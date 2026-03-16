@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>4Meaning — Filosofía viva</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --deep:    #1A2E1A;
+    --forest:  #2D5016;
+    --sage:    #5C7A3E;
+    --mist:    #8FA67A;
+    --fog:     #C2D4B0;
+    --cream:   #F4F1EA;
+    --sand:    #EDE8DC;
+    --warm:    #E8E0D0;
+    --gold:    #B8960C;
+    --terra:   #7A4A2A;
+    --white:   #FDFCF8;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--white);
+    color: var(--deep);
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE TEXTURE overlay ─────────────────────────────── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  /* ── NAV ───────────────────────────────────────────────── */
+  nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 100;
+    padding: 1.5rem 4rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    mix-blend-mode: normal;
+    transition: background 0.4s, padding 0.4s;
+  }
+  nav.scrolled {
+    background: rgba(26,46,26,0.96);
+    backdrop-filter: blur(12px);
+    padding: 1rem 4rem;
+  }
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+    font-weight: 500;
+    color: var(--white);
+    letter-spacing: 0.04em;
+    text-decoration: none;
+  }
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+  .nav-links a {
+    font-size: 0.82rem;
+    font-weight: 400;
+    color: rgba(253,252,248,0.7);
+    text-decoration: none;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--fog); }
+  .nav-cta {
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--deep) !important;
+    background: var(--fog);
+    padding: 0.55rem 1.4rem;
+    border-radius: 2px;
+    text-transform: uppercase !important;
+    letter-spacing: 0.08em;
+    transition: background 0.2s !important;
+  }
+  .nav-cta:hover { background: var(--cream) !important; color: var(--deep) !important; }
+
+  /* ── HERO ──────────────────────────────────────────────── */
+  .hero {
+    min-height: 100vh;
+    background: var(--deep);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0 4rem 6rem;
+    overflow: hidden;
+  }
+
+  /* Organic background shapes */
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+  .hero-bg::before {
+    content: '';
+    position: absolute;
+    top: -20%;
+    right: -10%;
+    width: 70vw;
+    height: 70vw;
+    border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(92,122,62,0.18) 0%, transparent 70%);
+  }
+  .hero-bg::after {
+    content: '';
+    position: absolute;
+    bottom: -10%;
+    left: -15%;
+    width: 55vw;
+    height: 55vw;
+    border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(45,80,22,0.25) 0%, transparent 70%);
+  }
+  .hero-bg-line {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 1px;
+    height: 100%;
+    background: linear-gradient(to bottom, transparent, rgba(143,166,122,0.12), transparent);
+  }
+
+  .hero-eyebrow {
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--mist);
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+
+  .hero-headline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(3.2rem, 7vw, 7rem);
+    font-weight: 300;
+    line-height: 1.05;
+    color: var(--white);
+    max-width: 14ch;
+    margin-bottom: 2.5rem;
+    opacity: 0;
+    animation: fadeUp 1s 0.4s forwards;
+  }
+  .hero-headline em {
+    font-style: italic;
+    color: var(--fog);
+  }
+
+  .hero-sub {
+    font-size: 1.05rem;
+    font-weight: 300;
+    color: rgba(253,252,248,0.6);
+    max-width: 52ch;
+    line-height: 1.75;
+    margin-bottom: 3rem;
+    opacity: 0;
+    animation: fadeUp 1s 0.6s forwards;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 1.2rem;
+    align-items: center;
+    opacity: 0;
+    animation: fadeUp 1s 0.8s forwards;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: var(--sage);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 1rem 2rem;
+    text-decoration: none;
+    border-radius: 2px;
+    transition: background 0.25s, transform 0.2s;
+  }
+  .btn-primary:hover { background: var(--forest); transform: translateY(-1px); }
+
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--fog);
+    font-size: 0.85rem;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(194,212,176,0.3);
+    padding-bottom: 2px;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .btn-ghost:hover { color: var(--white); border-color: var(--fog); }
+
+  .hero-scroll {
+    position: absolute;
+    bottom: 2.5rem;
+    right: 4rem;
+    writing-mode: vertical-rl;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(143,166,122,0.5);
+    opacity: 0;
+    animation: fadeIn 1s 1.4s forwards;
+  }
+
+  /* ── SECTION BASE ──────────────────────────────────────── */
+  section { position: relative; }
+
+  .section-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--sage);
+    margin-bottom: 1.2rem;
+    font-weight: 500;
+  }
+
+  /* ── PROBLEMA ──────────────────────────────────────────── */
+  .problema {
+    background: var(--cream);
+    padding: 9rem 4rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    align-items: start;
+  }
+  .problema-left {}
+  .problema-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.4rem, 4vw, 3.8rem);
+    font-weight: 400;
+    line-height: 1.15;
+    color: var(--deep);
+    margin-bottom: 2rem;
+  }
+  .problema-title em { font-style: italic; color: var(--sage); }
+  .problema-body {
+    font-size: 1rem;
+    line-height: 1.85;
+    color: rgba(26,46,26,0.65);
+    margin-bottom: 2rem;
+    font-weight: 300;
+  }
+  .problema-quote {
+    border-left: 2px solid var(--sage);
+    padding-left: 1.5rem;
+    margin: 2.5rem 0;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.35rem;
+    font-style: italic;
+    line-height: 1.5;
+    color: var(--forest);
+  }
+
+  .problema-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .dolor-card {
+    background: var(--white);
+    padding: 1.8rem 2rem;
+    border-radius: 3px;
+    border-left: 3px solid transparent;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+  .dolor-card:hover { border-color: var(--sage); transform: translateX(4px); }
+  .dolor-card:nth-child(1) { border-color: var(--mist); }
+  .dolor-num {
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--mist);
+    margin-bottom: 0.5rem;
+  }
+  .dolor-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    font-weight: 500;
+    color: var(--deep);
+    margin-bottom: 0.6rem;
+  }
+  .dolor-body {
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: rgba(26,46,26,0.6);
+    font-weight: 300;
+  }
+
+  /* ── QUÉ ES ────────────────────────────────────────────── */
+  .que-es {
+    background: var(--deep);
+    padding: 9rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .que-es::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80vw;
+    height: 80vw;
+    border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(92,122,62,0.07) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .que-es-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .que-es-not {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.3rem, 2.5vw, 1.9rem);
+    font-weight: 300;
+    color: rgba(253,252,248,0.4);
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.02em;
+  }
+  .que-es-headline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.8rem, 5.5vw, 5.5rem);
+    font-weight: 300;
+    line-height: 1.1;
+    color: var(--white);
+    margin-bottom: 3rem;
+  }
+  .que-es-headline em { font-style: italic; color: var(--fog); }
+
+  .que-es-line {
+    width: 3rem;
+    height: 1px;
+    background: var(--sage);
+    margin: 0 auto 3rem;
+  }
+
+  .que-es-body {
+    font-size: 1.05rem;
+    line-height: 1.9;
+    color: rgba(253,252,248,0.55);
+    max-width: 60ch;
+    margin: 0 auto 5rem;
+    font-weight: 300;
+  }
+
+  .pilares {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-top: 1rem;
+  }
+  .pilar {
+    background: rgba(253,252,248,0.03);
+    padding: 2.5rem 2rem;
+    text-align: left;
+    border-top: 1px solid rgba(143,166,122,0.15);
+    transition: background 0.3s;
+  }
+  .pilar:hover { background: rgba(92,122,62,0.08); }
+  .pilar-num {
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--mist);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+  .pilar-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: var(--white);
+    margin-bottom: 0.8rem;
+  }
+  .pilar-body {
+    font-size: 0.88rem;
+    line-height: 1.75;
+    color: rgba(253,252,248,0.45);
+    font-weight: 300;
+  }
+
+  /* ── ECOSISTEMA ────────────────────────────────────────── */
+  .ecosistema {
+    background: var(--sand);
+    padding: 9rem 4rem;
+  }
+  .eco-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: end;
+    margin-bottom: 5rem;
+  }
+  .eco-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.4rem, 4vw, 3.6rem);
+    font-weight: 400;
+    line-height: 1.15;
+    color: var(--deep);
+  }
+  .eco-title em { font-style: italic; color: var(--sage); }
+  .eco-desc {
+    font-size: 0.95rem;
+    line-height: 1.85;
+    color: rgba(26,46,26,0.6);
+    font-weight: 300;
+  }
+
+  .ramas {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+  .rama {
+    background: var(--white);
+    padding: 3rem;
+    border-radius: 3px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s;
+  }
+  .rama:hover { transform: translateY(-4px); }
+  .rama::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+  }
+  .rama.personalab::before { background: linear-gradient(90deg, var(--sage), var(--mist)); }
+  .rama.trascendencia::before { background: linear-gradient(90deg, var(--forest), var(--sage)); }
+
+  .rama-tag {
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--sage);
+    margin-bottom: 1.2rem;
+  }
+  .rama-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.2rem;
+    font-weight: 400;
+    color: var(--deep);
+    margin-bottom: 0.5rem;
+  }
+  .rama-tagline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-style: italic;
+    color: var(--sage);
+    margin-bottom: 1.5rem;
+  }
+  .rama-body {
+    font-size: 0.9rem;
+    line-height: 1.8;
+    color: rgba(26,46,26,0.6);
+    font-weight: 300;
+    margin-bottom: 2rem;
+  }
+  .rama-temas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+  }
+  .tema-tag {
+    font-size: 0.73rem;
+    padding: 0.3rem 0.85rem;
+    background: var(--cream);
+    color: var(--forest);
+    border-radius: 100px;
+    letter-spacing: 0.04em;
+  }
+  .rama-link {
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--sage);
+    text-decoration: none;
+    border-bottom: 1px solid var(--fog);
+    padding-bottom: 2px;
+    transition: color 0.2s;
+  }
+  .rama-link:hover { color: var(--forest); }
+
+  /* ── PARA QUIÉN ────────────────────────────────────────── */
+  .para-quien {
+    background: var(--white);
+    padding: 9rem 4rem;
+  }
+  .pq-header {
+    text-align: center;
+    margin-bottom: 5rem;
+  }
+  .pq-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.4rem, 4vw, 3.8rem);
+    font-weight: 400;
+    line-height: 1.15;
+    color: var(--deep);
+    margin-bottom: 1.2rem;
+  }
+  .pq-title em { font-style: italic; color: var(--sage); }
+  .pq-sub {
+    font-size: 0.95rem;
+    color: rgba(26,46,26,0.5);
+    max-width: 52ch;
+    margin: 0 auto;
+    line-height: 1.75;
+    font-weight: 300;
+  }
+
+  .perfiles {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 5rem;
+  }
+  .perfil {
+    border: 1px solid rgba(92,122,62,0.15);
+    padding: 2.5rem 2rem;
+    border-radius: 3px;
+    transition: border-color 0.3s, background 0.3s;
+  }
+  .perfil:hover {
+    border-color: var(--sage);
+    background: rgba(92,122,62,0.03);
+  }
+  .perfil-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background: var(--cream);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.2rem;
+  }
+  .perfil-icon svg { width: 1rem; height: 1rem; stroke: var(--sage); fill: none; stroke-width: 1.5; }
+  .perfil-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: var(--deep);
+    margin-bottom: 0.8rem;
+  }
+  .perfil-siente {
+    font-size: 0.85rem;
+    line-height: 1.75;
+    color: rgba(26,46,26,0.55);
+    font-weight: 300;
+    margin-bottom: 1.2rem;
+    border-left: 2px solid var(--fog);
+    padding-left: 1rem;
+    font-style: italic;
+  }
+  .perfil-ofrece {
+    font-size: 0.85rem;
+    line-height: 1.75;
+    color: rgba(26,46,26,0.65);
+    font-weight: 300;
+  }
+
+  /* Comparison table */
+  .comparativa {
+    background: var(--cream);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .comp-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    background: var(--deep);
+    padding: 1rem 2rem;
+  }
+  .comp-header span {
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(253,252,248,0.6);
+    font-weight: 400;
+  }
+  .comp-header span:last-child { color: var(--fog); }
+  .comp-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-bottom: 1px solid rgba(92,122,62,0.1);
+    padding: 1rem 2rem;
+  }
+  .comp-row:last-child { border-bottom: none; }
+  .comp-row:nth-child(even) { background: rgba(255,255,255,0.5); }
+  .comp-no {
+    font-size: 0.88rem;
+    color: rgba(26,46,26,0.45);
+    font-weight: 300;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .comp-no::before { content: '×'; color: var(--terra); font-size: 0.75rem; }
+  .comp-yes {
+    font-size: 0.88rem;
+    color: var(--forest);
+    font-weight: 400;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .comp-yes::before { content: '✓'; color: var(--sage); font-size: 0.75rem; }
+
+  /* ── FILOSOFÍA ─────────────────────────────────────────── */
+  .filosofia {
+    background: var(--forest);
+    padding: 7rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .filosofia::after {
+    content: '"';
+    position: absolute;
+    right: 3rem;
+    top: -2rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20rem;
+    color: rgba(253,252,248,0.04);
+    line-height: 1;
+    pointer-events: none;
+  }
+  .fil-inner {
+    max-width: 900px;
+  }
+  .fil-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.8rem, 3.5vw, 3rem);
+    font-weight: 300;
+    line-height: 1.3;
+    color: var(--white);
+    margin-bottom: 3rem;
+  }
+  .fil-quote em { font-style: italic; color: var(--fog); }
+  .fil-pensadores {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+  .fil-pensador {
+    font-size: 0.78rem;
+    padding: 0.35rem 1rem;
+    border: 1px solid rgba(194,212,176,0.25);
+    color: rgba(253,252,248,0.55);
+    border-radius: 100px;
+    letter-spacing: 0.04em;
+    font-weight: 300;
+  }
+
+  /* ── CIERRE ────────────────────────────────────────────── */
+  .cierre {
+    background: var(--deep);
+    padding: 10rem 4rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .cierre::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60vw;
+    height: 60vw;
+    border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(92,122,62,0.1) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .cierre-eyebrow {
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--mist);
+    margin-bottom: 2rem;
+  }
+  .cierre-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.6rem, 5vw, 4.8rem);
+    font-weight: 300;
+    line-height: 1.1;
+    color: var(--white);
+    max-width: 16ch;
+    margin: 0 auto 1.5rem;
+  }
+  .cierre-title em { font-style: italic; color: var(--fog); }
+  .cierre-sub {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: rgba(253,252,248,0.5);
+    max-width: 50ch;
+    margin: 0 auto 3.5rem;
+    font-weight: 300;
+  }
+  .cierre-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+  .cierre-links {
+    display: flex;
+    gap: 2rem;
+    margin-top: 0.5rem;
+  }
+  .cierre-link {
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(194,212,176,0.5);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(194,212,176,0.2);
+    padding-bottom: 1px;
+    transition: color 0.2s;
+  }
+  .cierre-link:hover { color: var(--fog); }
+
+  /* ── FOOTER ────────────────────────────────────────────── */
+  footer {
+    background: #111D11;
+    padding: 3rem 4rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    color: rgba(253,252,248,0.4);
+    letter-spacing: 0.04em;
+  }
+  .footer-text {
+    font-size: 0.75rem;
+    color: rgba(253,252,248,0.2);
+    letter-spacing: 0.06em;
+  }
+
+  /* ── ANIMATIONS ────────────────────────────────────────── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  /* Scroll-reveal */
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+  .reveal-delay-4 { transition-delay: 0.4s; }
+
+  /* ── RESPONSIVE ────────────────────────────────────────── */
+  @media (max-width: 900px) {
+    nav { padding: 1.2rem 1.5rem; }
+    nav.scrolled { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    .hero { padding: 0 1.5rem 5rem; }
+    .problema { grid-template-columns: 1fr; padding: 6rem 1.5rem; gap: 3rem; }
+    .que-es { padding: 6rem 1.5rem; }
+    .pilares { grid-template-columns: 1fr; gap: 1px; }
+    .ecosistema { padding: 6rem 1.5rem; }
+    .eco-header { grid-template-columns: 1fr; gap: 1.5rem; }
+    .ramas { grid-template-columns: 1fr; }
+    .para-quien { padding: 6rem 1.5rem; }
+    .perfiles { grid-template-columns: 1fr; }
+    .filosofia { padding: 5rem 1.5rem; }
+    .cierre { padding: 7rem 1.5rem; }
+    footer { padding: 2rem 1.5rem; flex-direction: column; gap: 1rem; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#" class="nav-logo">4Meaning</a>
+  <ul class="nav-links">
+    <li><a href="#ecosistema">El ecosistema</a></li>
+    <li><a href="#para-quien">Para quién</a></li>
+    <li><a href="#filosofia">Las raíces</a></li>
+    <li><a href="#cierre" class="nav-cta">Hablar con el equipo</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg">
+    <div class="hero-bg-line"></div>
+  </div>
+  <p class="hero-eyebrow">Filosofía viva — accesible, aplicada y con raíces</p>
+  <h1 class="hero-headline">
+    Hay preguntas que no<br>
+    <em>se callan solas.</em>
+  </h1>
+  <p class="hero-sub">
+    4Meaning traduce siglos de filosofía del personalismo en experiencias que puedes vivir hoy — para entender quién eres, para qué estás aquí y qué le dejas a los que vienen después de ti.
+  </p>
+  <div class="hero-actions">
+    <a href="#cierre" class="btn-primary">
+      Hablar con el equipo
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </a>
+    <a href="#ecosistema" class="btn-ghost">
+      Conocer el ecosistema
+    </a>
+  </div>
+  <span class="hero-scroll">Continuar</span>
+</section>
+
+<!-- EL PROBLEMA -->
+<section class="problema" id="problema">
+  <div class="problema-left">
+    <p class="section-label reveal">El vacío que llena</p>
+    <h2 class="problema-title reveal reveal-delay-1">
+      El mundo tiene muchas respuestas.<br>
+      <em>Pocas que llegan al fondo.</em>
+    </h2>
+    <p class="problema-body reveal reveal-delay-2">
+      Hay una diferencia entre saber muchas cosas sobre la vida y entender para qué es tu vida. Entre sentirte bien y saber quién eres. Entre tener éxito y tener sentido.
+    </p>
+    <p class="problema-body reveal reveal-delay-2">
+      La mayoría de los caminos disponibles hoy trabajan sobre lo primero. 4Meaning trabaja sobre lo segundo.
+    </p>
+    <blockquote class="problema-quote reveal reveal-delay-3">
+      ¿Es esto todo? ¿Hay algo más profundo que no estoy viendo?
+    </blockquote>
+  </div>
+  <div class="problema-cards">
+    <div class="dolor-card reveal reveal-delay-1">
+      <p class="dolor-num">01</p>
+      <h3 class="dolor-title">La pregunta que no desaparece</h3>
+      <p class="dolor-body">Tienes lo que buscabas. Y aun así hay algo que no encaja. Una pregunta que vuelve, que no se calla, que ningún logro termina de responder.</p>
+    </div>
+    <div class="dolor-card reveal reveal-delay-2">
+      <p class="dolor-num">02</p>
+      <h3 class="dolor-title">Las respuestas que no sostienen</h3>
+      <p class="dolor-body">Has buscado. En libros, en retiros, en tendencias. Encontraste alivio temporal. Nunca encontraste fundamento real.</p>
+    </div>
+    <div class="dolor-card reveal reveal-delay-3">
+      <p class="dolor-num">03</p>
+      <h3 class="dolor-title">El legado que no sabes cómo construir</h3>
+      <p class="dolor-body">Sientes que tu vida debería significar algo más allá de ti. Pero nadie te enseñó cómo construir eso — ni qué significa realmente dejarlo.</p>
+    </div>
+  </div>
+</section>
+
+<!-- QUÉ ES -->
+<section class="que-es" id="que-es">
+  <div class="que-es-inner">
+    <p class="que-es-not reveal">No es autoayuda. No es terapia. No es espiritualidad de tendencia.</p>
+    <h2 class="que-es-headline reveal reveal-delay-1">
+      Es <em>filosofía viva</em> —<br>accesible, aplicada<br>y con raíces.
+    </h2>
+    <div class="que-es-line reveal reveal-delay-2"></div>
+    <p class="que-es-body reveal reveal-delay-2">
+      4Meaning toma la tradición del personalismo filosófico y la convierte en experiencias que una persona puede vivir, sentir y aplicar a su vida real. No teorizamos sobre el sentido. Lo hacemos experiencial.
+    </p>
+    <div class="pilares">
+      <div class="pilar reveal reveal-delay-1">
+        <p class="pilar-num">Pilar I</p>
+        <h3 class="pilar-title">Fundamento real</h3>
+        <p class="pilar-body">Enraizado en una tradición filosófica sólida — no en opiniones, tendencias ni sincretismo. El personalismo ontológico como base.</p>
+      </div>
+      <div class="pilar reveal reveal-delay-2">
+        <p class="pilar-num">Pilar II</p>
+        <h3 class="pilar-title">Experiencia vivida</h3>
+        <p class="pilar-body">No conferencias ni cursos. Experiencias diseñadas para que el conocimiento no se quede en la cabeza — sino que mueva algo adentro.</p>
+      </div>
+      <div class="pilar reveal reveal-delay-3">
+        <p class="pilar-num">Pilar III</p>
+        <h3 class="pilar-title">Aplicación concreta</h3>
+        <p class="pilar-body">Cada experiencia responde preguntas de la vida real: familia, comunidad, legado. No preguntas abstractas — las tuyas.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ECOSISTEMA -->
+<section class="ecosistema" id="ecosistema">
+  <div class="eco-header">
+    <div>
+      <p class="section-label reveal">El ecosistema</p>
+      <h2 class="eco-title reveal reveal-delay-1">
+        El vacío existencial<br>tiene muchas caras.<br>
+        <em>Una experiencia para cada una.</em>
+      </h2>
+    </div>
+    <p class="eco-desc reveal reveal-delay-2">
+      4Meaning no es un producto. Es un ecosistema — un conjunto de expresiones distintas de la misma verdad central. Cada rama responde al mismo vacío, pero desde un ángulo diferente de la vida humana.
+    </p>
+  </div>
+
+  <div class="ramas">
+    <div class="rama personalab reveal reveal-delay-1">
+      <p class="rama-tag">Rama 01</p>
+      <h3 class="rama-name">PersonaLab</h3>
+      <p class="rama-tagline">El sentido en el individuo y la comunidad.</p>
+      <p class="rama-body">
+        Módulos experienciales diseñados para grupos — foros YPO y EO, retiros corporativos, equipos de liderazgo. Cada módulo es una pregunta de vida traducida en experiencia que el grupo vive junto.
+      </p>
+      <div class="rama-temas">
+        <span class="tema-tag">Presencia</span>
+        <span class="tema-tag">Transformación</span>
+        <span class="tema-tag">Legado</span>
+        <span class="tema-tag">Comunicación</span>
+        <span class="tema-tag">Nuevas etapas</span>
+      </div>
+      <a href="#cierre" class="rama-link">Conocer PersonaLab →</a>
+    </div>
+    <div class="rama trascendencia reveal reveal-delay-2">
+      <p class="rama-tag">Rama 02</p>
+      <h3 class="rama-name">Trascendencia</h3>
+      <p class="rama-tagline">El sentido en la familia y el legado.</p>
+      <p class="rama-body">
+        Un retiro de 3 días para construir legado con intención. Dos formatos: <em>Parejas</em> — para matrimonios que quieren entender qué historia le están escribiendo a sus hijos — y <em>Familia</em> — para el núcleo familiar completo, trabajando el legado que se transmite de generación en generación.
+      </p>
+      <div class="rama-temas">
+        <span class="tema-tag">Pareja</span>
+        <span class="tema-tag">Familia</span>
+        <span class="tema-tag">Legado</span>
+        <span class="tema-tag">Generaciones</span>
+        <span class="tema-tag">Valores</span>
+      </div>
+      <a href="#cierre" class="rama-link">Conocer Trascendencia →</a>
+    </div>
+  </div>
+</section>
+
+<!-- PARA QUIÉN -->
+<section class="para-quien" id="para-quien">
+  <div class="pq-header">
+    <p class="section-label reveal">Para quién</p>
+    <h2 class="pq-title reveal reveal-delay-1">
+      Para quienes ya no se conforman<br>
+      con <em>respuestas fáciles.</em>
+    </h2>
+    <p class="pq-sub reveal reveal-delay-2">
+      4Meaning no le habla a todo el mundo. Le habla a alguien en un momento específico de vida — con preguntas que no se callan y la disposición de ir al fondo.
+    </p>
+  </div>
+
+  <div class="perfiles">
+    <div class="perfil reveal reveal-delay-1">
+      <div class="perfil-icon">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      </div>
+      <h3 class="perfil-title">El buscador activo</h3>
+      <p class="perfil-siente">Ha leído, ha viajado, ha probado distintos caminos. Siente que ninguno llega al fondo.</p>
+      <p class="perfil-ofrece">Una tradición filosófica sólida traducida en experiencias que puede vivir — no solo leer o escuchar.</p>
+    </div>
+    <div class="perfil reveal reveal-delay-2">
+      <div class="perfil-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      </div>
+      <h3 class="perfil-title">El líder con preguntas de fondo</h3>
+      <p class="perfil-siente">Tiene éxito, posición, logros. Y una pregunta que no desaparece: ¿es esto lo que vine a hacer?</p>
+      <p class="perfil-ofrece">Un espacio donde la pregunta de fondo tiene nombre, historia y respuesta — construida en comunidad con pares.</p>
+    </div>
+    <div class="perfil reveal reveal-delay-3">
+      <div class="perfil-icon">
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <h3 class="perfil-title">El guardián del legado</h3>
+      <p class="perfil-siente">Siente el peso de lo que le deja a sus hijos. No solo en lo material — en lo que son, en lo que creen.</p>
+      <p class="perfil-ofrece">Un retiro para que la familia entera atraviese las preguntas que más importan — y salga con legado construido.</p>
+    </div>
+  </div>
+
+  <!-- Comparativa -->
+  <div class="comparativa reveal">
+    <div class="comp-header">
+      <span>Lo que encuentras en otro lado</span>
+      <span>Lo que ofrece 4Meaning</span>
+    </div>
+    <div class="comp-row">
+      <span class="comp-no">Opiniones sin fundamento filosófico</span>
+      <span class="comp-yes">Tradición de siglos — Frankl, Mounier, Wojtyla — aplicada a la vida real</span>
+    </div>
+    <div class="comp-row">
+      <span class="comp-no">Contenido para consumir</span>
+      <span class="comp-yes">Experiencias para vivir — que mueven algo adentro, no solo en la cabeza</span>
+    </div>
+    <div class="comp-row">
+      <span class="comp-no">Respuestas genéricas para todos</span>
+      <span class="comp-yes">Experiencias diseñadas según tu momento: individual, en pareja, en familia</span>
+    </div>
+    <div class="comp-row">
+      <span class="comp-no">Alivio temporal</span>
+      <span class="comp-yes">Fundamento real que sostiene el peso de las preguntas que no se callan</span>
+    </div>
+    <div class="comp-row">
+      <span class="comp-no">Una sola respuesta para el vacío existencial</span>
+      <span class="comp-yes">Un ecosistema que acompaña distintas etapas y dimensiones de la búsqueda</span>
+    </div>
+  </div>
+</section>
+
+<!-- FILOSOFÍA -->
+<section class="filosofia" id="filosofia">
+  <div class="fil-inner">
+    <p class="section-label reveal" style="color: var(--mist);">Las raíces</p>
+    <p class="fil-quote reveal reveal-delay-1">
+      No inventamos respuestas.<br>
+      Traducimos <em>las que ya existen</em><br>
+      desde hace siglos.
+    </p>
+    <div class="fil-pensadores reveal reveal-delay-2">
+      <span class="fil-pensador">Viktor Frankl</span>
+      <span class="fil-pensador">Emmanuel Mounier</span>
+      <span class="fil-pensador">Karol Wojtyla</span>
+      <span class="fil-pensador">Juan Manuel Burgos</span>
+      <span class="fil-pensador">Edith Stein</span>
+      <span class="fil-pensador">Personalismo ontológico</span>
+    </div>
+  </div>
+</section>
+
+<!-- CIERRE -->
+<section class="cierre" id="cierre">
+  <p class="cierre-eyebrow reveal">El primer paso</p>
+  <h2 class="cierre-title reveal reveal-delay-1">
+    La búsqueda que sientes<br>
+    <em>tiene un lugar</em><br>
+    donde continúa.
+  </h2>
+  <p class="cierre-sub reveal reveal-delay-2">
+    Habla con nuestro equipo. Cuéntanos en qué momento de vida estás — y te decimos qué experiencia de 4Meaning fue diseñada para ti.
+  </p>
+  <div class="cierre-actions reveal reveal-delay-3">
+    <a href="https://wa.me/" class="btn-primary" style="font-size: 0.9rem; padding: 1.1rem 2.4rem;">
+      Escribir por WhatsApp
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+    </a>
+    <div class="cierre-links">
+      <a href="#ecosistema" class="cierre-link">Conocer PersonaLab</a>
+      <a href="#ecosistema" class="cierre-link">Conocer Trascendencia</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-logo">4Meaning</span>
+  <span class="footer-text">Filosofía viva — accesible, aplicada y con raíces.</span>
+</footer>
+
+<script>
+  // Nav scroll behavior
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+  });
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+  reveals.forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
