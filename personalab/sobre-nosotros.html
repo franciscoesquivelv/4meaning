@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sobre Nosotros — PersonaLab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary:       #395640;
+    --primary-light: #4a7055;
+    --primary-mid:   #5c8c6a;
+    --primary-sage:  #7aad88;
+    --primary-mist:  #b5d4bc;
+    --primary-frost: #e4f0e7;
+    --primary-faint: #f2f8f3;
+    --ink:           #0d1a0e;
+    --ink-soft:      #283929;
+    --muted:         #6b8472;
+    --warm-white:    #f8f6f1;
+    --white:         #ffffff;
+    --border:        #cee4d2;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Montserrat', sans-serif;
+    background: var(--warm-white);
+    color: var(--ink);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  #navbar {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    height: 76px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 52px;
+    transition: background 0.45s ease, box-shadow 0.45s ease;
+  }
+  #navbar.over-image {
+    background: transparent;
+  }
+  #navbar.over-content {
+    background: rgba(248,246,241,0.96);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    box-shadow: 0 1px 0 var(--border);
+  }
+  .nav-logo {
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  #navbar.over-image  .nav-logo { color: rgba(255,255,255,0.95); }
+  #navbar.over-content .nav-logo { color: var(--primary); }
+
+  .nav-center {
+    display: flex;
+    align-items: center;
+    gap: 36px;
+    list-style: none;
+  }
+  .nav-center a {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: color 0.25s;
+    position: relative;
+  }
+  .nav-center a::after {
+    content: '';
+    position: absolute;
+    bottom: -3px; left: 0; right: 0;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+  }
+  .nav-center a:hover::after { transform: scaleX(1); }
+  #navbar.over-image  .nav-center a { color: rgba(255,255,255,0.75); }
+  #navbar.over-image  .nav-center a:hover { color: white; }
+  #navbar.over-content .nav-center a { color: var(--ink-soft); }
+  #navbar.over-content .nav-center a:hover { color: var(--primary); }
+
+  .nav-cta {
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    padding: 11px 26px;
+    transition: all 0.25s !important;
+    text-decoration: none;
+  }
+  .nav-cta::after { display: none !important; }
+  #navbar.over-image .nav-cta {
+    color: white !important;
+    border: 1.5px solid rgba(255,255,255,0.45);
+  }
+  #navbar.over-image .nav-cta:hover {
+    background: white;
+    color: var(--primary) !important;
+    border-color: white;
+  }
+  #navbar.over-content .nav-cta {
+    background: var(--primary);
+    color: white !important;
+    border: 1.5px solid var(--primary);
+  }
+  #navbar.over-content .nav-cta:hover {
+    background: var(--primary-light);
+    border-color: var(--primary-light);
+  }
+
+  .container {
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 0 52px;
+  }
+
+  /* HERO */
+  #hero {
+    position: relative;
+    height: 80vh;
+    min-height: 580px;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background-image: url('./Stock imgs/young-stylish-guy-and-girl-are-walking-together-on-2026-03-09-04-58-59-utc.jpg');
+    background-size: cover;
+    background-position: center 40%;
+    transform: scale(1.04);
+    transition: transform 8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .hero-bg.loaded { transform: scale(1); }
+
+  .hero-gradient {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(to top,   rgba(8,18,10,0.88) 0%, rgba(8,18,10,0.45) 45%, transparent 70%),
+      linear-gradient(to right, rgba(8,18,10,0.50) 0%, transparent 65%);
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    padding: 0 52px 80px;
+    max-width: 760px;
+  }
+
+  .hero-label {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--primary-mist);
+    margin-bottom: 20px;
+  }
+  .hero-label span { display: block; width: 36px; height: 1px; background: var(--primary-mist); }
+
+  .hero-headline {
+    font-size: clamp(38px, 5.5vw, 72px);
+    font-weight: 300;
+    color: white;
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+    margin-bottom: 24px;
+  }
+  .hero-headline em {
+    font-style: italic;
+    color: var(--primary-sage);
+  }
+
+  .hero-sub {
+    font-size: 17px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.70);
+    max-width: 520px;
+    line-height: 1.8;
+  }
+
+  /* SECTION UTILITIES */
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--primary-mid);
+    margin-bottom: 20px;
+  }
+  .section-label::before {
+    content: '';
+    display: block;
+    width: 28px;
+    height: 1px;
+    background: var(--primary-mid);
+    flex-shrink: 0;
+  }
+
+  .section-title {
+    font-size: clamp(28px, 3.2vw, 46px);
+    font-weight: 300;
+    color: var(--ink);
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+  }
+  .section-title em { font-style: italic; font-weight: 400; color: var(--primary); }
+
+  /* MISIÓN */
+  #mision {
+    padding: 128px 0;
+    background: var(--white);
+  }
+
+  .mision-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 100px;
+    align-items: center;
+  }
+
+  .mision-text { }
+
+  .big-quote {
+    font-size: clamp(22px, 2.5vw, 34px);
+    font-weight: 300;
+    color: var(--ink);
+    line-height: 1.45;
+    letter-spacing: -0.015em;
+    border-left: 3px solid var(--primary);
+    padding-left: 32px;
+    margin: 32px 0 40px;
+    font-style: italic;
+  }
+
+  .mision-body {
+    font-size: 16px;
+    font-weight: 300;
+    color: var(--ink-soft);
+    line-height: 1.85;
+  }
+
+  .mision-body p + p { margin-top: 20px; }
+
+  .mision-image {
+    position: relative;
+    height: 560px;
+    overflow: hidden;
+  }
+
+  .mision-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 30%;
+    display: block;
+  }
+
+  .mision-image-caption {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: var(--primary);
+    padding: 20px 28px;
+  }
+
+  .caption-text {
+    font-size: 13px;
+    font-weight: 300;
+    font-style: italic;
+    color: rgba(255,255,255,0.85);
+    line-height: 1.5;
+  }
+
+  /* VALORES */
+  #valores {
+    padding: 128px 0;
+    background: var(--primary-faint);
+  }
+
+  .valores-header {
+    text-align: center;
+    max-width: 580px;
+    margin: 0 auto 72px;
+  }
+  .valores-header .section-label { justify-content: center; }
+  .valores-header .section-label::before { display: none; }
+
+  .valores-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+
+  .valor-card {
+    background: var(--white);
+    padding: 52px 40px;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.35s;
+  }
+  .valor-card:hover { background: var(--primary-faint); }
+
+  .valor-icon {
+    font-size: 32px;
+    margin-bottom: 24px;
+    display: block;
+    line-height: 1;
+  }
+
+  .valor-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    margin-bottom: 16px;
+  }
+
+  .valor-desc {
+    font-size: 15px;
+    font-weight: 300;
+    color: var(--ink-soft);
+    line-height: 1.8;
+  }
+
+  .valor-accent {
+    position: absolute;
+    bottom: 0; left: 40px; right: 40px;
+    height: 2px;
+    background: var(--primary);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.45s ease;
+  }
+  .valor-card:hover .valor-accent { transform: scaleX(1); }
+
+  /* CREADORES */
+  #creadores {
+    padding: 128px 0;
+    background: var(--white);
+  }
+
+  .creadores-header { margin-bottom: 72px; }
+
+  .creadores-intro {
+    font-size: 17px;
+    font-weight: 300;
+    color: var(--ink-soft);
+    line-height: 1.85;
+    max-width: 680px;
+    margin-top: 24px;
+  }
+
+  .equipo-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+
+  .miembro-card {
+    background: var(--white);
+    padding: 52px 48px;
+    transition: background 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .miembro-card:hover { background: var(--primary-faint); }
+
+  .miembro-accent {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--primary);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.45s ease;
+  }
+  .miembro-card:hover .miembro-accent { transform: scaleX(1); }
+
+  .miembro-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--primary);
+    border: 1.5px solid var(--primary-mist);
+    padding: 6px 16px;
+    margin-bottom: 24px;
+  }
+
+  .miembro-nombre {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    margin-bottom: 8px;
+  }
+
+  .miembro-rol {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--primary-mid);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .miembro-bio {
+    font-size: 15px;
+    font-weight: 300;
+    color: var(--ink-soft);
+    line-height: 1.8;
+  }
+
+  /* NUMBERS */
+  #numeros {
+    position: relative;
+    overflow: hidden;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    background: var(--primary);
+  }
+
+  .numeros-grid {
+    padding: 100px 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.1);
+    width: 100%;
+  }
+
+  .numero-item {
+    background: var(--primary);
+    padding: 48px 40px;
+    text-align: center;
+    transition: background 0.3s;
+  }
+  .numero-item:hover { background: var(--primary-light); }
+
+  .numero-val {
+    font-size: clamp(40px, 4.5vw, 60px);
+    font-weight: 800;
+    color: white;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+
+  .numero-label {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--primary-mist);
+  }
+
+  /* ENFOQUE */
+  #enfoque {
+    padding: 128px 0;
+    background: var(--primary-faint);
+  }
+
+  .enfoque-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 100px;
+    align-items: start;
+  }
+
+  .enfoque-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 1px solid var(--border);
+    background: var(--white);
+    margin-top: 32px;
+  }
+
+  .enfoque-item {
+    padding: 24px 32px;
+    border-bottom: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: 32px 1fr;
+    gap: 20px;
+    align-items: start;
+    transition: background 0.25s;
+  }
+  .enfoque-item:last-child { border-bottom: none; }
+  .enfoque-item:hover { background: var(--primary-faint); }
+
+  .enfoque-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--primary);
+    margin-top: 7px;
+    justify-self: center;
+  }
+
+  .enfoque-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 4px;
+    letter-spacing: 0.02em;
+  }
+
+  .enfoque-desc {
+    font-size: 14px;
+    font-weight: 300;
+    color: var(--ink-soft);
+    line-height: 1.7;
+  }
+
+  .enfoque-right { padding-top: 8px; }
+
+  .enfoque-image {
+    height: 460px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .enfoque-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+
+  /* CTA */
+  #cta-final {
+    position: relative;
+    overflow: hidden;
+    min-height: 520px;
+    display: flex;
+    align-items: center;
+  }
+
+  .cta-bg {
+    position: absolute;
+    inset: 0;
+    background-image: url('./Stock imgs/silhouetted-woman-wading-in-baltic-sea-during-gold-2026-01-25-00-20-58-utc.jpg');
+    background-size: cover;
+    background-position: center 40%;
+  }
+
+  .cta-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to right,
+      rgba(8,20,10,0.93) 0%,
+      rgba(57,86,64,0.80) 55%,
+      rgba(8,20,10,0.55) 100%
+    );
+  }
+
+  .cta-content {
+    position: relative;
+    z-index: 2;
+    padding: 100px 0;
+    max-width: 620px;
+  }
+
+  .cta-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--primary-mist);
+    margin-bottom: 20px;
+  }
+  .cta-label::before {
+    content: '';
+    width: 28px; height: 1px;
+    background: var(--primary-mist);
+  }
+
+  .cta-title {
+    font-size: clamp(28px, 3.5vw, 48px);
+    font-weight: 300;
+    color: white;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+  }
+
+  .cta-sub {
+    font-size: 17px;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--primary-mist);
+    margin-bottom: 44px;
+    line-height: 1.6;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    background: white;
+    color: var(--ink);
+    padding: 16px 32px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all 0.3s;
+  }
+  .btn-primary:hover {
+    background: var(--primary-sage);
+    color: white;
+    gap: 20px;
+  }
+  .btn-primary .arrow { transition: transform 0.3s; }
+  .btn-primary:hover .arrow { transform: translateX(4px); }
+
+  /* FOOTER */
+  footer {
+    background: var(--ink);
+    padding: 52px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .footer-brand {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .footer-logo {
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.65);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-logo:hover { color: rgba(255,255,255,0.9); }
+
+  .footer-tagline {
+    font-size: 13px;
+    font-weight: 300;
+    font-style: italic;
+    color: rgba(255,255,255,0.28);
+  }
+
+  .footer-nav {
+    display: flex;
+    gap: 36px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .footer-nav a {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.32);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-nav a:hover { color: rgba(255,255,255,0.7); }
+
+  /* ANIMATIONS */
+  .reveal {
+    opacity: 0;
+    transform: translateY(36px);
+    transition: opacity 0.85s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal.d1 { transition-delay: 0.10s; }
+  .reveal.d2 { transition-delay: 0.20s; }
+  .reveal.d3 { transition-delay: 0.30s; }
+  .reveal.d4 { transition-delay: 0.40s; }
+
+  /* RESPONSIVE */
+  @media (max-width: 1024px) {
+    .container { padding: 0 36px; }
+    #navbar { padding: 0 36px; }
+    .hero-content { padding: 0 36px 72px; }
+    .mision-inner { grid-template-columns: 1fr; gap: 60px; }
+    .valores-grid { grid-template-columns: 1fr 1fr; }
+    .equipo-grid { grid-template-columns: 1fr; }
+    .enfoque-inner { grid-template-columns: 1fr; gap: 56px; }
+    .numeros-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 768px) {
+    #navbar { padding: 0 24px; }
+    .container { padding: 0 24px; }
+    .hero-content { padding: 0 24px 60px; }
+    .nav-center { display: none; }
+    .valores-grid { grid-template-columns: 1fr; }
+    .numeros-grid { grid-template-columns: 1fr 1fr; }
+    footer { flex-direction: column; align-items: flex-start; }
+    .footer-nav { justify-content: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar" class="over-image">
+  <a href="index.html" class="nav-logo">PersonaLab</a>
+  <ul class="nav-center">
+    <li><a href="index.html#catalogo">Catálogo</a></li>
+    <li><a href="index.html#medida">A la medida</a></li>
+    <li><a href="sobre-nosotros.html">Sobre nosotros</a></li>
+  </ul>
+  <a href="index.html#cierre" class="nav-cta nav-center a">Contáctanos</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg" id="heroBg"></div>
+  <div class="hero-gradient"></div>
+  <div class="hero-content reveal">
+    <p class="hero-label">
+      <span></span>
+      Nuestra historia
+    </p>
+    <h1 class="hero-headline">
+      Detrás de cada experiencia,<br>hay una <em>convicción.</em>
+    </h1>
+    <p class="hero-sub">
+      Creemos que las personas que se detienen a explorar su vida, viven mejor. Y que eso se puede diseñar.
+    </p>
+  </div>
+</section>
+
+<!-- MISIÓN -->
+<section id="mision">
+  <div class="container">
+    <div class="mision-inner">
+      <div class="mision-text">
+        <p class="section-label reveal">Nuestra misión</p>
+        <blockquote class="big-quote reveal d1">
+          "Que las personas comprendan el propósito y el sentido de la vida."
+        </blockquote>
+        <div class="mision-body reveal d2">
+          <p>PersonaLab nació de una pregunta simple: ¿por qué tantos retiros terminan con algo olvidado al día siguiente?</p>
+          <p>La respuesta que encontramos fue que la mayoría de las dinámicas se diseñan para entretener, no para transformar. Para llenar el tiempo, no para aprovechar la oportunidad.</p>
+          <p>Nosotros creemos que un grupo de personas que confían el uno en el otro merece algo más profundo. Algo que mueva. Algo que se recuerde.</p>
+          <p>Por eso diseñamos experiencias con arquitectura emocional — donde cada detalle, cada pregunta, cada ejercicio tiene un propósito claro.</p>
+        </div>
+      </div>
+      <div class="mision-image reveal d1">
+        <img src="./Stock imgs/diverse-group-of-people-sitting-in-circle-in-group-2026-01-07-07-00-43-utc.jpg" alt="Grupo en conversación profunda">
+        <div class="mision-image-caption">
+          <p class="caption-text">Cada retiro es una oportunidad de profundizar en lo que realmente importa.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VALORES -->
+<section id="valores">
+  <div class="container">
+    <div class="valores-header">
+      <p class="section-label reveal">Lo que nos mueve</p>
+      <h2 class="section-title reveal d1">Nuestros <em>valores fundamentales.</em></h2>
+    </div>
+    <div class="valores-grid">
+      <div class="valor-card reveal">
+        <span class="valor-icon">◎</span>
+        <h3 class="valor-title">Profundidad</h3>
+        <p class="valor-desc">No nos conformamos con la superficie. Cada experiencia está diseñada para tocar lo que realmente importa — los temas que la gente suele evitar porque no saben cómo abordarlos.</p>
+        <div class="valor-accent"></div>
+      </div>
+      <div class="valor-card reveal d1">
+        <span class="valor-icon">◈</span>
+        <h3 class="valor-title">Intencionalidad</h3>
+        <p class="valor-desc">Nada es al azar. Cada pregunta, cada ejercicio, cada momento del proceso tiene un propósito claro. El diseño es la herramienta con la que creamos experiencias que mueven.</p>
+        <div class="valor-accent"></div>
+      </div>
+      <div class="valor-card reveal d2">
+        <span class="valor-icon">◷</span>
+        <h3 class="valor-title">Acompañamiento</h3>
+        <p class="valor-desc">No entregamos un producto y nos vamos. Estamos contigo en todo el proceso — desde entender a tu grupo hasta asegurarnos de que llegues preparado y con confianza.</p>
+        <div class="valor-accent"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EQUIPO -->
+<section id="creadores">
+  <div class="container">
+    <div class="creadores-header">
+      <p class="section-label reveal">El equipo</p>
+      <h2 class="section-title reveal d1">Las personas detrás<br>de <em>PersonaLab.</em></h2>
+      <p class="creadores-intro reveal d2">
+        Somos un equipo apasionado por el desarrollo humano, la facilitación y el diseño de experiencias. Venimos de mundos distintos — psicología, filosofía, liderazgo — pero compartimos la misma convicción: que las conversaciones profundas cambian vidas.
+      </p>
+    </div>
+    <div class="equipo-grid">
+      <div class="miembro-card reveal">
+        <div class="miembro-accent"></div>
+        <span class="miembro-tag">Fundadora</span>
+        <h3 class="miembro-nombre">Patricia Arriaza</h3>
+        <p class="miembro-rol">Diseñadora de experiencias · Facilitadora</p>
+        <p class="miembro-bio">Comenzó como moderadora de YPO Guatemala, donde descubrió de primera mano la falta de recursos de calidad para facilitar retiros profundos. Esa experiencia la llevó a crear PersonaLab. Hoy diseña experiencias que combinan psicología, espiritualidad y narrativa para grupos de líderes.</p>
+      </div>
+      <div class="miembro-card reveal d1">
+        <div class="miembro-accent"></div>
+        <span class="miembro-tag">Co-fundador</span>
+        <h3 class="miembro-nombre">Equipo PersonaLab</h3>
+        <p class="miembro-rol">Psicología · Filosofía · Liderazgo</p>
+        <p class="miembro-bio">Un equipo multidisciplinario con raíces en psicología clínica, filosofía existencial y desarrollo organizacional. Cada experiencia del catálogo es el resultado de horas de investigación, diseño y pruebas con grupos reales — para asegurarnos de que lo que entregamos genuinamente mueve.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NÚMEROS -->
+<section id="numeros">
+  <div class="container" style="width: 100%; max-width: 100%; padding: 0;">
+    <div class="numeros-grid">
+      <div class="numero-item reveal">
+        <div class="numero-val">5+</div>
+        <div class="numero-label">Experiencias en catálogo</div>
+      </div>
+      <div class="numero-item reveal d1">
+        <div class="numero-val">100%</div>
+        <div class="numero-label">Diseñadas a propósito</div>
+      </div>
+      <div class="numero-item reveal d2">
+        <div class="numero-val">YPO</div>
+        <div class="numero-label">Probadas en foros reales</div>
+      </div>
+      <div class="numero-item reveal d3">
+        <div class="numero-val">∞</div>
+        <div class="numero-label">Posibilidades a la medida</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ENFOQUE -->
+<section id="enfoque">
+  <div class="container">
+    <div class="enfoque-inner">
+      <div>
+        <p class="section-label reveal">Nuestro enfoque</p>
+        <h2 class="section-title reveal d1">Cómo diseñamos cada <em>experiencia.</em></h2>
+        <div class="enfoque-list reveal d2">
+          <div class="enfoque-item">
+            <div class="enfoque-dot"></div>
+            <div>
+              <p class="enfoque-name">Fundamento conceptual</p>
+              <p class="enfoque-desc">Cada módulo parte de un marco teórico sólido — psicología, filosofía, espiritualidad — que da coherencia y profundidad al contenido.</p>
+            </div>
+          </div>
+          <div class="enfoque-item">
+            <div class="enfoque-dot"></div>
+            <div>
+              <p class="enfoque-name">Arquitectura emocional</p>
+              <p class="enfoque-desc">Diseñamos el arco emocional de cada experiencia: cómo entra el grupo, por dónde pasa, y dónde queremos que llegue.</p>
+            </div>
+          </div>
+          <div class="enfoque-item">
+            <div class="enfoque-dot"></div>
+            <div>
+              <p class="enfoque-name">Facilidad de uso</p>
+              <p class="enfoque-desc">El moderador no necesita ser experto. Todo está diseñado para que pueda facilitar con naturalidad y confianza.</p>
+            </div>
+          </div>
+          <div class="enfoque-item">
+            <div class="enfoque-dot"></div>
+            <div>
+              <p class="enfoque-name">Prueba real</p>
+              <p class="enfoque-desc">Antes de publicar cualquier módulo, lo probamos con grupos reales y refinamos hasta que genuinamente funciona.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="enfoque-right">
+        <div class="enfoque-image reveal d1">
+          <img src="./Stock imgs/child-having-fun-on-merry-go-round-2026-01-09-07-48-03-utc.jpg" alt="La alegría del proceso">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section id="cta-final">
+  <div class="cta-bg"></div>
+  <div class="cta-overlay"></div>
+  <div class="container">
+    <div class="cta-content">
+      <p class="cta-label">Hablemos</p>
+      <h2 class="cta-title reveal">¿Tienes un retiro o foro próximo y quieres hacerlo memorable?</h2>
+      <p class="cta-sub reveal d1">Cuéntanos sobre tu grupo. Encontramos juntos lo que necesitan.</p>
+      <div class="reveal d2" style="display: flex; gap: 16px; flex-wrap: wrap; align-items: center;">
+        <a href="index.html#cierre" class="btn-primary">
+          Escribirnos por WhatsApp
+          <span class="arrow">→</span>
+        </a>
+        <a href="index.html#catalogo" style="color: rgba(255,255,255,0.65); font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 2px; transition: all 0.25s;">
+          Ver catálogo
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">
+    <a href="index.html" class="footer-logo">PersonaLab</a>
+    <span class="footer-tagline">Experiencias con propósito y sentido.</span>
+  </div>
+  <nav class="footer-nav">
+    <a href="index.html#catalogo">Catálogo</a>
+    <a href="index.html#medida">A la medida</a>
+    <a href="sobre-nosotros.html">Sobre nosotros</a>
+    <a href="index.html#cierre">Contacto</a>
+  </nav>
+</footer>
+
+<script>
+  window.addEventListener('load', () => {
+    document.getElementById('heroBg').classList.add('loaded');
+  });
+
+  const navbar = document.getElementById('navbar');
+  const heroEl = document.getElementById('hero');
+
+  function updateNav() {
+    const heroBottom = heroEl.getBoundingClientRect().bottom;
+    navbar.classList.toggle('over-image', heroBottom > 80);
+    navbar.classList.toggle('over-content', heroBottom <= 80);
+  }
+  window.addEventListener('scroll', updateNav, { passive: true });
+  updateNav();
+
+  const revealObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        revealObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.10, rootMargin: '0px 0px -60px 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+</script>
+</body>
+</html>

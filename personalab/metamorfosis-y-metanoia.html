@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Metamorfosis y Metanoia — PersonaLab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary:#395640; --primary-light:#4a7055; --primary-mid:#5c8c6a;
+    --primary-sage:#7aad88; --primary-mist:#b5d4bc; --primary-frost:#e4f0e7;
+    --primary-faint:#f2f8f3; --ink:#0d1a0e; --ink-soft:#283929;
+    --muted:#6b8472; --warm-white:#f8f6f1; --white:#ffffff; --border:#cee4d2;
+  }
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{font-family:'Montserrat',sans-serif;background:var(--warm-white);color:var(--ink);line-height:1.6;overflow-x:hidden;}
+
+  #navbar{position:fixed;top:0;left:0;right:0;z-index:1000;height:76px;display:flex;align-items:center;justify-content:space-between;padding:0 52px;transition:background .45s,box-shadow .45s;}
+  #navbar.over-image{background:transparent;}
+  #navbar.over-content{background:rgba(248,246,241,.96);backdrop-filter:blur(18px);box-shadow:0 1px 0 var(--border);}
+  .nav-logo{font-size:17px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;transition:color .3s;}
+  #navbar.over-image .nav-logo{color:rgba(255,255,255,.95);}
+  #navbar.over-content .nav-logo{color:var(--primary);}
+  .nav-back{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;display:flex;align-items:center;gap:8px;transition:color .25s,gap .25s;}
+  #navbar.over-image .nav-back{color:rgba(255,255,255,.75);}
+  #navbar.over-content .nav-back{color:var(--ink-soft);}
+  .nav-back:hover{gap:12px;}
+  #navbar.over-image .nav-back:hover{color:white;}
+  #navbar.over-content .nav-back:hover{color:var(--primary);}
+  .nav-cta{font-size:12px;font-weight:700;padding:11px 26px;text-decoration:none;transition:all .25s;}
+  #navbar.over-image .nav-cta{color:white;border:1.5px solid rgba(255,255,255,.45);}
+  #navbar.over-image .nav-cta:hover{background:white;color:var(--primary);border-color:white;}
+  #navbar.over-content .nav-cta{background:var(--primary);color:white;border:1.5px solid var(--primary);}
+  #navbar.over-content .nav-cta:hover{background:var(--primary-light);border-color:var(--primary-light);}
+
+  .container{max-width:1160px;margin:0 auto;padding:0 52px;}
+
+  #hero{position:relative;height:92vh;min-height:640px;display:flex;align-items:flex-end;overflow:hidden;}
+  .hero-bg{position:absolute;inset:0;background-image:url('../Stock imgs/silhouetted-woman-wading-in-baltic-sea-during-gold-2026-01-25-00-20-58-utc.jpg');background-size:cover;background-position:center 35%;transform:scale(1.05);transition:transform 8s cubic-bezier(.16,1,.3,1);}
+  .hero-bg.loaded{transform:scale(1);}
+  .hero-gradient{position:absolute;inset:0;background:linear-gradient(to top,rgba(8,18,10,.92) 0%,rgba(8,18,10,.50) 40%,rgba(8,18,10,.20) 70%),linear-gradient(to right,rgba(8,18,10,.60) 0%,transparent 60%);}
+  .hero-content{position:relative;z-index:2;padding:0 52px 88px;max-width:800px;}
+
+  .breadcrumb{display:flex;align-items:center;gap:10px;margin-bottom:32px;}
+  .breadcrumb a{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.5);text-decoration:none;transition:color .25s;}
+  .breadcrumb a:hover{color:rgba(255,255,255,.85);}
+  .breadcrumb-sep{color:rgba(255,255,255,.3);font-size:12px;}
+  .breadcrumb span{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--primary-mist);}
+
+  .hero-tags{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;}
+  .tag{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--primary-mist);border:1px solid rgba(181,212,188,.4);padding:5px 14px;}
+
+  .hero-headline{font-size:clamp(40px,5.5vw,76px);font-weight:300;color:white;line-height:1.05;letter-spacing:-.025em;margin-bottom:24px;}
+  .hero-headline em{font-style:italic;color:var(--primary-sage);}
+  .hero-sub{font-size:17px;font-weight:300;color:rgba(255,255,255,.68);line-height:1.8;max-width:560px;}
+
+  .section-label{display:flex;align-items:center;gap:12px;font-size:10px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--primary-mid);margin-bottom:20px;}
+  .section-label::before{content:'';display:block;width:28px;height:1px;background:var(--primary-mid);flex-shrink:0;}
+  .section-title{font-size:clamp(26px,3vw,42px);font-weight:300;color:var(--ink);line-height:1.2;letter-spacing:-.015em;}
+  .section-title em{font-style:italic;font-weight:400;color:var(--primary);}
+
+  #overview{padding:100px 0;background:var(--white);}
+  .overview-inner{display:grid;grid-template-columns:1fr 1fr;gap:100px;align-items:start;}
+  .overview-desc{font-size:17px;font-weight:300;color:var(--ink-soft);line-height:1.9;margin-top:32px;}
+  .overview-desc p+p{margin-top:20px;}
+
+  .para-ti{margin-top:56px;}
+  .para-ti-title{font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--primary);margin-bottom:20px;}
+  .para-ti-list{list-style:none;display:flex;flex-direction:column;gap:14px;}
+  .para-ti-item{font-size:15px;font-weight:300;color:var(--ink-soft);line-height:1.7;padding-left:24px;position:relative;}
+  .para-ti-item::before{content:'';position:absolute;left:0;top:12px;width:10px;height:1px;background:var(--primary-sage);}
+
+  .incluye-card{background:var(--primary-faint);border:1px solid var(--border);padding:40px;margin-top:40px;}
+  .incluye-title{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--primary);margin-bottom:24px;}
+  .incluye-items{display:flex;flex-direction:column;gap:12px;}
+  .incluye-item{display:flex;align-items:center;gap:14px;font-size:15px;font-weight:300;color:var(--ink-soft);}
+  .incluye-icon{color:var(--primary-mid);font-weight:700;font-size:14px;flex-shrink:0;}
+
+  #flujo{padding:100px 0;background:var(--primary-faint);}
+  .fases-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;background:var(--border);margin-top:52px;}
+  .fase{background:var(--white);padding:36px 28px;transition:background .3s;}
+  .fase:hover{background:var(--primary-faint);}
+  .fase-code{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--primary-mid);margin-bottom:12px;}
+  .fase-name{font-size:19px;font-weight:600;color:var(--ink);letter-spacing:-.01em;margin-bottom:12px;line-height:1.3;}
+  .fase-desc{font-size:14px;font-weight:300;color:var(--ink-soft);line-height:1.75;}
+
+  #cita{position:relative;overflow:hidden;min-height:420px;display:flex;align-items:center;}
+  .cita-bg{position:absolute;inset:0;background-image:url('../Stock imgs/shadows-and-silhouette-of-man-in-the-parking-lot-a-2026-03-09-08-42-16-utc.jpg');background-size:cover;background-position:center;}
+  .cita-overlay{position:absolute;inset:0;background:linear-gradient(100deg,rgba(8,20,10,.93) 0%,rgba(57,86,64,.83) 55%,rgba(8,20,10,.55) 100%);}
+  .cita-content{position:relative;z-index:2;padding:80px 0;max-width:680px;}
+  .cita-text{font-size:clamp(20px,2.5vw,30px);font-weight:300;font-style:italic;color:white;line-height:1.5;border-left:3px solid var(--primary-sage);padding-left:32px;margin-bottom:24px;}
+  .cita-attr{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--primary-mist);padding-left:32px;}
+
+  #cta{padding:100px 0;background:var(--white);}
+  .cta-inner{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;}
+  .cta-sub{font-size:16px;font-weight:300;color:var(--ink-soft);line-height:1.8;margin-bottom:40px;margin-top:20px;}
+  .btn-primary{display:inline-flex;align-items:center;gap:14px;background:var(--primary);color:white;padding:16px 32px;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;transition:all .3s;}
+  .btn-primary:hover{background:var(--primary-light);gap:20px;}
+  .btn-primary .arrow{transition:transform .3s;}
+  .btn-primary:hover .arrow{transform:translateX(4px);}
+  .btn-secondary{display:inline-flex;align-items:center;gap:10px;color:var(--primary);font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;border-bottom:1px solid var(--primary-mist);padding-bottom:2px;transition:all .25s;}
+  .btn-secondary:hover{border-color:var(--primary);}
+  .other-experiencias{padding:40px;background:var(--primary-faint);border:1px solid var(--border);}
+  .other-title{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--primary);margin-bottom:20px;}
+  .other-list{list-style:none;display:flex;flex-direction:column;gap:0;}
+  .other-item a{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--border);font-size:14px;font-weight:500;color:var(--ink-soft);text-decoration:none;transition:color .25s;gap:12px;}
+  .other-item:last-child a{border-bottom:none;}
+  .other-item a:hover{color:var(--primary);}
+  .other-arrow{color:var(--primary-mid);font-size:16px;flex-shrink:0;}
+
+  footer{background:var(--ink);padding:52px;display:flex;justify-content:space-between;align-items:center;gap:24px;}
+  .footer-brand{display:flex;flex-direction:column;gap:8px;}
+  .footer-logo{font-size:15px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.65);text-decoration:none;transition:color .2s;}
+  .footer-logo:hover{color:rgba(255,255,255,.9);}
+  .footer-tagline{font-size:13px;font-weight:300;font-style:italic;color:rgba(255,255,255,.28);}
+  .footer-nav{display:flex;gap:36px;flex-wrap:wrap;justify-content:flex-end;}
+  .footer-nav a{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.32);text-decoration:none;transition:color .2s;}
+  .footer-nav a:hover{color:rgba(255,255,255,.7);}
+
+  .reveal{opacity:0;transform:translateY(36px);transition:opacity .85s cubic-bezier(.16,1,.3,1),transform .85s cubic-bezier(.16,1,.3,1);}
+  .reveal.visible{opacity:1;transform:translateY(0);}
+  .reveal.d1{transition-delay:.10s;} .reveal.d2{transition-delay:.20s;} .reveal.d3{transition-delay:.30s;}
+
+  @media(max-width:1024px){.container{padding:0 36px;}#navbar{padding:0 36px;}.hero-content{padding:0 36px 80px;}.overview-inner{grid-template-columns:1fr;gap:60px;}.fases-grid{grid-template-columns:1fr 1fr;}.cta-inner{grid-template-columns:1fr;gap:48px;}}
+  @media(max-width:768px){#navbar{padding:0 24px;}.container{padding:0 24px;}.hero-content{padding:0 24px 64px;}.fases-grid{grid-template-columns:1fr;}footer{flex-direction:column;align-items:flex-start;}.footer-nav{justify-content:flex-start;}}
+</style>
+</head>
+<body>
+
+<nav id="navbar" class="over-image">
+  <a href="../index.html" class="nav-logo">PersonaLab</a>
+  <a href="../index.html#catalogo" class="nav-back">← Catálogo</a>
+  <a href="../index.html#cierre" class="nav-cta">Contáctanos</a>
+</nav>
+
+<section id="hero">
+  <div class="hero-bg" id="heroBg"></div>
+  <div class="hero-gradient"></div>
+  <div class="hero-content">
+    <div class="breadcrumb">
+      <a href="../index.html">PersonaLab</a>
+      <span class="breadcrumb-sep">/</span>
+      <a href="../index.html#catalogo">Catálogo</a>
+      <span class="breadcrumb-sep">/</span>
+      <span>Metamorfosis y Metanoia</span>
+    </div>
+    <div class="hero-tags">
+      <span class="tag">Transformación</span>
+      <span class="tag">Cierre</span>
+      <span class="tag">Renovación</span>
+    </div>
+    <h1 class="hero-headline">Metamorfosis<br>y <em>Metanoia:</em><br>Cerrando Círculos.</h1>
+    <p class="hero-sub">Hay momentos en la vida que piden un cierre real — no solo dejar pasar el tiempo. Esta experiencia ayuda a tu grupo a soltar lo que fue, para abrirse a lo que puede ser.</p>
+  </div>
+</section>
+
+<section id="overview">
+  <div class="container">
+    <div class="overview-inner">
+      <div>
+        <p class="section-label reveal">La experiencia</p>
+        <h2 class="section-title reveal d1">¿De qué se trata esta <em>experiencia?</em></h2>
+        <div class="overview-desc reveal d2">
+          <p>"Metanoia" es una palabra griega que significa cambio profundo de mente y corazón — una transformación que va más allá de lo superficial. Este módulo acompaña a los participantes en un proceso de reconocimiento y cierre genuino.</p>
+          <p>A través de ejercicios de reflexión y diálogo, el grupo explora qué capítulos de su vida están pidiendo ser cerrados: relaciones, etapas, versiones de sí mismos que ya no les sirven. Y desde ese cierre, se abre espacio para algo nuevo.</p>
+          <p>Es una experiencia especialmente poderosa en momentos de transición — final de año, cambios de rol, o simplemente cuando el grupo siente que algo necesita cambiar.</p>
+        </div>
+        <div class="para-ti reveal d3">
+          <p class="para-ti-title">Esta experiencia es para tu foro si...</p>
+          <ul class="para-ti-list">
+            <li class="para-ti-item">Tu grupo está pasando por una etapa de cambio o transición colectiva.</li>
+            <li class="para-ti-item">Quieres una experiencia que facilite conversaciones honestas sobre lo que está dejando atrás.</li>
+            <li class="para-ti-item">Buscas generar renovación y apertura para una nueva etapa.</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="incluye-card reveal d1">
+          <p class="incluye-title">¿Qué incluye el módulo?</p>
+          <div class="incluye-items">
+            <div class="incluye-item"><span class="incluye-icon">✓</span> Guía completa del moderador con instrucciones paso a paso</div>
+            <div class="incluye-item"><span class="incluye-icon">✓</span> Video introductorio sobre el concepto de metanoia</div>
+            <div class="incluye-item"><span class="incluye-icon">✓</span> Ejercicios escritos de reflexión y cierre simbólico</div>
+            <div class="incluye-item"><span class="incluye-icon">✓</span> Preguntas de profundización para el diálogo grupal</div>
+            <div class="incluye-item"><span class="incluye-icon">✓</span> Acompañamiento previo al retiro</div>
+          </div>
+        </div>
+        <div style="margin-top:24px;padding:24px 32px;background:var(--primary);display:flex;align-items:center;gap:20px;" class="reveal d2">
+          <div>
+            <p style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--primary-mist);margin-bottom:6px;">Duración estimada</p>
+            <p style="font-size:17px;font-weight:600;color:white;">2.5 – 4 horas</p>
+          </div>
+          <div style="width:1px;height:40px;background:rgba(255,255,255,.15);"></div>
+          <div>
+            <p style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--primary-mist);margin-bottom:6px;">Tamaño del grupo</p>
+            <p style="font-size:17px;font-weight:600;color:white;">6 – 20 personas</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="flujo">
+  <div class="container">
+    <p class="section-label reveal">El flujo de la experiencia</p>
+    <h2 class="section-title reveal d1">Cómo se <em>vive.</em></h2>
+    <div class="fases-grid reveal d2">
+      <div class="fase">
+        <p class="fase-code">Fase 01</p>
+        <h3 class="fase-name">Reconocer</h3>
+        <p class="fase-desc">Reflexión honesta: ¿qué etapas, versiones o vínculos piden un cierre real en mi vida?</p>
+      </div>
+      <div class="fase">
+        <p class="fase-code">Fase 02</p>
+        <h3 class="fase-name">Nombrar</h3>
+        <p class="fase-desc">Cada participante da nombre concreto a lo que quiere cerrar. Nombrarlo es el primer paso para soltarlo.</p>
+      </div>
+      <div class="fase">
+        <p class="fase-code">Fase 03</p>
+        <h3 class="fase-name">Soltar</h3>
+        <p class="fase-desc">Un ritual simbólico de cierre. El grupo acompaña el proceso individual con presencia y escucha.</p>
+      </div>
+      <div class="fase">
+        <p class="fase-code">Fase 04</p>
+        <h3 class="fase-name">Abrirse</h3>
+        <p class="fase-desc">Desde el cierre, se genera espacio para lo nuevo. El grupo comparte su intención de transformación.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="cita">
+  <div class="cita-bg"></div>
+  <div class="cita-overlay"></div>
+  <div class="container">
+    <div class="cita-content">
+      <p class="cita-text reveal">"Metamorfosis no es huir de lo que fuiste. Es honrar lo que viviste y tener el valor de convertirte en algo más."</p>
+      <p class="cita-attr reveal d1">— Reflexión del módulo</p>
+    </div>
+  </div>
+</section>
+
+<section id="cta">
+  <div class="container">
+    <div class="cta-inner">
+      <div class="cta-text">
+        <p class="section-label reveal">¿Te interesa?</p>
+        <h2 class="section-title reveal d1">Lleva esta experiencia a tu <em>próximo retiro.</em></h2>
+        <p class="cta-sub reveal d2">Escríbenos. Te contamos cómo funciona y cómo prepararte para facilitar con confianza.</p>
+        <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap;" class="reveal d3">
+          <a href="../index.html#cierre" class="btn-primary">Quiero este módulo <span class="arrow">→</span></a>
+          <a href="../index.html#catalogo" class="btn-secondary">Ver otros módulos</a>
+        </div>
+      </div>
+      <div>
+        <div class="other-experiencias reveal d1">
+          <p class="other-title">Otras experiencias</p>
+          <ul class="other-list">
+            <li class="other-item"><a href="el-presente-como-regalo.html">El Presente como Regalo <span class="other-arrow">→</span></a></li>
+            <li class="other-item"><a href="una-pincelada-a-la-muerte.html">Una Pincelada a la Muerte <span class="other-arrow">→</span></a></li>
+            <li class="other-item"><a href="el-nido-vacio.html">El Nido Vacío <span class="other-arrow">→</span></a></li>
+            <li class="other-item"><a href="la-llave-la-comunicacion.html">La Llave de la Comunicación <span class="other-arrow">→</span></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-brand">
+    <a href="../index.html" class="footer-logo">PersonaLab</a>
+    <span class="footer-tagline">Experiencias con propósito y sentido.</span>
+  </div>
+  <nav class="footer-nav">
+    <a href="../index.html#catalogo">Catálogo</a>
+    <a href="../sobre-nosotros.html">Sobre nosotros</a>
+    <a href="../index.html#cierre">Contacto</a>
+  </nav>
+</footer>
+
+<script>
+  window.addEventListener('load',()=>{document.getElementById('heroBg').classList.add('loaded');});
+  const navbar=document.getElementById('navbar'),heroEl=document.getElementById('hero');
+  function updateNav(){const b=heroEl.getBoundingClientRect().bottom;navbar.classList.toggle('over-image',b>80);navbar.classList.toggle('over-content',b<=80);}
+  window.addEventListener('scroll',updateNav,{passive:true});updateNav();
+  const obs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:.10,rootMargin:'0px 0px -60px 0px'});
+  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>
