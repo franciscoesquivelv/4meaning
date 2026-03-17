@@ -37,9 +37,18 @@
   #navbar.over-image { background: transparent; }
   #navbar.over-content { background: rgba(248,246,241,0.96); backdrop-filter: blur(18px); box-shadow: 0 1px 0 var(--border); }
 
-  .nav-logo { font-size: 17px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; transition: color 0.3s; }
-  #navbar.over-image  .nav-logo { color: rgba(255,255,255,0.95); }
-  #navbar.over-content .nav-logo { color: var(--primary); }
+  .nav-logo {
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+  }
+  .nav-logo-img {
+    height: 30px;
+    width: auto;
+    display: none;
+  }
+  #navbar.over-image  .nav-logo .logo-white { display: block; }
+  #navbar.over-content .nav-logo .logo-color { display: block; }
 
   .nav-back { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none; display: flex; align-items: center; gap: 8px; transition: color 0.25s, gap 0.25s; }
   #navbar.over-image  .nav-back { color: rgba(255,255,255,0.75); }
@@ -152,8 +161,18 @@
   /* FOOTER */
   footer { background: var(--ink); padding: 52px; display: flex; justify-content: space-between; align-items: center; gap: 24px; }
   .footer-brand { display: flex; flex-direction: column; gap: 8px; }
-  .footer-logo { font-size: 15px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.65); text-decoration: none; transition: color 0.2s; }
-  .footer-logo:hover { color: rgba(255,255,255,0.9); }
+  .footer-logo {
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+  }
+  .footer-logo img {
+    height: 28px;
+    width: auto;
+    opacity: 0.65;
+    transition: opacity 0.2s;
+  }
+  .footer-logo:hover img { opacity: 0.9; }
   .footer-tagline { font-size: 13px; font-weight: 300; font-style: italic; color: rgba(255,255,255,0.28); }
   .footer-nav { display: flex; gap: 36px; flex-wrap: wrap; justify-content: flex-end; }
   .footer-nav a { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.32); text-decoration: none; transition: color 0.2s; }
@@ -184,11 +203,16 @@
     .footer-nav { justify-content: flex-start; }
   }
 </style>
+  <link rel="icon" href="../logos/blk-icon.png" media="(prefers-color-scheme: light)">
+  <link rel="icon" href="../logos/wht-icon.png" media="(prefers-color-scheme: dark)">
 </head>
 <body>
 
 <nav id="navbar" class="over-image">
-  <a href="./index.html" class="nav-logo">PersonaLab</a>
+  <a href="./index.html" class="nav-logo">
+      <img src="../logos/wht-logo.png" class="nav-logo-img logo-white" alt="PersonaLab">
+      <img src="../logos/grn-logo.png" class="nav-logo-img logo-color" alt="PersonaLab">
+    </a>
   <a href="./index.html#catalogo" class="nav-back">← Catálogo</a>
   <a href="./index.html#cierre" class="nav-cta">Contáctanos</a>
 </nav>
@@ -334,7 +358,9 @@
 
 <footer>
   <div class="footer-brand">
-    <a href="./index.html" class="footer-logo">PersonaLab</a>
+    <a href="./index.html" class="footer-logo">
+      <img src="../logos/wht-logo.png" alt="PersonaLab">
+    </a>
     <span class="footer-tagline">Experiencias con propósito y sentido.</span>
   </div>
   <nav class="footer-nav">

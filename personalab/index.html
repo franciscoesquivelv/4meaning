@@ -60,15 +60,17 @@
   }
 
   .nav-logo {
-    font-size: 17px;
-    font-weight: 800;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
     text-decoration: none;
-    transition: color 0.3s;
+    display: flex;
+    align-items: center;
   }
-  #navbar.over-image  .nav-logo { color: rgba(255,255,255,0.95); }
-  #navbar.over-content .nav-logo { color: var(--primary); }
+  .nav-logo-img {
+    height: 30px;
+    width: auto;
+    display: none;
+  }
+  #navbar.over-image  .nav-logo .logo-white { display: block; }
+  #navbar.over-content .nav-logo .logo-color { display: block; }
 
   .nav-center {
     display: flex;
@@ -1066,15 +1068,17 @@
   }
 
   .footer-logo {
-    font-size: 15px;
-    font-weight: 800;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.65);
     text-decoration: none;
-    transition: color 0.2s;
+    display: flex;
+    align-items: center;
   }
-  .footer-logo:hover { color: rgba(255,255,255,0.9); }
+  .footer-logo img {
+    height: 28px;
+    width: auto;
+    opacity: 0.65;
+    transition: opacity 0.2s;
+  }
+  .footer-logo:hover img { opacity: 0.9; }
 
   .footer-tagline {
     font-size: 13px;
@@ -1158,12 +1162,17 @@
     .footer-nav { justify-content: flex-start; }
   }
 </style>
+  <link rel="icon" href="../logos/blk-icon.png" media="(prefers-color-scheme: light)">
+  <link rel="icon" href="../logos/wht-icon.png" media="(prefers-color-scheme: dark)">
 </head>
 <body>
 
 <!-- ── NAV ─────────────────────────────────────────── -->
 <nav id="navbar" class="over-image">
-  <a href="index.html" class="nav-logo">PersonaLab</a>
+  <a href="index.html" class="nav-logo">
+      <img src="../logos/wht-logo.png" class="nav-logo-img logo-white" alt="PersonaLab">
+      <img src="../logos/grn-logo.png" class="nav-logo-img logo-color" alt="PersonaLab">
+    </a>
   <ul class="nav-center">
     <li><a href="#catalogo">Catálogo</a></li>
     <li><a href="sobre-nosotros.html">Sobre nosotros</a></li>
@@ -1475,7 +1484,9 @@
 <!-- ── FOOTER ─────────────────────────────────────────── -->
 <footer>
   <div class="footer-brand">
-    <a href="index.html" class="footer-logo">PersonaLab</a>
+    <a href="index.html" class="footer-logo">
+      <img src="../logos/wht-logo.png" alt="PersonaLab">
+    </a>
     <span class="footer-tagline">Experiencias con propósito y sentido.</span>
   </div>
   <nav class="footer-nav">

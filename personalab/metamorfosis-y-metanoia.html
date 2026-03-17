@@ -21,9 +21,10 @@
   #navbar{position:fixed;top:0;left:0;right:0;z-index:1000;height:76px;display:flex;align-items:center;justify-content:space-between;padding:0 52px;transition:background .45s,box-shadow .45s;}
   #navbar.over-image{background:transparent;}
   #navbar.over-content{background:rgba(248,246,241,.96);backdrop-filter:blur(18px);box-shadow:0 1px 0 var(--border);}
-  .nav-logo{font-size:17px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;transition:color .3s;}
-  #navbar.over-image .nav-logo{color:rgba(255,255,255,.95);}
-  #navbar.over-content .nav-logo{color:var(--primary);}
+  .nav-logo{text-decoration:none;display:flex;align-items:center;}
+  .nav-logo-img{height:30px;width:auto;display:none;}
+  #navbar.over-image .nav-logo .logo-white{display:block;}
+  #navbar.over-content .nav-logo .logo-color{display:block;}
   .nav-back{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;display:flex;align-items:center;gap:8px;transition:color .25s,gap .25s;}
   #navbar.over-image .nav-back{color:rgba(255,255,255,.75);}
   #navbar.over-content .nav-back{color:var(--ink-soft);}
@@ -113,8 +114,9 @@
 
   footer{background:var(--ink);padding:52px;display:flex;justify-content:space-between;align-items:center;gap:24px;}
   .footer-brand{display:flex;flex-direction:column;gap:8px;}
-  .footer-logo{font-size:15px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.65);text-decoration:none;transition:color .2s;}
-  .footer-logo:hover{color:rgba(255,255,255,.9);}
+  .footer-logo{text-decoration:none;display:flex;align-items:center;}
+  .footer-logo img{height:28px;width:auto;opacity:0.65;transition:opacity .2s;}
+  .footer-logo:hover img{opacity:0.9;}
   .footer-tagline{font-size:13px;font-weight:300;font-style:italic;color:rgba(255,255,255,.28);}
   .footer-nav{display:flex;gap:36px;flex-wrap:wrap;justify-content:flex-end;}
   .footer-nav a{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.32);text-decoration:none;transition:color .2s;}
@@ -127,11 +129,16 @@
   @media(max-width:1024px){.container{padding:0 36px;}#navbar{padding:0 36px;}.hero-content{padding:0 36px 80px;}.overview-inner{grid-template-columns:1fr;gap:60px;}.fases-grid{grid-template-columns:1fr 1fr;}.cta-inner{grid-template-columns:1fr;gap:48px;}}
   @media(max-width:768px){#navbar{padding:0 24px;}.container{padding:0 24px;}.hero-content{padding:0 24px 64px;}.fases-grid{grid-template-columns:1fr;}footer{flex-direction:column;align-items:flex-start;}.footer-nav{justify-content:flex-start;}}
 </style>
+  <link rel="icon" href="../logos/blk-icon.png" media="(prefers-color-scheme: light)">
+  <link rel="icon" href="../logos/wht-icon.png" media="(prefers-color-scheme: dark)">
 </head>
 <body>
 
 <nav id="navbar" class="over-image">
-  <a href="./index.html" class="nav-logo">PersonaLab</a>
+  <a href="./index.html" class="nav-logo">
+      <img src="../logos/wht-logo.png" class="nav-logo-img logo-white" alt="PersonaLab">
+      <img src="../logos/grn-logo.png" class="nav-logo-img logo-color" alt="PersonaLab">
+    </a>
   <a href="./index.html#catalogo" class="nav-back">← Catálogo</a>
   <a href="./index.html#cierre" class="nav-cta">Contáctanos</a>
 </nav>
@@ -273,7 +280,9 @@
 
 <footer>
   <div class="footer-brand">
-    <a href="./index.html" class="footer-logo">PersonaLab</a>
+    <a href="./index.html" class="footer-logo">
+      <img src="../logos/wht-logo.png" alt="PersonaLab">
+    </a>
     <span class="footer-tagline">Experiencias con propósito y sentido.</span>
   </div>
   <nav class="footer-nav">
