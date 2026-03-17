@@ -154,7 +154,7 @@
   .hero-bg {
     position: absolute;
     inset: 0;
-    background-image: url('./stock/beautiful-colors-at-the-antelope-canyon-near-page-2026-03-11-00-55-23-utc.webp');
+    background-image: url('./beautiful-colors-at-the-antelope-canyon-near-page-2026-03-11-00-55-23-utc.jpg');
     background-size: cover;
     background-position: center 40%;
     transform: scale(1.06);
@@ -468,7 +468,7 @@
   .quees-img {
     position: absolute;
     inset: 0;
-    background-image: url('./stock/diverse-group-of-people-sitting-in-circle-in-group-2026-01-07-07-00-43-utc.webp');
+    background-image: url('./diverse-group-of-people-sitting-in-circle-in-group-2026-01-07-07-00-43-utc.jpg');
     background-size: cover;
     background-position: center;
   }
@@ -767,24 +767,24 @@
     font-size: 12px;
   }
 
-  /* ─── A LA MEDIDA ────────────────────────────────── */
-  #medida {
+  /* ─── PARA QUIÉN ─────────────────────────────────── */
+  #paraquien {
     position: relative;
     overflow: hidden;
-    min-height: 720px;
+    min-height: 640px;
     display: flex;
     align-items: center;
   }
 
-  .medida-bg {
+  .paraquien-bg {
     position: absolute;
     inset: 0;
-    background-image: url('./stock/senior-black-man-communicating-with-participants-o-2026-01-09-00-31-07-utc.webp');
+    background-image: url('./stock/senior-black-man-communicating-with-participants-o-2026-01-09-00-31-07-utc.jpg');
     background-size: cover;
     background-position: center 25%;
   }
 
-  .medida-overlay {
+  .paraquien-overlay {
     position: absolute;
     inset: 0;
     background: linear-gradient(
@@ -795,134 +795,11 @@
     );
   }
 
-  .medida-inner {
+  .paraquien-inner {
     position: relative;
     z-index: 2;
     padding: 100px 0;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 100px;
-    align-items: start;
-  }
-
-  .medida-left .section-label { color: var(--primary-mist); }
-  .medida-left .section-label::before { background: var(--primary-mist); }
-
-  .medida-title {
-    font-size: clamp(30px, 3.4vw, 46px);
-    font-weight: 300;
-    color: white;
-    line-height: 1.2;
-    letter-spacing: -0.02em;
-    margin-bottom: 0;
-  }
-
-  .medida-quote {
-    font-size: 18px;
-    font-weight: 300;
-    font-style: italic;
-    color: var(--primary-mist);
-    line-height: 1.65;
-    border-left: 2px solid var(--primary-sage);
-    padding-left: 24px;
-    margin: 28px 0 48px;
-  }
-
-  .pilares { display: flex; flex-direction: column; gap: 28px; }
-
-  .pilar {
-    display: grid;
-    grid-template-columns: 28px 1fr;
-    gap: 16px;
-    align-items: start;
-  }
-
-  .pilar-num {
-    font-size: 12px;
-    font-weight: 800;
-    color: var(--primary-sage);
-    padding-top: 1px;
-  }
-
-  .pilar-name {
-    font-size: 14px;
-    font-weight: 700;
-    color: white;
-    margin-bottom: 4px;
-    letter-spacing: 0.01em;
-  }
-
-  .pilar-desc {
-    font-size: 14px;
-    font-weight: 300;
-    color: rgba(255,255,255,0.62);
-    line-height: 1.7;
-  }
-
-  .medida-right { padding-top: 8px; }
-
-  .delega-title {
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--primary-sage);
-    margin-bottom: 24px;
-  }
-
-  .delega-list {
-    list-style: none;
-    border: 1px solid rgba(255,255,255,0.1);
-    background: rgba(255,255,255,0.04);
-    margin-bottom: 40px;
-  }
-
-  .delega-item {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: 16px 24px;
-    border-bottom: 1px solid rgba(255,255,255,0.07);
-    font-size: 15px;
-    font-weight: 300;
-    color: rgba(255,255,255,0.72);
-    line-height: 1.5;
-  }
-  .delega-item:last-child { border-bottom: none; }
-
-  .delega-dash {
-    color: var(--primary-sage);
-    font-weight: 700;
-    flex-shrink: 0;
-    font-size: 14px;
-  }
-
-  .btn-white {
-    display: inline-flex;
-    align-items: center;
-    gap: 14px;
-    background: white;
-    color: var(--ink);
-    padding: 16px 32px;
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    text-decoration: none;
-    transition: all 0.3s;
-  }
-  .btn-white:hover {
-    background: var(--primary-sage);
-    color: white;
-    gap: 20px;
-  }
-  .btn-white .arrow { transition: transform 0.3s; }
-  .btn-white:hover .arrow { transform: translateX(4px); }
-
-  /* ─── PARA QUIÉN ─────────────────────────────────── */
-  #paraquien {
-    padding: 128px 0;
-    background: var(--white);
+    width: 100%;
   }
 
   .paraquien-header {
@@ -933,31 +810,47 @@
 
   .paraquien-header .section-label {
     justify-content: center;
+    color: var(--primary-mist);
   }
-  .paraquien-header .section-label::before { display: none; }
+  .paraquien-header .section-label::before {
+    display: none;
+  }
+
+  .paraquien-title {
+    font-size: clamp(30px, 3.6vw, 50px);
+    font-weight: 300;
+    color: white;
+    line-height: 1.18;
+    letter-spacing: -0.015em;
+  }
+  .paraquien-title em {
+    font-style: italic;
+    font-weight: 400;
+    color: var(--primary-sage);
+  }
 
   .perfiles-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1px;
-    background: var(--border);
-    border: 1px solid var(--border);
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.08);
   }
 
   .perfil-card {
-    background: var(--white);
+    background: rgba(255,255,255,0.05);
     padding: 56px 52px;
     position: relative;
     overflow: hidden;
     transition: background 0.35s;
   }
-  .perfil-card:hover { background: var(--primary-faint); }
+  .perfil-card:hover { background: rgba(255,255,255,0.10); }
 
   .perfil-accent {
     position: absolute;
     top: 0; left: 0; right: 0;
     height: 3px;
-    background: var(--primary);
+    background: var(--primary-sage);
     transform: scaleX(0);
     transform-origin: left;
     transition: transform 0.45s ease;
@@ -970,8 +863,8 @@
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--primary);
-    border: 1.5px solid var(--primary-mist);
+    color: var(--primary-mist);
+    border: 1.5px solid rgba(181,212,188,0.35);
     padding: 7px 18px;
     margin-bottom: 32px;
   }
@@ -986,7 +879,7 @@
   .perfil-point {
     font-size: 15px;
     font-weight: 300;
-    color: var(--ink-soft);
+    color: rgba(255,255,255,0.72);
     line-height: 1.7;
     padding-left: 24px;
     position: relative;
@@ -1080,7 +973,7 @@
   .cierre-bg {
     position: absolute;
     inset: 0;
-    background-image: url('./stock/happy-father-and-mother-holding-children-playing-t-2026-01-05-04-46-40-utc.webp');
+    background-image: url('./happy-father-of-big-family-with-tree-small-kids-pl-2026-01-08-07-23-41-utc.jpg');
     background-size: cover;
     background-position: center 30%;
   }
@@ -1236,7 +1129,6 @@
     .como-inner { grid-template-columns: 1fr; gap: 60px; }
     .como-visual { position: static; }
 
-    .medida-inner { grid-template-columns: 1fr; gap: 56px; }
     .perfiles-grid { grid-template-columns: 1fr; }
     .catalogo-header { flex-direction: column; align-items: flex-start; }
     .catalogo-nota { text-align: left; }
@@ -1274,7 +1166,6 @@
   <a href="index.html" class="nav-logo">PersonaLab</a>
   <ul class="nav-center">
     <li><a href="#catalogo">Catálogo</a></li>
-    <li><a href="#medida">A la medida</a></li>
     <li><a href="sobre-nosotros.html">Sobre nosotros</a></li>
   </ul>
   <a href="#cierre" class="nav-cta nav-center a">Contáctanos</a>
@@ -1408,7 +1299,7 @@
       </div>
       <div class="como-visual reveal d2">
         <div class="como-image-frame">
-          <img src="./stock/senior-black-man-communicating-with-participants-o-2026-01-09-00-31-07-utc.webp" alt="Facilitación de grupo">
+          <img src="./senior-black-man-communicating-with-participants-o-2026-01-09-00-31-07-utc.jpg" alt="Facilitación de grupo">
           <div class="como-badge">
             <p class="como-badge-quote">"Quería llegar con algo que de verdad mueva a mi grupo. De un equipo en el que confío."</p>
             <p class="como-badge-attr">— Ayleen Mini, Moderadora YPO Guatemala</p>
@@ -1431,7 +1322,7 @@
     </div>
 
     <div class="modulos-list reveal">
-      <a href="./el-presente-como-regalo.html" class="modulo-card">
+      <a href="./personalab/el-presente-como-regalo.html" class="modulo-card">
         <div class="modulo-num">01</div>
         <div class="modulo-info">
           <h3 class="modulo-nombre">El Presente como Regalo</h3>
@@ -1439,7 +1330,7 @@
         </div>
         <div class="modulo-arrow">→</div>
       </a>
-      <a href="./metamorfosis-y-metanoia.html" class="modulo-card">
+      <a href="./personalab/metamorfosis-y-metanoia.html" class="modulo-card">
         <div class="modulo-num">02</div>
         <div class="modulo-info">
           <h3 class="modulo-nombre">Metamorfosis y Metanoia: Cerrando Círculos</h3>
@@ -1447,7 +1338,7 @@
         </div>
         <div class="modulo-arrow">→</div>
       </a>
-      <a href="./una-pincelada-a-la-muerte.html" class="modulo-card">
+      <a href="./personalab/una-pincelada-a-la-muerte.html" class="modulo-card">
         <div class="modulo-num">03</div>
         <div class="modulo-info">
           <h3 class="modulo-nombre">Una Pincelada a la Muerte</h3>
@@ -1455,7 +1346,7 @@
         </div>
         <div class="modulo-arrow">→</div>
       </a>
-      <a href="./el-nido-vacio.html" class="modulo-card">
+      <a href="./personalab/el-nido-vacio.html" class="modulo-card">
         <div class="modulo-num">04</div>
         <div class="modulo-info">
           <h3 class="modulo-nombre">El Nido Vacío: Nuevas Oportunidades de Crecimiento en Pareja</h3>
@@ -1463,7 +1354,7 @@
         </div>
         <div class="modulo-arrow">→</div>
       </a>
-      <a href="./la-llave-la-comunicacion.html" class="modulo-card">
+      <a href="./personalab/la-llave-la-comunicacion.html" class="modulo-card">
         <div class="modulo-num">05</div>
         <div class="modulo-info">
           <h3 class="modulo-nombre">La Llave de la Comunicación: Analogías</h3>
@@ -1489,83 +1380,35 @@
   </div>
 </section>
 
-<!-- ── A LA MEDIDA ──────────────────────────────────── -->
-<section id="medida">
-  <div class="medida-bg"></div>
-  <div class="medida-overlay"></div>
-  <div class="container">
-    <div class="medida-inner">
-      <div class="medida-left">
-        <p class="section-label medida-label reveal">Experiencias a la medida</p>
-        <h2 class="medida-title reveal d1">Para cuando ningún módulo<br>encaja perfecto.</h2>
-        <p class="medida-quote reveal d2">"Quiero una experiencia personalizada para mi foro."</p>
-        <div class="pilares">
-          <div class="pilar reveal d2">
-            <span class="pilar-num">01</span>
-            <div>
-              <p class="pilar-name">Identificamos</p>
-              <p class="pilar-desc">Conversamos sobre tu grupo: quiénes son, qué están viviendo, qué quieren mover.</p>
-            </div>
-          </div>
-          <div class="pilar reveal d3">
-            <span class="pilar-num">02</span>
-            <div>
-              <p class="pilar-name">Construimos</p>
-              <p class="pilar-desc">Diseñamos la experiencia desde cero — ejercicios, dinámica, guía del facilitador.</p>
-            </div>
-          </div>
-          <div class="pilar reveal d4">
-            <span class="pilar-num">03</span>
-            <div>
-              <p class="pilar-name">Entregamos todo listo</p>
-              <p class="pilar-desc">Sin que tengas que pensar nada más.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="medida-right">
-        <p class="delega-title reveal">Lo que dejas de hacer</p>
-        <ul class="delega-list reveal d1">
-          <li class="delega-item"><span class="delega-dash">—</span> Pensar en qué tema y cómo abordarlo</li>
-          <li class="delega-item"><span class="delega-dash">—</span> Buscar dinámicas en internet</li>
-          <li class="delega-item"><span class="delega-dash">—</span> Diseñar ejercicios desde cero</li>
-          <li class="delega-item"><span class="delega-dash">—</span> Improvisar en el momento</li>
-          <li class="delega-item"><span class="delega-dash">—</span> Llegar sin prepararte</li>
-        </ul>
-        <a href="#cierre" class="btn-white reveal d2">
-          Me interesa
-          <span class="arrow">→</span>
-        </a>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- ── PARA QUIÉN ────────────────────────────────────── -->
 <section id="paraquien">
+  <div class="paraquien-bg"></div>
+  <div class="paraquien-overlay"></div>
   <div class="container">
-    <div class="paraquien-header">
-      <p class="section-label reveal">¿Para quién es PersonaLab?</p>
-      <h2 class="section-title reveal d1">Para el moderador que dirige conversaciones que <em>importan.</em></h2>
-    </div>
-    <div class="perfiles-grid">
-      <div class="perfil-card reveal">
-        <div class="perfil-accent"></div>
-        <span class="perfil-tag">Moderadores YPO / EO</span>
-        <ul class="perfil-points">
-          <li class="perfil-point">Es el moderador de este año y quiere proponer algo con profundidad.</li>
-          <li class="perfil-point">No quiere dinámicas superficiales.</li>
-          <li class="perfil-point">Quiere que su grupo profundice en los temas importantes de la vida.</li>
-        </ul>
+    <div class="paraquien-inner">
+      <div class="paraquien-header">
+        <p class="section-label reveal">¿Para quién es PersonaLab?</p>
+        <h2 class="paraquien-title reveal d1">Para el moderador que dirige conversaciones que <em>importan.</em></h2>
       </div>
-      <div class="perfil-card reveal d1">
-        <div class="perfil-accent"></div>
-        <span class="perfil-tag">Líderes de empresa y HR</span>
-        <ul class="perfil-points">
-          <li class="perfil-point">Retiro anual o jornada interna de liderazgo.</li>
-          <li class="perfil-point">Quiere ir más allá del teambuilding de siempre.</li>
-          <li class="perfil-point">Necesita que el equipo conecte desde lo humano, no solo lo funcional.</li>
-        </ul>
+      <div class="perfiles-grid">
+        <div class="perfil-card reveal">
+          <div class="perfil-accent"></div>
+          <span class="perfil-tag">Moderadores YPO / EO</span>
+          <ul class="perfil-points">
+            <li class="perfil-point">Es el moderador de este año y quiere proponer algo con profundidad.</li>
+            <li class="perfil-point">No quiere dinámicas superficiales.</li>
+            <li class="perfil-point">Quiere que su grupo profundice en los temas importantes de la vida.</li>
+          </ul>
+        </div>
+        <div class="perfil-card reveal d1">
+          <div class="perfil-accent"></div>
+          <span class="perfil-tag">Líderes de empresa y HR</span>
+          <ul class="perfil-points">
+            <li class="perfil-point">Retiro anual o jornada interna de liderazgo.</li>
+            <li class="perfil-point">Quiere ir más allá del teambuilding de siempre.</li>
+            <li class="perfil-point">Necesita que el equipo conecte desde lo humano, no solo lo funcional.</li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
@@ -1614,7 +1457,8 @@
   <div class="container">
     <div class="cierre-content">
       <p class="section-label cierre-label reveal">Empecemos</p>
-      <h2 class="cierre-title reveal d1">El retiro que tu grupo necesita, no tienes que diseñarlo solo.</h2>
+      <h2 class="cierre-title reveal d1">El retiro que tu grupo necesita empieza con una conversación.</h2>
+      <p class="cierre-sub reveal d2">No tienes que diseñarlo solo.</p>
       <div class="cierre-ctas reveal d3">
         <a href="#" class="btn-primary">
           Escribirnos por WhatsApp
