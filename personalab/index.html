@@ -199,11 +199,12 @@
     vertical-align: middle;
   }
 
-  .hero-label span {
+  .hero-label-rule {
     display: block;
     width: 36px;
     height: 1px;
     background: var(--primary-mist);
+    flex-shrink: 0;
   }
 
   .hero-headline {
@@ -319,7 +320,7 @@
     font-weight: 700;
     letter-spacing: 0.24em;
     text-transform: uppercase;
-    color: var(--primary-mid);
+    color: var(--primary);
     margin-bottom: 20px;
   }
   .section-label::before {
@@ -327,7 +328,7 @@
     display: block;
     width: 28px;
     height: 1px;
-    background: var(--primary-mid);
+    background: var(--primary);
     flex-shrink: 0;
   }
 
@@ -691,7 +692,7 @@
   .modulo-tags {
     font-size: 12px;
     font-weight: 500;
-    color: var(--primary-mid);
+    color: var(--primary);
     letter-spacing: 0.05em;
   }
 
@@ -952,7 +953,7 @@
 
   .comp-cell {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 14px;
     padding: 22px 40px;
     font-size: 15px;
@@ -1155,6 +1156,12 @@
     .catalogo-nota { text-align: left; }
   }
 
+  @media (max-width: 520px) {
+    .hero-label { flex-wrap: wrap; gap: 6px 8px; }
+    .hero-label-rule { display: none; }
+    .hero-label-logo { height: 16px; }
+  }
+
   @media (max-width: 768px) {
     #navbar { padding: 0 24px; }
     .container { padding: 0 24px; }
@@ -1164,6 +1171,9 @@
     .nav-center { display: none; }
 
     .dolor-grid { grid-template-columns: 1fr; }
+
+    .dimension-item { grid-template-columns: 1fr; gap: 4px; }
+    .dim-name { padding-top: 0; }
 
     .modulo-card {
       grid-template-columns: 48px 1fr 44px;
@@ -1204,8 +1214,8 @@
 
   <div class="hero-content reveal">
     <p class="hero-label">
-      <span></span>
-      De los creadores de
+      <span class="hero-label-rule"></span>
+      <span class="hero-label-text">De los creadores de</span>
       <img src="../logos/logotrascendencia.png" class="hero-label-logo" alt="Trascendencia">
     </p>
     <h1 class="hero-headline">
