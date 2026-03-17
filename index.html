@@ -6,19 +6,18 @@
 <title>4Meaning — Experiencias para vivir con propósito</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400&display=swap" rel="stylesheet">
 <style>
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
   :root {
-    --black:      #0c0c0c;
-    --white:      #f8f7f5;
-    --off-white:  #eeece8;
-    --border:     #e0ddd8;
-    --gray-light: #c8c5c0;
-    --gray-mid:   #909090;
-    --gray-dark:  #444;
+    --black:   #0a0a0a;
+    --white:   #f8f7f5;
+    --pure:    #ffffff;
+    --border:  #e0ddd8;
+    --muted:   #999;
+    --dark:    #222;
   }
 
   html { scroll-behavior: smooth; }
@@ -29,44 +28,29 @@
     color: var(--black);
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
   }
 
-  /* ─────────────────────────────────────────────
+  /* ─────────────────────────────────────────
      NAV
-  ───────────────────────────────────────────── */
+  ───────────────────────────────────────── */
   #nav {
     position: fixed;
-    top: 0;
-    width: 100%;
+    top: 0; left: 0; right: 0;
+    height: 68px;
     z-index: 200;
-    padding: 2.25rem 4rem;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    transition: background 0.45s ease, padding 0.45s ease, border-color 0.45s ease;
-  }
-
-  #nav.scrolled {
-    background: rgba(248, 247, 245, 0.96);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    padding: 1.4rem 4rem;
+    justify-content: space-between;
+    padding: 0 3.5rem;
+    background: var(--white);
     border-bottom: 1px solid var(--border);
+    transition: border-color 0.3s;
   }
 
-  .nav-logo { display: flex; align-items: center; text-decoration: none; }
-
-  .nav-logo-img {
-    height: 22px;
+  .nav-logo img {
+    height: 20px;
     width: auto;
-    display: none;
   }
-
-  /* white logo visible over dark hero */
-  #nav:not(.scrolled) .logo-white { display: block; }
-  /* black logo visible when scrolled */
-  #nav.scrolled .logo-black { display: block; }
 
   .nav-links {
     display: flex;
@@ -76,623 +60,508 @@
   }
 
   .nav-links a {
-    font-size: 0.68rem;
-    font-weight: 500;
-    letter-spacing: 0.12em;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     text-decoration: none;
-    transition: opacity 0.2s;
+    color: var(--muted);
+    transition: color 0.2s;
   }
 
-  #nav:not(.scrolled) .nav-links a { color: rgba(255,255,255,0.55); }
-  #nav:not(.scrolled) .nav-links a:hover { color: rgba(255,255,255,0.95); }
-  #nav.scrolled .nav-links a { color: var(--gray-dark); }
-  #nav.scrolled .nav-links a:hover { color: var(--black); }
+  .nav-links a:hover { color: var(--black); }
 
   .nav-cta {
-    padding: 0.6rem 1.5rem;
-    border: 1px solid;
-    transition: background 0.25s, color 0.25s !important;
+    font-size: 0.65rem !important;
+    font-weight: 600 !important;
+    color: var(--black) !important;
+    border: 1px solid var(--border) !important;
+    padding: 0.55rem 1.4rem;
+    transition: background 0.2s, color 0.2s !important;
   }
 
-  #nav:not(.scrolled) .nav-cta {
-    border-color: rgba(255,255,255,0.25);
-    color: rgba(255,255,255,0.65) !important;
-  }
-  #nav:not(.scrolled) .nav-cta:hover {
-    background: white;
-    color: var(--black) !important;
-    border-color: white;
-    opacity: 1;
-  }
-  #nav.scrolled .nav-cta {
-    border-color: var(--border);
-    color: var(--black) !important;
-  }
-  #nav.scrolled .nav-cta:hover {
-    background: var(--black);
+  .nav-cta:hover {
+    background: var(--black) !important;
     color: white !important;
-    border-color: var(--black);
+    border-color: var(--black) !important;
   }
 
-  /* ─────────────────────────────────────────────
-     HERO
-  ───────────────────────────────────────────── */
+  /* ─────────────────────────────────────────
+     HERO — split screen
+  ───────────────────────────────────────── */
   .hero {
-    min-height: 100vh;
-    background: var(--black);
     display: grid;
-    grid-template-rows: 1fr auto;
-    padding: 0 4rem;
+    grid-template-columns: 1fr 1fr;
+    min-height: 100vh;
+    padding-top: 68px;
+  }
+
+  /* Left — dark panel with icon */
+  .hero-visual {
+    background: var(--black);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     position: relative;
     overflow: hidden;
   }
 
-  /* Thin vertical rule — subtle geometric accent */
-  .hero::after {
+  .hero-icon {
+    width: 42%;
+    max-width: 200px;
+    opacity: 0.8;
+    animation: fadeIn 1.2s 0.3s both;
+  }
+
+  /* Subtle grid lines on dark side */
+  .hero-visual::before {
     content: '';
     position: absolute;
-    top: 0;
-    right: 22%;
-    width: 1px;
-    height: 100%;
-    background: linear-gradient(to bottom,
-      transparent 0%,
-      rgba(255,255,255,0.05) 25%,
-      rgba(255,255,255,0.05) 75%,
-      transparent 100%
-    );
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
     pointer-events: none;
   }
 
-  .hero-content {
+  /* Right — white text panel */
+  .hero-text {
+    background: var(--white);
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    padding-bottom: 7rem;
-    max-width: 1100px;
+    padding: 3.5rem 3.5rem 5.5rem 4.5rem;
+    border-left: 1px solid var(--border);
   }
 
-  .hero-label {
-    font-size: 0.62rem;
-    font-weight: 500;
+  .hero-eyebrow {
+    font-size: 0.6rem;
+    font-weight: 600;
     letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.25);
-    margin-bottom: 2.8rem;
+    color: var(--muted);
+    margin-bottom: 2rem;
     opacity: 0;
-    animation: fadeUp 0.8s 0.3s cubic-bezier(0.16,1,0.3,1) forwards;
+    animation: fadeUp 0.8s 0.4s forwards;
   }
 
-  .hero-headline {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(3.8rem, 8vw, 9rem);
+  .hero-h1 {
+    font-size: clamp(3.2rem, 5.2vw, 6rem);
+    font-weight: 800;
+    line-height: 0.93;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+    color: var(--black);
+    margin-bottom: 2.5rem;
+    opacity: 0;
+    animation: fadeUp 1s 0.6s forwards;
+  }
+
+  .hero-body {
+    font-size: 0.82rem;
     font-weight: 300;
-    line-height: 1.0;
-    color: var(--white);
-    letter-spacing: -0.02em;
+    line-height: 2;
+    color: var(--muted);
+    max-width: 42ch;
     margin-bottom: 3rem;
+    letter-spacing: 0.01em;
     opacity: 0;
-    animation: fadeUp 1s 0.5s cubic-bezier(0.16,1,0.3,1) forwards;
-  }
-
-  .hero-headline em {
-    font-style: italic;
-    color: rgba(255,255,255,0.38);
-  }
-
-  .hero-sub {
-    font-size: 0.85rem;
-    font-weight: 300;
-    line-height: 1.95;
-    color: rgba(255,255,255,0.38);
-    max-width: 46ch;
-    margin-bottom: 3.5rem;
-    letter-spacing: 0.02em;
-    opacity: 0;
-    animation: fadeUp 1s 0.7s cubic-bezier(0.16,1,0.3,1) forwards;
+    animation: fadeUp 1s 0.8s forwards;
   }
 
   .hero-actions {
     display: flex;
+    gap: 1.2rem;
     align-items: center;
-    gap: 2rem;
     opacity: 0;
-    animation: fadeUp 1s 0.9s cubic-bezier(0.16,1,0.3,1) forwards;
+    animation: fadeUp 1s 1s forwards;
   }
 
-  .btn-outline {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.7rem;
-    font-size: 0.68rem;
-    font-weight: 500;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    text-decoration: none;
-    color: white;
-    border: 1px solid rgba(255,255,255,0.3);
-    padding: 0.9rem 2rem;
-    transition: background 0.25s, border-color 0.25s;
-  }
-  .btn-outline:hover {
-    background: white;
-    color: var(--black);
-    border-color: white;
-  }
-
-  .btn-text {
-    font-size: 0.68rem;
-    font-weight: 400;
+  .btn-fill {
+    font-size: 0.62rem;
+    font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     text-decoration: none;
-    color: rgba(255,255,255,0.35);
-    border-bottom: 1px solid rgba(255,255,255,0.12);
+    color: white;
+    background: var(--black);
+    padding: 0.9rem 2rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    border: 1px solid var(--black);
+    transition: background 0.2s, color 0.2s;
+  }
+  .btn-fill:hover { background: var(--dark); }
+
+  .btn-ghost {
+    font-size: 0.62rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
     padding-bottom: 2px;
     transition: color 0.2s, border-color 0.2s;
   }
-  .btn-text:hover {
-    color: rgba(255,255,255,0.7);
-    border-color: rgba(255,255,255,0.3);
-  }
+  .btn-ghost:hover { color: var(--black); border-color: var(--black); }
 
-  /* Bottom strip with scroll hint */
-  .hero-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-bottom: 2.5rem;
-    opacity: 0;
-    animation: fadeIn 1s 1.4s forwards;
-  }
-
-  .hero-footer-brands {
-    display: flex;
-    gap: 2.5rem;
-  }
-
-  .hero-footer-brand {
-    font-size: 0.62rem;
-    font-weight: 500;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.18);
-  }
-
+  /* Scroll indicator bottom left */
   .hero-scroll {
-    font-size: 0.62rem;
-    font-weight: 400;
-    letter-spacing: 0.18em;
+    position: absolute;
+    bottom: 2.5rem;
+    left: 3.5rem;
+    font-size: 0.58rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.18);
+    color: rgba(255,255,255,0.2);
     writing-mode: vertical-rl;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
   }
 
-  /* ─────────────────────────────────────────────
-     ABOUT
-  ───────────────────────────────────────────── */
-  .about {
+  .hero-scroll::before {
+    content: '';
+    width: 1px;
+    height: 40px;
+    background: rgba(255,255,255,0.12);
+  }
+
+  /* ─────────────────────────────────────────
+     INTRO / SOBRE
+  ───────────────────────────────────────── */
+  .intro {
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 8rem 3.5rem;
     background: var(--white);
-    padding: 11rem 4rem;
   }
 
-  .about-inner {
+  .intro-inner {
+    max-width: 1160px;
+    margin: 0 auto;
     display: grid;
     grid-template-columns: 5fr 7fr;
-    gap: 9rem;
+    gap: 8rem;
     align-items: start;
-    max-width: 1200px;
-    margin: 0 auto;
   }
 
-  .eyebrow {
+  .section-label {
     display: block;
-    font-size: 0.62rem;
-    font-weight: 600;
+    font-size: 0.58rem;
+    font-weight: 700;
     letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: var(--gray-mid);
+    color: var(--muted);
     margin-bottom: 2rem;
   }
 
-  .about-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(2.4rem, 4vw, 4rem);
-    font-weight: 300;
-    line-height: 1.1;
+  .intro-heading {
+    font-size: clamp(2.2rem, 3.8vw, 3.8rem);
+    font-weight: 800;
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
     color: var(--black);
-    letter-spacing: -0.01em;
   }
 
-  .about-title em {
-    font-style: italic;
-    color: var(--gray-dark);
+  .intro-right {
+    padding-top: 0.4rem;
   }
 
-  .about-body {
-    font-size: 0.88rem;
+  .intro-body {
+    font-size: 0.85rem;
     font-weight: 300;
     line-height: 2;
-    color: var(--gray-dark);
-    margin-bottom: 3rem;
+    color: var(--dark);
     letter-spacing: 0.01em;
+    margin-bottom: 2rem;
   }
 
-  .about-rule {
+  .intro-divider {
     width: 2rem;
-    height: 1px;
+    height: 2px;
     background: var(--black);
-    margin-bottom: 2.5rem;
+    margin: 2.5rem 0;
   }
 
   .pillars {
     display: flex;
     flex-direction: column;
-    gap: 1.8rem;
+    gap: 1.4rem;
   }
 
   .pillar {
-    display: flex;
-    gap: 1.5rem;
-    align-items: flex-start;
+    display: grid;
+    grid-template-columns: 2.5rem 1fr;
+    align-items: start;
+    gap: 0;
   }
 
-  .pillar-num {
-    font-size: 0.6rem;
-    font-weight: 600;
+  .pillar-n {
+    font-size: 0.58rem;
+    font-weight: 700;
     letter-spacing: 0.08em;
-    color: var(--gray-light);
-    padding-top: 0.15rem;
-    min-width: 1.5rem;
-    flex-shrink: 0;
+    color: var(--border);
+    padding-top: 0.1rem;
   }
 
   .pillar p {
-    font-size: 0.83rem;
+    font-size: 0.82rem;
     font-weight: 300;
     line-height: 1.75;
-    color: var(--gray-dark);
+    color: var(--dark);
     letter-spacing: 0.01em;
   }
 
-  /* ─────────────────────────────────────────────
+  /* ─────────────────────────────────────────
      EXPERIENCES
-  ───────────────────────────────────────────── */
-  .experiences {
-    background: var(--off-white);
-    border-top: 1px solid var(--border);
+  ───────────────────────────────────────── */
+  .exp {
+    background: var(--white);
+    padding: 8rem 3.5rem;
     border-bottom: 1px solid var(--border);
-    padding: 11rem 4rem;
   }
 
-  .exp-intro {
-    max-width: 1200px;
-    margin: 0 auto 5rem;
+  .exp-header {
+    max-width: 1160px;
+    margin: 0 auto 4rem;
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
-    gap: 4rem;
+    gap: 3rem;
+    padding-bottom: 3rem;
+    border-bottom: 1px solid var(--border);
   }
 
-  .exp-intro-left {}
-
-  .exp-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(2.2rem, 3.8vw, 3.8rem);
-    font-weight: 300;
-    line-height: 1.1;
-    color: var(--black);
-    letter-spacing: -0.01em;
-    max-width: 18ch;
+  .exp-heading {
+    font-size: clamp(2rem, 3.5vw, 3.4rem);
+    font-weight: 800;
+    line-height: 1.0;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
   }
 
-  .exp-intro-right {
-    font-size: 0.83rem;
+  .exp-sub {
+    font-size: 0.82rem;
     font-weight: 300;
     line-height: 1.85;
-    color: var(--gray-dark);
-    max-width: 40ch;
-    flex-shrink: 0;
+    color: var(--muted);
+    max-width: 38ch;
+    text-align: right;
     letter-spacing: 0.01em;
+    flex-shrink: 0;
   }
 
   .exp-grid {
+    max-width: 1160px;
+    margin: 0 auto;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 2px;
-    max-width: 1200px;
-    margin: 0 auto;
   }
 
-  .exp-card {
-    background: var(--white);
-    padding: 4rem 3.5rem;
+  /* Cards are <a> tags */
+  .card {
+    display: block;
+    text-decoration: none;
+    padding: 3.5rem;
     position: relative;
-    cursor: default;
-    transition: background 0.4s ease, color 0.4s ease;
+    overflow: hidden;
+    transition: transform 0.35s cubic-bezier(0.16,1,0.3,1);
   }
 
-  .exp-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 1px;
-    background: var(--border);
-    transition: background 0.4s;
+  .card:hover { transform: translateY(-3px); }
+
+  .card-dark {
+    background: var(--black);
   }
 
-  .exp-card:hover { background: var(--black); }
-  .exp-card:hover::before { background: transparent; }
-  .exp-card:hover .exp-num    { color: rgba(255,255,255,0.2); }
-  .exp-card:hover .exp-name   { color: var(--white); }
-  .exp-card:hover .exp-tag    { color: rgba(255,255,255,0.38); }
-  .exp-card:hover .exp-rule   { background: rgba(255,255,255,0.1); }
-  .exp-card:hover .exp-desc   { color: rgba(255,255,255,0.45); }
-  .exp-card:hover .exp-link   { color: var(--white); border-color: rgba(255,255,255,0.2); }
+  .card-light {
+    background: var(--pure);
+    border: 1px solid var(--border);
+  }
 
-  .exp-num {
-    font-size: 0.6rem;
-    font-weight: 600;
-    letter-spacing: 0.15em;
+  .card-num {
+    font-size: 0.58rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
     text-transform: uppercase;
-    color: var(--gray-light);
-    margin-bottom: 3rem;
-    transition: color 0.4s;
+    margin-bottom: 3.5rem;
   }
 
-  .exp-name {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 3rem;
+  .card-dark  .card-num { color: rgba(255,255,255,0.2); }
+  .card-light .card-num { color: var(--muted); }
+
+  .card-name {
+    font-size: clamp(2.8rem, 4.5vw, 5rem);
+    font-weight: 900;
+    line-height: 0.88;
+    letter-spacing: -0.04em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  .card-dark  .card-name { color: white; }
+  .card-light .card-name { color: var(--black); }
+
+  .card-tag {
+    font-size: 0.75rem;
     font-weight: 300;
-    color: var(--black);
-    letter-spacing: -0.02em;
-    margin-bottom: 0.5rem;
-    transition: color 0.4s;
-    line-height: 1;
-  }
-
-  .exp-tag {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 1.05rem;
-    font-style: italic;
-    color: var(--gray-mid);
+    letter-spacing: 0.03em;
     margin-bottom: 2.5rem;
-    transition: color 0.4s;
   }
 
-  .exp-rule {
+  .card-dark  .card-tag { color: rgba(255,255,255,0.38); }
+  .card-light .card-tag { color: var(--muted); }
+
+  .card-rule {
     width: 2rem;
-    height: 1px;
-    background: var(--border);
+    height: 2px;
     margin-bottom: 2.5rem;
-    transition: background 0.4s;
   }
 
-  .exp-desc {
-    font-size: 0.83rem;
+  .card-dark  .card-rule { background: rgba(255,255,255,0.12); }
+  .card-light .card-rule { background: var(--border); }
+
+  .card-desc {
+    font-size: 0.8rem;
     font-weight: 300;
     line-height: 1.9;
-    color: var(--gray-dark);
     margin-bottom: 3rem;
     letter-spacing: 0.01em;
-    transition: color 0.4s;
   }
 
-  .exp-link {
+  .card-dark  .card-desc { color: rgba(255,255,255,0.38); }
+  .card-light .card-desc { color: var(--dark); }
+
+  .card-link {
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    font-size: 0.65rem;
-    font-weight: 500;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    text-decoration: none;
-    color: var(--black);
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid;
     padding-bottom: 2px;
-    transition: color 0.4s, border-color 0.4s;
+    transition: opacity 0.2s;
   }
 
-  /* ─────────────────────────────────────────────
-     PHILOSOPHY / QUOTE
-  ───────────────────────────────────────────── */
-  .philosophy {
-    background: var(--white);
-    padding: 11rem 4rem;
-    border-bottom: 1px solid var(--border);
-  }
+  .card-dark  .card-link { color: rgba(255,255,255,0.5); border-color: rgba(255,255,255,0.15); }
+  .card-light .card-link { color: var(--black); border-color: var(--border); }
+  .card:hover .card-link { opacity: 0.7; }
 
-  .philosophy-inner {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 8rem;
-    align-items: start;
-  }
-
-  .philosophy-left {}
-
-  .philosophy-quote {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(2rem, 3.5vw, 3.2rem);
-    font-weight: 300;
-    line-height: 1.2;
-    color: var(--black);
-    letter-spacing: -0.01em;
-    margin-bottom: 3rem;
-  }
-
-  .philosophy-quote em {
-    font-style: italic;
-    color: var(--gray-dark);
-  }
-
-  .philosophy-right {
-    padding-top: 0.5rem;
-  }
-
-  .philosophy-body {
-    font-size: 0.88rem;
-    font-weight: 300;
-    line-height: 2;
-    color: var(--gray-dark);
-    margin-bottom: 2.5rem;
-    letter-spacing: 0.01em;
-  }
-
-  .thinkers {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-top: 3rem;
-  }
-
-  .thinker {
-    font-size: 0.68rem;
-    font-weight: 400;
-    letter-spacing: 0.06em;
-    color: var(--gray-mid);
-    border: 1px solid var(--border);
-    padding: 0.4rem 1rem;
-  }
-
-  /* ─────────────────────────────────────────────
+  /* ─────────────────────────────────────────
      CTA
-  ───────────────────────────────────────────── */
+  ───────────────────────────────────────── */
   .cta {
     background: var(--black);
-    padding: 11rem 4rem;
+    padding: 9rem 3.5rem;
     text-align: center;
-    position: relative;
-    overflow: hidden;
   }
 
-  /* Concentric circles — geometric motif echoing the infinity mark */
-  .cta::before {
-    content: '';
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: 60vw; height: 60vw;
-    border-radius: 50%;
-    border: 1px solid rgba(255,255,255,0.03);
-    pointer-events: none;
-  }
-  .cta::after {
-    content: '';
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: 35vw; height: 35vw;
-    border-radius: 50%;
-    border: 1px solid rgba(255,255,255,0.03);
-    pointer-events: none;
-  }
-
-  .cta-inner { position: relative; z-index: 1; }
-
-  .cta-eyebrow {
-    font-size: 0.62rem;
-    font-weight: 500;
+  .cta-label {
+    font-size: 0.58rem;
+    font-weight: 700;
     letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.22);
+    color: rgba(255,255,255,0.2);
     margin-bottom: 2.5rem;
   }
 
   .cta-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(3rem, 6vw, 6.5rem);
-    font-weight: 300;
-    line-height: 1.03;
-    color: var(--white);
-    max-width: 15ch;
-    margin: 0 auto 2rem;
-    letter-spacing: -0.02em;
+    font-size: clamp(2.8rem, 5.5vw, 6rem);
+    font-weight: 900;
+    line-height: 0.93;
+    letter-spacing: -0.04em;
+    text-transform: uppercase;
+    color: white;
+    max-width: 14ch;
+    margin: 0 auto 1.5rem;
   }
 
-  .cta-title em {
-    font-style: italic;
-    color: rgba(255,255,255,0.35);
+  .cta-title span {
+    color: rgba(255,255,255,0.2);
   }
 
-  .cta-sub {
-    font-size: 0.85rem;
+  .cta-body {
+    font-size: 0.82rem;
     font-weight: 300;
     line-height: 1.95;
-    color: rgba(255,255,255,0.35);
+    color: rgba(255,255,255,0.3);
     max-width: 44ch;
     margin: 0 auto 3.5rem;
     letter-spacing: 0.01em;
   }
 
   .btn-white {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.7rem;
-    font-size: 0.68rem;
-    font-weight: 500;
-    letter-spacing: 0.12em;
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     text-decoration: none;
     color: var(--black);
-    background: var(--white);
+    background: white;
     padding: 1rem 2.5rem;
-    transition: background 0.25s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    transition: opacity 0.2s;
   }
-  .btn-white:hover { background: rgba(255,255,255,0.88); }
+  .btn-white:hover { opacity: 0.85; }
 
-  /* ─────────────────────────────────────────────
+  /* ─────────────────────────────────────────
      FOOTER
-  ───────────────────────────────────────────── */
+  ───────────────────────────────────────── */
   footer {
     background: var(--black);
     border-top: 1px solid rgba(255,255,255,0.06);
-    padding: 2.5rem 4rem;
+    padding: 2.2rem 3.5rem;
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    align-items: center;
   }
 
-  .footer-logo {
-    height: 18px;
-    width: auto;
-    opacity: 0.35;
-  }
+  .footer-logo { height: 16px; opacity: 0.3; }
 
-  .footer-right {
+  .footer-links {
     display: flex;
-    gap: 3rem;
-    align-items: center;
+    gap: 2.5rem;
+    list-style: none;
   }
 
-  .footer-link {
-    font-size: 0.62rem;
-    font-weight: 400;
+  .footer-links a {
+    font-size: 0.58rem;
+    font-weight: 500;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.2);
+    color: rgba(255,255,255,0.18);
     text-decoration: none;
     transition: color 0.2s;
   }
-  .footer-link:hover { color: rgba(255,255,255,0.5); }
+
+  .footer-links a:hover { color: rgba(255,255,255,0.5); }
 
   .footer-copy {
-    font-size: 0.62rem;
+    font-size: 0.58rem;
     font-weight: 300;
     letter-spacing: 0.06em;
-    color: rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.14);
   }
 
-  /* ─────────────────────────────────────────────
+  /* ─────────────────────────────────────────
      ANIMATIONS
-  ───────────────────────────────────────────── */
+  ───────────────────────────────────────── */
   @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(18px); }
+    from { opacity: 0; transform: translateY(16px); }
     to   { opacity: 1; transform: translateY(0); }
   }
+
   @keyframes fadeIn {
     from { opacity: 0; }
     to   { opacity: 1; }
@@ -700,271 +569,248 @@
 
   .reveal {
     opacity: 0;
-    transform: translateY(22px);
+    transform: translateY(18px);
     transition:
-      opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
-      transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+      opacity  0.85s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
   }
+
   .reveal.visible { opacity: 1; transform: none; }
   .d1 { transition-delay: 0.1s; }
   .d2 { transition-delay: 0.2s; }
   .d3 { transition-delay: 0.3s; }
-  .d4 { transition-delay: 0.4s; }
 
-  /* ─────────────────────────────────────────────
+  /* ─────────────────────────────────────────
      RESPONSIVE
-  ───────────────────────────────────────────── */
-  @media (max-width: 980px) {
-    #nav { padding: 1.5rem; }
-    #nav.scrolled { padding: 1.2rem 1.5rem; }
+  ───────────────────────────────────────── */
+  @media (max-width: 960px) {
+    #nav { padding: 0 1.5rem; }
     .nav-links { display: none; }
 
-    .hero { padding: 0 1.5rem; }
-    .hero::after { display: none; }
-    .hero-content { padding-bottom: 5rem; }
+    .hero {
+      grid-template-columns: 1fr;
+      min-height: auto;
+    }
 
-    .about { padding: 7rem 1.5rem; }
-    .about-inner { grid-template-columns: 1fr; gap: 3.5rem; }
+    .hero-visual {
+      min-height: 50vw;
+    }
 
-    .experiences { padding: 7rem 1.5rem; }
-    .exp-intro { flex-direction: column; align-items: flex-start; gap: 1.5rem; }
-    .exp-intro-right { max-width: 100%; }
+    .hero-scroll { display: none; }
+
+    .hero-text {
+      padding: 3rem 1.5rem 5rem;
+      border-left: none;
+      border-top: 1px solid var(--border);
+    }
+
+    .intro { padding: 5rem 1.5rem; }
+    .intro-inner { grid-template-columns: 1fr; gap: 3rem; }
+
+    .exp { padding: 5rem 1.5rem; }
+    .exp-header { flex-direction: column; align-items: flex-start; }
+    .exp-sub { text-align: left; max-width: 100%; }
     .exp-grid { grid-template-columns: 1fr; }
 
-    .philosophy { padding: 7rem 1.5rem; }
-    .philosophy-inner { grid-template-columns: 1fr; gap: 3rem; }
+    .cta { padding: 6rem 1.5rem; }
 
-    .cta { padding: 7rem 1.5rem; }
-    .cta::before, .cta::after { display: none; }
+    footer {
+      padding: 2rem 1.5rem;
+      flex-direction: column;
+      gap: 1.2rem;
+      text-align: center;
+    }
 
-    footer { padding: 2rem 1.5rem; flex-direction: column; gap: 1.5rem; text-align: center; }
-    .footer-right { flex-direction: column; gap: 1rem; }
+    .footer-links { display: none; }
   }
 
 </style>
 </head>
 <body>
 
-<!-- ─── NAV ──────────────────────────────────────── -->
+<!-- ── NAV ──────────────────────────────────── -->
 <nav id="nav">
-  <a href="#" class="nav-logo">
-    <img src="logos-4meaning/wht-logo.png" class="nav-logo-img logo-white" alt="4Meaning">
-    <img src="logos-4meaning/blk-logo.png" class="nav-logo-img logo-black" alt="4Meaning">
+  <a href="/" class="nav-logo">
+    <img src="logos-4meaning/blk-logo.png" alt="4Meaning">
   </a>
   <ul class="nav-links">
     <li><a href="#experiencias">Experiencias</a></li>
-    <li><a href="#filosofia">Filosofía</a></li>
+    <li><a href="#sobre">Sobre 4Meaning</a></li>
     <li><a href="#contacto" class="nav-cta">Hablar con el equipo</a></li>
   </ul>
 </nav>
 
-<!-- ─── HERO ─────────────────────────────────────── -->
+<!-- ── HERO ─────────────────────────────────── -->
 <section class="hero">
-  <div class="hero-content">
-    <p class="hero-label">Marca sombrilla · Experiencias de propósito y sentido</p>
-    <h1 class="hero-headline">
-      Vivir con<br>
-      <em>propósito</em><br>
-      es una decisión.
-    </h1>
-    <p class="hero-sub">
-      4Meaning crea experiencias para personas que quieren ir al fondo
-      de las preguntas que más importan — sobre quiénes son,
-      para qué están aquí y qué le dejan a quienes vienen después.
-    </p>
-    <div class="hero-actions">
-      <a href="#experiencias" class="btn-outline">
-        Explorar experiencias
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-      </a>
-      <a href="#sobre" class="btn-text">Qué es 4Meaning</a>
-    </div>
-  </div>
-  <div class="hero-footer">
-    <div class="hero-footer-brands">
-      <span class="hero-footer-brand">Trascendencia</span>
-      <span class="hero-footer-brand">PersonaLab</span>
-    </div>
+
+  <!-- Dark left panel -->
+  <div class="hero-visual">
+    <img src="logos-4meaning/wht-icon.png" class="hero-icon" alt="4Meaning">
     <span class="hero-scroll">Desplazar</span>
   </div>
+
+  <!-- White right panel -->
+  <div class="hero-text">
+    <p class="hero-eyebrow">Experiencias de propósito y sentido</p>
+    <h1 class="hero-h1">
+      Para<br>
+      que la<br>
+      vida<br>
+      tenga<br>
+      sentido.
+    </h1>
+    <p class="hero-body">
+      Diseñamos experiencias para personas que quieren ir al fondo
+      de las preguntas que más importan — sobre quiénes son, para
+      qué están aquí y qué dejan a quienes vienen después.
+    </p>
+    <div class="hero-actions">
+      <a href="#experiencias" class="btn-fill">
+        Ver experiencias
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+      <a href="#sobre" class="btn-ghost">Qué es 4Meaning</a>
+    </div>
+  </div>
+
 </section>
 
-<!-- ─── ABOUT ─────────────────────────────────────── -->
-<section class="about" id="sobre">
-  <div class="about-inner">
-    <div class="about-left">
-      <span class="eyebrow reveal">Sobre 4Meaning</span>
-      <h2 class="about-title reveal d1">
-        Experiencias diseñadas para vivir con <em>sentido.</em>
+<!-- ── SOBRE ─────────────────────────────────── -->
+<section class="intro" id="sobre">
+  <div class="intro-inner">
+
+    <div>
+      <span class="section-label reveal">Sobre 4Meaning</span>
+      <h2 class="intro-heading reveal d1">
+        Experiencias<br>
+        para vivir<br>
+        con propósito.
       </h2>
     </div>
-    <div class="about-right">
-      <p class="about-body reveal d2">
-        4Meaning es una marca que diseña experiencias para ayudar a las personas
-        a vivir con propósito. No son cursos ni conferencias — son experiencias
-        inmersivas que los participantes viven para profundizar en temas específicos
-        de la vida y construir valores más estructurados e intencionales.
+
+    <div class="intro-right">
+      <p class="intro-body reveal d1">
+        4Meaning es una marca que diseña experiencias para ayudar a las
+        personas a vivir con propósito y sentido. No son cursos ni conferencias —
+        son experiencias que los participantes viven para profundizar en temas
+        específicos de la vida y construir valores más estructurados e intencionales.
       </p>
-      <div class="about-rule reveal d2"></div>
+      <div class="intro-divider reveal d2"></div>
       <div class="pillars">
         <div class="pillar reveal d2">
-          <span class="pillar-num">01</span>
-          <p>Enraizadas en una tradición filosófica sólida — no en opiniones ni tendencias pasajeras.</p>
+          <span class="pillar-n">01</span>
+          <p>Enraizadas en una tradición filosófica sólida — no en tendencias pasajeras.</p>
         </div>
         <div class="pillar reveal d3">
-          <span class="pillar-num">02</span>
-          <p>Diseñadas para ser vividas, no solo escuchadas — el conocimiento que mueve algo adentro.</p>
+          <span class="pillar-n">02</span>
+          <p>Diseñadas para ser vividas, no solo escuchadas. El conocimiento que mueve algo adentro.</p>
         </div>
-        <div class="pillar reveal d4">
-          <span class="pillar-num">03</span>
+        <div class="pillar reveal d3">
+          <span class="pillar-n">03</span>
           <p>Responden preguntas reales de la vida: familia, legado, propósito, comunidad.</p>
         </div>
       </div>
     </div>
+
   </div>
 </section>
 
-<!-- ─── EXPERIENCES ──────────────────────────────── -->
-<section class="experiences" id="experiencias">
-  <div class="exp-intro">
-    <div class="exp-intro-left">
-      <span class="eyebrow reveal">Las experiencias</span>
-      <h2 class="exp-title reveal d1">
-        Dos marcas.<br>
-        Una misma búsqueda.
-      </h2>
-    </div>
-    <p class="exp-intro-right reveal d2">
-      4Meaning no es un producto — es un ecosistema de experiencias. Cada marca
-      responde al mismo vacío existencial desde un ángulo distinto de la vida humana.
+<!-- ── EXPERIENCIAS ──────────────────────────── -->
+<section class="exp" id="experiencias">
+
+  <div class="exp-header">
+    <h2 class="exp-heading reveal">
+      Las<br>
+      experiencias
+    </h2>
+    <p class="exp-sub reveal d2">
+      Dos marcas. Una misma búsqueda.<br>
+      Cada experiencia responde a una dimensión
+      distinta de la vida humana.
     </p>
   </div>
 
   <div class="exp-grid">
-    <div class="exp-card reveal d1">
-      <p class="exp-num">01 — Legado familiar</p>
-      <h3 class="exp-name">Trascendencia</h3>
-      <p class="exp-tag">El legado familiar como proyecto de vida.</p>
-      <div class="exp-rule"></div>
-      <p class="exp-desc">
-        Una experiencia sobre los valores que los padres dejan a sus hijos y el
-        legado que se construye en familia. Diseñada para parejas que quieren
-        profundizar juntos — y para familias que quieren trabajar el legado que
-        se transmite de generación en generación.
-      </p>
-      <a href="#contacto" class="exp-link">
-        Conocer Trascendencia
-        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-      </a>
-    </div>
 
-    <div class="exp-card reveal d2">
-      <p class="exp-num">02 — Propósito personal</p>
-      <h3 class="exp-name">PersonaLab</h3>
-      <p class="exp-tag">El propósito personal desde adentro.</p>
-      <div class="exp-rule"></div>
-      <p class="exp-desc">
+    <!-- Trascendencia -->
+    <a href="https://www.latrascendencia.com/" class="card card-dark reveal d1" target="_blank" rel="noopener">
+      <p class="card-num">01 — Legado familiar</p>
+      <h3 class="card-name">Trascen&shy;dencia</h3>
+      <p class="card-tag">El legado familiar como proyecto de vida.</p>
+      <div class="card-rule"></div>
+      <p class="card-desc">
+        Una experiencia sobre los valores que los padres dejan a sus hijos y el
+        legado que se construye en familia. Diseñada para parejas y familias que
+        quieren profundizar en lo que transmiten de generación en generación.
+      </p>
+      <span class="card-link">
+        Visitar Trascendencia
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </span>
+    </a>
+
+    <!-- PersonaLab -->
+    <a href="https://4meaning.life/personalab/" class="card card-light reveal d2" target="_blank" rel="noopener">
+      <p class="card-num">02 — Propósito personal</p>
+      <h3 class="card-name">Persona&shy;Lab</h3>
+      <p class="card-tag">El propósito personal desde adentro.</p>
+      <div class="card-rule"></div>
+      <p class="card-desc">
         Una experiencia enfocada en el propósito personal y el sentido de la vida
         desde un enfoque interno. Módulos experienciales para grupos, foros y
-        equipos — para quienes buscan respuestas de fondo sobre quiénes son y
-        para qué están aquí.
+        equipos que buscan respuestas de fondo sobre quiénes son y para qué están aquí.
       </p>
-      <a href="personalab/" class="exp-link">
-        Conocer PersonaLab
-        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-      </a>
-    </div>
-  </div>
-</section>
-
-<!-- ─── PHILOSOPHY ───────────────────────────────── -->
-<section class="philosophy" id="filosofia">
-  <div class="philosophy-inner">
-    <div class="philosophy-left">
-      <span class="eyebrow reveal">Las raíces</span>
-      <p class="philosophy-quote reveal d1">
-        No inventamos respuestas. Traducimos <em>las que ya existen</em> desde hace siglos.
-      </p>
-    </div>
-    <div class="philosophy-right">
-      <p class="philosophy-body reveal d2">
-        4Meaning toma la tradición del personalismo filosófico y la convierte en experiencias
-        que una persona puede vivir, sentir y aplicar a su vida real. No teorizamos sobre el
-        sentido — lo hacemos experiencial, concreto y profundo.
-      </p>
-      <p class="philosophy-body reveal d3">
-        Hay una diferencia entre saber muchas cosas sobre la vida y entender para qué es
-        <em>tu</em> vida. Entre sentirte bien y saber quién eres. Entre tener éxito y tener
-        sentido. 4Meaning trabaja sobre lo segundo.
-      </p>
-      <div class="thinkers reveal d3">
-        <span class="thinker">Viktor Frankl</span>
-        <span class="thinker">Emmanuel Mounier</span>
-        <span class="thinker">Karol Wojtyla</span>
-        <span class="thinker">Edith Stein</span>
-        <span class="thinker">Juan Manuel Burgos</span>
-        <span class="thinker">Personalismo ontológico</span>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ─── CTA ──────────────────────────────────────── -->
-<section class="cta" id="contacto">
-  <div class="cta-inner">
-    <p class="cta-eyebrow reveal">El primer paso</p>
-    <h2 class="cta-title reveal d1">
-      La pregunta que sientes<br>
-      <em>tiene un lugar</em><br>
-      donde continúa.
-    </h2>
-    <p class="cta-sub reveal d2">
-      Habla con nuestro equipo. Cuéntanos en qué momento de vida estás
-      y te decimos qué experiencia fue diseñada para ti.
-    </p>
-    <a href="https://wa.me/message/4meaning" class="btn-white reveal d3">
-      Escribir por WhatsApp
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+      <span class="card-link">
+        Visitar PersonaLab
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </span>
     </a>
+
   </div>
 </section>
 
-<!-- ─── FOOTER ───────────────────────────────────── -->
+<!-- ── CTA ───────────────────────────────────── -->
+<section class="cta" id="contacto">
+  <p class="cta-label reveal">El primer paso</p>
+  <h2 class="cta-title reveal d1">
+    La pregunta <span>que</span><br>
+    sientes tiene<br>
+    respuesta.
+  </h2>
+  <p class="cta-body reveal d2">
+    Habla con nuestro equipo. Cuéntanos en qué momento de vida estás
+    y te decimos qué experiencia de 4Meaning fue diseñada para ti.
+  </p>
+  <a href="https://wa.me/" class="btn-white reveal d3">
+    Escribir por WhatsApp
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
+  </a>
+</section>
+
+<!-- ── FOOTER ─────────────────────────────────── -->
 <footer>
   <img src="logos-4meaning/wht-logo.png" class="footer-logo" alt="4Meaning">
-  <div class="footer-right">
-    <a href="#experiencias" class="footer-link">Experiencias</a>
-    <a href="#filosofia" class="footer-link">Filosofía</a>
-    <a href="personalab/" class="footer-link">PersonaLab</a>
-    <span class="footer-copy">© 2025 4Meaning</span>
-  </div>
+  <ul class="footer-links">
+    <li><a href="#sobre">4Meaning</a></li>
+    <li><a href="https://www.latrascendencia.com/" target="_blank">Trascendencia</a></li>
+    <li><a href="https://4meaning.life/personalab/" target="_blank">PersonaLab</a></li>
+  </ul>
+  <span class="footer-copy">© 2025 4Meaning</span>
 </footer>
 
 <script>
-  // Nav: switch between transparent (over hero) and white (scrolled)
-  const nav = document.getElementById('nav');
-  const hero = document.querySelector('.hero');
-
-  const navObserver = new IntersectionObserver(
-    ([entry]) => nav.classList.toggle('scrolled', !entry.isIntersecting),
-    { threshold: 0, rootMargin: '-76px 0px 0px 0px' }
-  );
-  navObserver.observe(hero);
-
   // Scroll reveal
   const reveals = document.querySelectorAll('.reveal');
-  const revealObserver = new IntersectionObserver(
-    (entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          revealObserver.unobserve(entry.target);
-        }
-      });
-    },
-    { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+  const ro = new IntersectionObserver(
+    entries => entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        ro.unobserve(e.target);
+      }
+    }),
+    { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
   );
-  reveals.forEach(el => revealObserver.observe(el));
+  reveals.forEach(el => ro.observe(el));
 </script>
 
 </body>
