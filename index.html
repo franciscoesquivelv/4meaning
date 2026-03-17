@@ -399,17 +399,13 @@
   .card-dark  .card-num { color: rgba(255,255,255,0.2); }
   .card-light .card-num { color: var(--muted); }
 
-  .card-name {
-    font-size: clamp(2.8rem, 4.5vw, 5rem);
-    font-weight: 900;
-    line-height: 0.88;
-    letter-spacing: -0.04em;
-    text-transform: uppercase;
-    margin-bottom: 1rem;
+  .card-logo {
+    display: block;
+    height: 38px;
+    width: auto;
+    max-width: 80%;
+    margin-bottom: 1.2rem;
   }
-
-  .card-dark  .card-name { color: white; }
-  .card-light .card-name { color: var(--black); }
 
   .card-tag {
     font-size: 0.75rem;
@@ -483,7 +479,7 @@
     letter-spacing: -0.04em;
     text-transform: uppercase;
     color: white;
-    max-width: 14ch;
+    max-width: 18ch;
     margin: 0 auto 1.5rem;
   }
 
@@ -653,7 +649,7 @@
 
   <!-- White right panel -->
   <div class="hero-text">
-    <p class="hero-eyebrow">Experiencias de propósito y sentido</p>
+    <p class="hero-eyebrow">Experiencias con propósito y sentido</p>
     <h1 class="hero-h1">
       Para<br>
       que la<br>
@@ -737,7 +733,7 @@
     <!-- Trascendencia -->
     <a href="https://www.latrascendencia.com/" class="card card-dark reveal d1" target="_blank" rel="noopener">
       <p class="card-num">01 — Legado familiar</p>
-      <h3 class="card-name">Trascen&shy;dencia</h3>
+      <img src="logos/logotrascendencia.png" class="card-logo" alt="Trascendencia">
       <p class="card-tag">El legado familiar como proyecto de vida.</p>
       <div class="card-rule"></div>
       <p class="card-desc">
@@ -754,7 +750,7 @@
     <!-- PersonaLab -->
     <a href="https://4meaning.life/personalab/" class="card card-light reveal d2" target="_blank" rel="noopener">
       <p class="card-num">02 — Propósito personal</p>
-      <h3 class="card-name">Persona&shy;Lab</h3>
+      <img src="logos/blk-logo.png" class="card-logo" alt="PersonaLab">
       <p class="card-tag">El propósito personal desde adentro.</p>
       <div class="card-rule"></div>
       <p class="card-desc">
@@ -775,9 +771,10 @@
 <section class="cta" id="contacto">
   <p class="cta-label reveal">El primer paso</p>
   <h2 class="cta-title reveal d1">
-    La pregunta <span>que</span><br>
-    sientes tiene<br>
-    respuesta.
+    Encuentra<br>
+    las respuestas<br>
+    <span>del sentido</span><br>
+    de tu vida.
   </h2>
   <p class="cta-body reveal d2">
     Habla con nuestro equipo. Cuéntanos en qué momento de vida estás
