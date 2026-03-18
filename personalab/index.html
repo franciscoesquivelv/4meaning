@@ -193,6 +193,9 @@
     margin-bottom: 24px;
     border: 2px solid rgba(255,255,255,0.5);
     padding: 9px 18px;
+    background: rgba(8, 20, 10, 0.35);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
   }
 
   .hero-label-logo {
@@ -222,6 +225,10 @@
   .hero-headline em {
     font-style: italic;
     color: var(--primary-sage);
+  }
+
+  .hero-line {
+    display: block;
   }
 
   .hero-sub {
@@ -1174,7 +1181,8 @@
     .container { padding: 0 24px; }
     .hero-content { padding: 0 24px 64px; }
     .hero-scroll-indicator { display: none; }
-    .hero-br { display: none; }
+    .hero-line { display: inline; }
+    .hero-line::after { content: ' '; }
 
     .nav-center { display: none; }
 
@@ -1227,7 +1235,7 @@
       <img src="../logos/logotrascendencia.png" class="hero-label-logo" alt="Trascendencia">
     </p>
     <h1 class="hero-headline">
-      Experiencias<br class="hero-br">que le dan<br class="hero-br"><em>sentido</em> a tu<br class="hero-br">retiro.
+      <span class="hero-line">Experiencias</span><span class="hero-line">que le dan</span><span class="hero-line"><em>sentido</em> a tu</span><span class="hero-line">retiro.</span>
     </h1>
     <p class="hero-sub">
       Diseñadas para moderadores que quieren que su foro profundice en los temas importantes de la vida.
