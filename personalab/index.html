@@ -181,7 +181,8 @@
   }
 
   .hero-label {
-    display: flex;
+    display: inline-flex;
+    align-self: flex-start;
     align-items: center;
     gap: 14px;
     font-size: 13px;
@@ -190,6 +191,8 @@
     text-transform: uppercase;
     color: var(--primary-mist);
     margin-bottom: 24px;
+    border: 1px solid rgba(255,255,255,0.22);
+    padding: 9px 18px;
   }
 
   .hero-label-logo {
@@ -338,6 +341,10 @@
     color: var(--ink);
     line-height: 1.18;
     letter-spacing: -0.015em;
+  }
+  .accent-word {
+    color: var(--primary);
+    font-weight: 400;
   }
   .section-title em {
     font-style: italic;
@@ -1314,7 +1321,7 @@
           <div class="paso reveal d2">
             <div class="paso-circle">1</div>
             <div class="paso-body">
-              <h3 class="paso-title">Escoges tu tema (o construimos)</h3>
+              <h3 class="paso-title">Escoges tu tema (o lo construimos)</h3>
               <p class="paso-desc">Seleccionas del catálogo de experiencias o diseñamos algo a la medida.</p>
             </div>
           </div>
@@ -1425,7 +1432,7 @@
     <div class="paraquien-inner">
       <div class="paraquien-header">
         <p class="section-label reveal">¿Para quién es PersonaLab?</p>
-        <h2 class="paraquien-title reveal d1">Para el moderador que dirige conversaciones que <em>importan.</em></h2>
+        <h2 class="paraquien-title reveal d1">Para el moderador que dirige foros que trascienden.</h2>
       </div>
       <div class="perfiles-grid">
         <div class="perfil-card reveal">
@@ -1456,7 +1463,7 @@
   <div class="container">
     <div class="porque-header">
       <p class="section-label reveal">¿Por qué PersonaLab?</p>
-      <h2 class="section-title reveal d1">Nos importa que las personas comprendan<br>el <em>propósito y sentido de la vida.</em></h2>
+      <h2 class="section-title reveal d1">Nuestro <span class="accent-word">propósito</span> es que explores el <span class="accent-word">propósito</span> y sentido de tu vida.</h2>
     </div>
     <div class="comparativa reveal d2">
       <div class="comp-header">
@@ -1465,15 +1472,15 @@
       </div>
       <div class="comp-row">
         <div class="comp-cell other"><span class="comp-x">✕</span> Dinámicas sueltas, sin hilo conductor</div>
-        <div class="comp-cell us"><span class="comp-chk">✓</span> Módulos con arquitectura emocional diseñada</div>
+        <div class="comp-cell us"><span class="comp-chk">✓</span> Módulos diseñados con arquitectura emocional</div>
       </div>
       <div class="comp-row">
         <div class="comp-cell other"><span class="comp-x">✕</span> El moderador tiene que armar todo solo</div>
-        <div class="comp-cell us"><span class="comp-chk">✓</span> Todo listo: guía, audio y ejercicios</div>
+        <div class="comp-cell us"><span class="comp-chk">✓</span> Todo en uno: guía, audio y ejercicios</div>
       </div>
       <div class="comp-row">
         <div class="comp-cell other"><span class="comp-x">✕</span> Contenido genérico para cualquier grupo</div>
-        <div class="comp-cell us"><span class="comp-chk">✓</span> Asesoría para entender tu grupo específico</div>
+        <div class="comp-cell us"><span class="comp-chk">✓</span> Opción de crear contenido a la medida</div>
       </div>
       <div class="comp-row">
         <div class="comp-cell other"><span class="comp-x">✕</span> Sin profundidad conceptual</div>
@@ -1481,7 +1488,7 @@
       </div>
       <div class="comp-row">
         <div class="comp-cell other"><span class="comp-x">✕</span> Sin seguimiento</div>
-        <div class="comp-cell us"><span class="comp-chk">✓</span> Acompañamiento en todo el proceso</div>
+        <div class="comp-cell us"><span class="comp-chk">✓</span> Acompañamiento disponible durante el proceso</div>
       </div>
     </div>
   </div>
