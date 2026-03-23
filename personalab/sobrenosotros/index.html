@@ -443,6 +443,40 @@
     line-height: 1.8;
   }
 
+  .trascendencia-ref {
+    margin: 48px 0 40px;
+  }
+
+  .trascendencia-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 24px;
+    text-decoration: none;
+    border: 1px solid var(--border);
+    padding: 20px 36px;
+    transition: border-color 0.25s, background 0.25s;
+  }
+  .trascendencia-link:hover {
+    border-color: var(--primary-mist);
+    background: var(--primary-faint);
+  }
+
+  .trascendencia-ref-logo {
+    height: 28px;
+    width: auto;
+    opacity: 0.7;
+    transition: opacity 0.25s;
+  }
+  .trascendencia-link:hover .trascendencia-ref-logo { opacity: 1; }
+
+  .trascendencia-ref-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--primary);
+  }
+
   /* NUMBERS */
   #numeros {
     position: relative;
@@ -456,7 +490,7 @@
   .numeros-grid {
     padding: 100px 0;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 2px;
     background: rgba(255,255,255,0.1);
     border: 1px solid rgba(255,255,255,0.1);
@@ -730,7 +764,7 @@
     .valores-grid { grid-template-columns: 1fr 1fr; }
     .equipo-grid { grid-template-columns: 1fr; }
     .enfoque-inner { grid-template-columns: 1fr; gap: 56px; }
-    .numeros-grid { grid-template-columns: repeat(2, 1fr); }
+    .numeros-grid { grid-template-columns: repeat(3, 1fr); }
   }
 
   @media (max-width: 768px) {
@@ -855,30 +889,36 @@
   </div>
 </section>
 
-<!-- EQUIPO -->
+<!-- TRAYECTORIA -->
 <section id="creadores">
   <div class="container">
     <div class="creadores-header">
-      <p class="section-label reveal">El equipo</p>
-      <h2 class="section-title reveal d1">Las personas detrás<br>de <em>PersonaLab.</em></h2>
+      <p class="section-label reveal">Nuestra trayectoria</p>
+      <h2 class="section-title reveal d1">El respaldo detrás<br>de cada <em>experiencia.</em></h2>
       <p class="creadores-intro reveal d2">
-        PersonaLab nació del mismo equipo detrás de Trascendencia, una empresa de formación humana con más de 20 años de trayectoria, presencia en 7 países, y una calificación de satisfacción del 95%. Esa experiencia acumulada de más de 15 años facilitando grupos es la base sobre la que se diseñó cada módulo del catálogo.
+        PersonaLab nació del mismo equipo detrás de Trascendencia, una empresa de formación humana con presencia en 7 países y una calificación de satisfacción del 95%. Cada módulo del catálogo se construyó sobre más de 15 años de retiros reales, grupos reales y resultados comprobados.
       </p>
+    </div>
+    <div class="trascendencia-ref reveal d2">
+      <a href="https://www.latrascendencia.com/" target="_blank" rel="noopener" class="trascendencia-link">
+        <img src="../../logos/logotrascendencia.png" alt="Trascendencia" class="trascendencia-ref-logo">
+        <span class="trascendencia-ref-label">Visitar Trascendencia →</span>
+      </a>
     </div>
     <div class="equipo-grid">
       <div class="miembro-card reveal">
         <div class="miembro-accent"></div>
-        <span class="miembro-tag">Fundadora</span>
-        <h3 class="miembro-nombre">Patricia Arriaza</h3>
-        <p class="miembro-rol">Diseñadora de experiencias · Facilitadora</p>
-        <p class="miembro-bio">Comenzó como moderadora de YPO Guatemala, donde descubrió de primera mano la falta de recursos de calidad para facilitar retiros profundos. Esa experiencia la llevó a crear PersonaLab. Hoy diseña experiencias que combinan psicología, espiritualidad y narrativa para grupos de líderes, apoyada en el respaldo de más de 20 años de Trascendencia.</p>
+        <span class="miembro-tag">La raíz</span>
+        <h3 class="miembro-nombre">Retiros que formaron el catálogo</h3>
+        <p class="miembro-rol">Experiencia de campo · Grupos reales · Resultados comprobados</p>
+        <p class="miembro-bio">Durante más de 15 años, Trascendencia diseñó y facilitó retiros profundos para grupos de líderes empresariales, familias y equipos en 7 países. Cada retiro fue un laboratorio: qué preguntas abren conversaciones reales, qué dinámicas generan cambio genuino, qué temas resuenan con profundidad. PersonaLab sistematizó ese aprendizaje.</p>
       </div>
       <div class="miembro-card reveal d1">
         <div class="miembro-accent"></div>
-        <span class="miembro-tag">Co-fundador</span>
-        <h3 class="miembro-nombre">Equipo PersonaLab</h3>
-        <p class="miembro-rol">Psicología · Filosofía · Liderazgo</p>
-        <p class="miembro-bio">Un equipo con raíces en psicología, filosofía existencial y desarrollo humano. Detrás de Trascendencia, la marca que dio origen a PersonaLab, hay más de 15 años facilitando grupos en 7 países, con una calificación de satisfacción del 95%. Cada experiencia del catálogo es el resultado de ese acumulado: diseño riguroso, prueba real y refinamiento continuo.</p>
+        <span class="miembro-tag">El puente</span>
+        <h3 class="miembro-nombre">De la experiencia al módulo</h3>
+        <p class="miembro-rol">Diseño · Metodología · Contenido probado</p>
+        <p class="miembro-bio">PersonaLab es la forma de hacer accesible ese acervo. Cada módulo del catálogo fue construido sobre lo que Trascendencia probó, refinó y validó en el campo. No son ideas teóricas: son experiencias que ya transformaron grupos reales, disponibles ahora en un formato que cualquier moderador puede facilitar con confianza.</p>
       </div>
     </div>
   </div>
@@ -889,18 +929,14 @@
   <div class="container" style="width: 100%; max-width: 100%; padding: 0;">
     <div class="numeros-grid">
       <div class="numero-item reveal">
-        <div class="numero-val">20+</div>
-        <div class="numero-label">Años de trayectoria</div>
-      </div>
-      <div class="numero-item reveal d1">
         <div class="numero-val">7</div>
         <div class="numero-label">Países con presencia activa</div>
       </div>
-      <div class="numero-item reveal d2">
+      <div class="numero-item reveal d1">
         <div class="numero-val">95%</div>
         <div class="numero-label">Calificación de satisfacción</div>
       </div>
-      <div class="numero-item reveal d3">
+      <div class="numero-item reveal d2">
         <div class="numero-val">15+</div>
         <div class="numero-label">Años facilitando grupos</div>
       </div>
