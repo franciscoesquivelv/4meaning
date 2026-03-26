@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Oscar Esquivel — All Programs</title>
+  <meta name="description" content="Browse all 25 training programs and 10 curated bundles by Oscar Esquivel.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --orange: #FF4D00;
+      --orange-dim: #cc3d00;
+      --black: #080808;
+      --dark: #111111;
+      --surface: #181818;
+      --border: #272727;
+      --white: #ffffff;
+      --muted: #888888;
+      --muted-light: #aaaaaa;
+      --font-head: 'Barlow Condensed', sans-serif;
+      --font-body: 'Barlow', sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--black); color: var(--white); font-family: var(--font-body); font-size: 16px; line-height: 1.6; overflow-x: hidden; }
+
+    /* NAV */
+    #nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 0 40px; height: 72px; background: rgba(8,8,8,.96); border-bottom: 1px solid var(--border); backdrop-filter: blur(12px); }
+    .nav-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+    .nav-logo-icon { height: 36px; width: auto; }
+    .nav-logo-word { height: 18px; width: auto; }
+    .nav-links { display: flex; align-items: center; gap: 36px; list-style: none; }
+    .nav-links a { color: rgba(255,255,255,.75); text-decoration: none; font-size: 14px; font-weight: 500; letter-spacing: .04em; text-transform: uppercase; transition: color .2s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--white); }
+    .nav-links a.active { color: var(--orange); }
+    .nav-cta { background: var(--orange); color: var(--white); text-decoration: none; font-size: 14px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; padding: 10px 24px; border-radius: 4px; transition: background .2s; }
+    .nav-cta:hover { background: var(--orange-dim); }
+    .nav-hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
+    .nav-hamburger span { display: block; width: 24px; height: 2px; background: var(--white); border-radius: 2px; }
+
+    /* MOBILE MENU */
+    .mobile-menu { display: none; position: fixed; inset: 0; z-index: 99; background: rgba(8,8,8,.98); flex-direction: column; align-items: center; justify-content: center; gap: 32px; }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a { font-family: var(--font-head); font-size: 40px; font-weight: 900; text-transform: uppercase; color: var(--white); text-decoration: none; transition: color .2s; }
+    .mobile-menu a:hover, .mobile-menu a.orange { color: var(--orange); }
+    .mobile-close { position: absolute; top: 24px; right: 24px; background: none; border: none; color: var(--white); font-size: 28px; cursor: pointer; }
+
+    /* PAGE HEADER */
+    .page-header { padding: 140px 40px 72px; background: var(--dark); border-bottom: 1px solid var(--border); }
+    .page-header-inner { max-width: 1200px; margin: 0 auto; }
+    .back-link { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); text-decoration: none; font-size: 13px; font-weight: 500; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 24px; transition: color .2s; }
+    .back-link:hover { color: var(--white); }
+    .section-label { display: inline-flex; align-items: center; gap: 10px; font-size: 11px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--orange); margin-bottom: 16px; }
+    .section-label::before { content: ''; display: block; width: 24px; height: 2px; background: var(--orange); }
+    .page-title { font-family: var(--font-head); font-size: clamp(52px, 7vw, 90px); font-weight: 900; line-height: .92; text-transform: uppercase; letter-spacing: -.01em; margin-bottom: 20px; }
+    .page-title em { font-style: normal; color: var(--orange); }
+    .page-sub { font-size: 16px; font-weight: 300; color: rgba(255,255,255,.6); }
+    .page-sub strong { color: var(--orange); font-weight: 600; }
+
+    /* LEGEND */
+    .legend { display: flex; gap: 24px; margin-top: 28px; flex-wrap: wrap; }
+    .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 500; color: var(--muted-light); }
+    .legend-swatch { width: 10px; height: 10px; border-radius: 2px; }
+    .legend-swatch.basic { background: var(--surface); border: 1px solid var(--muted); }
+    .legend-swatch.pro { background: var(--orange); }
+    .legend-swatch.bundle { background: var(--orange); border: 2px solid var(--black); outline: 1px solid var(--orange); }
+
+    /* PROGRAMS SECTION */
+    .programs-section { padding: 64px 40px 100px; }
+    .programs-wrap { max-width: 1200px; margin: 0 auto; }
+
+    /* FILTERS */
+    .catalog-filters { display: flex; flex-direction: column; gap: 12px; margin-bottom: 40px; padding: 24px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; }
+    .filter-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .filter-label { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); min-width: 88px; }
+    .filter-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+    .filter-pill { font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; padding: 6px 14px; border-radius: 100px; border: 1.5px solid var(--border); color: var(--muted-light); background: transparent; cursor: pointer; transition: all .2s; }
+    .filter-pill:hover { border-color: var(--white); color: var(--white); }
+    .filter-pill.active { background: var(--orange); border-color: var(--orange); color: var(--white); }
+    .filter-pill.active.cat-basic { background: var(--surface); border-color: var(--muted); color: var(--white); }
+    .filter-pill.active.cat-pro { background: var(--orange); border-color: var(--orange); }
+    .filter-pill.active.cat-bundle { background: var(--black); border-color: var(--white); }
+
+    /* COUNT */
+    .catalog-count { font-size: 13px; color: var(--muted); margin-bottom: 28px; }
+    .catalog-count span { color: var(--orange); font-weight: 600; }
+
+    /* GRID */
+    .programs-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+
+    /* CARDS — BASE */
+    .workout-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; transition: transform .3s, border-color .3s, box-shadow .3s; display: flex; flex-direction: column; }
+    .workout-card:hover { transform: translateY(-4px); }
+    .workout-card.hidden { display: none; }
+
+    /* BASIC card */
+    .workout-card.basic:hover { border-color: var(--muted); }
+
+    /* PRO card */
+    .workout-card.pro { border-color: var(--orange); border-width: 1.5px; }
+    .workout-card.pro:hover { box-shadow: 0 8px 32px rgba(255,77,0,.2); }
+
+    /* BUNDLE card */
+    .workout-card.bundle { background: var(--orange); border-color: var(--orange); }
+    .workout-card.bundle:hover { border-color: var(--black); box-shadow: 0 8px 40px rgba(255,77,0,.35); transform: translateY(-4px); }
+    .workout-card.bundle .card-title { color: white; }
+    .workout-card.bundle .card-desc { color: rgba(255,255,255,.88); }
+    .workout-card.bundle .card-footer { border-color: rgba(255,255,255,.25); }
+    .workout-card.bundle .card-price-num { color: white; }
+    .workout-card.bundle .card-price-label { color: rgba(255,255,255,.7); }
+    .workout-card.bundle .card-btn { background: var(--black); color: white; }
+    .workout-card.bundle .card-btn:hover { background: var(--dark); }
+
+    /* CARD IMAGE */
+    .card-img { position: relative; aspect-ratio: 16/10; overflow: hidden; }
+    .card-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s; }
+    .workout-card:hover .card-img img { transform: scale(1.05); }
+    .card-img-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(8,8,8,.65) 0%, transparent 55%); }
+    .workout-card.bundle .card-img-overlay { background: linear-gradient(to top, rgba(255,77,0,.6) 0%, rgba(255,77,0,.1) 55%); }
+
+    /* CATEGORY BADGE */
+    .cat-badge { position: absolute; top: 14px; left: 14px; font-size: 9px; font-weight: 900; letter-spacing: .18em; text-transform: uppercase; padding: 4px 10px; border-radius: 3px; }
+    .cat-badge.basic { background: rgba(8,8,8,.85); border: 1px solid rgba(255,255,255,.2); color: rgba(255,255,255,.75); }
+    .cat-badge.pro { background: var(--orange); color: white; }
+    .cat-badge.bundle { background: rgba(0,0,0,.85); color: white; border: 1px solid rgba(255,255,255,.25); }
+
+    /* DURATION */
+    .card-duration { position: absolute; top: 14px; right: 14px; background: rgba(8,8,8,.85); color: var(--white); font-size: 11px; font-weight: 700; letter-spacing: .06em; padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border); }
+
+    /* CARD BODY */
+    .card-body { padding: 18px 20px 20px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+    .card-tags { display: flex; gap: 5px; flex-wrap: wrap; }
+    .card-tag { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 3px 7px; border-radius: 3px; border: 1px solid var(--border); color: var(--muted-light); }
+    .card-tag.hi { border-color: rgba(255,77,0,.35); color: var(--orange); }
+    .workout-card.bundle .card-tag { background: rgba(0,0,0,.2); border-color: rgba(255,255,255,.25); color: rgba(255,255,255,.85); }
+    .card-title { font-family: var(--font-head); font-size: 20px; font-weight: 800; line-height: 1.1; text-transform: uppercase; letter-spacing: .01em; }
+    .card-desc { font-size: 13px; font-weight: 300; color: rgba(255,255,255,.65); line-height: 1.6; flex: 1; }
+    .workout-card.bundle .card-desc { color: rgba(255,255,255,.88); }
+
+    /* BUNDLE CONTENTS */
+    .bundle-contents { margin-top: 2px; padding: 10px 12px; background: rgba(0,0,0,.2); border-radius: 4px; border: 1px solid rgba(255,255,255,.15); }
+    .bundle-contents-label { font-size: 9px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: rgba(255,255,255,.5); margin-bottom: 7px; }
+    .bundle-items { display: flex; flex-direction: column; gap: 4px; }
+    .bundle-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: rgba(255,255,255,.85); line-height: 1.3; }
+    .bi-cat { font-size: 8px; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; padding: 2px 5px; border-radius: 2px; flex-shrink: 0; }
+    .bi-cat.pro { background: rgba(0,0,0,.5); color: rgba(255,255,255,.9); }
+    .bi-cat.basic { background: rgba(255,255,255,.15); color: rgba(255,255,255,.65); }
+
+    /* CARD FOOTER */
+    .card-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 14px; border-top: 1px solid var(--border); margin-top: auto; }
+    .card-price { display: flex; flex-direction: column; line-height: 1; }
+    .card-price-num { font-family: var(--font-head); font-size: 28px; font-weight: 900; color: var(--white); }
+    .card-price-label { font-size: 10px; color: var(--muted); font-weight: 500; letter-spacing: .06em; text-transform: uppercase; }
+    .card-btn { background: var(--orange); color: var(--white); text-decoration: none; font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 10px 16px; border-radius: 4px; border: none; cursor: pointer; transition: background .2s; white-space: nowrap; }
+    .card-btn:hover { background: var(--orange-dim); }
+
+    /* FOOTER */
+    footer { background: var(--black); border-top: 1px solid var(--border); padding: 60px 40px 32px; }
+    .footer-inner { max-width: 1200px; margin: 0 auto; }
+    .footer-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 40px; padding-bottom: 40px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+    .footer-logo { display: flex; align-items: center; gap: 12px; }
+    .footer-logo img.icon { height: 32px; width: auto; }
+    .footer-logo img.word { height: 16px; width: auto; }
+    .footer-tagline { font-size: 13px; color: var(--muted); margin-top: 8px; max-width: 260px; line-height: 1.6; }
+    .footer-links { display: flex; gap: 60px; flex-wrap: wrap; }
+    .footer-col { display: flex; flex-direction: column; gap: 12px; }
+    .footer-col-title { font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--white); margin-bottom: 4px; }
+    .footer-col a { font-size: 14px; color: var(--muted); text-decoration: none; transition: color .2s; }
+    .footer-col a:hover { color: var(--white); }
+    .footer-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 28px; gap: 16px; flex-wrap: wrap; }
+    .footer-copy { font-size: 13px; color: var(--muted); }
+    .footer-parent { font-size: 13px; color: var(--muted); text-decoration: none; transition: color .2s; }
+    .footer-parent:hover { color: var(--white); }
+
+    /* RESPONSIVE */
+    @media (max-width: 1024px) { .programs-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 768px) {
+      #nav { padding: 0 24px; }
+      .nav-links, .nav-cta { display: none; }
+      .nav-hamburger { display: flex; }
+      .page-header { padding: 110px 24px 56px; }
+      .programs-section { padding: 48px 24px 72px; }
+      .programs-grid { grid-template-columns: 1fr; }
+      .footer-top { flex-direction: column; }
+      .footer-bottom { flex-direction: column; align-items: flex-start; }
+    }
+    @media (max-width: 520px) {
+      .filter-row { flex-direction: column; align-items: flex-start; }
+      .legend { gap: 16px; }
+    }
+
+    /* REVEAL */
+    .reveal { opacity: 0; transform: translateY(20px); transition: opacity .6s ease, transform .6s ease; }
+    .reveal.visible { opacity: 1; transform: none; }
+  </style>
+</head>
+<body>
+
+<nav id="nav">
+  <a href="./index.html" class="nav-logo">
+    <img src="./imagenes/logos/Artboard 1 copy 32.png" alt="OE" class="nav-logo-icon">
+    <img src="./imagenes/logos/Artboard 1 copy2.png" alt="Oscar Esquivel" class="nav-logo-word">
+  </a>
+  <ul class="nav-links">
+    <li><a href="./programs.html" class="active">Programs</a></li>
+    <li><a href="./index.html#about">About</a></li>
+    <li><a href="./index.html#plans">Plans</a></li>
+  </ul>
+  <a href="./index.html#plans" class="nav-cta">Get Started</a>
+  <div class="nav-hamburger" id="hamburger"><span></span><span></span><span></span></div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-close" id="mobileClose">&#x2715;</button>
+  <a href="./programs.html" onclick="closeMobile()">Programs</a>
+  <a href="./index.html#about" onclick="closeMobile()">About</a>
+  <a href="./index.html#plans" onclick="closeMobile()">Plans</a>
+  <a href="./index.html#plans" class="orange" onclick="closeMobile()">Get Started</a>
+</div>
+
+<header class="page-header">
+  <div class="page-header-inner">
+    <a href="./index.html" class="back-link">&#8592; Back to Home</a>
+    <div class="section-label">Full Catalog</div>
+    <h1 class="page-title">All <em>Programs.</em></h1>
+    <p class="page-sub"><strong>15 Basic</strong> · <strong>10 Pro</strong> · <strong>10 Bundles</strong> — filter by what works for you.</p>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-swatch basic"></div> Basic — $12 · 20–25 min building blocks</div>
+      <div class="legend-item"><div class="legend-swatch pro"></div> Pro — $25 · Complete 40–60 min sessions</div>
+      <div class="legend-item"><div class="legend-swatch bundle"></div> Bundle — $45 · Curated full-concept packages</div>
+    </div>
+  </div>
+</header>
+
+<section class="programs-section">
+  <div class="programs-wrap">
+
+    <div class="catalog-filters">
+      <div class="filter-row">
+        <span class="filter-label">Category</span>
+        <div class="filter-pills" data-filter="category">
+          <button class="filter-pill active" data-value="all">All</button>
+          <button class="filter-pill cat-basic" data-value="basic">Basic</button>
+          <button class="filter-pill cat-pro" data-value="pro">Pro</button>
+          <button class="filter-pill cat-bundle" data-value="bundle">Bundle</button>
+        </div>
+      </div>
+      <div class="filter-row">
+        <span class="filter-label">Gender</span>
+        <div class="filter-pills" data-filter="gender">
+          <button class="filter-pill active" data-value="all">All</button>
+          <button class="filter-pill" data-value="men">Men</button>
+          <button class="filter-pill" data-value="women">Women</button>
+          <button class="filter-pill" data-value="mixed">Mixed</button>
+        </div>
+      </div>
+      <div class="filter-row">
+        <span class="filter-label">Age</span>
+        <div class="filter-pills" data-filter="age">
+          <button class="filter-pill active" data-value="all">All</button>
+          <button class="filter-pill" data-value="20-35">20–35</button>
+          <button class="filter-pill" data-value="35-50">35–50</button>
+          <button class="filter-pill" data-value="50+">50+</button>
+        </div>
+      </div>
+      <div class="filter-row">
+        <span class="filter-label">Setting</span>
+        <div class="filter-pills" data-filter="env">
+          <button class="filter-pill active" data-value="all">All</button>
+          <button class="filter-pill" data-value="gym">Gym</button>
+          <button class="filter-pill" data-value="outdoor">Outdoor</button>
+          <button class="filter-pill" data-value="hotel">Hotel</button>
+          <button class="filter-pill" data-value="beach">Beach</button>
+          <button class="filter-pill" data-value="home">Home</button>
+        </div>
+      </div>
+      <div class="filter-row">
+        <span class="filter-label">Type</span>
+        <div class="filter-pills" data-filter="type">
+          <button class="filter-pill active" data-value="all">All</button>
+          <button class="filter-pill" data-value="strength">Strength</button>
+          <button class="filter-pill" data-value="hiit">HIIT</button>
+          <button class="filter-pill" data-value="mobility">Mobility</button>
+          <button class="filter-pill" data-value="activation">Activation</button>
+        </div>
+      </div>
+    </div>
+
+    <p class="catalog-count"><span id="count">35</span> programs available</p>
+
+    <div class="programs-grid" id="programsGrid">
+
+      <!-- ══════════════════════════════════════════ -->
+      <!--  BASIC TRAININGS (15)                      -->
+      <!-- ══════════════════════════════════════════ -->
+
+      <!-- B1 Push Foundation -->
+      <div class="workout-card basic reveal" data-category="basic" data-gender="mixed" data-age="20-35 35-50" data-env="gym" data-type="strength">
+        <div class="card-img">
+          <img src="./imagenes/sports-in-the-gym-2026-01-09-11-02-01-utc.webp" alt="Push Foundation" loading="lazy">
+          <div class="card-img-overlay"></div>
+          <span class="cat-badge basic">Basic</span>
+          <span class="card-duration">25 min</span>
+        </div>
+        <div class="card-body">
+          <div class="card-tags"><span class="card-tag hi">Strength</span><span class="card-tag">Mixed</span><span class="card-tag">Gym</span><span class="card-tag">20–50 yrs</span></div>
+          <h3 class="card-title">Push Foundation</h3>
+          <p class="card-desc">Chest, shoulders, and triceps. A focused push-pattern block that pairs with Pull Foundation and Squat & Hinge to make a complete training day.</p>
+          <div class="card-footer">
+            <div class="card-price"><span class="card-price-num">$12</span><span class="card-price-label">basic · 25 min</span></div>
+            <button class="card-btn">Get It</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- B2 Pull Foundation -->
+      <div class="workout-card basic reveal" data-category="basic" data-gender="mixed" data-age="20-35 35-50" data-env="gym" data-type="strength">
+        <div class="card-img">
+          <img src="./imagenes/low-angle-grayscale-gym-inside-view-with-a-barbell-2026-03-18-16-05-06-utc.webp" alt="Pull Foundation" loading="lazy">
+          <div class="card-img-overlay"></div>
+          <span class="cat-badge basic">Basic</span>
+          <span class="card-duration">25 min</span>
+        </div>
+        <div class="card-body">
+          <div class="card-tags"><span class="card-tag hi">Strength</span><span class="card-tag">Mixed</span><span class="card-tag">Gym</span><span class="card-tag">20–50 yrs</span></div>
+          <h3 class="card-title">Pull Foundation</h3>
+          <p class="card-desc">Back and biceps, built on pull-pattern mechanics. Emphasizes scapular control and form over load. Part of the core gym trio.</p>
+          <div class="card-footer">
+            <div class="card-price"><span class="card-price-num">$12</span><span class="card-price-label">basic · 25 min</span></div>
+            <button class="card-btn">Get It</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- B3 Squat & Hinge -->
+      <div class="workout-card basic reveal" data-category="basic" data-gender="mixed" data-age="20-35 35-50" data-env="gym" data-type="strength">
+        <div class="card-img">
+          <img src="./imagenes/sport-equipment-unrecognizable-black-male-athlete-2026-03-24-03-09-02-utc.webp" alt="Squat & Hinge" loading="lazy">
+          <div class="card-img-overlay"></div>
+          <span class="cat-badge basic">Basic</span>
+          <span class="card-duration">25 min</span>
+        </div>
+        <div class="card-body">
+          <div class="card-tags"><span class="card-tag hi">Strength</span><span class="card-tag">Mixed</span><span class="card-tag">Gym</span><span class="card-tag">20–50 yrs</span></div>
+          <h3 class="card-title">Squat & Hinge</h3>
+          <p class="card-desc">Lower body fundamentals. Squat patterns, hip hinges, and posterior chain activation done right. Complete the trio with Push and Pull.</p>
+          <div class="card-footer">
+            <div class="card-price"><span class="card-price-num">$12</span><span class="card-price-label">basic · 25 min</span></div>
+            <button class="card-btn">Get It</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- B4 Core Ignite -->
+      <div class="workout-card basic reveal" data-category="basic" data-gender="mixed" data-age="20-35 35-50" data-env="home" data-type="activation">
+        <div class="card-img">
+          <img src="./imagenes/diverse-people-working-out-with-fitness-balls-2026-01-07-23-35-57-utc.webp" alt="Core Ignite" loading="lazy">
+          <div class="card-img-overlay"></div>
+          <span class="cat-badge basic">Basic</span>
+          <span class="card-duration">20 min</span>
+        </div>
+        <div class="card-body">
+          <div class="card-tags"><span class="card-tag hi">Activation</span><span class="card-tag">Mixed</span><span class="card-tag">Home</span><span class="card-tag">20–50 yrs</span></div>
+          <h3 class="card-title">Core Ignite</h3>
+          <p class="card-desc">Core activation circuit that fires up the deep stabilizers before any training session — or stands alone as a focused mid-day movement break.</p>
+          <div class="card-footer">
+            <div class="card-price"><span class="card-price-num">$12</span><span class="card-price-label">basic · 20 min</span></div>
+            <button class="card-btn">Get It</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- B5 Hip Mobility -->
+      <div class="workout-card basic reveal" data-category="basic" data-gender="mixed" data-age="35-50 50+" data-env="home" data-type="mobility">
+        <div class="card-img">
+          <img src="./imagenes/sportive-people-using-dumbbells-2026-01-07-23-08-32-utc.webp" alt="Hip Mobility" loading="lazy">
+          <div class="card-img-overlay"></div>
+          <span class="cat-badge basic">Basic</span>
+          <span class="card-duration">20 min</span>
+        </div>
+        <div class="card-body">
+          <div class="card-tags"><span class="card-tag hi">Mobility</span><span class="card-tag">Mixed</span><span class="card-tag">Home</span><span class="card-tag">35–60 yrs</span></div>
+          <h3 class="card-title">Hip Mobility</h3>
+          <p class="card-desc">Hip flexor release, glute activation, and joint mobility for people who sit too much or recover from intense training. Works as a warm-up or standalone.</p>
+          <div class="card-footer">
+            <div class="card-price"><span class="card-price-num">$12</span><span class="card-price-label">basic · 20 min</span></div>
+            <button class="card-btn">Get It</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- B6 Morning Wake-Up -->
+      <div class="workout-card basic reveal" data-category="basic" data-gender="mixed" data-age="35-50" data-env="home" data-type="activation">
+        <div class="card-img">
+          <img src="./imagenes/good-things-come-to-those-who-sweat-2026-03-25-05-31-25-utc.webp" alt="Morning Wake-Up" loading="lazy">
+          <div class="card-img-overlay"></div>
+          <span class="cat-badge basic">Basic</span>
+          <span class="card-duration">20 min</span>
+        </div>
+        <div class="card-body">
+          <div class="card-tags"><span class="card-tag hi">Activation</span><span class="card-tag">Mixed</span><span class="card-tag">Home</span><span class="card-tag">30–55 yrs</span></div>
+          <h3 class="card-title">Morning Wake-Up</h3>
+          <p class="card-desc">Full-body activation in 20 minutes. No equipment, no excuses. Designed to start the day with intention — pairs well with any Travel or HIIT block.</p>
+          <div class="card-footer">
+            <div class="card-price"><span class="card-price-num">$12</span><span class="card-price-label">basic · 20 min</span></div>
+            <button class="card-btn">Get It</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- B7 Hotel Sprint -->
+      <div class="workout-card basic reveal" data-category="basic" data-gender="mixed" data-age="20-35 35-50" data-env="hotel" data-type="hiit">
+        <div class="card-img">
+          <img src="./imagenes/sportsman-and-sportswoman-working-out-on-step-plat-2026-01-05-23-58-50-utc.webp" alt="Hotel Sprint" loading="lazy">
+          <div class="card-img-overlay"></div>
+          <span class="cat-badge basic">Basic</span>
+          <span class="card-duration">25 min</span>
+        </div>
+        <div class="card-body">
+          <div class="card-tags"><span class="card-tag hi">HIIT</span><span class="card-tag">Mixed</span><span class="card-tag">Hotel</span><span class="card-tag">25–50 yrs</span></div>
+          <h3 class="card-title">Hotel Sprint</h3>
+          <p class="card-desc">Bodyweight HIIT for hotel rooms. No equipment, minimal space. Combines interval runs with functional circuits for maximum output on the road.</p>
+          <div class="card-footer">
+            <div class="card-price"><span class="card-price-num">$12</span><span class="card-price-label">basic · 25 min</span></div>
+            <button class="card-btn">Get It</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- B8 Beach Sprint -->
+      <div class="workout-card basic reveal" data-category="basic" data-gender="mixed" data-age="20-35" data-env="beach" data-type="hiit">
+        <div class="card-img">
+          <img src="./imagenes/young-athletic-woman-standing-near-punching-bag-ou-2026-01-05-06-10-26-utc.webp" alt="Beach Sprint" loading="lazy">
+          <div class="card-img-overlay"></div>
+          <span class="cat-badge basic">Basic</span>
+          <span class="card-duration">20 min</span>
+        </div>
+        <div class="card-body">
+          <div class="card-tags"><span class="card-tag hi">HIIT</span><span class="card-tag">Mixed</span><span class="card-tag">Beach</span><span class="card-tag">20–35 yrs</span></div>
+          <h3 class="card-title">Beach Sprint</h3>
+          <p class="card-desc">Sprint intervals on sand. Explosive, demanding, and fun. Pairs with Beach Total for a complete beach training day or works as a standalone burst session.</p>
+          <div class="card-footer">
+            <div class="card-price"><span class="card-price-num">$12</span><span class="card-price-label">basic · 20 min</span></div>
+            <button class="card-btn">Get It</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- B9 Posture Reset -->
+      <div class="workout-card basic reveal" data-category="basic" data-gender="mixed" data-age="35-50 50+" data-env="home" data-type="mobility">
+        <div class="card-img">
+          <img src="./imagenes/training-in-fitness-center-2026-01-08-07-07-37-utc.webp" alt="Posture Reset" loading="lazy">
+          <div class="card-img-overlay"></div>
+          <span class="cat-badge basic">Basic</span>
+          <span class="card-duration">20 min</span>
+        </div>
+        <div class="card-body">
+          <div class="card-tags"><span class="card-tag hi">Mobility</span><span class="card-tag">Mixed</span><span class="card-tag">Home</span><span class="card-tag">35–60 yrs</span></div>
+          <h3 class="card-title">Posture Reset</h3>
+          <p class="card-desc">Shoulder, thoracic, and cervical mobility to undo hours at a desk. Focused on alignment and decompression — a must-have add-on for any weekly routine.</p>
+          <div class="card-footer">
+            <div class="card-price"><span class="card-price-num">$12</span><span class="card-price-label">basic · 20 min</span></div>
+            <button class="card-btn">Get It</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- B10 Glute Builder -->
+      <div class="workout-card basic reveal" data-category="basic" data-gender="women" data-age="20-35 35-50" data-env="gym" data-type="strength">
+        <div class="card-img">
+          <img src="./imagenes/enthusiastic-young-ladies-doing-regular-physical-e-2026-01-09-01-16-21-utc.webp" alt="Glute Builder" loading="lazy">
+          <div class="card-img-overlay"></div>
+          <span class="cat-badge basic">Basic</span>
+          <span class="card-duration">25 min</span>
+        </div>
+        <div class="card-body">
+          <div class="card-tags"><span class="card-tag hi">Strength</span><span class="card-tag">Women</span><span class="card-tag">Gym</span><span class="card-tag">25–45 yrs</span></div>
+          <h3 class="card-title">Glute Builder</h3>
+          <p class="card-desc">Glute isolation and activation focused on progressive overload. Designed to complement Female Power or Women's Upper Body as part of a weekly split.</p>
+          <div class="card-footer">
+            <div class="card-price"><span class="card-price-num">$12</span><span class="card-price-label">basic · 25 min</span></div>
+            <button class="card-btn">Get It</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- B11 Balance Circuit -->
+      <div class="workout-card basic reveal" data-category="basic" data-gender="mixed" data-age="50+" data-env="home" data-type="mobility">
+        <div class="card-img">
+          <img src="./imagenes/diverse-people-working-out-with-fitness-balls-2026-01-07-23-35-57-utc.webp" alt="Balance Circuit" loading="lazy">
+          <div class="card-img-overlay"></div>
+          <span class="cat-badge basic">Basic</span>
+          <span class="card-duration">25 min</span>
+        </div>
+        <div class="card-body">
+          <div class="card-tags"><span class="card-tag hi">Mobility</span><span class="card-tag">Mixed</span><span class="card-tag">Home</span><span class="card-tag">50+ yrs</span></div>
+          <h3 class="card-title">Balance Circuit</h3>
+          <p class="card-desc">Proprioception and balance training for the 50+ body. Builds neuromuscular stability that prevents falls and supports all other physical activity.</p>
+          <div class="card-footer">
+            <div class="card-price"><span class="card-price-num">$12</span><span class="card-price-label">basic · 25 min</span></div>
+            <button class="card-btn">Get It</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- B12 Cardio Burst -->
+      <div class="workout-card basic reveal" data-category="basic" data-gender="men" data-age="20-35" data-env="outdoor" data-type="hiit">
+        <div class="card-img">
+          <img src="./imagenes/happy-fit-men-with-battle-ropes-exercise-in-the-fi-2026-03-25-00-06-17-utc.webp" alt="Cardio Burst" loading="lazy">
+          <div class="card-img-overlay"></div>
+          <span class="cat-badge basic">Basic</span>
+          <span class="card-duration">25 min</span>
+        </div>
+        <div class="card-body">
+          <div class="card-tags"><span class="card-tag hi">HIIT</span><span class="card-tag">Men</span><span class="card-tag">Outdoor</span><span class="card-tag">20–35 yrs</span></div>
+          <h3 class="card-title">Cardio Burst</h3>
+          <p class="card-desc">Sprint intervals and explosive bodyweight movements for outdoor conditioning. Builds the aerobic base that powers every other training modality.</p>
+          <div class="card-footer">
+            <div class="card-price"><span class="card-price-num">$12</span><span class="card-price-label">basic · 25 min</span></div>
+            <button class="card-btn">Get It</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- B13 Recovery Flow -->
+      <div class="workout-card basic reveal" data-category="basic" data-gender="mixed" data-age="35-50 50+" data-env="home" data-type="mobility">
+        <div class="card-img">
+          <img src="./imagenes/sportive-people-using-dumbbells-2026-01-07-23-08-32-utc.webp" alt="Recovery Flow" loading="lazy">
+          <div class="card-img-overlay"></div>
+          <span class="cat-badge basic">Basic</span>
+          <span class="card-duration">25 min</span>
+        </div>
+        <div class="card-body">
+          <div class="card-tags"><span class="card-tag hi">Mobility</span><span class="card-tag">Mixed</span><span class="card-tag">Home</span><span class="card-tag">35–60 yrs</span></div>
+          <h3 class="card-title">Recovery Flow</h3>
+          <p class="card-desc">Full-body stretch and breathwork. Reduces soreness, restores range of motion, and primes the nervous system for the next training day.</p>
+          <div class="card-footer">
+            <div class="card-price"><span class="card-price-num">$12</span><span class="card-price-label">basic · 25 min</span></div>
+            <button class="card-btn">Get It</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- B14 Women's Upper Body -->
+      <div class="workout-card basic reveal" data-category="basic" data-gender="women" data-age="20-35 35-50" data-env="gym" data-type="strength">
+        <div class="card-img">
+          <img src="./imagenes/young-people-working-out-2026-03-10-02-07-22-utc.webp" alt="Women's Upper Body" loading="lazy">
+          <div class="card-img-overlay"></div>
+          <span class="cat-badge basic">Basic</span>
+          <span class="card-duration">25 min</span>
+        </div>
+        <div class="card-body">
+          <div class="card-tags"><span class="card-tag hi">Strength</span><span class="card-tag">Women</span><span class="card-tag">Gym</span><span class="card-tag">25–45 yrs</span></div>
+          <h3 class="card-title">Women's Upper Body</h3>
+          <p class="card-desc">Push and pull patterns designed for women. Balanced upper body development with attention to posture, joint health, and progressive overload.</p>
+          <div class="card-footer">
+            <div class="card-price"><span class="card-price-num">$12</span><span class="card-price-label">basic · 25 min</span></div>
+            <button class="card-btn">Get It</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- B15 Joint Stability -->
+      <div class="workout-card basic reveal" data-category="basic" data-gender="mixed" data-age="35-50 50+" data-env="home" data-type="mobility">
+        <div class="card-img">
+          <img src="./imagenes/diverse-people-working-out-with-fitness-balls-2026-01-07-23-35-57-utc.webp" alt="Joint Stability" loading="lazy">
+          <div class="card-img-overlay"></div>
+          <span class="cat-badge basic">Basic</span>
+          <span class="card-duration">25 min</span>
+        </div>
+        <div class="card-body">
+          <div class="card-tags"><span class="card-tag hi">Mobility</span><span class="card-tag">Mixed</span><span class="card-tag">Home</span><span class="card-tag">35–60 yrs</span></div>
+          <h3 class="card-title">Joint Stability</h3>
+          <p class="card-desc">Knees, hips, and ankles. Targeted stability work that protects the joints most compromised by age or sedentary habits. Essential for long-term movement health.</p>
+          <div class="card-footer">
+            <div class="card-price"><span class="card-price-num">$12</span><span class="card-price-label">basic · 25 min</span></div>
+            <button class="card-btn">Get It</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════ -->
+      <!--  PRO TRAININGS (10)                        -->
+      <!-- ══════════════════════════════════════════ -->
+
+      <!-- P1 Iron Foundation -->
+      <div class="workout-card pro reveal" data-category="pro" data-gender="men" data-age="20-35 35-50" data-env="gym" data-type="strength">
+        <div class="card-img">
+          <img src="./imagenes/low-angle-grayscale-gym-inside-view-with-a-barbell-2026-03-18-16-05-06-utc.webp" alt="Iron Foundation" loading="lazy">
+          <div class="card-img-overlay"></div>
+          <span class="cat-badge pro">Pro</span>
+          <span class="card-duration">60 min</span>
+        </div>
+        <div class="card-body">
+          <div class="card-tags"><span class="card-tag hi">Strength</span><span class="card-tag">Men</span><span class="card-tag">Gym</span><span class="card-tag">25–45 yrs</span></div>
+          <h3 class="card-title">Iron Foundation</h3>
+          <p class="card-desc">8-week hypertrophy and strength program built for men. Progressive overload, correct technique, and real muscle development from the ground up.</p>
+          <div class="card-footer">
+            <div class="card-price"><span class="card-price-num">$25</span><span class="card-price-label">pro · 60 min</span></div>
+            <button class="card-btn">Get It</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- P2 Female Power -->
+      <div class="workout-card pro reveal" data-category="pro" data-gender="women" data-age="20-35 35-50" data-env="gym" data-type="strength">
+        <div class="card-img">
+          <img src="./imagenes/enthusiastic-young-ladies-doing-regular-physical-e-2026-01-09-01-16-21-utc.webp" alt="Female Power" loading="lazy">
+          <div class="card-img-overlay"></div>
+          <span class="cat-badge pro">Pro</span>
+          <span class="card-duration">60 min</span>
+        </div>
+        <div class="card-body">
+          <div class="card-tags"><span class="card-tag hi">Strength</span><span class="card-tag">Women</span><span class="card-tag">Gym</span><span class="card-tag">25–45 yrs</span></div>
+          <h3 class="card-title">Female Power</h3>
+          <p class="card-desc">Functional strength designed for women. No myths. A complete, progressive program that builds muscle, confidence, and real-world physical performance.</p>
+          <div class="card-footer">
+            <div class="card-price"><span class="card-price-num">$25</span><span class="card-price-label">pro · 60 min</span></div>
+            <button class="card-btn">Get It</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- P3 Battle HIIT -->
+      <div class="workout-card pro reveal" data-category="pro" data-gender="men" data-age="20-35" data-env="outdoor" data-type="hiit">
+        <div class="card-img">
+          <img src="./imagenes/happy-fit-men-with-battle-ropes-exercise-in-the-fi-2026-03-25-00-06-17-utc.webp" alt="Battle HIIT" loading="lazy">
+          <div class="card-img-overlay"></div>
+          <span class="cat-badge pro">Pro</span>
+          <span class="card-duration">40 min</span>
+        </div>
+        <div class="card-body">
+          <div class="card-tags"><span class="card-tag hi">HIIT</span><span class="card-tag">Men</span><span class="card-tag">Outdoor</span><span class="card-tag">20–35 yrs</span></div>
+          <h3 class="card-title">Battle HIIT</h3>
+          <p class="card-desc">High-performance outdoor conditioning. Battle ropes, plyometrics, and bodyweight circuits designed to build explosive endurance and burn fat fast.</p>
+          <div class="card-footer">
+            <div class="card-price"><span class="card-price-num">$25</span><span class="card-price-label">pro · 40 min</span></div>
+            <button class="card-btn">Get It</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- P4 Full Body Burn -->
+      <div class="workout-card pro reveal" data-category="pro" data-gender="mixed" data-age="20-35 35-50" data-env="gym" data-type="hiit">
+        <div class="card-img">
+          <img src="./imagenes/sports-in-the-gym-2026-03-25-07-33-54-utc.webp" alt="Full Body Burn" loading="lazy">
+          <div class="card-img-overlay"></div>
+          <span class="cat-badge pro">Pro</span>
+          <span class="card-duration">50 min</span>
+        </div>
+        <div class="card-body">
+          <div class="card-tags"><span class="card-tag hi">HIIT</span><span class="card-tag">Mixed</span><span class="card-tag">Gym</span><span class="card-tag">20–50 yrs</span></div>
+          <h3 class="card-title">Full Body Burn</h3>
+          <p class="card-desc">A complete metabolic conditioning session. Combines strength and cardio intervals in a gym setting for maximum calorie burn and muscular endurance.</p>
+          <div class="card-footer">
+            <div class="card-price"><span class="card-price-num">$25</span><span class="card-price-label">pro · 50 min</span></div>
+            <button class="card-btn">Get It</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- P5 Women 40+ -->
+      <div class="workout-card pro reveal" data-category="pro" data-gender="women" data-age="35-50" data-env="gym" data-type="strength">
+        <div class="card-img">
+          <img src="./imagenes/training-in-fitness-center-2026-01-08-07-07-37-utc.webp" alt="Women 40+" loading="lazy">
+          <div class="card-img-overlay"></div>
+          <span class="cat-badge pro">Pro</span>
+          <span class="card-duration">55 min</span>
+        </div>
+        <div class="card-body">
+          <div class="card-tags"><span class="card-tag hi">Strength</span><span class="card-tag">Women</span><span class="card-tag">Gym</span><span class="card-tag">40–55 yrs</span></div>
+          <h3 class="card-title">Women 40+</h3>
+          <p class="card-desc">Strength, posture, and wellbeing for women after 40. Built around hormonal realities and a preventive approach to create a lasting physical foundation.</p>
+          <div class="card-footer">
+            <div class="card-price"><span class="card-price-num">$25</span><span class="card-price-label">pro · 55 min</span></div>
+            <button class="card-btn">Get It</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- P6 Vitality 50+ -->
+      <div class="workout-card pro reveal" data-category="pro" data-gender="mixed" data-age="50+" data-env="home" data-type="mobility">
+        <div class="card-img">
+          <img src="./imagenes/sportive-people-using-dumbbells-2026-01-07-23-08-32-utc.webp" alt="Vitality 50+" loading="lazy">
+          <div class="card-img-overlay"></div>
+          <span class="cat-badge pro">Pro</span>
+          <span class="card-duration">45 min</span>
+        </div>
+        <div class="card-body">
+          <div class="card-tags"><span class="card-tag hi">Mobility</span><span class="card-tag">Mixed</span><span class="card-tag">Home</span><span class="card-tag">50+ yrs</span></div>
+          <h3 class="card-title">Vitality 50+</h3>
+          <p class="card-desc">A complete 45-minute session for the 50+ body. Balance, gentle strength, and joint mobility working together to keep you active and pain-free long term.</p>
+          <div class="card-footer">
+            <div class="card-price"><span class="card-price-num">$25</span><span class="card-price-label">pro · 45 min</span></div>
+            <button class="card-btn">Get It</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- P7 Combat Ready -->
+      <div class="workout-card pro reveal" data-category="pro" data-gender="men" data-age="20-35" data-env="outdoor" data-type="hiit">
+        <div class="card-img">
+          <img src="./imagenes/sport-equipment-unrecognizable-black-male-athlete-2026-03-24-03-09-02-utc.webp" alt="Combat Ready" loading="lazy">
+          <div class="card-img-overlay"></div>
+          <span class="cat-badge pro">Pro</span>
+          <span class="card-duration">60 min</span>
+        </div>
+        <div class="card-body">
+          <div class="card-tags"><span class="card-tag hi">HIIT</span><span class="card-tag">Men</span><span class="card-tag">Outdoor</span><span class="card-tag">20–40 yrs</span></div>
+          <h3 class="card-title">Combat Ready</h3>
+          <p class="card-desc">High-performance outdoor conditioning for men. Power, speed, and endurance trained together for transferable, real-world fitness that shows up when it matters.</p>
+          <div class="card-footer">
+            <div class="card-price"><span class="card-price-num">$25</span><span class="card-price-label">pro · 60 min</span></div>
+            <button class="card-btn">Get It</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- P8 Travel Warrior -->
+      <div class="workout-card pro reveal" data-category="pro" data-gender="mixed" data-age="20-35 35-50" data-env="hotel" data-type="hiit">
+        <div class="card-img">
+          <img src="./imagenes/sportsman-and-sportswoman-working-out-on-step-plat-2026-01-05-23-58-50-utc.webp" alt="Travel Warrior" loading="lazy">
+          <div class="card-img-overlay"></div>
+          <span class="cat-badge pro">Pro</span>
+          <span class="card-duration">45 min</span>
+        </div>
+        <div class="card-body">
+          <div class="card-tags"><span class="card-tag hi">HIIT</span><span class="card-tag">Mixed</span><span class="card-tag">Hotel</span><span class="card-tag">25–50 yrs</span></div>
+          <h3 class="card-title">Travel Warrior</h3>
+          <p class="card-desc">A complete 45-minute session for anywhere you travel. No equipment needed. Built for hotel rooms but effective in any small space — and fully repeatable.</p>
+          <div class="card-footer">
+            <div class="card-price"><span class="card-price-num">$25</span><span class="card-price-label">pro · 45 min</span></div>
+            <button class="card-btn">Get It</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- P9 Functional Core Pro -->
+      <div class="workout-card pro reveal" data-category="pro" data-gender="mixed" data-age="20-35 35-50" data-env="gym" data-type="strength">
+        <div class="card-img">
+          <img src="./imagenes/sports-in-the-gym-2026-01-09-11-02-01-utc.webp" alt="Functional Core Pro" loading="lazy">
+          <div class="card-img-overlay"></div>
+          <span class="cat-badge pro">Pro</span>
+          <span class="card-duration">45 min</span>
+        </div>
+        <div class="card-body">
+          <div class="card-tags"><span class="card-tag hi">Strength</span><span class="card-tag">Mixed</span><span class="card-tag">Gym</span><span class="card-tag">25–45 yrs</span></div>
+          <h3 class="card-title">Functional Core Pro</h3>
+          <p class="card-desc">Deep core and full-body stability. Beyond crunches: motor control, anti-rotation, and the transferable strength that makes every other program more effective.</p>
+          <div class="card-footer">
+            <div class="card-price"><span class="card-price-num">$25</span><span class="card-price-label">pro · 45 min</span></div>
+            <button class="card-btn">Get It</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- P10 Beach Total -->
+      <div class="workout-card pro reveal" data-category="pro" data-gender="mixed" data-age="20-35" data-env="beach" data-type="strength">
+        <div class="card-img">
+          <img src="./imagenes/close-up-of-female-athlete-walking-on-treadmill-in-2026-03-16-03-27-19-utc.webp" alt="Beach Total" loading="lazy">
+          <div class="card-img-overlay"></div>
+          <span class="cat-badge pro">Pro</span>
+          <span class="card-duration">50 min</span>
+        </div>
+        <div class="card-body">
+          <div class="card-tags"><span class="card-tag hi">Strength</span><span class="card-tag">Mixed</span><span class="card-tag">Beach</span><span class="card-tag">20–40 yrs</span></div>
+          <h3 class="card-title">Beach Total</h3>
+          <p class="card-desc">A complete beach training session. Functional strength circuits using sand resistance, bodyweight mechanics, and natural environment to build real fitness.</p>
+          <div class="card-footer">
+            <div class="card-price"><span class="card-price-num">$25</span><span class="card-price-label">pro · 50 min</span></div>
+            <button class="card-btn">Get It</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════ -->
+      <!--  BUNDLES (10)                              -->
+      <!-- ══════════════════════════════════════════ -->
+
+      <!-- BU1 The Gym Week -->
+      <div class="workout-card bundle reveal" data-category="bundle" data-gender="men" data-age="20-35 35-50" data-env="gym" data-type="strength">
+        <div class="card-img">
+          <img src="./imagenes/low-angle-grayscale-gym-inside-view-with-a-barbell-2026-03-18-16-05-06-utc.webp" alt="The Gym Week" loading="lazy">
+          <div class="card-img-overlay"></div>
+          <span class="cat-badge bundle">Bundle</span>
+          <span class="card-duration">4 programs</span>
+        </div>
+        <div class="card-body">
+          <div class="card-tags"><span class="card-tag">Men</span><span class="card-tag">Gym</span><span class="card-tag">Strength</span><span class="card-tag">25–45 yrs</span></div>
+          <h3 class="card-title">The Gym Week</h3>
+          <p class="card-desc">Everything you need for a complete gym week. Iron Foundation anchors the week while the three Basic blocks give you a full push/pull/legs split.</p>
+          <div class="bundle-contents">
+            <div class="bundle-contents-label">Includes</div>
+            <div class="bundle-items">
+              <div class="bundle-item"><span class="bi-cat pro">PRO</span> Iron Foundation</div>
+              <div class="bundle-item"><span class="bi-cat basic">BASIC</span> Push Foundation</div>
+              <div class="bundle-item"><span class="bi-cat basic">BASIC</span> Pull Foundation</div>
+              <div class="bundle-item"><span class="bi-cat basic">BASIC</span> Squat & Hinge</div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <div class="card-price"><span class="card-price-num">$45</span><span class="card-price-label">save $28</span></div>
+            <button class="card-btn">Get Bundle</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- BU2 Women's Gym Pack -->
+      <div class="workout-card bundle reveal" data-category="bundle" data-gender="women" data-age="20-35 35-50" data-env="gym" data-type="strength">
+        <div class="card-img">
+          <img src="./imagenes/enthusiastic-young-ladies-doing-regular-physical-e-2026-01-09-01-16-21-utc.webp" alt="Women's Gym Pack" loading="lazy">
+          <div class="card-img-overlay"></div>
+          <span class="cat-badge bundle">Bundle</span>
+          <span class="card-duration">3 programs</span>
+        </div>
+        <div class="card-body">
+          <div class="card-tags"><span class="card-tag">Women</span><span class="card-tag">Gym</span><span class="card-tag">Strength</span><span class="card-tag">25–45 yrs</span></div>
+          <h3 class="card-title">Women's Gym Pack</h3>
+          <p class="card-desc">The complete women's gym system. Female Power delivers the full session while Glute Builder and Women's Upper Body fill out the split for a balanced week.</p>
+          <div class="bundle-contents">
+            <div class="bundle-contents-label">Includes</div>
+            <div class="bundle-items">
+              <div class="bundle-item"><span class="bi-cat pro">PRO</span> Female Power</div>
+              <div class="bundle-item"><span class="bi-cat basic">BASIC</span> Glute Builder</div>
+              <div class="bundle-item"><span class="bi-cat basic">BASIC</span> Women's Upper Body</div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <div class="card-price"><span class="card-price-num">$45</span><span class="card-price-label">save $14</span></div>
+            <button class="card-btn">Get Bundle</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- BU3 Travel Ready -->
+      <div class="workout-card bundle reveal" data-category="bundle" data-gender="mixed" data-age="20-35 35-50" data-env="hotel" data-type="hiit">
+        <div class="card-img">
+          <img src="./imagenes/sportsman-and-sportswoman-working-out-on-step-plat-2026-01-05-23-58-50-utc.webp" alt="Travel Ready" loading="lazy">
+          <div class="card-img-overlay"></div>
+          <span class="cat-badge bundle">Bundle</span>
+          <span class="card-duration">3 programs</span>
+        </div>
+        <div class="card-body">
+          <div class="card-tags"><span class="card-tag">Mixed</span><span class="card-tag">Hotel</span><span class="card-tag">HIIT</span><span class="card-tag">25–50 yrs</span></div>
+          <h3 class="card-title">Travel Ready</h3>
+          <p class="card-desc">Your travel training kit. Travel Warrior handles the full session. Hotel Sprint adds intensity. Morning Wake-Up starts every day right — no gym required.</p>
+          <div class="bundle-contents">
+            <div class="bundle-contents-label">Includes</div>
+            <div class="bundle-items">
+              <div class="bundle-item"><span class="bi-cat pro">PRO</span> Travel Warrior</div>
+              <div class="bundle-item"><span class="bi-cat basic">BASIC</span> Hotel Sprint</div>
+              <div class="bundle-item"><span class="bi-cat basic">BASIC</span> Morning Wake-Up</div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <div class="card-price"><span class="card-price-num">$45</span><span class="card-price-label">save $14</span></div>
+            <button class="card-btn">Get Bundle</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- BU4 50+ Complete -->
+      <div class="workout-card bundle reveal" data-category="bundle" data-gender="mixed" data-age="50+" data-env="home" data-type="mobility">
+        <div class="card-img">
+          <img src="./imagenes/sportive-people-using-dumbbells-2026-01-07-23-08-32-utc.webp" alt="50+ Complete" loading="lazy">
+          <div class="card-img-overlay"></div>
+          <span class="cat-badge bundle">Bundle</span>
+          <span class="card-duration">4 programs</span>
+        </div>
+        <div class="card-body">
+          <div class="card-tags"><span class="card-tag">Mixed</span><span class="card-tag">Home</span><span class="card-tag">Mobility</span><span class="card-tag">50+ yrs</span></div>
+          <h3 class="card-title">50+ Complete</h3>
+          <p class="card-desc">A full wellness week for the 50+ body. Vitality 50+ is the anchor session, supported by targeted mobility blocks that build lasting physical independence.</p>
+          <div class="bundle-contents">
+            <div class="bundle-contents-label">Includes</div>
+            <div class="bundle-items">
+              <div class="bundle-item"><span class="bi-cat pro">PRO</span> Vitality 50+</div>
+              <div class="bundle-item"><span class="bi-cat basic">BASIC</span> Hip Mobility</div>
+              <div class="bundle-item"><span class="bi-cat basic">BASIC</span> Balance Circuit</div>
+              <div class="bundle-item"><span class="bi-cat basic">BASIC</span> Recovery Flow</div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <div class="card-price"><span class="card-price-num">$45</span><span class="card-price-label">save $26</span></div>
+            <button class="card-btn">Get Bundle</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- BU5 Outdoor Performance -->
+      <div class="workout-card bundle reveal" data-category="bundle" data-gender="men" data-age="20-35" data-env="outdoor" data-type="hiit">
+        <div class="card-img">
+          <img src="./imagenes/happy-fit-men-with-battle-ropes-exercise-in-the-fi-2026-03-25-00-06-17-utc.webp" alt="Outdoor Performance" loading="lazy">
+          <div class="card-img-overlay"></div>
+          <span class="cat-badge bundle">Bundle</span>
+          <span class="card-duration">3 programs</span>
+        </div>
+        <div class="card-body">
+          <div class="card-tags"><span class="card-tag">Men</span><span class="card-tag">Outdoor</span><span class="card-tag">HIIT</span><span class="card-tag">20–35 yrs</span></div>
+          <h3 class="card-title">Outdoor Performance</h3>
+          <p class="card-desc">Maximum outdoor conditioning. Two Pro anchors push the limits of power and endurance. Cardio Burst adds the aerobic base that ties everything together.</p>
+          <div class="bundle-contents">
+            <div class="bundle-contents-label">Includes</div>
+            <div class="bundle-items">
+              <div class="bundle-item"><span class="bi-cat pro">PRO</span> Combat Ready</div>
+              <div class="bundle-item"><span class="bi-cat pro">PRO</span> Battle HIIT</div>
+              <div class="bundle-item"><span class="bi-cat basic">BASIC</span> Cardio Burst</div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <div class="card-price"><span class="card-price-num">$45</span><span class="card-price-label">save $37</span></div>
+            <button class="card-btn">Get Bundle</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- BU6 Women 40+ Wellness -->
+      <div class="workout-card bundle reveal" data-category="bundle" data-gender="women" data-age="35-50" data-env="gym" data-type="strength">
+        <div class="card-img">
+          <img src="./imagenes/young-people-working-out-2026-03-10-02-07-22-utc.webp" alt="Women 40+ Wellness" loading="lazy">
+          <div class="card-img-overlay"></div>
+          <span class="cat-badge bundle">Bundle</span>
+          <span class="card-duration">3 programs</span>
+        </div>
+        <div class="card-body">
+          <div class="card-tags"><span class="card-tag">Women</span><span class="card-tag">Gym</span><span class="card-tag">Strength</span><span class="card-tag">40–55 yrs</span></div>
+          <h3 class="card-title">Women 40+ Wellness</h3>
+          <p class="card-desc">A complete system for women after 40. Women 40+ leads the week. Posture Reset and Joint Stability protect and restore what daily life takes away.</p>
+          <div class="bundle-contents">
+            <div class="bundle-contents-label">Includes</div>
+            <div class="bundle-items">
+              <div class="bundle-item"><span class="bi-cat pro">PRO</span> Women 40+</div>
+              <div class="bundle-item"><span class="bi-cat basic">BASIC</span> Posture Reset</div>
+              <div class="bundle-item"><span class="bi-cat basic">BASIC</span> Joint Stability</div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <div class="card-price"><span class="card-price-num">$45</span><span class="card-price-label">save $14</span></div>
+            <button class="card-btn">Get Bundle</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- BU7 Core & Stability -->
+      <div class="workout-card bundle reveal" data-category="bundle" data-gender="mixed" data-age="20-35 35-50" data-env="gym" data-type="strength">
+        <div class="card-img">
+          <img src="./imagenes/sports-in-the-gym-2026-01-09-11-02-01-utc.webp" alt="Core & Stability" loading="lazy">
+          <div class="card-img-overlay"></div>
+          <span class="cat-badge bundle">Bundle</span>
+          <span class="card-duration">3 programs</span>
+        </div>
+        <div class="card-body">
+          <div class="card-tags"><span class="card-tag">Mixed</span><span class="card-tag">Gym</span><span class="card-tag">Strength</span><span class="card-tag">25–50 yrs</span></div>
+          <h3 class="card-title">Core & Stability</h3>
+          <p class="card-desc">The complete core system. Functional Core Pro delivers the depth. Core Ignite activates before training. Joint Stability protects the joints that support every movement.</p>
+          <div class="bundle-contents">
+            <div class="bundle-contents-label">Includes</div>
+            <div class="bundle-items">
+              <div class="bundle-item"><span class="bi-cat pro">PRO</span> Functional Core Pro</div>
+              <div class="bundle-item"><span class="bi-cat basic">BASIC</span> Core Ignite</div>
+              <div class="bundle-item"><span class="bi-cat basic">BASIC</span> Joint Stability</div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <div class="card-price"><span class="card-price-num">$45</span><span class="card-price-label">save $14</span></div>
+            <button class="card-btn">Get Bundle</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- BU8 Beach Escape -->
+      <div class="workout-card bundle reveal" data-category="bundle" data-gender="mixed" data-age="20-35" data-env="beach" data-type="strength">
+        <div class="card-img">
+          <img src="./imagenes/close-up-of-female-athlete-walking-on-treadmill-in-2026-03-16-03-27-19-utc.webp" alt="Beach Escape" loading="lazy">
+          <div class="card-img-overlay"></div>
+          <span class="cat-badge bundle">Bundle</span>
+          <span class="card-duration">3 programs</span>
+        </div>
+        <div class="card-body">
+          <div class="card-tags"><span class="card-tag">Mixed</span><span class="card-tag">Beach</span><span class="card-tag">Strength</span><span class="card-tag">20–40 yrs</span></div>
+          <h3 class="card-title">Beach Escape</h3>
+          <p class="card-desc">Your full beach training experience. Beach Total handles the main session. Beach Sprint adds explosive work. Morning Wake-Up sets the tone for the day.</p>
+          <div class="bundle-contents">
+            <div class="bundle-contents-label">Includes</div>
+            <div class="bundle-items">
+              <div class="bundle-item"><span class="bi-cat pro">PRO</span> Beach Total</div>
+              <div class="bundle-item"><span class="bi-cat basic">BASIC</span> Beach Sprint</div>
+              <div class="bundle-item"><span class="bi-cat basic">BASIC</span> Morning Wake-Up</div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <div class="card-price"><span class="card-price-num">$45</span><span class="card-price-label">save $14</span></div>
+            <button class="card-btn">Get Bundle</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- BU9 Recovery Week -->
+      <div class="workout-card bundle reveal" data-category="bundle" data-gender="mixed" data-age="35-50 50+" data-env="home" data-type="mobility">
+        <div class="card-img">
+          <img src="./imagenes/diverse-people-working-out-with-fitness-balls-2026-01-07-23-35-57-utc.webp" alt="Recovery Week" loading="lazy">
+          <div class="card-img-overlay"></div>
+          <span class="cat-badge bundle">Bundle</span>
+          <span class="card-duration">4 programs</span>
+        </div>
+        <div class="card-body">
+          <div class="card-tags"><span class="card-tag">Mixed</span><span class="card-tag">Home</span><span class="card-tag">Mobility</span><span class="card-tag">35–60 yrs</span></div>
+          <h3 class="card-title">Recovery Week</h3>
+          <p class="card-desc">A full deload and recovery week. Four programs designed to work the body without breaking it down — restoring mobility, reducing tension, rebuilding for what's next.</p>
+          <div class="bundle-contents">
+            <div class="bundle-contents-label">Includes</div>
+            <div class="bundle-items">
+              <div class="bundle-item"><span class="bi-cat pro">PRO</span> Vitality 50+</div>
+              <div class="bundle-item"><span class="bi-cat basic">BASIC</span> Recovery Flow</div>
+              <div class="bundle-item"><span class="bi-cat basic">BASIC</span> Hip Mobility</div>
+              <div class="bundle-item"><span class="bi-cat basic">BASIC</span> Posture Reset</div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <div class="card-price"><span class="card-price-num">$45</span><span class="card-price-label">save $26</span></div>
+            <button class="card-btn">Get Bundle</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- BU10 HIIT Anywhere -->
+      <div class="workout-card bundle reveal" data-category="bundle" data-gender="mixed" data-age="20-35 35-50" data-env="gym" data-type="hiit">
+        <div class="card-img">
+          <img src="./imagenes/good-things-come-to-those-who-sweat-2026-03-25-05-31-25-utc.webp" alt="HIIT Anywhere" loading="lazy">
+          <div class="card-img-overlay"></div>
+          <span class="cat-badge bundle">Bundle</span>
+          <span class="card-duration">3 programs</span>
+        </div>
+        <div class="card-body">
+          <div class="card-tags"><span class="card-tag">Mixed</span><span class="card-tag">Gym · Hotel</span><span class="card-tag">HIIT</span><span class="card-tag">20–50 yrs</span></div>
+          <h3 class="card-title">HIIT Anywhere</h3>
+          <p class="card-desc">High intensity with no setting restrictions. Full Body Burn owns the gym. Hotel Sprint keeps the fire going on the road. Cardio Burst fills any outdoor gap.</p>
+          <div class="bundle-contents">
+            <div class="bundle-contents-label">Includes</div>
+            <div class="bundle-items">
+              <div class="bundle-item"><span class="bi-cat pro">PRO</span> Full Body Burn</div>
+              <div class="bundle-item"><span class="bi-cat basic">BASIC</span> Hotel Sprint</div>
+              <div class="bundle-item"><span class="bi-cat basic">BASIC</span> Cardio Burst</div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <div class="card-price"><span class="card-price-num">$45</span><span class="card-price-label">save $14</span></div>
+            <button class="card-btn">Get Bundle</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /programs-grid -->
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <div class="footer-logo">
+          <img src="./imagenes/logos/Artboard 1 copy 32.png" alt="OE" class="icon">
+          <img src="./imagenes/logos/Artboard 1 copy2.png" alt="Oscar Esquivel" class="word">
+        </div>
+        <p class="footer-tagline">Training built for your body, your age, and your lifestyle.</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <span class="footer-col-title">Programs</span>
+          <a href="./programs.html">All Programs</a>
+          <a href="./programs.html?cat=basic">Basic</a>
+          <a href="./programs.html?cat=pro">Pro</a>
+          <a href="./programs.html?cat=bundle">Bundles</a>
+        </div>
+        <div class="footer-col">
+          <span class="footer-col-title">Info</span>
+          <a href="./index.html#about">About Oscar</a>
+          <a href="./index.html#plans">Pricing</a>
+          <a href="./index.html">Home</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2025 Oscar Esquivel. All rights reserved.</span>
+      <a href="https://4meaning.life" class="footer-parent">A 4Meaning brand</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Mobile menu
+  document.getElementById('hamburger').addEventListener('click', () => document.getElementById('mobileMenu').classList.add('open'));
+  document.getElementById('mobileClose').addEventListener('click', () => document.getElementById('mobileMenu').classList.remove('open'));
+  function closeMobile() { document.getElementById('mobileMenu').classList.remove('open'); }
+
+  // Reveal
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); revealObserver.unobserve(e.target); } });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+  // Filter
+  const cards = Array.from(document.querySelectorAll('.workout-card'));
+  const countEl = document.getElementById('count');
+  const filters = { category: 'all', gender: 'all', age: 'all', env: 'all', type: 'all' };
+
+  document.querySelectorAll('[data-filter]').forEach(group => {
+    const key = group.dataset.filter;
+    group.querySelectorAll('.filter-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        group.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        filters[key] = pill.dataset.value;
+        applyFilters();
+      });
+    });
+  });
+
+  function applyFilters() {
+    let visible = 0;
+    cards.forEach(card => {
+      const ok =
+        (filters.category === 'all' || card.dataset.category === filters.category) &&
+        (filters.gender   === 'all' || card.dataset.gender   === filters.gender) &&
+        (filters.age      === 'all' || card.dataset.age.includes(filters.age)) &&
+        (filters.env      === 'all' || card.dataset.env      === filters.env) &&
+        (filters.type     === 'all' || card.dataset.type     === filters.type);
+      card.classList.toggle('hidden', !ok);
+      if (ok) visible++;
+    });
+    countEl.textContent = visible;
+  }
+</script>
+</body>
+</html>
