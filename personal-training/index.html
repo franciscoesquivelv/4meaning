@@ -581,8 +581,8 @@
     }
     .pricing-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
       margin-top: 56px;
     }
     .pricing-card {
@@ -719,6 +719,9 @@
     .mobile-close { position: absolute; top: 24px; right: 24px; background: none; border: none; color: var(--white); font-size: 28px; cursor: pointer; line-height: 1; }
 
     /* ── RESPONSIVE ── */
+    @media (max-width: 1200px) {
+      .pricing-grid { grid-template-columns: repeat(2, 1fr); }
+    }
     @media (max-width: 1024px) {
       .catalog-grid { grid-template-columns: repeat(2, 1fr); }
       .about-wrap { gap: 48px; }
@@ -756,6 +759,7 @@
     .reveal.d2 { transition-delay: .2s; }
     .reveal.d3 { transition-delay: .3s; }
     .reveal.d4 { transition-delay: .4s; }
+    .reveal.d5 { transition-delay: .5s; }
     .reveal.visible { opacity: 1; transform: none; }
   </style>
 </head>
@@ -1133,7 +1137,7 @@
         <div>
           <span class="pricing-badge">Building Blocks</span>
           <h3 class="pricing-name">Basic</h3>
-          <p class="pricing-desc">Short, focused sessions of 20–25 minutes. The building blocks that stack into your week.</p>
+          <p class="pricing-desc">Short, focused sessions of 20–25 min. The building blocks that stack into your week.</p>
         </div>
         <div class="pricing-price">
           <span class="pricing-currency">$</span>
@@ -1143,15 +1147,15 @@
         <ul class="pricing-features">
           <li>20–25 min targeted sessions</li>
           <li>Video guidance included</li>
-          <li>Mix and match with Pro sessions</li>
+          <li>Mix &amp; match with Pro sessions</li>
           <li>No subscription required</li>
         </ul>
         <a href="./programs.html" class="pricing-btn">Browse Basic</a>
       </div>
 
-      <div class="pricing-card featured reveal d2">
+      <div class="pricing-card reveal d2">
         <div>
-          <span class="pricing-badge">Most Popular</span>
+          <span class="pricing-badge">Complete Sessions</span>
           <h3 class="pricing-name">Pro</h3>
           <p class="pricing-desc">Complete 40–60 min sessions with full structure, progression, and execution cues.</p>
         </div>
@@ -1174,7 +1178,7 @@
         <div>
           <span class="pricing-badge">Best Value</span>
           <h3 class="pricing-name">Bundle</h3>
-          <p class="pricing-desc">Curated combos that build a complete training concept. Save vs. buying programs individually.</p>
+          <p class="pricing-desc">Curated combos built around a complete concept. Save vs. buying programs individually.</p>
         </div>
         <div class="pricing-price">
           <span class="pricing-currency">$</span>
@@ -1189,6 +1193,27 @@
           <li>Direct WhatsApp support</li>
         </ul>
         <a href="./programs.html" class="pricing-btn">Browse Bundles</a>
+      </div>
+
+      <div class="pricing-card featured reveal d4">
+        <div>
+          <span class="pricing-badge">Full Access</span>
+          <h3 class="pricing-name">Monthly</h3>
+          <p class="pricing-desc">Unlimited access to every program. Perfect for couples training together or families covering all ages and goals.</p>
+        </div>
+        <div class="pricing-price">
+          <span class="pricing-currency">$</span>
+          <span class="pricing-amount">79</span>
+          <span class="pricing-period">/ month</span>
+        </div>
+        <ul class="pricing-features">
+          <li>Access to all 35 programs</li>
+          <li>Men's + women's programs included</li>
+          <li>All age ranges covered</li>
+          <li>New workouts added monthly</li>
+          <li>Priority access to Oscar</li>
+        </ul>
+        <a href="#plans" class="pricing-btn">Get Started</a>
       </div>
 
     </div>
