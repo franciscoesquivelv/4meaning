@@ -9,6 +9,8 @@
   <meta property="og:description" content="Personalized workouts for the gym, outdoors, or wherever you are.">
   <meta property="og:type" content="website">
   <meta property="og:image" content="./imagenes/sports-in-the-gym-2026-01-09-11-02-01-utc.webp">
+  <link rel="icon" type="image/png" href="./imagenes/logos/Artboard 1 copy 32.png" media="(prefers-color-scheme: dark)">
+  <link rel="icon" type="image/png" href="./imagenes/logos/Artboard 1 copy 22.png" media="(prefers-color-scheme: light)">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -761,9 +763,64 @@
     .reveal.d4 { transition-delay: .4s; }
     .reveal.d5 { transition-delay: .5s; }
     .reveal.visible { opacity: 1; transform: none; }
+
+    /* ── PAGE TRANSITION ── */
+    #page-transition {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: var(--black);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 1;
+      transition: opacity .38s ease;
+      pointer-events: all;
+    }
+    #page-transition.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .pt-wrap {
+      position: relative;
+      width: 88px;
+      height: 88px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .pt-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 2px solid rgba(255,77,0,.18);
+      border-top-color: var(--orange);
+      animation: pt-spin 1s linear infinite;
+    }
+    .pt-logo {
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+      animation: pt-pulse 1.4s ease-in-out infinite;
+    }
+    @keyframes pt-spin {
+      to { transform: rotate(360deg); }
+    }
+    @keyframes pt-pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: .55; transform: scale(.88); }
+    }
   </style>
 </head>
 <body>
+
+<!-- PAGE TRANSITION -->
+<div id="page-transition">
+  <div class="pt-wrap">
+    <div class="pt-ring"></div>
+    <img src="./imagenes/logos/Artboard 1 copy 32.png" alt="" class="pt-logo">
+  </div>
+</div>
 
 <!-- NAV -->
 <nav id="nav">
@@ -1291,6 +1348,21 @@
     entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); revealObserver.unobserve(e.target); } });
   }, { threshold: 0.12 });
   reveals.forEach(el => revealObserver.observe(el));
+
+  // Page transition
+  const pt = document.getElementById('page-transition');
+  // Fade out after page loads
+  requestAnimationFrame(() => requestAnimationFrame(() => pt.classList.add('hidden')));
+  // Intercept internal link clicks
+  document.addEventListener('click', e => {
+    const link = e.target.closest('a[href]');
+    if (!link) return;
+    const href = link.getAttribute('href');
+    if (!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('mailto') || link.target === '_blank') return;
+    e.preventDefault();
+    pt.classList.remove('hidden');
+    setTimeout(() => { window.location.href = href; }, 420);
+  });
 
 </script>
 </body>
