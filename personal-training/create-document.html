@@ -8,6 +8,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="./imagenes/logos/Artboard 1 copy 32.png" media="(prefers-color-scheme: dark)">
+  <link rel="icon" type="image/png" href="./imagenes/logos/Artboard 1 copy 22.png" media="(prefers-color-scheme: light)">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
   <style>
@@ -715,7 +717,24 @@ function showToast(msg) {
 
 // ── INIT ─────────────────────────────────────────────────────────────────────
 
+let _logoBase64 = null;
+
+async function preloadLogo() {
+  try {
+    const resp = await fetch('./imagenes/logos/Artboard 1 copy 32.png');
+    const blob = await resp.blob();
+    await new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => { _logoBase64 = reader.result; resolve(); };
+      reader.readAsDataURL(blob);
+    });
+  } catch (e) {
+    console.warn('Logo preload failed:', e);
+  }
+}
+
 ['warmup','main','cooldown'].forEach(s => renderList(s));
+preloadLogo();
 
 // ── PDF GENERATION ───────────────────────────────────────────────────────────
 
@@ -790,13 +809,17 @@ function buildPDF() {
   doc.setFillColor(OR[0], OR[1], OR[2]);
   doc.rect(0, 0, 4, headerH, 'F');
 
-  // OE badge
-  doc.setFillColor(OR[0], OR[1], OR[2]);
-  doc.roundedRect(M, 11, 22, 22, 1, 1, 'F');
-  doc.setTextColor(0, 0, 0);
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(12);
-  doc.text('OE', M + 11, 25, { align: 'center' });
+  // OE logo
+  if (_logoBase64) {
+    doc.addImage(_logoBase64, 'PNG', M, 12, 22, 22);
+  } else {
+    doc.setFillColor(OR[0], OR[1], OR[2]);
+    doc.roundedRect(M, 11, 22, 22, 1, 1, 'F');
+    doc.setTextColor(0, 0, 0);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.text('OE', M + 11, 25, { align: 'center' });
+  }
 
   // Program title
   doc.setTextColor(WH[0], WH[1], WH[2]);
@@ -973,8 +996,12 @@ function pdfContinHeader(doc, title, W, M, BK, OR, WH, MU) {
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(7.5);
   doc.text(title.toUpperCase(), M, 10);
-  doc.setTextColor(OR[0], OR[1], OR[2]);
-  doc.text('OE', W - M, 10, { align: 'right' });
+  if (_logoBase64) {
+    doc.addImage(_logoBase64, 'PNG', W - M - 8, 3, 8, 8);
+  } else {
+    doc.setTextColor(OR[0], OR[1], OR[2]);
+    doc.text('OE', W - M, 10, { align: 'right' });
+  }
 }
 
 function pdfFooter(doc, W, H, M, BK, MU) {
