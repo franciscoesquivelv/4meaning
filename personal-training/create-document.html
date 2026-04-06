@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Create Document — OE Training</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --orange: #FF4D00;
+      --black: #080808;
+      --surface: #181818;
+      --surface2: #222222;
+      --border: #2c2c2c;
+      --white: #ffffff;
+      --muted: #777777;
+      --font-head: 'Barlow Condensed', sans-serif;
+      --font-body: 'Barlow', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    /* ─── PAGE HEADER ─── */
+    .page-header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 18px 32px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .oe-badge {
+      width: 36px; height: 36px;
+      background: var(--orange);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-head);
+      font-size: 13px; font-weight: 900;
+      color: #000; flex-shrink: 0;
+    }
+    .page-header-title {
+      font-family: var(--font-head);
+      font-size: 20px; font-weight: 800;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+    .page-header-sub {
+      font-size: 12px;
+      color: var(--muted);
+      margin-left: auto;
+    }
+
+    /* ─── MAIN ─── */
+    .main { max-width: 900px; margin: 0 auto; padding: 40px 24px 100px; }
+
+    /* ─── SECTION CARD ─── */
+    .form-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 28px 32px;
+      margin-bottom: 20px;
+    }
+    .form-card-title {
+      font-family: var(--font-head);
+      font-size: 11px; font-weight: 700;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 22px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ─── GRID ─── */
+    .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+    .g4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px; }
+    .g-full { margin-top: 16px; }
+
+    /* ─── FIELD ─── */
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label {
+      font-size: 10px; font-weight: 600;
+      letter-spacing: .1em; text-transform: uppercase;
+      color: var(--muted);
+    }
+    .field label .req { color: var(--orange); margin-left: 2px; }
+    .field input,
+    .field select,
+    .field textarea {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--white);
+      font-family: var(--font-body);
+      font-size: 14px;
+      padding: 10px 12px;
+      outline: none;
+      transition: border-color .2s;
+      width: 100%;
+    }
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus { border-color: var(--orange); }
+    .field input::placeholder,
+    .field textarea::placeholder { color: #444; }
+    .field select option { background: #222; }
+    .field textarea { resize: vertical; min-height: 76px; }
+    .field input.error,
+    .field select.error { border-color: #ff4444; }
+
+    /* ─── AGE CHECKBOXES ─── */
+    .check-row { display: flex; gap: 16px; flex-wrap: wrap; padding-top: 4px; }
+    .check-item { display: flex; align-items: center; gap: 7px; cursor: pointer; user-select: none; }
+    .check-item input[type="checkbox"] {
+      width: 15px; height: 15px;
+      accent-color: var(--orange);
+      cursor: pointer;
+    }
+    .check-item span { font-size: 13px; }
+
+    /* ─── EXERCISE TABLE ─── */
+    .ex-section { margin-top: 0; }
+    .ex-col-heads {
+      display: grid;
+      gap: 8px;
+      padding-right: 40px;
+      margin-bottom: 6px;
+    }
+    .ex-col-heads span {
+      font-size: 9px; font-weight: 700;
+      letter-spacing: .12em; text-transform: uppercase;
+      color: var(--muted);
+    }
+    .ex-rows { display: flex; flex-direction: column; gap: 6px; }
+    .ex-row {
+      display: grid;
+      gap: 8px;
+      align-items: center;
+    }
+    /* warm / cool: Name | Reps | Notes | ✕ */
+    .ex-col-heads.wc,
+    .ex-row.wc { grid-template-columns: 2.2fr 1fr 2fr 32px; }
+    /* main: Name | Sets | Reps | Rest | Tip | ✕ */
+    .ex-col-heads.main,
+    .ex-row.main { grid-template-columns: 2fr 52px 60px 72px 2fr 32px; }
+
+    .ex-row input {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--white);
+      font-family: var(--font-body);
+      font-size: 13px;
+      padding: 8px 10px;
+      outline: none;
+      width: 100%;
+      transition: border-color .2s;
+    }
+    .ex-row input:focus { border-color: var(--orange); }
+    .ex-row input::placeholder { color: #444; }
+    .ex-remove {
+      background: none; border: none;
+      color: #3a3a3a; cursor: pointer;
+      font-size: 15px;
+      width: 32px; height: 32px;
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      transition: color .2s, background .2s;
+      flex-shrink: 0;
+    }
+    .ex-remove:hover { color: #ff4444; background: rgba(255,68,68,.1); }
+    .btn-add-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      margin-top: 12px;
+      background: none;
+      border: 1px dashed var(--border);
+      border-radius: 4px;
+      color: var(--muted);
+      cursor: pointer;
+      font-family: var(--font-body);
+      font-size: 13px;
+      padding: 8px 16px;
+      transition: border-color .2s, color .2s;
+    }
+    .btn-add-row:hover { border-color: var(--orange); color: var(--orange); }
+    .btn-add-row svg { width: 14px; height: 14px; }
+
+    /* ─── GENERATE ─── */
+    .actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-top: 32px;
+    }
+    .btn-reset {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--muted);
+      cursor: pointer;
+      font-family: var(--font-body);
+      font-size: 13px;
+      padding: 12px 24px;
+      transition: border-color .2s, color .2s;
+    }
+    .btn-reset:hover { border-color: #555; color: var(--white); }
+    .btn-generate {
+      background: var(--orange);
+      border: none;
+      border-radius: 4px;
+      color: var(--white);
+      cursor: pointer;
+      font-family: var(--font-head);
+      font-size: 17px; font-weight: 800;
+      letter-spacing: .1em; text-transform: uppercase;
+      padding: 16px 48px;
+      transition: background .2s, transform .15s;
+    }
+    .btn-generate:hover { background: #cc3d00; transform: translateY(-1px); }
+    .btn-generate:active { transform: translateY(0); }
+    .btn-generate:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+
+    /* ─── TOAST ─── */
+    #toast {
+      position: fixed;
+      bottom: 32px; left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #1a2e1a;
+      border: 1px solid #2d5c2d;
+      border-radius: 6px;
+      color: #6fcf6f;
+      font-size: 14px; font-weight: 500;
+      padding: 12px 24px;
+      transition: transform .35s ease;
+      z-index: 999;
+      white-space: nowrap;
+    }
+    #toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 680px) {
+      .g2, .g3, .g4 { grid-template-columns: 1fr; }
+      .ex-col-heads.main,
+      .ex-row.main { grid-template-columns: 2fr 48px 56px 32px; }
+      .ex-row.main input.rest,
+      .ex-row.main input.tip { display: none; }
+      .ex-col-heads.main span:nth-child(4),
+      .ex-col-heads.main span:nth-child(5) { display: none; }
+      .form-card { padding: 20px 18px; }
+      .page-header-sub { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="page-header">
+  <div class="oe-badge">OE</div>
+  <h1 class="page-header-title">Create Routine Document</h1>
+  <span class="page-header-sub">Internal tool — not linked publicly</span>
+</header>
+
+<main class="main">
+
+  <!-- 1. PROGRAM IDENTITY -->
+  <div class="form-card">
+    <div class="form-card-title">01 — Program Identity</div>
+    <div class="g2">
+      <div class="field" style="grid-column: span 2">
+        <label>Program Name <span class="req">*</span></label>
+        <input type="text" id="prog-title" placeholder="e.g. Push Foundation, Iron Circuit, Morning Activation...">
+      </div>
+    </div>
+    <div class="g4" style="margin-top:16px">
+      <div class="field">
+        <label>Type <span class="req">*</span></label>
+        <select id="prog-type">
+          <option value="Basic">Basic</option>
+          <option value="Pro">Pro</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Duration <span class="req">*</span></label>
+        <input type="text" id="prog-duration" placeholder="e.g. 25 min">
+      </div>
+      <div class="field">
+        <label>Category</label>
+        <select id="prog-category">
+          <option value="Strength">Strength</option>
+          <option value="HIIT">HIIT</option>
+          <option value="Mobility">Mobility</option>
+          <option value="Activation">Activation</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Setting</label>
+        <select id="prog-setting">
+          <option value="Gym">Gym</option>
+          <option value="Home">Home</option>
+          <option value="Outdoor">Outdoor</option>
+          <option value="Hotel">Hotel</option>
+          <option value="Beach">Beach</option>
+        </select>
+      </div>
+    </div>
+    <div class="g2" style="margin-top:16px">
+      <div class="field">
+        <label>Target Gender</label>
+        <select id="prog-gender">
+          <option value="Men &amp; Women">Men &amp; Women</option>
+          <option value="Men">Men</option>
+          <option value="Women">Women</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Age Range</label>
+        <div class="check-row">
+          <label class="check-item">
+            <input type="checkbox" id="age-20" value="20–35" checked>
+            <span>20–35</span>
+          </label>
+          <label class="check-item">
+            <input type="checkbox" id="age-35" value="35–50">
+            <span>35–50</span>
+          </label>
+          <label class="check-item">
+            <input type="checkbox" id="age-50" value="50+">
+            <span>50+</span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. DESCRIPTION & HIGHLIGHTS -->
+  <div class="form-card">
+    <div class="form-card-title">02 — Description &amp; Highlights</div>
+    <div class="field">
+      <label>Program Description <span class="req">*</span></label>
+      <textarea id="prog-desc" rows="3" placeholder="What is this program about? Who is it for? What will the client experience? (2–3 sentences)"></textarea>
+    </div>
+    <div class="g3" style="margin-top:16px">
+      <div class="field">
+        <label>Key Benefit 1</label>
+        <input type="text" id="h1" placeholder="e.g. Build foundational pushing strength">
+      </div>
+      <div class="field">
+        <label>Key Benefit 2</label>
+        <input type="text" id="h2" placeholder="e.g. Improve shoulder stability">
+      </div>
+      <div class="field">
+        <label>Key Benefit 3</label>
+        <input type="text" id="h3" placeholder="e.g. Progressive overload built in">
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. WARM-UP -->
+  <div class="form-card">
+    <div class="form-card-title">03 — Warm-Up</div>
+    <div class="ex-section">
+      <div class="ex-col-heads wc">
+        <span>Exercise</span>
+        <span>Reps / Duration</span>
+        <span>Notes</span>
+        <span></span>
+      </div>
+      <div class="ex-rows" id="warmup-rows"></div>
+      <button type="button" class="btn-add-row" onclick="addRow('warmup')">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 2a.75.75 0 01.75.75v4.5h4.5a.75.75 0 010 1.5h-4.5v4.5a.75.75 0 01-1.5 0v-4.5h-4.5a.75.75 0 010-1.5h4.5v-4.5A.75.75 0 018 2z"/></svg>
+        Add exercise
+      </button>
+    </div>
+  </div>
+
+  <!-- 4. MAIN WORKOUT -->
+  <div class="form-card">
+    <div class="form-card-title">04 — Main Workout</div>
+    <div class="ex-section">
+      <div class="ex-col-heads main">
+        <span>Exercise</span>
+        <span>Sets</span>
+        <span>Reps</span>
+        <span>Rest</span>
+        <span>Form Tip</span>
+        <span></span>
+      </div>
+      <div class="ex-rows" id="main-rows"></div>
+      <button type="button" class="btn-add-row" onclick="addRow('main')">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 2a.75.75 0 01.75.75v4.5h4.5a.75.75 0 010 1.5h-4.5v4.5a.75.75 0 01-1.5 0v-4.5h-4.5a.75.75 0 010-1.5h4.5v-4.5A.75.75 0 018 2z"/></svg>
+        Add exercise
+      </button>
+    </div>
+  </div>
+
+  <!-- 5. COOL-DOWN -->
+  <div class="form-card">
+    <div class="form-card-title">05 — Cool-Down</div>
+    <div class="ex-section">
+      <div class="ex-col-heads wc">
+        <span>Exercise</span>
+        <span>Duration</span>
+        <span>Notes</span>
+        <span></span>
+      </div>
+      <div class="ex-rows" id="cooldown-rows"></div>
+      <button type="button" class="btn-add-row" onclick="addRow('cooldown')">
+        <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 2a.75.75 0 01.75.75v4.5h4.5a.75.75 0 010 1.5h-4.5v4.5a.75.75 0 01-1.5 0v-4.5h-4.5a.75.75 0 010-1.5h4.5v-4.5A.75.75 0 018 2z"/></svg>
+        Add exercise
+      </button>
+    </div>
+  </div>
+
+  <!-- 6. COACH'S NOTE -->
+  <div class="form-card">
+    <div class="form-card-title">06 — Coach's Note <span style="color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></div>
+    <div class="field">
+      <textarea id="coach-note" rows="3" placeholder="A personal message, motivation, or context for the client doing this program..."></textarea>
+    </div>
+  </div>
+
+  <!-- ACTIONS -->
+  <div class="actions">
+    <button class="btn-reset" onclick="resetForm()">Clear Form</button>
+    <button class="btn-generate" id="gen-btn" onclick="generatePDF()">
+      Generate PDF →
+    </button>
+  </div>
+
+</main>
+
+<div id="toast">PDF generated and downloaded.</div>
+
+<script>
+// ─── ROW TEMPLATES ─────────────────────────────────────────────────────────
+
+function addRow(section) {
+  const container = document.getElementById(section + '-rows');
+  const div = document.createElement('div');
+  div.className = 'ex-row ' + (section === 'main' ? 'main' : 'wc');
+
+  if (section === 'main') {
+    div.innerHTML = `
+      <input type="text" placeholder="Exercise name">
+      <input type="text" placeholder="3" class="sets">
+      <input type="text" placeholder="10–12" class="reps">
+      <input type="text" placeholder="60 sec" class="rest">
+      <input type="text" placeholder="Form tip or coaching cue" class="tip">
+      <button type="button" class="ex-remove" title="Remove">✕</button>
+    `;
+  } else {
+    const repsLabel = section === 'cooldown' ? 'Duration' : 'Reps / Duration';
+    div.innerHTML = `
+      <input type="text" placeholder="Exercise name">
+      <input type="text" placeholder="${section === 'cooldown' ? '30–45 sec' : '30 sec / 10 reps'}">
+      <input type="text" placeholder="Notes (optional)">
+      <button type="button" class="ex-remove" title="Remove">✕</button>
+    `;
+  }
+
+  div.querySelector('.ex-remove').addEventListener('click', () => div.remove());
+  container.appendChild(div);
+  div.querySelector('input').focus();
+}
+
+function getRows(section) {
+  const rows = [];
+  document.getElementById(section + '-rows').querySelectorAll('.ex-row').forEach(row => {
+    const inputs = row.querySelectorAll('input');
+    if (inputs[0].value.trim()) {
+      rows.push(Array.from(inputs).map(i => i.value.trim()));
+    }
+  });
+  return rows;
+}
+
+// Init with starter rows
+window.addEventListener('DOMContentLoaded', () => {
+  ['warmup','warmup','warmup'].forEach(() => addRow('warmup'));
+  for (let i = 0; i < 5; i++) addRow('main');
+  ['cooldown','cooldown','cooldown'].forEach(() => addRow('cooldown'));
+});
+
+// ─── FORM RESET ────────────────────────────────────────────────────────────
+
+function resetForm() {
+  if (!confirm('Clear all form data?')) return;
+  document.getElementById('prog-title').value = '';
+  document.getElementById('prog-desc').value = '';
+  document.getElementById('prog-duration').value = '';
+  document.getElementById('h1').value = '';
+  document.getElementById('h2').value = '';
+  document.getElementById('h3').value = '';
+  document.getElementById('coach-note').value = '';
+  document.getElementById('age-20').checked = true;
+  document.getElementById('age-35').checked = false;
+  document.getElementById('age-50').checked = false;
+  ['warmup','main','cooldown'].forEach(s => {
+    document.getElementById(s + '-rows').innerHTML = '';
+    const count = s === 'main' ? 5 : 3;
+    for (let i = 0; i < count; i++) addRow(s);
+  });
+}
+
+// ─── TOAST ────────────────────────────────────────────────────────────────
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+// ─── PDF GENERATION ────────────────────────────────────────────────────────
+
+async function generatePDF() {
+  // Validate required fields
+  const titleEl = document.getElementById('prog-title');
+  const descEl  = document.getElementById('prog-desc');
+  const durEl   = document.getElementById('prog-duration');
+  let valid = true;
+  [titleEl, descEl, durEl].forEach(el => {
+    el.classList.remove('error');
+    if (!el.value.trim()) { el.classList.add('error'); valid = false; }
+  });
+  if (!valid) { titleEl.focus(); return; }
+
+  const btn = document.getElementById('gen-btn');
+  btn.disabled = true;
+  btn.textContent = 'Generating...';
+
+  await new Promise(r => setTimeout(r, 50)); // let UI update
+
+  try {
+    buildPDF();
+    showToast('PDF downloaded successfully.');
+  } catch(e) {
+    console.error(e);
+    showToast('Error generating PDF. Check console.');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Generate PDF →';
+  }
+}
+
+function buildPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'mm', format: 'letter' });
+
+  // ── Dimensions
+  const W = 215.9;
+  const H = 279.4;
+  const M = 14;
+
+  // ── Collect data
+  const title    = document.getElementById('prog-title').value.trim();
+  const type     = document.getElementById('prog-type').value;
+  const duration = document.getElementById('prog-duration').value.trim();
+  const category = document.getElementById('prog-category').value;
+  const setting  = document.getElementById('prog-setting').value;
+  const gender   = document.getElementById('prog-gender').value;
+  const ages     = ['age-20','age-35','age-50']
+    .filter(id => document.getElementById(id).checked)
+    .map(id => document.getElementById(id).value);
+  const desc      = document.getElementById('prog-desc').value.trim();
+  const h1        = document.getElementById('h1').value.trim();
+  const h2        = document.getElementById('h2').value.trim();
+  const h3        = document.getElementById('h3').value.trim();
+  const note      = document.getElementById('coach-note').value.trim();
+  const highlights = [h1,h2,h3].filter(Boolean);
+
+  const warmupRows   = getRows('warmup');
+  const mainRows     = getRows('main');
+  const cooldownRows = getRows('cooldown');
+
+  // ── Color helpers
+  const BK  = [8,   8,   8];
+  const OR  = [255, 77,  0];
+  const WH  = [255, 255, 255];
+  const GR  = [240, 240, 240];
+  const DG  = [28,  28,  28];
+  const MU  = [130, 130, 130];
+  const LO  = [255, 237, 229]; // light orange tint
+
+  // ── y tracker (top of current content)
+  let y = 0;
+
+  // ══════════════════════════════════════════
+  // PAGE 1 HEADER
+  // ══════════════════════════════════════════
+  const headerH = 54;
+  doc.setFillColor(...BK);
+  doc.rect(0, 0, W, headerH, 'F');
+
+  // Orange left accent bar
+  doc.setFillColor(...OR);
+  doc.rect(0, 0, 4, headerH, 'F');
+
+  // OE box
+  doc.setFillColor(...OR);
+  doc.roundedRect(M, 12, 22, 22, 1, 1, 'F');
+  doc.setTextColor(...BK);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(12);
+  doc.text('OE', M + 11, 26, { align: 'center' });
+
+  // Program title
+  doc.setTextColor(...WH);
+  doc.setFont('helvetica', 'bold');
+  const titleFontSize = title.length > 28 ? 22 : 26;
+  doc.setFontSize(titleFontSize);
+  doc.text(title.toUpperCase(), M + 28, 26);
+
+  // Type badge + metadata
+  const isBasic = type === 'Basic';
+  doc.setFillColor(isBasic ? 60 : 255, isBasic ? 60 : 77, isBasic ? 60 : 0);
+  doc.roundedRect(M + 28, 30, isBasic ? 18 : 14, 7, 1, 1, 'F');
+  doc.setTextColor(isBasic ? ...WH : ...BK);
+  doc.setFontSize(6.5);
+  doc.setFont('helvetica', 'bold');
+  doc.text(type.toUpperCase(), M + 28 + (isBasic ? 9 : 7), 35.2, { align: 'center' });
+
+  // Metadata string
+  const meta = `${duration}  ·  ${category}  ·  ${setting}`;
+  doc.setTextColor(...MU);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(9);
+  doc.text(meta, M + 28 + (isBasic ? 22 : 18), 35.2);
+
+  // Target info
+  const ageStr = ages.length ? ages.join(', ') : 'All ages';
+  doc.setTextColor(...MU);
+  doc.setFontSize(8.5);
+  doc.text(`For: ${gender}  ·  ${ageStr}`, M + 28, 46);
+
+  y = headerH + 12;
+
+  // ══════════════════════════════════════════
+  // DESCRIPTION
+  // ══════════════════════════════════════════
+  if (desc) {
+    doc.setTextColor(50, 50, 50);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    const lines = doc.splitTextToSize(desc, W - M * 2);
+    doc.text(lines, M, y);
+    y += lines.length * 5.2 + 8;
+  }
+
+  // ══════════════════════════════════════════
+  // HIGHLIGHTS
+  // ══════════════════════════════════════════
+  if (highlights.length) {
+    const boxH = highlights.length * 9 + 14;
+    doc.setFillColor(250, 247, 245);
+    doc.roundedRect(M, y, W - M*2, boxH, 2, 2, 'F');
+    doc.setFillColor(...OR);
+    doc.rect(M, y, 3, boxH, 'F');
+    let hy = y + 10;
+    highlights.forEach(h => {
+      doc.setFillColor(...OR);
+      doc.circle(M + 9, hy - 1, 1.5, 'F');
+      doc.setTextColor(40, 40, 40);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(9.5);
+      doc.text(h, M + 14, hy);
+      hy += 9;
+    });
+    y += boxH + 12;
+  }
+
+  // ══════════════════════════════════════════
+  // EXERCISE SECTIONS
+  // ══════════════════════════════════════════
+
+  const sectionDefs = [
+    { key: 'warmup',   label: 'WARM-UP',      rows: warmupRows,   head: ['Exercise', 'Reps / Duration', 'Notes'],             cols: [{cw:70,bold:true},{cw:42},{cw:'auto'}] },
+    { key: 'main',     label: 'MAIN WORKOUT',  rows: mainRows,     head: ['Exercise', 'Sets', 'Reps', 'Rest', 'Form Tip'],     cols: [{cw:52,bold:true},{cw:16},{cw:22},{cw:22},{cw:'auto'}] },
+    { key: 'cooldown', label: 'COOL-DOWN',     rows: cooldownRows, head: ['Exercise', 'Duration', 'Notes'],                   cols: [{cw:70,bold:true},{cw:38},{cw:'auto'}] },
+  ];
+
+  sectionDefs.forEach(section => {
+    if (!section.rows.length) return;
+
+    // Check if there's enough space for the header (at least 30mm needed)
+    if (y > 240) { doc.addPage(); y = 24; }
+
+    // Section header
+    doc.setFillColor(...DG);
+    doc.rect(M, y, W - M*2, 11, 'F');
+    doc.setFillColor(...OR);
+    doc.rect(M, y, 3, 11, 'F');
+    doc.setTextColor(...WH);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(9);
+    doc.text(section.label, M + 7, y + 7.5);
+    y += 11;
+
+    // Build column styles
+    const columnStyles = {};
+    section.cols.forEach((c, i) => {
+      columnStyles[i] = {};
+      if (c.cw !== 'auto') columnStyles[i].cellWidth = c.cw;
+      if (c.bold) columnStyles[i].fontStyle = 'bold';
+    });
+
+    doc.autoTable({
+      startY: y,
+      margin: { left: M, right: M, top: 24, bottom: 18 },
+      head: [section.head],
+      body: section.rows,
+      theme: 'grid',
+      headStyles: {
+        fillColor: [20, 20, 20],
+        textColor: [200, 200, 200],
+        fontStyle: 'bold',
+        fontSize: 8,
+        cellPadding: { top: 5, bottom: 5, left: 6, right: 4 },
+      },
+      bodyStyles: {
+        fontSize: 9,
+        textColor: [35, 35, 35],
+        cellPadding: { top: 6, bottom: 6, left: 6, right: 4 },
+        lineColor: [220, 220, 220],
+        lineWidth: 0.2,
+      },
+      alternateRowStyles: { fillColor: [248, 248, 248] },
+      styles: {
+        lineColor: [210, 210, 210],
+        lineWidth: 0.25,
+        overflow: 'linebreak',
+      },
+      columnStyles,
+      didDrawPage: (data) => {
+        if (data.pageNumber > 1) {
+          drawContinuationHeader(doc, title, W, M, BK, OR, WH, MU);
+        }
+        drawPageFooter(doc, W, H, M, BK, MU);
+      },
+    });
+
+    y = doc.lastAutoTable.finalY + 10;
+  });
+
+  // ══════════════════════════════════════════
+  // COACH'S NOTE
+  // ══════════════════════════════════════════
+  if (note) {
+    if (y > 238) { doc.addPage(); y = 24; }
+
+    const noteLines = doc.splitTextToSize(note, W - M*2 - 24);
+    const noteH = noteLines.length * 5.5 + 24;
+
+    doc.setFillColor(...LO);
+    doc.roundedRect(M, y, W - M*2, noteH, 2, 2, 'F');
+    doc.setFillColor(...OR);
+    doc.rect(M, y, 3, noteH, 'F');
+
+    doc.setTextColor(...OR);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(7.5);
+    doc.text("COACH'S NOTE", M + 8, y + 9);
+
+    doc.setTextColor(60, 30, 15);
+    doc.setFont('helvetica', 'italic');
+    doc.setFontSize(9.5);
+    doc.text(noteLines, M + 8, y + 17);
+
+    y += noteH + 10;
+  }
+
+  // ══════════════════════════════════════════
+  // FOOTERS ON ALL PAGES
+  // ══════════════════════════════════════════
+  const totalPages = doc.getNumberOfPages();
+  for (let p = 1; p <= totalPages; p++) {
+    doc.setPage(p);
+    if (p > 1) drawContinuationHeader(doc, title, W, M, BK, OR, WH, MU);
+    drawPageFooter(doc, W, H, M, BK, MU);
+    // Page number
+    doc.setTextColor(...MU);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(7.5);
+    doc.text(`${p} / ${totalPages}`, W - M, H - 5, { align: 'right' });
+  }
+
+  // ── Save
+  const filename = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g,'') + '.pdf';
+  doc.save(filename);
+}
+
+function drawContinuationHeader(doc, title, W, M, BK, OR, WH, MU) {
+  doc.setFillColor(...BK);
+  doc.rect(0, 0, W, 16, 'F');
+  doc.setFillColor(...OR);
+  doc.rect(0, 0, 4, 16, 'F');
+  doc.setTextColor(...WH);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(8);
+  doc.text(title.toUpperCase(), M, 10.5);
+  doc.setTextColor(...OR);
+  doc.text('OE', W - M, 10.5, { align: 'right' });
+}
+
+function drawPageFooter(doc, W, H, M, BK, MU) {
+  doc.setFillColor(...BK);
+  doc.rect(0, H - 14, W, 14, 'F');
+  doc.setTextColor(...MU);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(7);
+  doc.text('OSCAR ESQUIVEL  ·  PERSONAL TRAINING', M, H - 5.5);
+  doc.text('4meaning.life/personal-training', W / 2, H - 5.5, { align: 'center' });
+}
+</script>
+
+</body>
+</html>
