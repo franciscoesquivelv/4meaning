@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Hub Operativo — Trascendencia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0f0e0d;
+      --surface:  #1a1917;
+      --surface2: #222120;
+      --border:   #2d2b28;
+      --text:     #f0ede8;
+      --muted:    #88847e;
+      --gold:     #c4a97d;
+      --gold-bg:  rgba(196,169,125,0.09);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Montserrat', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 24px 64px;
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 52px;
+    }
+    .brand-logo {
+      height: 36px;
+      width: auto;
+      filter: brightness(0) invert(1);
+      opacity: 0.88;
+    }
+    .brand-eyebrow {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 220px);
+      gap: 14px;
+      margin-bottom: 52px;
+    }
+
+    .tool-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 26px 22px 22px;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      transition: border-color 0.22s, background 0.22s;
+      cursor: pointer;
+    }
+    .tool-card:hover {
+      border-color: var(--gold);
+      background: var(--surface2);
+    }
+    .tool-card.disabled {
+      cursor: default;
+      opacity: 0.55;
+      pointer-events: none;
+    }
+    .tool-icon {
+      width: 34px;
+      height: 34px;
+      background: var(--gold-bg);
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 8px;
+    }
+    .tool-icon svg { width: 17px; height: 17px; color: var(--gold); }
+    .tool-name {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+    }
+    .tool-desc {
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+    .tool-status {
+      display: inline-block;
+      margin-top: 8px;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      padding: 3px 9px;
+      border-radius: 3px;
+      width: fit-content;
+    }
+    .tool-status.ready  { background: var(--gold-bg); color: var(--gold); }
+    .tool-status.soon   { background: rgba(255,255,255,0.04); color: var(--muted); }
+
+    .divider {
+      width: 100%;
+      max-width: 682px;
+      height: 1px;
+      background: var(--border);
+      margin-bottom: 28px;
+    }
+
+    .notion-section { width: 100%; max-width: 682px; }
+    .notion-label {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+    .notion-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+    }
+    .notion-link {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 9px 15px;
+      text-decoration: none;
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 500;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .notion-link:hover { border-color: var(--gold); color: var(--gold); }
+    .notion-link svg { opacity: 0.4; flex-shrink: 0; transition: opacity 0.2s; }
+    .notion-link:hover svg { opacity: 0.8; }
+
+    @media (max-width: 720px) {
+      .tools-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="brand">
+    <img class="brand-logo" src="../logos/logotrascendencia.png" alt="Trascendencia">
+    <span class="brand-eyebrow">Hub Operativo</span>
+  </div>
+
+  <div class="tools-grid">
+
+    <a href="acuerdos/" class="tool-card">
+      <div class="tool-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
+        </svg>
+      </div>
+      <div class="tool-name">Acuerdos</div>
+      <div class="tool-desc">Genera los 6 tipos de acuerdo de confidencialidad listos para imprimir y firmar.</div>
+      <span class="tool-status ready">Disponible</span>
+    </a>
+
+    <a class="tool-card disabled">
+      <div class="tool-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+      </div>
+      <div class="tool-name">Materiales por Familia</div>
+      <div class="tool-desc">Genera los materiales personalizados para cada pareja participante.</div>
+      <span class="tool-status soon">Próximamente</span>
+    </a>
+
+    <a class="tool-card disabled">
+      <div class="tool-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+        </svg>
+      </div>
+      <div class="tool-name">Agenda del Evento</div>
+      <div class="tool-desc">Genera la agenda imprimible del evento para el equipo y los participantes.</div>
+      <span class="tool-status soon">Próximamente</span>
+    </a>
+
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="notion-section">
+    <p class="notion-label">Manuales y Bases de Datos</p>
+    <div class="notion-links">
+      <a href="#" class="notion-link">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+        </svg>
+        Workspace Notion
+      </a>
+      <a href="#" class="notion-link">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+        </svg>
+        Base de Eventos
+      </a>
+      <a href="#" class="notion-link">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+        </svg>
+        Base de Familias
+      </a>
+      <a href="#" class="notion-link">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+        </svg>
+        Base de Equipo
+      </a>
+    </div>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Acuerdos — Trascendencia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:         #0f0e0d;
+      --surface:    #1a1917;
+      --surface2:   #222120;
+      --border:     #2d2b28;
+      --border-hi:  #4a4642;
+      --text:       #f0ede8;
+      --muted:      #88847e;
+      --gold:       #c4a97d;
+      --gold-bg:    rgba(196,169,125,0.09);
+      --gold-hi:    rgba(196,169,125,0.18);
+      --error:      #c0504a;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 13px;
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    .page-header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 28px;
+      height: 54px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .back-link {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      transition: color 0.2s;
+      flex-shrink: 0;
+    }
+    .back-link:hover { color: var(--text); }
+    .header-sep {
+      width: 1px;
+      height: 18px;
+      background: var(--border);
+      flex-shrink: 0;
+    }
+    .header-logo {
+      height: 20px;
+      width: auto;
+      filter: brightness(0) invert(1);
+      opacity: 0.8;
+    }
+    .header-title {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-left: auto;
+    }
+
+    /* ── LAYOUT ── */
+    .main { max-width: 660px; margin: 0 auto; padding: 40px 24px 120px; }
+
+    /* ── TYPE TABS ── */
+    .type-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-bottom: 32px;
+    }
+    .tab {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--muted);
+      cursor: pointer;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      padding: 8px 16px;
+      transition: all 0.18s;
+      text-transform: uppercase;
+    }
+    .tab:hover { border-color: var(--border-hi); color: var(--text); }
+    .tab.active {
+      background: var(--gold-bg);
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    /* ── FORM SECTION ── */
+    .form-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 28px;
+      margin-bottom: 14px;
+    }
+    .section-label {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 20px;
+      padding-bottom: 13px;
+      border-bottom: 1px solid var(--border);
+    }
+    .fields { display: flex; flex-direction: column; gap: 16px; }
+    .fields-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .field label .req { color: var(--gold); margin-left: 2px; }
+    .field input,
+    .field select,
+    .field textarea {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      color: var(--text);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 13px;
+      font-weight: 400;
+      padding: 10px 13px;
+      outline: none;
+      transition: border-color 0.18s;
+      width: 100%;
+      -webkit-appearance: none;
+    }
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus { border-color: var(--gold); }
+    .field input.invalid,
+    .field select.invalid { border-color: var(--error); }
+    .field input::placeholder,
+    .field textarea::placeholder { color: #4a4744; }
+    .field select option { background: #1a1917; }
+    .field textarea { resize: vertical; min-height: 80px; }
+    .field-hint {
+      font-size: 10px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* cost preview */
+    .cost-preview {
+      background: var(--gold-bg);
+      border: 1px solid rgba(196,169,125,0.2);
+      border-radius: 7px;
+      padding: 14px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .cost-preview-label { font-size: 10px; color: var(--muted); font-weight: 500; letter-spacing: 0.06em; }
+    .cost-preview-value { font-size: 16px; font-weight: 700; color: var(--gold); }
+
+    /* ── GENERATE BTN ── */
+    .btn-generate {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: var(--gold);
+      border: none;
+      border-radius: 7px;
+      color: #1a1917;
+      cursor: pointer;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 14px 28px;
+      width: 100%;
+      transition: background 0.18s, opacity 0.18s;
+    }
+    .btn-generate:hover { background: #d4b98d; }
+    .btn-generate:disabled { opacity: 0.45; cursor: not-allowed; }
+    .btn-generate svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #2a2826;
+      border: 1px solid var(--border-hi);
+      border-radius: 8px;
+      padding: 13px 22px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s, transform 0.25s;
+      white-space: nowrap;
+      z-index: 100;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .toast.success { border-color: rgba(196,169,125,0.4); color: var(--gold); }
+    .toast.error   { border-color: rgba(192,80,74,0.4);  color: #e07070; }
+  </style>
+</head>
+<body>
+
+<header class="page-header">
+  <a href="../" class="back-link">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    Hub
+  </a>
+  <div class="header-sep"></div>
+  <img class="header-logo" src="../../logos/logotrascendencia.png" alt="Trascendencia">
+  <span class="header-title">Acuerdos de Confidencialidad</span>
+</header>
+
+<main class="main">
+
+  <!-- Type selector -->
+  <div class="type-tabs" id="type-tabs">
+    <button class="tab active" data-type="evento">Evento</button>
+    <button class="tab" data-type="video">Equipo de Video</button>
+    <button class="tab" data-type="storybook">Storybook</button>
+    <button class="tab" data-type="staff">Staff</button>
+    <button class="tab" data-type="participante">Participante</button>
+    <button class="tab" data-type="fotografo">Fotógrafo</button>
+  </div>
+
+  <!-- Dynamic form -->
+  <div id="form-container"></div>
+
+  <!-- Generate -->
+  <button class="btn-generate" id="btn-generate">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+    </svg>
+    Generar PDF
+  </button>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─────────────────────────────────────────────
+// AGREEMENT DEFINITIONS
+// ─────────────────────────────────────────────
+const TYPES = {
+  evento: {
+    label: 'Evento Trascendencia',
+    sections: [
+      {
+        title: 'Datos del Evento',
+        fields: [
+          { id: 'capitulo',    label: 'Capítulo YPO',                 type: 'text',   req: true,  placeholder: 'Ej: YPO México Norte' },
+          { id: 'contacto',    label: 'Representante del capítulo',   type: 'text',   req: true,  placeholder: 'Nombre completo' },
+          { id: 'ciudad',      label: 'Ciudad del evento',            type: 'text',   req: true,  placeholder: 'Ej: Antigua Guatemala' },
+          { id: 'fecha_evento',label: 'Fecha del evento',             type: 'text',   req: true,  placeholder: 'Ej: 14–16 de marzo, 2025' },
+          { id: 'n_parejas',   label: 'Número de parejas',            type: 'number', req: true,  min: 8, max: 24, placeholder: '8' },
+          { id: 'fecha_firma', label: 'Fecha de este acuerdo',        type: 'date',   req: true },
+        ]
+      }
+    ]
+  },
+  video: {
+    label: 'Equipo de Video',
+    sections: [
+      {
+        title: 'Datos del Proveedor',
+        fields: [
+          { id: 'empresa',     label: 'Empresa / Responsable',  type: 'text', req: true, placeholder: 'Ej: Maleta Films' },
+          { id: 'evento',      label: 'Evento',                 type: 'text', req: true, placeholder: 'Ej: YPO México Norte — Marzo 2025' },
+          { id: 'fecha_firma', label: 'Fecha de este acuerdo',  type: 'date', req: true },
+        ]
+      }
+    ]
+  },
+  storybook: {
+    label: 'Storybook',
+    sections: [
+      {
+        title: 'Datos del Encargo',
+        fields: [
+          { id: 'familia',      label: 'Familia',                   type: 'text',   req: true,  placeholder: 'Ej: Familia Rodríguez Sánchez' },
+          { id: 'evento',       label: 'Evento de referencia',      type: 'text',   req: true,  placeholder: 'Ej: YPO México Norte — Marzo 2025' },
+          { id: 'n_libros',     label: 'Número de libros',          type: 'number', req: true,  min: 1, max: 10, placeholder: '1' },
+          { id: 'copias_extra', label: 'Copias adicionales',        type: 'number', req: false, min: 0, max: 20, placeholder: '0',
+            hint: 'Cada copia adicional tiene un costo de $70 USD' },
+          { id: 'fecha_firma',  label: 'Fecha de este acuerdo',     type: 'date',   req: true },
+        ]
+      }
+    ]
+  },
+  staff: {
+    label: 'Staff',
+    sections: [
+      {
+        title: 'Datos del Integrante',
+        fields: [
+          { id: 'nombre',      label: 'Nombre completo',          type: 'text', req: true,  placeholder: '' },
+          { id: 'rol',         label: 'Rol / función en el evento', type: 'text', req: true, placeholder: 'Ej: Coordinadora de Logística' },
+          { id: 'evento',      label: 'Evento',                   type: 'text', req: true,  placeholder: 'Ej: YPO México Norte — Marzo 2025' },
+          { id: 'fecha_firma', label: 'Fecha de este acuerdo',    type: 'date', req: true },
+        ]
+      }
+    ]
+  },
+  participante: {
+    label: 'Participante',
+    sections: [
+      {
+        title: 'Datos de la Pareja',
+        fields: [
+          { id: 'nombre1',     label: 'Nombre — persona 1',      type: 'text', req: true, placeholder: '' },
+          { id: 'nombre2',     label: 'Nombre — persona 2',      type: 'text', req: true, placeholder: '' },
+          { id: 'evento',      label: 'Evento',                  type: 'text', req: true, placeholder: 'Ej: YPO México Norte — Marzo 2025' },
+          { id: 'fecha_firma', label: 'Fecha de este acuerdo',   type: 'date', req: true },
+        ]
+      }
+    ]
+  },
+  fotografo: {
+    label: 'Fotógrafo',
+    sections: [
+      {
+        title: 'Datos del Fotógrafo',
+        fields: [
+          { id: 'nombre',      label: 'Fotógrafo / Empresa',      type: 'text', req: true, placeholder: '' },
+          { id: 'evento',      label: 'Evento',                   type: 'text', req: true, placeholder: 'Ej: YPO México Norte — Marzo 2025' },
+          { id: 'fecha_firma', label: 'Fecha de este acuerdo',    type: 'date', req: true },
+        ]
+      }
+    ]
+  }
+};
+
+// ─────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────
+let currentType = 'evento';
+
+// ─────────────────────────────────────────────
+// RENDER FORM
+// ─────────────────────────────────────────────
+function renderForm(type) {
+  const def = TYPES[type];
+  const container = document.getElementById('form-container');
+  container.innerHTML = '';
+
+  def.sections.forEach(section => {
+    const card = document.createElement('div');
+    card.className = 'form-section';
+    card.innerHTML = `<div class="section-label">${section.title}</div><div class="fields" id="fields-${section.title.replace(/\s/g,'_')}"></div>`;
+    container.appendChild(card);
+
+    const fieldsEl = card.querySelector('.fields');
+
+    section.fields.forEach(f => {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'field';
+
+      const labelEl = document.createElement('label');
+      labelEl.setAttribute('for', f.id);
+      labelEl.innerHTML = f.label + (f.req ? '<span class="req">*</span>' : '');
+      wrapper.appendChild(labelEl);
+
+      let inputEl;
+      if (f.type === 'number') {
+        inputEl = document.createElement('input');
+        inputEl.type = 'number';
+        inputEl.min = f.min ?? 0;
+        if (f.max) inputEl.max = f.max;
+        inputEl.placeholder = f.placeholder ?? '';
+        if (f.id === 'n_parejas') inputEl.addEventListener('input', updateCostPreview);
+      } else if (f.type === 'date') {
+        inputEl = document.createElement('input');
+        inputEl.type = 'date';
+      } else {
+        inputEl = document.createElement('input');
+        inputEl.type = 'text';
+        inputEl.placeholder = f.placeholder ?? '';
+      }
+      inputEl.id = f.id;
+      inputEl.name = f.id;
+      if (f.req) inputEl.required = true;
+      wrapper.appendChild(inputEl);
+
+      if (f.hint) {
+        const hint = document.createElement('p');
+        hint.className = 'field-hint';
+        hint.textContent = f.hint;
+        wrapper.appendChild(hint);
+      }
+
+      fieldsEl.appendChild(wrapper);
+    });
+
+    // Cost preview for evento type
+    if (type === 'evento') {
+      const preview = document.createElement('div');
+      preview.className = 'cost-preview';
+      preview.id = 'cost-preview';
+      preview.innerHTML = `
+        <span class="cost-preview-label">Costo por pareja</span>
+        <span class="cost-preview-value" id="cost-value">—</span>
+      `;
+      fieldsEl.appendChild(preview);
+    }
+
+    // Storybook total
+    if (type === 'storybook') {
+      const preview = document.createElement('div');
+      preview.className = 'cost-preview';
+      preview.id = 'cost-preview';
+      preview.innerHTML = `
+        <span class="cost-preview-label">Total estimado</span>
+        <span class="cost-preview-value" id="cost-value">$500 USD</span>
+      `;
+      fieldsEl.appendChild(preview);
+
+      ['n_libros','copias_extra'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', updateStorybookPreview);
+      });
+    }
+  });
+}
+
+function updateCostPreview() {
+  const n = parseInt(document.getElementById('n_parejas')?.value) || 0;
+  let cost = n <= 12 ? 4000 : n <= 16 ? 4200 : n <= 20 ? 4500 : 4700;
+  const el = document.getElementById('cost-value');
+  if (el) el.textContent = n >= 8 ? `$${cost.toLocaleString()} USD por pareja` : '—';
+}
+
+function updateStorybookPreview() {
+  const n = parseInt(document.getElementById('n_libros')?.value) || 1;
+  const extra = parseInt(document.getElementById('copias_extra')?.value) || 0;
+  const total = n * 500 + extra * 70;
+  const el = document.getElementById('cost-value');
+  if (el) el.textContent = `$${total.toLocaleString()} USD`;
+}
+
+// ─────────────────────────────────────────────
+// COLLECT + VALIDATE
+// ─────────────────────────────────────────────
+function collectData() {
+  const def = TYPES[currentType];
+  const data = {};
+  let valid = true;
+
+  def.sections.forEach(s => {
+    s.fields.forEach(f => {
+      const el = document.getElementById(f.id);
+      if (!el) return;
+      el.classList.remove('invalid');
+      const val = el.value.trim();
+      if (f.req && !val) {
+        el.classList.add('invalid');
+        valid = false;
+      }
+      data[f.id] = val;
+    });
+  });
+
+  return valid ? data : null;
+}
+
+// ─────────────────────────────────────────────
+// LOGO LOADER
+// ─────────────────────────────────────────────
+let _logoCache = null;
+async function getLogo() {
+  if (_logoCache) return _logoCache;
+  return new Promise(resolve => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      const cv = document.createElement('canvas');
+      cv.width = img.naturalWidth;
+      cv.height = img.naturalHeight;
+      cv.getContext('2d').drawImage(img, 0, 0);
+      _logoCache = cv.toDataURL('image/png');
+      resolve(_logoCache);
+    };
+    img.onerror = () => resolve(null);
+    img.src = '../../logos/logotrascendencia.png';
+  });
+}
+
+// ─────────────────────────────────────────────
+// PDF UTILITIES
+// ─────────────────────────────────────────────
+const W = 215.9, H = 279.4;
+const ML = 22, MR = 22, CW = W - ML - MR;
+
+const C_DARK   = [26, 25, 23];
+const C_TEXT   = [42, 40, 37];
+const C_MUTED  = [138, 132, 126];
+const C_GOLD   = [196, 169, 125];
+const C_LINE   = [210, 200, 185];
+const C_ALTROW = [250, 248, 245];
+
+function pText(doc, text, x, y, maxW, { size=10, color=C_TEXT, weight='normal', lh=5.4 }={}) {
+  doc.setFontSize(size);
+  doc.setTextColor(...color);
+  doc.setFont('helvetica', weight);
+  const lines = doc.splitTextToSize(String(text), maxW);
+  doc.text(lines, x, y);
+  return y + lines.length * lh;
+}
+
+function pBullet(doc, text, x, y, maxW, opts={}) {
+  doc.setFillColor(...C_GOLD);
+  doc.circle(x + 1.8, y - 1.6, 0.85, 'F');
+  return pText(doc, text, x + 5.5, y, maxW - 5.5, { size: 9.5, lh: 5.2, ...opts });
+}
+
+function pSectionLabel(doc, text, x, y) {
+  doc.setFontSize(7.5);
+  doc.setTextColor(...C_GOLD);
+  doc.setFont('helvetica', 'bold');
+  doc.text(text, x, y, { charSpace: 1.4 });
+  doc.setDrawColor(...C_LINE);
+  doc.setLineWidth(0.25);
+  doc.line(x, y + 2.5, x + CW, y + 2.5);
+  return y + 8;
+}
+
+function pSigLine(doc, label, x, y, lineW=68) {
+  doc.setDrawColor(...C_LINE);
+  doc.setLineWidth(0.3);
+  doc.line(x, y, x + lineW, y);
+  doc.setFontSize(7.5);
+  doc.setTextColor(...C_MUTED);
+  doc.setFont('helvetica', 'normal');
+  doc.text(label, x, y + 4.5);
+  return y + 13;
+}
+
+function addHeader(doc, logo) {
+  // Dark header band
+  doc.setFillColor(...C_DARK);
+  doc.rect(0, 0, W, 33, 'F');
+
+  // Logo — aspect 8.646:1, white via CSS not needed here, using original PNG
+  if (logo) {
+    const lw = 74, lh = 74 / 8.646;
+    doc.addImage(logo, 'PNG', (W - lw) / 2, (33 - lh) / 2, lw, lh);
+  }
+
+  // Gold accent line
+  doc.setDrawColor(...C_GOLD);
+  doc.setLineWidth(0.5);
+  doc.line(0, 33, W, 33);
+}
+
+function addFooter(doc) {
+  doc.setDrawColor(...C_GOLD);
+  doc.setLineWidth(0.3);
+  doc.line(ML, H - 19, W - MR, H - 19);
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(7);
+  doc.setTextColor(...C_MUTED);
+  doc.text('TRASCENDENCIA', W / 2, H - 12, { align: 'center', charSpace: 1.6 });
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(6.5);
+  doc.text('www.latrascendencia.com', W / 2, H - 7.5, { align: 'center' });
+}
+
+function addTitle(doc, subtitle) {
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(7.5);
+  doc.setTextColor(...C_GOLD);
+  doc.text('ACUERDO DE CONFIDENCIALIDAD', W / 2, 43, { align: 'center', charSpace: 1.4 });
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(20);
+  doc.setTextColor(...C_DARK);
+  doc.text(subtitle, W / 2, 55, { align: 'center' });
+
+  doc.setDrawColor(...C_LINE);
+  doc.setLineWidth(0.3);
+  doc.line(W/2 - 26, 59.5, W/2 + 26, 59.5);
+}
+
+function checkBreak(doc, y, needed=30) {
+  if (y + needed > H - 24) {
+    doc.addPage();
+    addFooter(doc);
+    return 22;
+  }
+  return y;
+}
+
+function fmtDate(str) {
+  if (!str) return '_______________';
+  const [y, m, d] = str.split('-');
+  const months = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  return `${parseInt(d)} de ${months[parseInt(m)-1]} de ${y}`;
+}
+
+function fileName(type) {
+  const map = { evento:'Evento', video:'Video', storybook:'Storybook', staff:'Staff', participante:'Participante', fotografo:'Fotografo' };
+  return `Acuerdo_${map[type]}_${new Date().toISOString().slice(0,10)}.pdf`;
+}
+
+// ─────────────────────────────────────────────
+// PDF CONTENT RENDERERS
+// ─────────────────────────────────────────────
+
+function buildEvento(doc, d) {
+  let y = 70;
+
+  y = pText(doc,
+    'TRASCENDENCIA es un Proyecto de Vida, personal y de pareja, que busca explorar las raíces de la propia historia en base a los valores familiares. El objetivo es trasladar a las futuras generaciones un concepto completo de Sentido de Vida y una recopilación fotográfico-histórica narrada por los propios padres a sus hijos.',
+    ML, y, CW, { size: 9.5 });
+  y += 9;
+
+  y = pSectionLabel(doc, 'DATOS DEL EVENTO', ML, y);
+  const rows = [
+    ['Capítulo YPO', d.capitulo],
+    ['Representante', d.contacto],
+    ['Ciudad', d.ciudad],
+    ['Fecha del evento', d.fecha_evento],
+  ];
+  rows.forEach(([lbl, val]) => {
+    doc.setFontSize(8.5);
+    doc.setTextColor(...C_MUTED);
+    doc.setFont('helvetica', 'normal');
+    doc.text(lbl, ML, y);
+    doc.setTextColor(...C_TEXT);
+    doc.setFont('helvetica', 'bold');
+    doc.text(val || '—', ML + 38, y);
+    y += 6;
+  });
+  y += 6;
+
+  y = pSectionLabel(doc, 'ACERCA DEL EVENTO', ML, y);
+  const commitments = [
+    'Compromiso. Es fundamental y determinante participar dos días completos como mínimo, con disposición de apertura y comunicación que permita desarrollar el concepto en su totalidad.',
+    'Confidencialidad. Todo lo que se comparta en el evento se maneja bajo el Protocolo de Foro: Nunca. Nada a Nadie.',
+    'Comunicación. Es mandatorio nombrar una persona de total confianza a cargo de la logística y entrega de material, con comunicación fluida y periódica.',
+    'Material. El material de Trascendencia no podrá ser compartido sin previa autorización escrita por parte de la autoría.',
+  ];
+  commitments.forEach(c => {
+    y = checkBreak(doc, y);
+    y = pBullet(doc, c, ML, y, CW);
+    y += 3;
+  });
+  y += 5;
+
+  y = checkBreak(doc, y, 60);
+  y = pSectionLabel(doc, 'COSTO Y FORMA DE PAGO', ML, y);
+
+  const n = parseInt(d.n_parejas) || 0;
+  const tierCost = n <= 12 ? 4000 : n <= 16 ? 4200 : n <= 20 ? 4500 : 4700;
+
+  doc.autoTable({
+    startY: y,
+    margin: { left: ML, right: MR },
+    head: [['Número de parejas', 'Costo por pareja']],
+    body: [
+      ['8 a 12 parejas',  '$4,000 USD'],
+      ['13 a 16 parejas', '$4,200 USD'],
+      ['17 a 20 parejas', '$4,500 USD'],
+      ['21 a 24 parejas', '$4,700 USD'],
+    ],
+    headStyles:  { fillColor: C_DARK, textColor: C_GOLD, fontStyle: 'bold', fontSize: 8, cellPadding: 4 },
+    bodyStyles:  { fontSize: 9, textColor: C_TEXT, cellPadding: 3.5 },
+    alternateRowStyles: { fillColor: C_ALTROW },
+    styles: { lineColor: C_LINE, lineWidth: 0.25 },
+    didDrawCell: (data) => {
+      if (data.section === 'body' && data.column.index === 0) {
+        const rowCosts = [4000, 4200, 4500, 4700];
+        if (rowCosts[data.row.index] === tierCost) {
+          doc.setFillColor(...C_GOLD);
+          doc.rect(data.cell.x, data.cell.y, 1.5, data.cell.height, 'F');
+        }
+      }
+    }
+  });
+
+  y = doc.lastAutoTable.finalY + 7;
+  doc.setFontSize(9.5);
+  doc.setTextColor(...C_TEXT);
+  doc.setFont('helvetica', 'normal');
+  doc.text(`Número de parejas acordado para este evento:`, ML, y);
+  doc.setFont('helvetica', 'bold');
+  doc.text(`${d.n_parejas} parejas`, ML + 88, y);
+  y += 6;
+  doc.setFont('helvetica', 'normal');
+  doc.text('Forma de pago:', ML, y);
+  doc.setFont('helvetica', 'bold');
+  doc.text('50% al confirmar · 50% una semana antes del evento', ML + 35, y);
+  y += 10;
+
+  y = checkBreak(doc, y, 40);
+  y = pSectionLabel(doc, 'POLÍTICAS DE CANCELACIÓN', ML, y);
+  y = pBullet(doc, 'En caso de cancelación el monto no será reembolsado.', ML, y, CW);
+  y += 3;
+  y = pBullet(doc, 'Cláusula de fuerza mayor: En caso de inundación, terremoto, erupción volcánica o problemas políticos, ambas partes de común acuerdo encontrarán la fecha que mejor les convenga para realizar el evento posteriormente.', ML, y, CW);
+  y += 12;
+
+  y = checkBreak(doc, y, 40);
+  doc.setFontSize(8);
+  doc.setTextColor(...C_MUTED);
+  doc.setFont('helvetica', 'italic');
+  doc.text(`Ciudad: ${d.ciudad || '_______________'}   ·   Fecha: ${fmtDate(d.fecha_firma)}`, ML, y);
+  y += 12;
+
+  pSigLine(doc, 'Firma del capítulo / representante', ML, y, 100);
+}
+
+function buildConfidencialidad(doc, sigName, eventRef, date, bullets) {
+  let y = 70;
+  const intro = 'A través de este acuerdo, el firmante se compromete a guardar con prudencia la confidencialidad en torno a todos los aspectos del evento Trascendencia, concretamente:';
+  y = pText(doc, intro, ML, y, CW, { size: 9.5 });
+  y += 8;
+
+  bullets.forEach(b => {
+    y = checkBreak(doc, y);
+    y = pBullet(doc, b, ML, y, CW);
+    y += 3.5;
+  });
+  y += 6;
+
+  y = checkBreak(doc, y, 30);
+  doc.setFont('helvetica', 'italic');
+  doc.setFontSize(9.5);
+  doc.setTextColor(...C_MUTED);
+  y = pText(doc,
+    'Soy consciente de que guardar esta confidencialidad es una de las razones por las que fui seleccionado/a para ser parte del equipo de Trascendencia.',
+    ML, y, CW, { size: 9, color: C_MUTED });
+  y += 12;
+
+  y = checkBreak(doc, y, 50);
+  if (eventRef) {
+    doc.setFontSize(8);
+    doc.setTextColor(...C_MUTED);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Evento: ${eventRef}`, ML, y);
+    y += 5;
+  }
+  doc.setFontSize(8);
+  doc.setTextColor(...C_MUTED);
+  doc.text(`Fecha: ${fmtDate(date)}`, ML, y);
+  y += 12;
+
+  pSigLine(doc, sigName, ML, y, 100);
+}
+
+function buildVideo(doc, d) {
+  buildConfidencialidad(doc, d.empresa || 'Empresa / Responsable', d.evento, d.fecha_firma, [
+    'Conservar el anonimato de las personas que comparten su historia personal, su testimonio de vida y el contenido de las sesiones del taller.',
+    'Respetar el contenido de los testimonios filmados, renunciando a cualquier tipo de comentario, murmuración, referencia o alusión a las historias que comparten las familias.',
+    'Bajo ninguna condición difundir el material filmado, las actividades del evento ni el material propio de los participantes.',
+    'No publicar ningún material relacionado con el evento en redes sociales o plataformas públicas, ni utilizarlo para fines de publicidad propia.',
+    'El material filmado es propiedad exclusiva de cada familia y de Trascendencia. Su uso está estrictamente restringido a la entrega final acordada.',
+  ]);
+}
+
+function buildStorybook(doc, d) {
+  let y = 70;
+  const n = parseInt(d.n_libros) || 1;
+  const extra = parseInt(d.copias_extra) || 0;
+  const total = n * 500 + extra * 70;
+
+  y = pText(doc,
+    'El Storybook de Trascendencia es un libro impreso en pasta dura de aproximadamente 100 páginas, que recopila la Historia Familiar con texto y fotografía, creado de manera personalizada para cada familia participante.',
+    ML, y, CW, { size: 9.5 });
+  y += 9;
+
+  y = pSectionLabel(doc, 'TÉRMINOS DEL SERVICIO', ML, y);
+
+  const terms = [
+    [`Familia solicitante`, d.familia || '—'],
+    [`Evento de referencia`, d.evento || '—'],
+    [`Número de libros`, `${n} libro${n > 1 ? 's' : ''}`],
+    [`Copias adicionales`, extra > 0 ? `${extra} copia${extra > 1 ? 's' : ''} (× $70 USD)` : 'Ninguna'],
+    [`Total acordado`, `$${total.toLocaleString()} USD`],
+    [`Plazo de entrega`, '3 meses a partir del evento'],
+  ];
+  terms.forEach(([lbl, val]) => {
+    doc.setFontSize(8.5);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(...C_MUTED);
+    doc.text(lbl, ML, y);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(lbl === 'Total acordado' ? C_GOLD[0] : C_TEXT[0], lbl === 'Total acordado' ? C_GOLD[1] : C_TEXT[1], lbl === 'Total acordado' ? C_GOLD[2] : C_TEXT[2]);
+    doc.text(val, ML + 48, y);
+    y += 6;
+  });
+  y += 8;
+
+  y = pSectionLabel(doc, 'CONFIDENCIALIDAD', ML, y);
+  [
+    'El contenido del Storybook pertenece exclusivamente a la familia. No podrá ser reproducido, compartido ni publicado sin autorización expresa.',
+    'La coordinadora de diseño se compromete a guardar absoluta reserva sobre la historia, fotografías y valores documentados en el libro.',
+  ].forEach(b => {
+    y = pBullet(doc, b, ML, y, CW);
+    y += 3.5;
+  });
+  y += 10;
+
+  doc.setFontSize(8);
+  doc.setTextColor(...C_MUTED);
+  doc.setFont('helvetica', 'normal');
+  doc.text(`Fecha: ${fmtDate(d.fecha_firma)}`, ML, y);
+  y += 12;
+  pSigLine(doc, d.familia || 'Familia', ML, y, 80);
+}
+
+function buildStaff(doc, d) {
+  buildConfidencialidad(doc, `${d.nombre || '—'} · ${d.rol || ''}`, d.evento, d.fecha_firma, [
+    'Conservar el anonimato de las personas que comparten su historia personal, su testimonio de vida y el contenido de las conferencias y dinámicas.',
+    'Respetar el contenido de los testimonios escuchados durante el evento, renunciando a cualquier comentario, murmuración o referencia a las historias compartidas.',
+    'Bajo ninguna condición difundir el material propio de los participantes, el detalle de las actividades ni el material del evento.',
+    'No publicar el material en redes sociales ni utilizarlo para publicidad personal o corporativa.',
+  ]);
+}
+
+function buildParticipante(doc, d) {
+  let y = 70;
+  y = pText(doc,
+    'A través de este acuerdo, los participantes se comprometen a guardar con prudencia la confidencialidad en torno a todos los aspectos del evento Trascendencia:',
+    ML, y, CW, { size: 9.5 });
+  y += 8;
+
+  [
+    'Respetaremos el contenido de los testimonios escuchados en el evento, renunciando a cualquier tipo de comentario, murmuración, referencia o alusión a las historias que comparten.',
+    'Cuidaremos no difundir el detalle de las actividades del evento a personas fuera del grupo de participantes.',
+    'No publicaremos, ni compartiremos el material del evento en ninguna plataforma.',
+    'Utilizamos el Protocolo de Foro: escuchar y aportar, no juzgar y muy importante el sigilo fraternal — Nunca. Nada a Nadie.',
+    'Somos conscientes de que guardar esta confidencialidad contribuye a la continuidad del evento, colaborando con el factor sorpresa para que futuras familias puedan disfrutarlo con igual profundidad.',
+  ].forEach(b => {
+    y = checkBreak(doc, y);
+    y = pBullet(doc, b, ML, y, CW);
+    y += 3.5;
+  });
+  y += 10;
+
+  doc.setFontSize(8);
+  doc.setTextColor(...C_MUTED);
+  doc.setFont('helvetica', 'normal');
+  doc.text(`Evento: ${d.evento || '—'}   ·   Fecha: ${fmtDate(d.fecha_firma)}`, ML, y);
+  y += 12;
+
+  pSigLine(doc, d.nombre1 || 'Persona 1', ML, y, 80);
+  pSigLine(doc, d.nombre2 || 'Persona 2', ML + 95, y, 80);
+}
+
+function buildFotografo(doc, d) {
+  buildConfidencialidad(doc, d.nombre || 'Fotógrafo', d.evento, d.fecha_firma, [
+    'Conservar el anonimato de las personas fotografiadas y el contenido visual del evento.',
+    'No difundir, publicar ni compartir las fotografías del evento sin autorización expresa de Trascendencia y de cada familia participante.',
+    'Bajo ninguna condición utilizar las fotografías para portafolio personal, publicidad o redes sociales sin autorización escrita previa.',
+    'Las imágenes son propiedad exclusiva de las familias participantes y de Trascendencia.',
+  ]);
+}
+
+// ─────────────────────────────────────────────
+// MAIN PDF GENERATOR
+// ─────────────────────────────────────────────
+async function generatePDF(type, data) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ format: 'letter', unit: 'mm' });
+  const logo = await getLogo();
+
+  const subtitles = {
+    evento:       'Evento Trascendencia',
+    video:        'Equipo de Video',
+    storybook:    'Storybook',
+    staff:        'Staff',
+    participante: 'Participantes',
+    fotografo:    'Fotógrafo',
+  };
+
+  addHeader(doc, logo);
+  addTitle(doc, subtitles[type]);
+  addFooter(doc);
+
+  switch (type) {
+    case 'evento':       buildEvento(doc, data);        break;
+    case 'video':        buildVideo(doc, data);         break;
+    case 'storybook':    buildStorybook(doc, data);     break;
+    case 'staff':        buildStaff(doc, data);         break;
+    case 'participante': buildParticipante(doc, data);  break;
+    case 'fotografo':    buildFotografo(doc, data);     break;
+  }
+
+  doc.save(fileName(type));
+}
+
+// ─────────────────────────────────────────────
+// TOAST
+// ─────────────────────────────────────────────
+function showToast(msg, kind='success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast ${kind} show`;
+  setTimeout(() => { t.classList.remove('show'); }, 3000);
+}
+
+// ─────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  renderForm(currentType);
+
+  // Tab switching
+  document.getElementById('type-tabs').addEventListener('click', e => {
+    const btn = e.target.closest('.tab');
+    if (!btn) return;
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    currentType = btn.dataset.type;
+    renderForm(currentType);
+  });
+
+  // Generate
+  document.getElementById('btn-generate').addEventListener('click', async () => {
+    const data = collectData();
+    if (!data) {
+      showToast('Completa los campos requeridos', 'error');
+      return;
+    }
+    const btn = document.getElementById('btn-generate');
+    btn.disabled = true;
+    btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Generando…`;
+    try {
+      await generatePDF(currentType, data);
+      showToast('PDF generado correctamente', 'success');
+    } catch (err) {
+      showToast('Error al generar el PDF', 'error');
+      console.error(err);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Generar PDF`;
+    }
+  });
+});
+</script>
+</body>
+</html>
