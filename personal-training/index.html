@@ -755,6 +755,108 @@
       .filter-row { flex-direction: column; align-items: flex-start; }
     }
 
+    /* ── THE GAP ── */
+    .gap-section { background: var(--dark); border-top: 1px solid var(--border); padding: 100px 40px; }
+    .gap-inner { max-width: 1200px; margin: 0 auto; }
+    .gap-intro { max-width: 600px; }
+    .gap-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; margin-top: 56px; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+    .gap-cell { padding: 32px 28px; border-right: 1px solid var(--border); }
+    .gap-cell:last-child { border-right: none; }
+    .gap-pill { display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; padding: 4px 10px; border-radius: 100px; margin-bottom: 16px; }
+    .gap-pill.no { background: rgba(255,255,255,.06); color: var(--muted-light); }
+    .gap-pill.yes { background: rgba(255,77,0,.15); color: var(--orange); }
+    .gap-cell-title { font-family: var(--font-head); font-size: 20px; font-weight: 800; text-transform: uppercase; line-height: 1.2; margin-bottom: 12px; }
+    .gap-cell.dim .gap-cell-title { color: rgba(255,255,255,.3); }
+    .gap-cell.lit .gap-cell-title { color: var(--white); }
+    .gap-cell-body { font-size: 13px; line-height: 1.7; }
+    .gap-cell.dim .gap-cell-body { color: rgba(255,255,255,.35); }
+    .gap-cell.lit .gap-cell-body { color: rgba(255,255,255,.7); }
+
+    /* ── SCIENCE PILLARS ── */
+    .science-section { padding: 100px 40px; }
+    .science-inner { max-width: 1200px; margin: 0 auto; }
+    .science-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 56px; }
+    .pillar { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 28px 24px; position: relative; overflow: hidden; transition: border-color .3s, transform .3s; }
+    .pillar:hover { border-color: var(--orange); transform: translateY(-4px); }
+    .pillar-num { font-family: var(--font-head); font-size: 96px; font-weight: 900; color: rgba(255,77,0,.06); line-height: 1; position: absolute; top: 0; right: 8px; pointer-events: none; }
+    .pillar-title { font-family: var(--font-head); font-size: 21px; font-weight: 800; text-transform: uppercase; letter-spacing: .02em; margin-bottom: 12px; line-height: 1.2; }
+    .pillar-body { font-size: 13px; color: var(--muted-light); line-height: 1.75; }
+    .pillar-term { display: inline-block; margin-top: 16px; font-size: 9px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--orange); border: 1px solid rgba(255,77,0,.3); padding: 3px 8px; border-radius: 3px; }
+
+    /* ── AUDIENCE / 60+ ── */
+    .audience-section { background: var(--dark); border-top: 1px solid var(--border); padding: 100px 40px; }
+    .audience-inner { max-width: 1200px; margin: 0 auto; }
+    .audience-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 48px; }
+    .aud-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 28px; transition: border-color .3s; }
+    .aud-card:hover { border-color: #444; }
+    .aud-card.featured { background: var(--orange); border-color: var(--orange); }
+    .aud-age { font-family: var(--font-head); font-size: 52px; font-weight: 900; line-height: 1; color: rgba(255,255,255,.15); margin-bottom: 2px; }
+    .aud-card.featured .aud-age { color: rgba(0,0,0,.2); }
+    .aud-label { font-size: 9px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+    .aud-card.featured .aud-label { color: rgba(0,0,0,.5); }
+    .aud-title { font-family: var(--font-head); font-size: 19px; font-weight: 800; text-transform: uppercase; line-height: 1.2; margin-bottom: 10px; }
+    .aud-card.featured .aud-title { color: #000; }
+    .aud-desc { font-size: 13px; color: var(--muted-light); line-height: 1.65; margin-bottom: 16px; }
+    .aud-card.featured .aud-desc { color: rgba(0,0,0,.7); }
+    .aud-list { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+    .aud-list li { font-size: 12px; color: var(--muted-light); padding-left: 14px; position: relative; line-height: 1.4; }
+    .aud-list li::before { content: '◆'; position: absolute; left: 0; font-size: 6px; top: 4px; color: rgba(255,77,0,.6); }
+    .aud-card.featured .aud-list li { color: rgba(0,0,0,.75); }
+    .aud-card.featured .aud-list li::before { color: rgba(0,0,0,.3); }
+
+    /* ── 1-ON-1 SECTION ── */
+    .oneon1-section { padding: 100px 40px; }
+    .oneon1-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+    .oneon1-benefits { margin-top: 36px; display: flex; flex-direction: column; gap: 20px; }
+    .benefit-row { display: flex; align-items: flex-start; gap: 16px; }
+    .benefit-num { font-family: var(--font-head); font-size: 32px; font-weight: 900; color: rgba(255,77,0,.35); line-height: 1; flex-shrink: 0; width: 32px; }
+    .benefit-text h4 { font-family: var(--font-head); font-size: 16px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 3px; }
+    .benefit-text p { font-size: 13px; color: var(--muted-light); line-height: 1.65; }
+    .oneon1-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 40px; position: sticky; top: 100px; }
+    .oneon1-card-label { font-size: 9px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--orange); margin-bottom: 20px; }
+    .oneon1-quote { font-family: var(--font-head); font-size: 26px; font-weight: 700; line-height: 1.35; margin-bottom: 20px; }
+    .oneon1-quote em { color: var(--orange); font-style: normal; }
+    .oneon1-subtext { font-size: 13px; color: var(--muted-light); line-height: 1.75; padding-bottom: 28px; border-bottom: 1px solid var(--border); margin-bottom: 28px; }
+    .oneon1-cta-btn { display: flex; align-items: center; justify-content: center; gap: 10px; background: var(--orange); border-radius: 4px; color: var(--white); font-family: var(--font-head); font-size: 16px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; padding: 16px 28px; text-decoration: none; transition: background .2s, transform .15s; }
+    .oneon1-cta-btn:hover { background: #cc3d00; transform: translateY(-1px); }
+    .oneon1-footnote { font-size: 11px; color: var(--muted); text-align: center; margin-top: 12px; }
+
+    /* ── BOOK SECTION ── */
+    .book-section { background: var(--black); border-top: 1px solid var(--border); padding: 100px 40px; }
+    .book-inner { max-width: 760px; margin: 0 auto; text-align: center; }
+    .book-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,77,0,.1); border: 1px solid rgba(255,77,0,.2); border-radius: 100px; padding: 6px 18px; font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--orange); margin-bottom: 28px; }
+    .book-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--orange); animation: pulse-dot 2s ease-in-out infinite; }
+    @keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.7)} }
+    .book-title { font-family: var(--font-head); font-size: 68px; font-weight: 900; line-height: .95; text-transform: uppercase; letter-spacing: .01em; margin-bottom: 22px; }
+    .book-title em { color: var(--orange); font-style: normal; display: block; }
+    .book-sub { font-size: 16px; color: var(--muted-light); line-height: 1.7; max-width: 520px; margin: 0 auto 48px; }
+    .book-what { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 48px; text-align: left; }
+    .book-what-item { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 20px; }
+    .book-what-num { font-family: var(--font-head); font-size: 36px; font-weight: 900; color: rgba(255,77,0,.2); line-height: 1; margin-bottom: 6px; }
+    .book-what-text { font-size: 13px; color: var(--muted-light); line-height: 1.6; }
+    .book-what-text strong { color: var(--white); display: block; font-family: var(--font-head); font-size: 15px; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 4px; }
+    /* REPLACE THIS HREF WITH GOOGLE CALENDAR APPOINTMENT LINK WHEN READY */
+    .btn-book { display: inline-flex; align-items: center; gap: 10px; background: var(--orange); border: none; border-radius: 4px; color: var(--white); cursor: pointer; font-family: var(--font-head); font-size: 18px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; padding: 20px 52px; text-decoration: none; transition: background .2s, transform .15s; }
+    .btn-book:hover { background: #cc3d00; transform: translateY(-2px); }
+    .book-footnote { font-size: 12px; color: var(--muted); margin-top: 14px; }
+
+    /* ── RESPONSIVE NEW SECTIONS ── */
+    @media (max-width: 900px) {
+      .science-grid { grid-template-columns: repeat(2, 1fr); }
+      .audience-grid { grid-template-columns: repeat(2, 1fr); }
+      .gap-grid { grid-template-columns: 1fr; }
+      .gap-cell { border-right: none; border-bottom: 1px solid var(--border); }
+      .gap-cell:last-child { border-bottom: none; }
+      .oneon1-inner { grid-template-columns: 1fr; gap: 48px; }
+      .oneon1-card { position: static; }
+      .book-what { grid-template-columns: 1fr; }
+      .book-title { font-size: 48px; }
+    }
+    @media (max-width: 600px) {
+      .science-grid, .audience-grid { grid-template-columns: 1fr; }
+      .gap-section, .science-section, .audience-section, .oneon1-section, .book-section { padding: 72px 24px; }
+    }
+
     /* ── REVEAL ── */
     .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease; }
     .reveal.d1 { transition-delay: .1s; }
@@ -831,9 +933,10 @@
   <ul class="nav-links">
     <li><a href="./programs.html">Programs</a></li>
     <li><a href="#about">About</a></li>
+    <li><a href="#who">60+</a></li>
     <li><a href="#plans">Plans</a></li>
   </ul>
-  <a href="#plans" class="nav-cta">Get Started</a>
+  <a href="#book" class="nav-cta">Book a Call</a>
   <div class="nav-hamburger" id="hamburger" aria-label="Menu">
     <span></span><span></span><span></span>
   </div>
@@ -844,8 +947,9 @@
   <button class="mobile-close" id="mobileClose">&#x2715;</button>
   <a href="./programs.html" onclick="closeMobile()">Programs</a>
   <a href="#about" onclick="closeMobile()">About</a>
+  <a href="#who" onclick="closeMobile()">60+</a>
   <a href="#plans" onclick="closeMobile()">Plans</a>
-  <a href="#plans" class="orange" onclick="closeMobile()">Get Started</a>
+  <a href="#book" class="orange" onclick="closeMobile()">Book a Call</a>
 </div>
 
 <!-- HERO -->
@@ -856,8 +960,8 @@
   <div class="hero-overlay"></div>
   <div class="hero-content">
     <div class="hero-label">Online Personal Training</div>
-    <h1 class="hero-title">Train<br>anywhere.<br><em>Always.</em></h1>
-    <p class="hero-sub">Programs built for your body, your age, and your real life. At the gym, on the road, on the beach, or at home.</p>
+    <h1 class="hero-title">Your gym<br>needs a<br><em>scientist.</em></h1>
+    <p class="hero-sub">Oscar Esquivel combines deep expertise in food science and molecular biology with 10+ years on the training floor — building programs that work <em>with</em> your biology, not against it.</p>
     <div class="hero-actions">
       <a href="./programs.html" class="btn-primary">Browse Programs</a>
       <a href="https://personalab.thinkific.com/courses/body-training" target="_blank" class="btn-outline">&#9654; Play Demo</a>
@@ -898,39 +1002,27 @@
       <video class="about-video" autoplay muted loop playsinline>
         <source src="./footage/personal-trainer-assisting-a-woman-with-her-suspen-2026-03-24-15-40-07-utc.webm" type="video/webm">
       </video>
-      <div class="about-media-tag">Certified Trainer</div>
+      <div class="about-media-tag">Food Scientist &amp; Trainer</div>
     </div>
     <div class="about-text">
       <div class="reveal">
         <div class="section-label">About Oscar</div>
-        <h2 class="section-title">Science<br>meets <em>sweat.</em></h2>
+        <h2 class="section-title">The science<br>of how your<br><em>body works.</em></h2>
       </div>
       <p class="about-body reveal d1">
-        <strong>Oscar Esquivel</strong> is a food scientist with a deep passion for physical wellbeing. His background in science shaped a core belief: that physical health is one of the most powerful drivers of mental and emotional wellness. The body and the mind are not separate — they move together.
+        <strong>Oscar Esquivel</strong> spent years studying the chemistry of living systems — how molecules interact, how nutrients are absorbed, how the gut shapes recovery, and how inflammation silently sabotages progress. That foundation changed how he sees training forever.
       </p>
       <p class="about-body reveal d2">
-        With over <strong>10 years in the fitness industry</strong>, Oscar recently opened his own gyms — but his mission goes further. He wants more people to access the knowledge that only years on the floor can give you: how to move well, how to avoid injury, and how to build a body that actually performs. Every program he designs is grounded in <strong>proper execution, smart progression, and long-term results</strong>.
+        Most trainers tell you what to do. Oscar understands <strong>why it works at a biological level</strong>. That means programs designed around what your body actually absorbs, how it recovers, and what it needs at every age — not what worked for someone else.
       </p>
       <p class="about-body reveal d3">
-        No gimmicks. No shortcuts. Just well-designed training, built on science and refined through experience.
+        Over <strong>10+ years on the training floor</strong>, with his own gyms and hundreds of clients across every age and condition, one conviction has never changed: <em>the body is chemistry. Train it that way.</em>
       </p>
       <div class="about-creds reveal d4">
-        <div class="cred-item">
-          <div class="cred-dot"></div>
-          <span class="cred-text">Food scientist with expertise in human performance</span>
-        </div>
-        <div class="cred-item">
-          <div class="cred-dot"></div>
-          <span class="cred-text">Injury prevention and movement quality specialist</span>
-        </div>
-        <div class="cred-item">
-          <div class="cred-dot"></div>
-          <span class="cred-text">10+ years training individuals of all ages and levels</span>
-        </div>
-        <div class="cred-item">
-          <div class="cred-dot"></div>
-          <span class="cred-text">Founder of his own gym and online training platform</span>
-        </div>
+        <div class="cred-item"><div class="cred-dot"></div><span class="cred-text">Deep background in food science, biochemistry &amp; molecular biology</span></div>
+        <div class="cred-item"><div class="cred-dot"></div><span class="cred-text">Specialist in injury prevention and movement quality</span></div>
+        <div class="cred-item"><div class="cred-dot"></div><span class="cred-text">10+ years training all ages — from athletes to 60+ clients</span></div>
+        <div class="cred-item"><div class="cred-dot"></div><span class="cred-text">Founder of his own gym and online training platform</span></div>
       </div>
     </div>
   </div>
@@ -1156,30 +1248,208 @@
   </div>
 </section>
 
-<!-- HOW IT WORKS -->
-<section class="section-full" style="padding: 100px 40px;">
-  <div class="how-wrap reveal">
-    <div class="section-label">How It Works</div>
-    <h2 class="section-title">Simple.<br><em>Effective.</em></h2>
-    <div class="how-grid">
-      <div class="how-step">
-        <div class="how-num">01</div>
-        <h3 class="how-step-title">Pick Your Program</h3>
-        <p class="how-step-body">Filter by gender, age, setting, and workout type. Find exactly what you need for where you are today — gym, hotel, beach, or home.</p>
+<!-- THE GAP -->
+<section class="gap-section">
+  <div class="gap-inner">
+    <div class="gap-intro">
+      <div class="section-label reveal">Why Others Miss It</div>
+      <h2 class="section-title reveal d1">Most training<br>fails before<br><em>you even start.</em></h2>
+      <p class="about-body reveal d2" style="margin-top:16px">Not because of lack of effort. Because most programs are built on averages — ignoring what's actually happening inside your specific biology.</p>
+    </div>
+    <div class="gap-grid reveal d3">
+      <div class="gap-cell dim">
+        <div class="gap-pill no">The average trainer</div>
+        <div class="gap-cell-title">Counts macros.<br>Recommends reps.</div>
+        <div class="gap-cell-body">They track calories in and calories out. They give you a plan that worked for someone else. They don't know why your protein source matters — only that you should eat more of it.</div>
       </div>
-      <div class="how-divider"></div>
-      <div class="how-step">
-        <div class="how-num">02</div>
-        <h3 class="how-step-title">Get Instant Access</h3>
-        <p class="how-step-body">Access your complete program immediately: video walkthroughs, execution cues, and a structured week-by-week progression you can actually follow.</p>
+      <div class="gap-cell dim">
+        <div class="gap-pill no">Generic programs</div>
+        <div class="gap-cell-title">Built for<br>the average body.</div>
+        <div class="gap-cell-body">They assume everyone absorbs nutrients the same way. They don't account for inflammation, gut health, age-related changes, or the supplements that are actually doing nothing for you.</div>
       </div>
-      <div class="how-divider"></div>
-      <div class="how-step">
-        <div class="how-num">03</div>
-        <h3 class="how-step-title">Train Anywhere</h3>
-        <p class="how-step-body">At the gym, your hotel room, the beach, or your living room. No excuses. And if you have questions, you can reach Oscar directly.</p>
+      <div class="gap-cell lit">
+        <div class="gap-pill yes">Oscar's approach</div>
+        <div class="gap-cell-title">Engineers<br>your biology.</div>
+        <div class="gap-cell-body">Oscar understands what your cells actually use. He designs training and nutrition around bioavailability, gut-muscle dynamics, anti-inflammatory protocols — and your individual reality.</div>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- SCIENCE PILLARS -->
+<section class="science-section">
+  <div class="science-inner">
+    <div class="section-label reveal">The Science Advantage</div>
+    <h2 class="section-title reveal d1">What a deep<br>biology background<br><em>actually changes.</em></h2>
+    <div class="science-grid">
+
+      <div class="pillar reveal d1">
+        <div class="pillar-num">01</div>
+        <div class="pillar-title">Nutrient Bioavailability</div>
+        <p class="pillar-body">The label says 30g of protein. But how much does your body actually absorb? It depends on the food's molecular structure, how it was processed, and what else you ate with it. Oscar designs nutrition around what your body <em>uses</em> — not what's printed on the package.</p>
+        <span class="pillar-term">Bioavailability · Amino acid absorption</span>
+      </div>
+
+      <div class="pillar reveal d2">
+        <div class="pillar-num">02</div>
+        <div class="pillar-title">The Gut–Muscle Connection</div>
+        <p class="pillar-body">Your gut microbiome directly controls how fast you recover, how much energy you have, and how effectively your muscles rebuild. Most trainers have never studied this. Oscar built a significant part of his career understanding it — and it shows in every program he writes.</p>
+        <span class="pillar-term">Microbiome · Inflammatory response</span>
+      </div>
+
+      <div class="pillar reveal d3">
+        <div class="pillar-num">03</div>
+        <div class="pillar-title">Anti-Inflammatory Protocols</div>
+        <p class="pillar-body">Chronic low-grade inflammation is the silent enemy of results — especially after 40. It slows recovery, disrupts hormones, and makes you feel like training isn't working. Oscar structures both exercise and nutrition to actively reduce it, not ignore it.</p>
+        <span class="pillar-term">Oxidative stress · Cortisol management</span>
+      </div>
+
+      <div class="pillar reveal d4">
+        <div class="pillar-num">04</div>
+        <div class="pillar-title">Supplement Integrity</div>
+        <p class="pillar-body">The supplement market runs on claims that don't hold up scientifically. Oscar can evaluate the chemical stability of a product, how it behaves inside your body, and whether it's actually doing anything. He only recommends what the science backs — and the exact way to take it so it works.</p>
+        <span class="pillar-term">Chemical stability · Efficacy analysis</span>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- BUILT FOR EVERY BODY -->
+<section class="audience-section" id="who">
+  <div class="audience-inner">
+    <div class="section-label reveal">Who This Is For</div>
+    <h2 class="section-title reveal d1">Your biology<br>doesn't have<br><em>an expiration date.</em></h2>
+    <div class="audience-grid">
+
+      <div class="aud-card reveal d1">
+        <div class="aud-age">20s</div>
+        <div class="aud-label">The Foundation Years</div>
+        <div class="aud-title">Build It Right From The Start</div>
+        <p class="aud-desc">This is when habits form and patterns set. Oscar's science-based approach ensures you build strength, mobility, and nutritional intelligence early — so you don't spend decades undoing bad foundations.</p>
+        <ul class="aud-list">
+          <li>Peak performance programming</li>
+          <li>Body composition &amp; muscle building</li>
+          <li>Supplement education from day one</li>
+        </ul>
+      </div>
+
+      <div class="aud-card reveal d2">
+        <div class="aud-age">40s</div>
+        <div class="aud-label">The Pivot Point</div>
+        <div class="aud-title">Maximize What You Have</div>
+        <p class="aud-desc">Hormones shift. Recovery slows. What worked at 25 stops working. Oscar's programs account for these biological realities — not by doing less, but by doing the right things at the right intensity.</p>
+        <ul class="aud-list">
+          <li>Hormone-aware training design</li>
+          <li>Anti-inflammatory nutrition focus</li>
+          <li>Joint protection without losing intensity</li>
+        </ul>
+      </div>
+
+      <div class="aud-card reveal d3">
+        <div class="aud-age">55s</div>
+        <div class="aud-label">The Strength Years</div>
+        <div class="aud-title">Stay Strong, Stay Independent</div>
+        <p class="aud-desc">Muscle preservation becomes critical after 55. Most people don't realize how much they're losing — or that it's preventable. Oscar designs specifically to protect and rebuild what matters most for long-term quality of life.</p>
+        <ul class="aud-list">
+          <li>Sarcopenia prevention protocols</li>
+          <li>High-protein bioavailability focus</li>
+          <li>Balance and functional strength</li>
+        </ul>
+      </div>
+
+      <div class="aud-card featured reveal d4">
+        <div class="aud-age">60+</div>
+        <div class="aud-label">The Most Important Decade</div>
+        <div class="aud-title">Not Slowing Down. Moving Smarter.</div>
+        <p class="aud-desc">Oscar works with clients managing cardiac conditions, prosthetics, hip replacements, osteoporosis, and chronic inflammation. There is no "generic senior workout" here — every program is adapted to your exact reality.</p>
+        <ul class="aud-list">
+          <li>Cardiac-safe heart rate zone training</li>
+          <li>Prosthetic &amp; implant-aware programming</li>
+          <li>Joint-first movement design</li>
+          <li>Bone density &amp; fall prevention focus</li>
+          <li>Anti-inflammatory nutrition integration</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- 1-ON-1 WITH OSCAR -->
+<section class="oneon1-section" id="oneon1">
+  <div class="oneon1-inner">
+    <div class="oneon1-text">
+      <div class="section-label reveal">Personal Training</div>
+      <h2 class="section-title reveal d1">A program<br>guides you.<br><em>Oscar changes you.</em></h2>
+      <p class="about-body reveal d2" style="margin-top:16px">When you work directly with Oscar, you're not getting a plan. You're getting a conversation about your biology. Your past injuries. Your current medications. The supplement you've been told works. The goal you've been carrying with you for years but haven't been able to reach.</p>
+      <p class="about-body reveal d3" style="margin-top:12px">These details matter. At a molecular level, they matter enormously. And no program, no matter how well designed, can capture them the way one honest conversation can.</p>
+      <div class="oneon1-benefits">
+        <div class="benefit-row reveal d1">
+          <span class="benefit-num">01</span>
+          <div class="benefit-text">
+            <h4>A Full Biological Assessment</h4>
+            <p>Oscar reviews your history, conditions, medications, and goals before recommending a single exercise or food. Not a form — an actual conversation about your body.</p>
+          </div>
+        </div>
+        <div class="benefit-row reveal d2">
+          <span class="benefit-num">02</span>
+          <div class="benefit-text">
+            <h4>Molecular Nutrition Guidance</h4>
+            <p>Not just macros. Oscar advises on what your body actually absorbs from the foods you eat, which supplements are worth it for your specific profile, and how to time everything for real results.</p>
+          </div>
+        </div>
+        <div class="benefit-row reveal d3">
+          <span class="benefit-num">03</span>
+          <div class="benefit-text">
+            <h4>Adapted to Your Exact Reality</h4>
+            <p>Whether you have a cardiac condition, a prosthetic limb, a recent surgery, or chronic joint pain — Oscar designs around your body, not despite it.</p>
+          </div>
+        </div>
+        <div class="benefit-row reveal d4">
+          <span class="benefit-num">04</span>
+          <div class="benefit-text">
+            <h4>Direct Access &amp; Real Accountability</h4>
+            <p>You have Oscar's direct attention throughout your journey. Questions get answered. Plans get adjusted. Nothing falls through the cracks.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="oneon1-card reveal d2">
+      <div class="oneon1-card-label">What clients say after their first session</div>
+      <div class="oneon1-quote">"I've worked with trainers for years. This was the first time someone explained <em>why</em> my body responds the way it does."</div>
+      <p class="oneon1-subtext">Most people train in spite of their biology. Working with Oscar means training in alignment with it — understanding, for the first time, what your body actually needs to change.</p>
+      <!-- REPLACE href WITH GOOGLE CALENDAR APPOINTMENT URL WHEN READY -->
+      <a href="#book" class="oneon1-cta-btn">Book Your Free Discovery Call →</a>
+      <p class="oneon1-footnote">Free 20-minute call. No commitment. Oscar reviews every inquiry personally.</p>
+    </div>
+  </div>
+</section>
+
+<!-- BOOK A CALL -->
+<section class="book-section" id="book">
+  <div class="book-inner">
+    <div class="book-badge reveal">Scheduling Now Open</div>
+    <h2 class="book-title reveal d1">Let's talk<br><em>about your body.</em></h2>
+    <p class="book-sub reveal d2">A free 20-minute discovery call with Oscar. No pitch, no pressure. Just an honest conversation about where you are, where you want to be, and whether working together makes sense.</p>
+    <div class="book-what reveal d3">
+      <div class="book-what-item">
+        <div class="book-what-num">01</div>
+        <div class="book-what-text"><strong>You Talk, Oscar Listens</strong>Your history, conditions, goals — and what you've already tried. Everything matters here.</div>
+      </div>
+      <div class="book-what-item">
+        <div class="book-what-num">02</div>
+        <div class="book-what-text"><strong>He Shares His Perspective</strong>Oscar gives you his honest read — what he sees, what he'd focus on, what most people miss about your situation.</div>
+      </div>
+      <div class="book-what-item">
+        <div class="book-what-num">03</div>
+        <div class="book-what-text"><strong>You Decide</strong>No pressure. If working together makes sense, great. If not, you'll still leave with something valuable.</div>
+      </div>
+    </div>
+    <!-- REPLACE href WITH YOUR GOOGLE CALENDAR APPOINTMENT URL -->
+    <!-- Example: href="https://calendar.app.google/XXXXXXXXXX" -->
+    <a href="mailto:oscar@4meaning.life?subject=Discovery%20Call%20Request&body=Hi%20Oscar%2C%20I%27d%20like%20to%20book%20a%20free%20discovery%20call." class="btn-book reveal d4">Book My Free Call →</a>
+    <p class="book-footnote reveal d5">Oscar reviews every request personally — you'll hear back within 24 hours.</p>
   </div>
 </section>
 
@@ -1285,10 +1555,11 @@
   <div class="cta-overlay"></div>
   <div class="cta-content">
     <div class="section-label reveal" style="justify-content: center;">Start Today</div>
-    <h2 class="cta-title reveal d1">No excuses.<br><em>Just results.</em></h2>
-    <p class="cta-sub reveal d2">Pick your program, get instant access, and start today. No matter where you are.</p>
+    <h2 class="cta-title reveal d1">Your biology<br><em>is ready.</em></h2>
+    <p class="cta-sub reveal d2">Browse 35 science-designed programs — or book a free call and let Oscar build something around you specifically.</p>
     <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap;" class="reveal d3">
-      <a href="./programs.html" class="btn-primary">Browse All Programs</a>
+      <a href="./programs.html" class="btn-primary">Browse Programs</a>
+      <a href="#book" class="btn-outline">Book a Free Call</a>
     </div>
   </div>
 </section>
