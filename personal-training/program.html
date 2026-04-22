@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title id="page-title">Program — Oscar Esquivel</title>
+  <meta name="description" content="Training program by Oscar Esquivel. Built for your body, your age, and your lifestyle.">
+  <link rel="icon" type="image/png" href="./imagenes/logos/Artboard 1 copy 32.png" media="(prefers-color-scheme: dark)">
+  <link rel="icon" type="image/png" href="./imagenes/logos/Artboard 1 copy 22.png" media="(prefers-color-scheme: light)">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --orange: #FF4D00;
+      --orange-dim: #cc3d00;
+      --black: #080808;
+      --dark: #111111;
+      --surface: #181818;
+      --border: #272727;
+      --white: #ffffff;
+      --muted: #888888;
+      --muted-light: #aaaaaa;
+      --font-head: 'Barlow Condensed', sans-serif;
+      --font-body: 'Barlow', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--black); color: var(--white); font-family: var(--font-body); font-size: 16px; line-height: 1.6; overflow-x: hidden; }
+
+    /* ── NAV ── */
+    #nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 40px; height: 72px;
+      background: rgba(8,8,8,.96);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+    }
+    .nav-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+    .nav-logo-icon { height: 36px; width: auto; }
+    .nav-logo-word { height: 18px; width: auto; }
+    .nav-links { display: flex; align-items: center; gap: 36px; list-style: none; }
+    .nav-links a { color: rgba(255,255,255,.75); text-decoration: none; font-family: var(--font-body); font-size: 14px; font-weight: 500; letter-spacing: .04em; text-transform: uppercase; transition: color .2s; }
+    .nav-links a:hover { color: var(--white); }
+    .nav-cta { background: var(--orange); color: var(--white); text-decoration: none; font-family: var(--font-body); font-size: 14px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; padding: 10px 24px; border-radius: 4px; transition: background .2s; }
+    .nav-cta:hover { background: var(--orange-dim); }
+    .nav-hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
+    .nav-hamburger span { display: block; width: 24px; height: 2px; background: var(--white); border-radius: 2px; }
+
+    /* ── MOBILE MENU ── */
+    .mobile-menu { display: none; position: fixed; inset: 0; z-index: 99; background: rgba(8,8,8,.98); flex-direction: column; align-items: center; justify-content: center; gap: 32px; }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a { font-family: var(--font-head); font-size: 40px; font-weight: 900; text-transform: uppercase; color: var(--white); text-decoration: none; letter-spacing: .02em; transition: color .2s; }
+    .mobile-menu a:hover, .mobile-menu a.orange { color: var(--orange); }
+    .mobile-close { position: absolute; top: 24px; right: 24px; background: none; border: none; color: var(--white); font-size: 28px; cursor: pointer; line-height: 1; }
+
+    /* ── PAGE TRANSITION ── */
+    #page-transition {
+      position: fixed; inset: 0; z-index: 9999; background: var(--black);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 1; transition: opacity .38s ease; pointer-events: all;
+    }
+    #page-transition.hidden { opacity: 0; pointer-events: none; }
+    .pt-wrap { position: relative; width: 88px; height: 88px; display: flex; align-items: center; justify-content: center; }
+    .pt-ring { position: absolute; inset: 0; border-radius: 50%; border: 2px solid rgba(255,77,0,.18); border-top-color: var(--orange); animation: pt-spin 1s linear infinite; }
+    .pt-logo { width: 48px; height: 48px; object-fit: contain; animation: pt-pulse 1.4s ease-in-out infinite; }
+    @keyframes pt-spin { to { transform: rotate(360deg); } }
+    @keyframes pt-pulse { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:.55; transform:scale(.88); } }
+
+    /* ── SHARED ── */
+    .section-label {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-size: 11px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--orange); margin-bottom: 16px;
+    }
+    .section-label::before { content: ''; display: block; width: 24px; height: 2px; background: var(--orange); }
+    .section-title { font-family: var(--font-head); font-size: clamp(38px, 5vw, 64px); font-weight: 900; line-height: .95; text-transform: uppercase; letter-spacing: -.01em; margin-bottom: 40px; }
+    .section-title em { font-style: normal; color: var(--orange); }
+    .prog-inner { max-width: 1200px; margin: 0 auto; padding: 0 40px; }
+
+    /* ── PROGRAM HERO ── */
+    .prog-hero {
+      min-height: 88vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      position: relative;
+      padding-top: 72px;
+    }
+    .prog-hero-content {
+      padding: 80px 60px 80px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background: var(--black);
+      position: relative;
+      z-index: 2;
+    }
+    .prog-hero-img {
+      position: relative;
+      overflow: hidden;
+    }
+    .prog-hero-img img {
+      width: 100%; height: 100%; object-fit: cover;
+      filter: brightness(.65);
+    }
+    .prog-hero-img::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(to right, var(--black) 0%, transparent 45%);
+    }
+
+    .prog-back {
+      display: inline-flex; align-items: center; gap: 8px;
+      color: var(--muted); text-decoration: none; font-size: 12px;
+      font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
+      margin-bottom: 28px; transition: color .2s;
+    }
+    .prog-back:hover { color: var(--white); }
+
+    .prog-type-badge {
+      display: inline-block;
+      font-size: 10px; font-weight: 900; letter-spacing: .2em; text-transform: uppercase;
+      padding: 5px 12px; border-radius: 3px; margin-bottom: 20px;
+    }
+    .prog-type-badge.basic { background: var(--surface); border: 1px solid var(--border); color: var(--muted-light); }
+    .prog-type-badge.pro { background: var(--orange); color: var(--white); }
+    .prog-type-badge.bundle { background: rgba(255,77,0,.15); border: 1px solid rgba(255,77,0,.3); color: var(--orange); }
+
+    .prog-name {
+      font-family: var(--font-head);
+      font-size: clamp(52px, 7vw, 100px);
+      font-weight: 900;
+      text-transform: uppercase;
+      line-height: .9;
+      letter-spacing: -.01em;
+      margin-bottom: 20px;
+    }
+
+    .prog-meta {
+      display: flex; align-items: center; gap: 0; flex-wrap: wrap;
+      font-size: 12px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 24px;
+    }
+    .prog-meta-item { display: flex; align-items: center; }
+    .prog-meta-dot { margin: 0 10px; color: rgba(255,77,0,.4); font-size: 8px; }
+
+    .prog-desc {
+      font-size: 17px; color: rgba(255,255,255,.75); line-height: 1.65;
+      max-width: 520px; margin-bottom: 40px;
+    }
+
+    .prog-price-row { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+    .prog-price-big {
+      font-family: var(--font-head);
+      font-size: 60px; font-weight: 900; line-height: 1; color: var(--white);
+    }
+    .prog-cta-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--orange); color: var(--white); text-decoration: none;
+      font-family: var(--font-body); font-size: 14px; font-weight: 700;
+      letter-spacing: .08em; text-transform: uppercase;
+      padding: 16px 32px; border-radius: 4px; border: none; cursor: pointer;
+      transition: background .2s, transform .2s;
+    }
+    .prog-cta-btn:hover { background: var(--orange-dim); transform: translateY(-1px); }
+
+    /* ── EXERCISES SECTION ── */
+    .prog-exercises {
+      padding: 100px 0;
+      background: var(--dark);
+      border-top: 1px solid var(--border);
+    }
+    .ex-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .ex-item {
+      display: flex; align-items: center; gap: 20px;
+      padding: 20px 24px;
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      transition: background .2s;
+    }
+    .ex-item:nth-child(even) { border-right: none; }
+    .ex-item:nth-last-child(-n+2) { border-bottom: none; }
+    .ex-item:hover { background: var(--surface); }
+    .ex-num {
+      font-family: var(--font-head);
+      font-size: 36px; font-weight: 900; color: rgba(255,77,0,.2);
+      line-height: 1; flex-shrink: 0; width: 40px; text-align: right;
+    }
+    .ex-name { font-family: var(--font-head); font-size: 18px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
+
+    /* ── FOR WHO SECTION ── */
+    .prog-for {
+      padding: 100px 0;
+      background: var(--black);
+      border-top: 1px solid var(--border);
+    }
+    .for-list { display: flex; flex-direction: column; gap: 0; margin-top: 8px; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+    .for-item {
+      display: flex; align-items: flex-start; gap: 20px;
+      padding: 28px 32px;
+      border-bottom: 1px solid var(--border);
+      transition: background .2s;
+    }
+    .for-item:last-child { border-bottom: none; }
+    .for-item:hover { background: var(--surface); }
+    .for-check { color: var(--orange); font-size: 18px; font-weight: 700; flex-shrink: 0; margin-top: 2px; }
+    .for-text { font-size: 16px; color: rgba(255,255,255,.85); line-height: 1.5; }
+
+    /* ── SCIENCE NOTE ── */
+    .prog-science {
+      padding: 100px 0;
+      background: var(--dark);
+      border-top: 1px solid var(--border);
+    }
+    .science-bar {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--orange);
+      border-radius: 8px;
+      padding: 40px 48px;
+    }
+    .science-bar-label {
+      font-size: 10px; font-weight: 800; letter-spacing: .18em; text-transform: uppercase;
+      color: var(--orange); margin-bottom: 16px;
+    }
+    .science-bar p { font-size: 16px; color: rgba(255,255,255,.8); line-height: 1.75; max-width: 800px; }
+
+    /* ── BUNDLE INCLUDES ── */
+    .prog-includes {
+      padding: 100px 0;
+      background: var(--black);
+      border-top: 1px solid var(--border);
+    }
+    .includes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 16px;
+      margin-top: 8px;
+    }
+    .include-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px 24px;
+    }
+    .include-card.is-pro { border-color: var(--orange); }
+    .include-card.is-bundle { background: rgba(255,77,0,.08); border-color: rgba(255,77,0,.3); }
+    .include-type {
+      font-size: 9px; font-weight: 900; letter-spacing: .18em; text-transform: uppercase;
+      padding: 3px 8px; border-radius: 3px; display: inline-block; margin-bottom: 10px;
+    }
+    .include-type.pro { background: var(--orange); color: var(--white); }
+    .include-type.basic { background: rgba(255,255,255,.1); color: var(--muted-light); }
+    .include-name { font-family: var(--font-head); font-size: 20px; font-weight: 800; text-transform: uppercase; line-height: 1.1; }
+
+    /* ── BUY SECTION ── */
+    .prog-buy {
+      padding: 100px 0;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+    }
+    .buy-card {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 40px; flex-wrap: wrap;
+      background: var(--black);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 56px 64px;
+    }
+    .buy-name {
+      font-family: var(--font-head);
+      font-size: clamp(36px, 4vw, 56px); font-weight: 900; text-transform: uppercase;
+      line-height: .95; letter-spacing: -.01em; margin-bottom: 10px;
+    }
+    .buy-type {
+      font-size: 11px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase;
+      color: var(--muted);
+    }
+    .buy-price-wrap { display: flex; align-items: center; gap: 32px; }
+    .buy-price {
+      font-family: var(--font-head);
+      font-size: 72px; font-weight: 900; line-height: 1; color: var(--white);
+    }
+    .buy-btn {
+      background: var(--orange); color: var(--white); border: none; cursor: pointer;
+      font-family: var(--font-body); font-size: 15px; font-weight: 700;
+      letter-spacing: .08em; text-transform: uppercase;
+      padding: 18px 40px; border-radius: 4px;
+      transition: background .2s, transform .2s;
+      white-space: nowrap;
+    }
+    .buy-btn:hover { background: var(--orange-dim); transform: translateY(-1px); }
+
+    /* ── RELATED PROGRAMS ── */
+    .prog-related {
+      padding: 100px 0;
+      background: var(--black);
+      border-top: 1px solid var(--border);
+    }
+    .related-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .related-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; overflow: hidden;
+      transition: transform .3s, border-color .3s;
+      display: flex; flex-direction: column;
+      text-decoration: none; color: inherit;
+    }
+    .related-card:hover { transform: translateY(-4px); border-color: rgba(255,77,0,.4); }
+    .related-card.is-pro { border-color: var(--orange); }
+    .related-card.is-bundle { background: rgba(255,77,0,.06); border-color: rgba(255,77,0,.3); }
+    .related-img { position: relative; aspect-ratio: 16/10; overflow: hidden; }
+    .related-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s; }
+    .related-card:hover .related-img img { transform: scale(1.05); }
+    .related-img-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(8,8,8,.7) 0%, transparent 60%); }
+    .related-badge { position: absolute; top: 12px; left: 12px; font-size: 9px; font-weight: 900; letter-spacing: .18em; text-transform: uppercase; padding: 4px 9px; border-radius: 3px; }
+    .related-badge.basic { background: rgba(8,8,8,.85); border: 1px solid rgba(255,255,255,.2); color: rgba(255,255,255,.75); }
+    .related-badge.pro { background: var(--orange); color: white; }
+    .related-badge.bundle { background: rgba(255,77,0,.9); color: white; }
+    .related-dur { position: absolute; top: 12px; right: 12px; background: rgba(8,8,8,.85); color: var(--white); font-size: 10px; font-weight: 700; letter-spacing: .06em; padding: 4px 9px; border-radius: 3px; border: 1px solid var(--border); }
+    .related-body { padding: 16px 18px 18px; flex: 1; display: flex; flex-direction: column; gap: 8px; }
+    .related-title { font-family: var(--font-head); font-size: 19px; font-weight: 800; text-transform: uppercase; line-height: 1.1; }
+    .related-desc { font-size: 12px; color: rgba(255,255,255,.6); line-height: 1.55; flex: 1; }
+    .related-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 12px; border-top: 1px solid var(--border); }
+    .related-price { font-family: var(--font-head); font-size: 24px; font-weight: 900; }
+    .related-link { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--orange); transition: opacity .2s; }
+    .related-card:hover .related-link { opacity: .7; }
+
+    /* ── FOOTER ── */
+    footer { background: var(--black); border-top: 1px solid var(--border); padding: 60px 40px 32px; }
+    .footer-inner { max-width: 1200px; margin: 0 auto; }
+    .footer-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 40px; padding-bottom: 40px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+    .footer-logo { display: flex; align-items: center; gap: 12px; }
+    .footer-logo img.icon { height: 32px; width: auto; }
+    .footer-logo img.word { height: 16px; width: auto; }
+    .footer-tagline { font-size: 13px; color: var(--muted); margin-top: 8px; max-width: 260px; line-height: 1.6; }
+    .footer-links { display: flex; gap: 60px; flex-wrap: wrap; }
+    .footer-col { display: flex; flex-direction: column; gap: 12px; }
+    .footer-col-title { font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--white); margin-bottom: 4px; }
+    .footer-col a { font-size: 14px; color: var(--muted); text-decoration: none; transition: color .2s; }
+    .footer-col a:hover { color: var(--white); }
+    .footer-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 28px; gap: 16px; flex-wrap: wrap; }
+    .footer-copy { font-size: 13px; color: var(--muted); }
+    .footer-parent { font-size: 13px; color: var(--muted); text-decoration: none; transition: color .2s; }
+    .footer-parent:hover { color: var(--white); }
+
+    /* ── NOT FOUND ── */
+    .not-found { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 80vh; text-align: center; padding: 40px; }
+    .not-found h1 { font-family: var(--font-head); font-size: 64px; font-weight: 900; text-transform: uppercase; margin-bottom: 16px; }
+    .not-found p { color: var(--muted); margin-bottom: 32px; font-size: 16px; }
+    .not-found a { display: inline-flex; align-items: center; gap: 8px; background: var(--orange); color: var(--white); text-decoration: none; font-size: 14px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 14px 32px; border-radius: 4px; }
+
+    /* ── REVEAL ── */
+    .reveal { opacity: 0; transform: translateY(20px); transition: opacity .6s ease, transform .6s ease; }
+    .reveal.d1 { transition-delay: .1s; }
+    .reveal.d2 { transition-delay: .2s; }
+    .reveal.d3 { transition-delay: .3s; }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .prog-hero { grid-template-columns: 1fr; }
+      .prog-hero-img { height: 45vh; order: -1; }
+      .prog-hero-img::after { background: linear-gradient(to top, var(--black) 0%, transparent 40%); }
+      .prog-hero-content { padding: 60px 24px 60px; }
+      .prog-name { font-size: clamp(44px, 10vw, 72px); }
+      .related-grid { grid-template-columns: 1fr; }
+      .buy-card { flex-direction: column; padding: 40px 24px; gap: 24px; }
+      .buy-price-wrap { flex-direction: column; align-items: flex-start; gap: 16px; }
+      .science-bar { padding: 28px 24px; }
+    }
+    @media (max-width: 768px) {
+      #nav { padding: 0 24px; }
+      .nav-links, .nav-cta { display: none; }
+      .nav-hamburger { display: flex; }
+      .prog-inner { padding: 0 24px; }
+      .prog-exercises, .prog-for, .prog-science, .prog-includes, .prog-buy, .prog-related { padding: 72px 0; }
+      .ex-list { grid-template-columns: 1fr; }
+      .ex-item { border-right: none; }
+      .ex-item:nth-last-child(-n+2) { border-bottom: 1px solid var(--border); }
+      .ex-item:last-child { border-bottom: none; }
+      footer { padding: 48px 24px 28px; }
+      .footer-top { flex-direction: column; gap: 32px; }
+      .footer-bottom { flex-direction: column; align-items: flex-start; }
+    }
+    @media (max-width: 520px) {
+      .related-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- PAGE TRANSITION -->
+<div id="page-transition">
+  <div class="pt-wrap">
+    <div class="pt-ring"></div>
+    <img src="./imagenes/logos/Artboard 1 copy 32.png" alt="" class="pt-logo">
+  </div>
+</div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="./index.html" class="nav-logo">
+    <img src="./imagenes/logos/Artboard 1 copy 32.png" alt="OE" class="nav-logo-icon">
+    <img src="./imagenes/logos/Artboard 1 copy2.png" alt="Oscar Esquivel" class="nav-logo-word">
+  </a>
+  <ul class="nav-links">
+    <li><a href="./programs.html">Programs</a></li>
+    <li><a href="./index.html#about">About</a></li>
+    <li><a href="./index.html#who">60+</a></li>
+    <li><a href="./index.html#plans">Plans</a></li>
+  </ul>
+  <a href="./index.html#book" class="nav-cta">Book a Call</a>
+  <div class="nav-hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-close" id="mobileClose">&#x2715;</button>
+  <a href="./programs.html" onclick="closeMobile()">Programs</a>
+  <a href="./index.html#about" onclick="closeMobile()">About</a>
+  <a href="./index.html#who" onclick="closeMobile()">60+</a>
+  <a href="./index.html#plans" onclick="closeMobile()">Plans</a>
+  <a href="./index.html#book" class="orange" onclick="closeMobile()">Book a Call</a>
+</div>
+
+<!-- PROGRAM PAGE CONTENT (populated by JS) -->
+<div id="program-page" style="display:none">
+
+  <!-- HERO -->
+  <section class="prog-hero">
+    <div class="prog-hero-content">
+      <a href="./programs.html" class="prog-back">&#8592; All Programs</a>
+      <div class="prog-type-badge" id="prog-badge"></div>
+      <h1 class="prog-name" id="prog-name"></h1>
+      <div class="prog-meta" id="prog-meta"></div>
+      <p class="prog-desc" id="prog-desc"></p>
+      <div class="prog-price-row">
+        <span class="prog-price-big" id="prog-price"></span>
+        <a href="#buy" class="prog-cta-btn">Get This Program</a>
+      </div>
+    </div>
+    <div class="prog-hero-img">
+      <img id="prog-img" src="" alt="">
+    </div>
+  </section>
+
+  <!-- EXERCISES -->
+  <section class="prog-exercises">
+    <div class="prog-inner">
+      <div class="section-label reveal">What You'll Work On</div>
+      <h2 class="section-title reveal d1">Exercise <em>Preview.</em></h2>
+      <div class="ex-list reveal d2" id="ex-list"></div>
+    </div>
+  </section>
+
+  <!-- FOR WHO -->
+  <section class="prog-for">
+    <div class="prog-inner">
+      <div class="section-label reveal">This Program Is For You If...</div>
+      <div class="for-list reveal d1" id="for-list"></div>
+    </div>
+  </section>
+
+  <!-- SCIENCE NOTE -->
+  <section class="prog-science">
+    <div class="prog-inner">
+      <div class="science-bar reveal">
+        <div class="science-bar-label">Oscar's Science Note</div>
+        <p id="science-text"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- BUNDLE CONTENTS (only for bundles) -->
+  <section class="prog-includes" id="includes-section" style="display:none">
+    <div class="prog-inner">
+      <div class="section-label reveal">What's Included</div>
+      <h2 class="section-title reveal d1">Everything in this <em>Bundle.</em></h2>
+      <div class="includes-grid reveal d2" id="includes-list"></div>
+    </div>
+  </section>
+
+  <!-- BUY -->
+  <section class="prog-buy" id="buy">
+    <div class="prog-inner">
+      <div class="buy-card reveal">
+        <div>
+          <div id="buy-name" class="buy-name"></div>
+          <div id="buy-type" class="buy-type"></div>
+        </div>
+        <div class="buy-price-wrap">
+          <div id="buy-price" class="buy-price"></div>
+          <button class="buy-btn">Get This Program</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RELATED PROGRAMS -->
+  <section class="prog-related">
+    <div class="prog-inner">
+      <div class="section-label reveal">More Programs</div>
+      <h2 class="section-title reveal d1">You Might Also <em>Like.</em></h2>
+      <div class="related-grid reveal d2" id="related-grid"></div>
+    </div>
+  </section>
+
+</div><!-- /#program-page -->
+
+<!-- NOT FOUND (shown if slug doesn't match) -->
+<div id="not-found-page" style="display:none">
+  <div class="not-found">
+    <h1>Program Not Found</h1>
+    <p>The program you're looking for doesn't exist or the link is broken.</p>
+    <a href="./programs.html">&#8592; Browse All Programs</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <div class="footer-logo">
+          <img src="./imagenes/logos/Artboard 1 copy 32.png" alt="OE" class="icon">
+          <img src="./imagenes/logos/Artboard 1 copy2.png" alt="Oscar Esquivel" class="word">
+        </div>
+        <p class="footer-tagline">Training built for your body, your age, and your lifestyle.</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <span class="footer-col-title">Programs</span>
+          <a href="./programs.html">Browse All</a>
+          <a href="./programs.html">For Men</a>
+          <a href="./programs.html">For Women</a>
+          <a href="./programs.html">Bundles</a>
+        </div>
+        <div class="footer-col">
+          <span class="footer-col-title">Info</span>
+          <a href="./index.html#about">About Oscar</a>
+          <a href="./index.html#plans">Pricing</a>
+          <a href="./index.html">Home</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2025 Oscar Esquivel. All rights reserved.</span>
+      <a href="https://4meaning.life" class="footer-parent">A 4Meaning brand</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ── PROGRAM DATA ──
+const PROGRAMS = {
+  // BASIC (15)
+  'push-foundation': { name: 'Push Foundation', type: 'basic', price: 12, duration: '25 min', category: 'Strength', setting: 'Gym', gender: 'Men & Women', age: '20–50', img: './imagenes/sports-in-the-gym-2026-01-09-11-02-01-utc.webp', desc: 'Chest, shoulders, and triceps. A focused push-pattern block that pairs with Pull Foundation and Squat & Hinge to make a complete training day.', exercises: ['Barbell Bench Press', 'Dumbbell Shoulder Press', 'Incline Push-Up', 'Tricep Dip', 'Lateral Raise', 'Chest Fly'], for: ['You want to build upper body pushing strength with proper form','You train at the gym and want a focused 25-minute block','You\'re building a push/pull/legs split and need the push day'], science: 'Push patterns recruit the largest fast-twitch fibers in the upper body. Oscar sequences exercises to maximize motor unit recruitment before fatigue sets in — a principle rooted in neuromuscular physiology.' },
+  'pull-foundation': { name: 'Pull Foundation', type: 'basic', price: 12, duration: '25 min', category: 'Strength', setting: 'Gym', gender: 'Men & Women', age: '20–50', img: './imagenes/low-angle-grayscale-gym-inside-view-with-a-barbell-2026-03-18-16-05-06-utc.webp', desc: 'Back and biceps, built on pull-pattern mechanics. Emphasizes scapular control and form over load. Part of the core gym trio.', exercises: ['Barbell Row', 'Lat Pulldown', 'Seated Cable Row', 'Face Pull', 'Bicep Curl', 'Rear Delt Fly'], for: ['You want to develop back thickness and width with correct mechanics','You struggle with posture and need scapular stability work','You\'re building a push/pull/legs split and need the pull day'], science: 'Posterior chain development directly improves posture and injury resilience. Oscar\'s sequencing prioritizes scapular retraction before loading — reducing the shoulder impingement risk most pull workouts ignore.' },
+  'squat-hinge': { name: 'Squat & Hinge', type: 'basic', price: 12, duration: '25 min', category: 'Strength', setting: 'Gym', gender: 'Men & Women', age: '20–50', img: './imagenes/sport-equipment-unrecognizable-black-male-athlete-2026-03-24-03-09-02-utc.webp', desc: 'Lower body fundamentals. Squat patterns, hip hinges, and posterior chain activation done right. Complete the trio with Push and Pull.', exercises: ['Back Squat', 'Romanian Deadlift', 'Goblet Squat', 'Hip Thrust', 'Leg Press', 'Nordic Curl'], for: ['You want to build lower body strength from the ground up','You have a history of lower back pain and want safe hip hinge mechanics','You\'re completing a push/pull/legs split and need the leg day'], science: 'Hip hinge mechanics protect the lumbar spine under load by distributing force through the posterior chain. Oscar teaches the movement pattern before adding weight — a principle that prevents the most common gym injuries.' },
+  'core-ignite': { name: 'Core Ignite', type: 'basic', price: 12, duration: '20 min', category: 'Activation', setting: 'Home', gender: 'Men & Women', age: '20–50', img: './imagenes/diverse-people-working-out-with-fitness-balls-2026-01-07-23-35-57-utc.webp', desc: 'Core activation circuit that fires up the deep stabilizers before any training session — or stands alone as a focused mid-day movement break.', exercises: ['Dead Bug', 'Bird Dog', 'Hollow Body Hold', 'Pallof Press', 'McGill Curl-Up', 'Side Plank'], for: ['You want to activate your core properly before lifting','You deal with lower back discomfort and need deep stabilizer work','You need a quick, no-equipment core session at home or the office'], science: 'The deep stabilizers — transversus abdominis, multifidus — protect the spine before surface muscles activate. Oscar uses a specific firing order based on motor control research to switch them on before any load is applied.' },
+  'hip-mobility': { name: 'Hip Mobility', type: 'basic', price: 12, duration: '20 min', category: 'Mobility', setting: 'Home', gender: 'Men & Women', age: '35–60', img: './imagenes/sportive-people-using-dumbbells-2026-01-07-23-08-32-utc.webp', desc: 'Hip flexor release, glute activation, and joint mobility for people who sit too much or recover from intense training. Works as a warm-up or standalone.', exercises: ['90/90 Hip Stretch', 'Hip Flexor Lunge', 'Pigeon Pose', 'Glute Bridge', 'Lateral Band Walk', 'Hip Circle'], for: ['You sit for long periods and feel stiffness in your hips and lower back','You want to improve squat depth and movement quality','You need a gentle active recovery session after intense training'], science: 'Prolonged sitting shortens the iliopsoas and inhibits glute firing — a pattern that loads the lumbar spine incorrectly during movement. Oscar\'s sequence releases the flexors first, then activates the posterior chain in order.' },
+  'morning-wake-up': { name: 'Morning Wake-Up', type: 'basic', price: 12, duration: '20 min', category: 'Activation', setting: 'Home', gender: 'Men & Women', age: '30–55', img: './imagenes/good-things-come-to-those-who-sweat-2026-03-25-05-31-25-utc.webp', desc: 'Full-body activation in 20 minutes. No equipment, no excuses. Designed to start the day with intention — pairs well with any Travel or HIIT block.', exercises: ['World\'s Greatest Stretch', 'Bodyweight Squat', 'Push-Up', 'Inchworm', 'Lateral Lunge', 'Mountain Climber'], for: ['You want to start your day with movement and mental clarity','You travel often and need a no-equipment option for any morning','You want to build a consistent morning routine without a gym'], science: 'Morning movement elevates cortisol in a controlled, beneficial way — sharpening focus and priming metabolism. Oscar sequences this block to progress from parasympathetic to sympathetic activation without causing early-day fatigue.' },
+  'hotel-sprint': { name: 'Hotel Sprint', type: 'basic', price: 12, duration: '25 min', category: 'HIIT', setting: 'Hotel', gender: 'Men & Women', age: '25–50', img: './imagenes/sportsman-and-sportswoman-working-out-on-step-plat-2026-01-05-23-58-50-utc.webp', desc: 'Bodyweight HIIT for hotel rooms. No equipment, minimal space. Combines interval runs with functional circuits for maximum output on the road.', exercises: ['Jump Squat', 'Push-Up Burpee', 'High Knees', 'Plank to Down Dog', 'Lateral Shuffle', 'Tricep Dip on Chair'], for: ['You travel for work and can\'t maintain your gym routine on the road','You want high-intensity output with zero equipment','You need to stay consistent regardless of your environment'], science: 'HIIT triggers EPOC — excess post-exercise oxygen consumption — for up to 24 hours after the session. Oscar\'s work-to-rest ratios are calibrated to maximize this effect without requiring recovery time you don\'t have.' },
+  'beach-sprint': { name: 'Beach Sprint', type: 'basic', price: 12, duration: '20 min', category: 'HIIT', setting: 'Beach', gender: 'Men & Women', age: '20–35', img: './imagenes/young-athletic-woman-standing-near-punching-bag-ou-2026-01-05-06-10-26-utc.webp', desc: 'Sprint intervals on sand. Explosive, demanding, and fun. Pairs with Beach Total for a complete beach training day or works as a standalone burst session.', exercises: ['Sand Sprint 40m', 'Lateral Shuffle', 'Broad Jump', 'Bear Crawl', 'Explosive Push-Up', 'Agility Run'], for: ['You\'re at the beach and want a real training session','You want explosive conditioning using natural resistance','You\'re pairing this with Beach Total for a complete day'], science: 'Sand training increases ground contact time and proprioceptive demand — engaging stabilizing muscles that hard surfaces don\'t activate. The metabolic cost of sand running is 1.6× higher than pavement for the same distance.' },
+  'posture-reset': { name: 'Posture Reset', type: 'basic', price: 12, duration: '20 min', category: 'Mobility', setting: 'Home', gender: 'Men & Women', age: '35–60', img: './imagenes/training-in-fitness-center-2026-01-08-07-07-37-utc.webp', desc: 'Shoulder, thoracic, and cervical mobility to undo hours at a desk. Focused on alignment and decompression — a must-have add-on for any weekly routine.', exercises: ['Thoracic Extension', 'Wall Angel', 'Chin Tuck', 'Pec Stretch', 'Shoulder Circle', 'Cat-Cow'], for: ['You spend hours at a desk and feel chronic neck or upper back tension','You want to correct forward head posture and rounded shoulders','You need a short, effective daily mobility routine'], science: 'Upper crossed syndrome — the pattern of tight chest/neck flexors and weak deep neck flexors/mid-back muscles — is the most common postural dysfunction in desk workers. Oscar\'s sequence specifically targets and reverses this pattern.' },
+  'glute-builder': { name: 'Glute Builder', type: 'basic', price: 12, duration: '25 min', category: 'Strength', setting: 'Gym', gender: 'Women', age: '25–45', img: './imagenes/enthusiastic-young-ladies-doing-regular-physical-e-2026-01-09-01-16-21-utc.webp', desc: 'Glute isolation and activation focused on progressive overload. Designed to complement Female Power or Women\'s Upper Body as part of a weekly split.', exercises: ['Hip Thrust', 'Cable Kickback', 'Sumo Squat', 'Glute Bridge', 'Abductor Machine', 'Single-Leg Press'], for: ['You want targeted glute development with progressive overload','You\'re building a lower/upper split and need a dedicated glute day','You want to improve hip strength and reduce lower back stress'], science: 'The gluteus maximus is the most powerful muscle in the human body and a primary protector of the lumbar spine. Oscar\'s hip thrust sequencing maximizes glute activation percentage through scientifically validated joint angle positioning.' },
+  'balance-circuit': { name: 'Balance Circuit', type: 'basic', price: 12, duration: '25 min', category: 'Mobility', setting: 'Home', gender: 'Men & Women', age: '50+', img: './imagenes/diverse-people-working-out-with-fitness-balls-2026-01-07-23-35-57-utc.webp', desc: 'Proprioception and balance training for the 50+ body. Builds neuromuscular stability that prevents falls and supports all other physical activity.', exercises: ['Single-Leg Stand', 'Heel-to-Toe Walk', 'Side-Step', 'Sit-to-Stand', 'Tandem Balance', 'Ankle Circle'], for: ['You\'re 50+ and want to prevent falls and improve daily stability','You feel unsteady and want to rebuild proprioceptive confidence','You\'re recovering from a joint issue and need safe balance work'], science: 'Falls are the leading cause of injury-related death in adults over 65. Proprioceptive training — the sense of body position in space — is highly trainable at any age. Oscar\'s progression rebuilds this sense systematically and safely.' },
+  'cardio-burst': { name: 'Cardio Burst', type: 'basic', price: 12, duration: '25 min', category: 'HIIT', setting: 'Outdoor', gender: 'Men', age: '20–35', img: './imagenes/happy-fit-men-with-battle-ropes-exercise-in-the-fi-2026-03-25-00-06-17-utc.webp', desc: 'Sprint intervals and explosive bodyweight movements for outdoor conditioning. Builds the aerobic base that powers every other training modality.', exercises: ['100m Sprint', 'Box Jump', 'Battle Rope Slam', 'Broad Jump', 'Shuttle Run', 'Push-Up Burpee'], for: ['You want to build explosive outdoor conditioning','You need to improve your aerobic base for performance','You train outdoors and want a structured high-intensity block'], science: 'Explosive interval training elevates VO₂max more efficiently than steady-state cardio. Oscar\'s sprint-to-recovery ratios are based on research showing optimal anaerobic adaptation in trained and semi-trained males.' },
+  'recovery-flow': { name: 'Recovery Flow', type: 'basic', price: 12, duration: '25 min', category: 'Mobility', setting: 'Home', gender: 'Men & Women', age: '35–60', img: './imagenes/sportive-people-using-dumbbells-2026-01-07-23-08-32-utc.webp', desc: 'Full-body stretch and breathwork. Reduces soreness, restores range of motion, and primes the nervous system for the next training day.', exercises: ['Diaphragmatic Breathing', 'Supine Hip Stretch', 'Foam Roll Quads', 'Child\'s Pose', 'Thread the Needle', 'Legs-Up-the-Wall'], for: ['You\'re sore after a hard training week and need active recovery','You want to reduce muscle tension and improve flexibility','You want to build a parasympathetic recovery practice'], science: 'Active recovery stimulates blood flow to muscle tissue without causing additional micro-damage — accelerating the removal of lactate and inflammatory metabolites. Oscar includes controlled breathing to activate the vagal nerve and speed recovery.' },
+  'womens-upper-body': { name: "Women's Upper Body", type: 'basic', price: 12, duration: '25 min', category: 'Strength', setting: 'Gym', gender: 'Women', age: '25–45', img: './imagenes/young-people-working-out-2026-03-10-02-07-22-utc.webp', desc: 'Push and pull patterns designed for women. Balanced upper body development with attention to posture, joint health, and progressive overload.', exercises: ['Dumbbell Press', 'Seated Row', 'Lateral Raise', 'Face Pull', 'Tricep Pushdown', 'Bicep Curl'], for: ['You want to build toned, strong arms and shoulders','You want balanced push and pull training to protect your posture','You\'re building a weekly split and need a dedicated upper body day'], science: 'Women have a proportionally higher Type I muscle fiber composition in the upper body, responding well to moderate loads with higher volume. Oscar programs accordingly — avoiding the "light weights many reps" myth with evidence-based loading.' },
+  'joint-stability': { name: 'Joint Stability', type: 'basic', price: 12, duration: '25 min', category: 'Mobility', setting: 'Home', gender: 'Men & Women', age: '35–60', img: './imagenes/diverse-people-working-out-with-fitness-balls-2026-01-07-23-35-57-utc.webp', desc: 'Knees, hips, and ankles. Targeted stability work that protects the joints most compromised by age or sedentary habits. Essential for long-term movement health.', exercises: ['Terminal Knee Extension', 'Clamshell', 'Ankle Alphabet', 'Wall Sit', 'Step-Up', 'Single-Leg Balance'], for: ['You have knee, hip, or ankle discomfort and want to stabilize them','You\'re 40+ and want to protect your joints for long-term movement','You\'ve had a joint injury and need safe, progressive strengthening'], science: 'Joint stability depends on the neuromuscular system activating the right muscles in the right order before and during movement. Oscar\'s protocol uses specific activation drills based on arthrokinematic principles to restore this firing pattern.' },
+  // PRO (10)
+  'iron-foundation': { name: 'Iron Foundation', type: 'pro', price: 25, duration: '60 min', category: 'Strength', setting: 'Gym', gender: 'Men', age: '25–45', img: './imagenes/low-angle-grayscale-gym-inside-view-with-a-barbell-2026-03-18-16-05-06-utc.webp', desc: '8-week hypertrophy and strength program built for men. Progressive overload, correct technique, and real muscle development from the ground up.', exercises: ['Barbell Squat', 'Barbell Bench Press', 'Bent-Over Row', 'Overhead Press', 'Romanian Deadlift', 'Pull-Up'], for: ['You\'re serious about building real muscle with a structured 8-week plan','You want progressive overload guided by someone who understands the science','You train consistently and want to stop guessing your way through the gym'], science: 'Hypertrophy requires mechanical tension, metabolic stress, and muscle damage in the right combination. Oscar\'s 8-week periodization cycles all three stimuli systematically — the same approach used in sports science research.' },
+  'female-power': { name: 'Female Power', type: 'pro', price: 25, duration: '60 min', category: 'Strength', setting: 'Gym', gender: 'Women', age: '25–45', img: './imagenes/enthusiastic-young-ladies-doing-regular-physical-e-2026-01-09-01-16-21-utc.webp', desc: 'Functional strength designed for women. No myths. A complete, progressive program that builds muscle, confidence, and real-world physical performance.', exercises: ['Hip Thrust', 'Goblet Squat', 'Dumbbell Row', 'Overhead Press', 'Bulgarian Split Squat', 'Cable Pull-Through'], for: ['You want to build real strength — not "tone" — without the myths','You\'re tired of programs that underestimate what women can do physically','You want a complete, science-based system built for the female body'], science: 'Women\'s hormonal cycles influence recovery and strength adaptation. Oscar accounts for this in the programming — adjusting volume and intensity across the month to work with your physiology, not ignore it.' },
+  'battle-hiit': { name: 'Battle HIIT', type: 'pro', price: 25, duration: '40 min', category: 'HIIT', setting: 'Outdoor', gender: 'Men', age: '20–35', img: './imagenes/happy-fit-men-with-battle-ropes-exercise-in-the-fi-2026-03-25-00-06-17-utc.webp', desc: 'High-performance outdoor conditioning. Battle ropes, plyometrics, and bodyweight circuits designed to build explosive endurance and burn fat fast.', exercises: ['Battle Rope Wave', 'Box Jump', 'Sled Push', 'Tire Flip', 'Burpee', 'Farmer Carry'], for: ['You want elite-level outdoor conditioning in 40 minutes','You need to develop power and endurance simultaneously','You\'re an active male who wants a program that actually challenges you'], science: 'Concurrent training — combining strength and cardio stimuli in one session — requires careful sequencing to avoid interference. Oscar structures this session to minimize the interference effect while maximizing power and aerobic adaptation.' },
+  'full-body-burn': { name: 'Full Body Burn', type: 'pro', price: 25, duration: '50 min', category: 'HIIT', setting: 'Gym', gender: 'Men & Women', age: '20–50', img: './imagenes/sports-in-the-gym-2026-03-25-07-33-54-utc.webp', desc: 'A complete metabolic conditioning session. Combines strength and cardio intervals in a gym setting for maximum calorie burn and muscular endurance.', exercises: ['Kettlebell Swing', 'Push-Up', 'Box Jump', 'Goblet Squat', 'Rowing Machine', 'TRX Row'], for: ['You want maximum caloric expenditure in a single gym session','You need to build both strength and cardiovascular endurance','You want structured intervals that feel like real training'], science: 'Metabolic conditioning elevates growth hormone secretion by 400–700% during and after the session. Oscar\'s interval design maintains this hormonal response throughout — a key mechanism behind the body recomposition effect.' },
+  'women-40-plus': { name: 'Women 40+', type: 'pro', price: 25, duration: '55 min', category: 'Strength', setting: 'Gym', gender: 'Women', age: '40–55', img: './imagenes/training-in-fitness-center-2026-01-08-07-07-37-utc.webp', desc: 'Strength, posture, and wellbeing for women after 40. Built around hormonal realities and a preventive approach to create a lasting physical foundation.', exercises: ['Dumbbell Squat', 'Cable Row', 'Hip Thrust', 'Lateral Band Walk', 'Overhead Press', 'Dead Bug'], for: ['You\'re 40+ and want to stay strong, mobile, and pain-free','Perimenopause or menopause is affecting your energy and body composition','You want a program that respects your age instead of ignoring it'], science: 'Estrogen decline after 40 accelerates muscle loss and bone density reduction. Resistance training is the most evidence-backed intervention to counteract both. Oscar\'s program is specifically structured around this biological reality.' },
+  'vitality-50-plus': { name: 'Vitality 50+', type: 'pro', price: 25, duration: '45 min', category: 'Mobility', setting: 'Home', gender: 'Men & Women', age: '50+', img: './imagenes/sportive-people-using-dumbbells-2026-01-07-23-08-32-utc.webp', desc: 'A complete 45-minute session for the 50+ body. Balance, gentle strength, and joint mobility working together to keep you active and pain-free long term.', exercises: ['Sit-to-Stand', 'Dumbbell Press', 'Single-Leg Balance', 'Hip Hinge', 'Band Pull-Apart', 'Thoracic Rotation'], for: ['You\'re 50+ and want a complete, safe, and effective training session','You want to maintain independence and physical capability long-term','You need a program that accounts for joint sensitivity and recovery time'], science: 'After 50, the nervous system\'s ability to recruit muscle fibers diminishes — but it remains highly trainable. Oscar\'s session sequence stimulates neuromuscular adaptation first, then applies load, maximizing the training response per session.' },
+  'combat-ready': { name: 'Combat Ready', type: 'pro', price: 25, duration: '60 min', category: 'HIIT', setting: 'Outdoor', gender: 'Men', age: '20–40', img: './imagenes/sport-equipment-unrecognizable-black-male-athlete-2026-03-24-03-09-02-utc.webp', desc: 'High-performance outdoor conditioning for men. Power, speed, and endurance trained together for transferable, real-world fitness that shows up when it matters.', exercises: ['Sprint Intervals', 'Push-Up Complex', 'Jump Squat', 'Medicine Ball Slam', 'Pull-Up', 'Agility Ladder'], for: ['You want peak physical conditioning for real-world demands','You need power, speed, and endurance trained as an integrated system','You want the hardest outdoor session in this catalog'], science: 'Real-world physical performance requires the simultaneous development of the phosphocreatine, glycolytic, and oxidative energy systems. Oscar\'s work-to-rest structure cycles through all three during a single 60-minute session.' },
+  'travel-warrior': { name: 'Travel Warrior', type: 'pro', price: 25, duration: '45 min', category: 'HIIT', setting: 'Hotel', gender: 'Men & Women', age: '25–50', img: './imagenes/sportsman-and-sportswoman-working-out-on-step-plat-2026-01-05-23-58-50-utc.webp', desc: 'A complete 45-minute session for anywhere you travel. No equipment needed. Built for hotel rooms but effective in any small space — and fully repeatable.', exercises: ['Push-Up Variation', 'Squat Jump', 'Plank Series', 'Reverse Lunge', 'Tricep Dip', 'Mountain Climber'], for: ['You travel constantly and need a complete session with zero equipment','You want to arrive at every destination still maintaining your training','You need a program that\'s fully repeatable and scalable to your level'], science: 'Training in confined spaces challenges proprioception and spatial awareness differently than open environments. Oscar leverages this by programming movements that increase neuromuscular demand — you get more adaptation per rep.' },
+  'functional-core-pro': { name: 'Functional Core Pro', type: 'pro', price: 25, duration: '45 min', category: 'Strength', setting: 'Gym', gender: 'Men & Women', age: '25–45', img: './imagenes/sports-in-the-gym-2026-01-09-11-02-01-utc.webp', desc: 'Deep core and full-body stability. Beyond crunches: motor control, anti-rotation, and the transferable strength that makes every other program more effective.', exercises: ['Pallof Press', 'Dead Bug', 'Cable Rotation', 'Stir-the-Pot', 'Anti-Lateral Flexion Hold', 'Turkish Get-Up'], for: ['You want real core strength — not just a six-pack','You deal with lower back pain and want to address the root cause','You want every other program you do to become more effective'], science: 'The core\'s primary function is not to flex the spine — it\'s to resist unwanted motion under load. Oscar programs exclusively anti-movement patterns (anti-flexion, anti-rotation, anti-extension), which is what the research supports for both performance and injury prevention.' },
+  'beach-total': { name: 'Beach Total', type: 'pro', price: 25, duration: '50 min', category: 'Strength', setting: 'Beach', gender: 'Men & Women', age: '20–40', img: './imagenes/close-up-of-female-athlete-walking-on-treadmill-in-2026-03-16-03-27-19-utc.webp', desc: 'A complete beach training session. Functional strength circuits using sand resistance, bodyweight mechanics, and natural environment to build real fitness.', exercises: ['Sand Lunge', 'Push-Up Complex', 'Broad Jump', 'Bear Crawl', 'Sprint', 'Plank Hold'], for: ['You\'re near a beach and want to use it for real training','You want a complete functional strength session with no gym required','You\'re combining this with Beach Sprint for a full beach training day'], science: 'Beach training\'s unstable surface increases muscle activation by up to 30% compared to stable ground — particularly in the ankles, hips, and core. Oscar\'s circuit design capitalizes on this elevated demand for superior neuromuscular adaptation.' },
+  // BUNDLES (10)
+  'the-gym-week': { name: 'The Gym Week', type: 'bundle', price: 45, duration: '4 programs', category: 'Strength', setting: 'Gym', gender: 'Men', age: '25–45', img: './imagenes/low-angle-grayscale-gym-inside-view-with-a-barbell-2026-03-18-16-05-06-utc.webp', desc: 'Everything you need for a complete gym week. Iron Foundation anchors the week while the three Basic blocks give you a full push/pull/legs split.', exercises: ['Barbell Bench Press', 'Barbell Row', 'Back Squat', 'Romanian Deadlift', 'Pull-Up', 'Overhead Press'], includes: [{type:'PRO',name:'Iron Foundation'},{type:'BASIC',name:'Push Foundation'},{type:'BASIC',name:'Pull Foundation'},{type:'BASIC',name:'Squat & Hinge'}], for: ['You want a complete, structured gym week with zero guesswork','You\'re building serious strength with a proven push/pull/legs split','You want to save $28 vs. buying each program separately'], science: 'A push/pull/legs split is one of the most validated training structures in sports science — optimizing recovery time per muscle group while maximizing weekly volume for hypertrophy.' },
+  'womens-gym-pack': { name: "Women's Gym Pack", type: 'bundle', price: 45, duration: '3 programs', category: 'Strength', setting: 'Gym', gender: 'Women', age: '25–45', img: './imagenes/enthusiastic-young-ladies-doing-regular-physical-e-2026-01-09-01-16-21-utc.webp', desc: 'The complete women\'s gym system. Female Power delivers the full session while Glute Builder and Women\'s Upper Body fill out the split for a balanced week.', exercises: ['Hip Thrust', 'Goblet Squat', 'Dumbbell Row', 'Lateral Raise', 'Cable Kickback', 'Bulgarian Split Squat'], includes: [{type:'PRO',name:'Female Power'},{type:'BASIC',name:'Glute Builder'},{type:'BASIC',name:"Women's Upper Body"}], for: ['You want a complete women\'s gym week, not just isolated exercises','You want posterior chain and upper body development that balances each other','You\'re saving $14 vs. buying the programs individually'], science: 'Balanced agonist-antagonist development reduces injury risk and improves movement quality. Oscar structures the bundle so each session complements the others — reducing overlap and maximizing weekly volume efficiency.' },
+  'travel-ready': { name: 'Travel Ready', type: 'bundle', price: 45, duration: '3 programs', category: 'HIIT', setting: 'Hotel', gender: 'Men & Women', age: '25–50', img: './imagenes/sportsman-and-sportswoman-working-out-on-step-plat-2026-01-05-23-58-50-utc.webp', desc: 'Your travel training kit. Travel Warrior handles the full session. Hotel Sprint adds intensity. Morning Wake-Up starts every day right — no gym required.', exercises: ['Push-Up Variation', 'Squat Jump', 'High Knees', 'Mountain Climber', 'Reverse Lunge', 'Bodyweight Squat'], includes: [{type:'PRO',name:'Travel Warrior'},{type:'BASIC',name:'Hotel Sprint'},{type:'BASIC',name:'Morning Wake-Up'}], for: ['You travel often and can\'t afford to lose your training momentum','You need a full training system that works in any hotel room','You save $14 vs. buying each program separately'], science: 'Training consistency during travel is the single biggest predictor of long-term fitness maintenance. Oscar designed this bundle to provide enough session variety to maintain motivation across different settings and time zones.' },
+  '50-plus-complete': { name: '50+ Complete', type: 'bundle', price: 45, duration: '4 programs', category: 'Mobility', setting: 'Home', gender: 'Men & Women', age: '50+', img: './imagenes/sportive-people-using-dumbbells-2026-01-07-23-08-32-utc.webp', desc: 'A full wellness week for the 50+ body. Vitality 50+ is the anchor session, supported by targeted mobility blocks that build lasting physical independence.', exercises: ['Sit-to-Stand', 'Single-Leg Balance', '90/90 Hip Stretch', 'Glute Bridge', 'Diaphragmatic Breathing', 'Hip Circle'], includes: [{type:'PRO',name:'Vitality 50+'},{type:'BASIC',name:'Hip Mobility'},{type:'BASIC',name:'Balance Circuit'},{type:'BASIC',name:'Recovery Flow'}], for: ['You\'re 50+ and want a complete weekly training system built for your body','You want strength, mobility, and recovery working together — not separately','You save $26 vs. buying each program individually'], science: 'For the 50+ body, the combination of strength, balance, and mobility training produces superior outcomes to any single modality alone. Oscar sequences this bundle so each session prepares the body for the next.' },
+  'outdoor-performance': { name: 'Outdoor Performance', type: 'bundle', price: 45, duration: '3 programs', category: 'HIIT', setting: 'Outdoor', gender: 'Men', age: '20–35', img: './imagenes/happy-fit-men-with-battle-ropes-exercise-in-the-fi-2026-03-25-00-06-17-utc.webp', desc: 'Maximum outdoor conditioning. Two Pro anchors push the limits of power and endurance. Cardio Burst adds the aerobic base that ties everything together.', exercises: ['Sprint Intervals', 'Battle Rope Wave', 'Box Jump', 'Broad Jump', 'Push-Up Complex', '100m Sprint'], includes: [{type:'PRO',name:'Combat Ready'},{type:'PRO',name:'Battle HIIT'},{type:'BASIC',name:'Cardio Burst'}], for: ['You want peak outdoor performance with two complete Pro sessions','You\'re building power, endurance, and aerobic capacity simultaneously','You save $37 vs. buying each program separately'], science: 'Including two distinct high-intensity modalities — power-based and endurance-based — targets both fast-twitch and slow-twitch fiber adaptation simultaneously. Oscar alternates the stimuli to prevent accommodation and maximize total adaptation.' },
+  'women-40-plus-wellness': { name: 'Women 40+ Wellness', type: 'bundle', price: 45, duration: '3 programs', category: 'Strength', setting: 'Gym', gender: 'Women', age: '40–55', img: './imagenes/young-people-working-out-2026-03-10-02-07-22-utc.webp', desc: 'A complete system for women after 40. Women 40+ leads the week. Posture Reset and Joint Stability protect and restore what daily life takes away.', exercises: ['Dumbbell Squat', 'Cable Row', 'Hip Thrust', 'Wall Angel', 'Clamshell', 'Thoracic Extension'], includes: [{type:'PRO',name:'Women 40+'},{type:'BASIC',name:'Posture Reset'},{type:'BASIC',name:'Joint Stability'}], for: ['You\'re 40+ and want strength, posture, and joint protection in one system','You want your training to address the full picture — not just workouts','You save $14 vs. buying the three programs individually'], science: 'Perimenopause accelerates postural degradation and joint laxity alongside muscle loss. This bundle addresses all three simultaneously — the only approach that matches the complexity of what\'s actually happening biologically.' },
+  'core-stability': { name: 'Core & Stability', type: 'bundle', price: 45, duration: '3 programs', category: 'Strength', setting: 'Gym', gender: 'Men & Women', age: '25–50', img: './imagenes/sports-in-the-gym-2026-01-09-11-02-01-utc.webp', desc: 'The complete core system. Functional Core Pro delivers the depth. Core Ignite activates before training. Joint Stability protects the joints that support every movement.', exercises: ['Pallof Press', 'Dead Bug', 'Turkish Get-Up', 'Bird Dog', 'Terminal Knee Extension', 'Anti-Lateral Flexion Hold'], includes: [{type:'PRO',name:'Functional Core Pro'},{type:'BASIC',name:'Core Ignite'},{type:'BASIC',name:'Joint Stability'}], for: ['You want to build a truly strong and resilient core, not just abs','You deal with lower back issues and want to address the root cause','You save $14 vs. buying the three programs separately'], science: 'Core stability and joint stability are the foundation of every other physical quality. Oscar built this bundle so you develop both in parallel — eliminating the weak links that cause injury in every other training context.' },
+  'beach-escape': { name: 'Beach Escape', type: 'bundle', price: 45, duration: '3 programs', category: 'Strength', setting: 'Beach', gender: 'Men & Women', age: '20–40', img: './imagenes/close-up-of-female-athlete-walking-on-treadmill-in-2026-03-16-03-27-19-utc.webp', desc: 'Your full beach training experience. Beach Total handles the main session. Beach Sprint adds explosive work. Morning Wake-Up sets the tone for the day.', exercises: ['Sand Lunge', 'Bear Crawl', 'Sand Sprint 40m', 'Broad Jump', 'Push-Up Complex', 'Bodyweight Squat'], includes: [{type:'PRO',name:'Beach Total'},{type:'BASIC',name:'Beach Sprint'},{type:'BASIC',name:'Morning Wake-Up'}], for: ['You want to fully use the beach as a training environment','You want both strength and explosive conditioning in one package','You save $14 vs. buying the three programs individually'], science: 'Training on varied surfaces and conditions enhances neurological adaptability — the ability to perform under uncertainty. This bundle deliberately combines different movement demands and surface textures for this exact effect.' },
+  'recovery-week': { name: 'Recovery Week', type: 'bundle', price: 45, duration: '4 programs', category: 'Mobility', setting: 'Home', gender: 'Men & Women', age: '35–60', img: './imagenes/diverse-people-working-out-with-fitness-balls-2026-01-07-23-35-57-utc.webp', desc: 'A full deload and recovery week. Four programs designed to work the body without breaking it down — restoring mobility, reducing tension, rebuilding for what\'s next.', exercises: ['Diaphragmatic Breathing', '90/90 Hip Stretch', 'Child\'s Pose', 'Thoracic Extension', 'Supine Hip Stretch', 'Wall Angel'], includes: [{type:'PRO',name:'Vitality 50+'},{type:'BASIC',name:'Recovery Flow'},{type:'BASIC',name:'Hip Mobility'},{type:'BASIC',name:'Posture Reset'}], for: ['You\'ve had an intense training block and need a structured deload week','You\'re 35+ and want to prevent overuse injuries with strategic recovery','You save $26 vs. buying each program separately'], science: 'Strategic deload weeks increase long-term training adaptation by allowing the nervous system to fully recover. Oscar sequences this bundle to maintain movement quality and blood flow while completely eliminating mechanical stress.' },
+  'hiit-anywhere': { name: 'HIIT Anywhere', type: 'bundle', price: 45, duration: '3 programs', category: 'HIIT', setting: 'Gym · Hotel', gender: 'Men & Women', age: '20–50', img: './imagenes/good-things-come-to-those-who-sweat-2026-03-25-05-31-25-utc.webp', desc: 'High intensity with no setting restrictions. Full Body Burn owns the gym. Hotel Sprint keeps the fire going on the road. Cardio Burst fills any outdoor gap.', exercises: ['Kettlebell Swing', 'Box Jump', 'Jump Squat', 'High Knees', 'Push-Up Burpee', 'Battle Rope Slam'], includes: [{type:'PRO',name:'Full Body Burn'},{type:'BASIC',name:'Hotel Sprint'},{type:'BASIC',name:'Cardio Burst'}], for: ['You want high intensity training regardless of where you are','You travel and need HIIT options for the gym, hotel, and outdoors','You save $14 vs. buying the three programs separately'], science: 'Maintaining HIIT frequency across changing environments is the key to sustaining cardiovascular adaptation. Oscar designed this bundle so the work-to-rest ratios are consistent across all three programs — your body stays in the same adaptation zone.' }
+};
+
+// ── SLUG → SLUG MAP (for related programs)
+const SLUG_ORDER = Object.keys(PROGRAMS);
+
+// ── RENDER ──
+function getSlug() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get('id') || '';
+}
+
+function typeLabel(type) {
+  if (type === 'basic') return 'BASIC';
+  if (type === 'pro') return 'PRO';
+  if (type === 'bundle') return 'BUNDLE';
+  return type.toUpperCase();
+}
+
+function render(slug) {
+  const p = PROGRAMS[slug];
+  if (!p) {
+    document.getElementById('not-found-page').style.display = '';
+    document.getElementById('program-page').style.display = 'none';
+    document.title = 'Program Not Found — Oscar Esquivel';
+    return;
+  }
+
+  document.getElementById('program-page').style.display = '';
+  document.getElementById('not-found-page').style.display = 'none';
+  document.title = p.name + ' — Oscar Esquivel';
+
+  // Badge
+  const badge = document.getElementById('prog-badge');
+  badge.textContent = typeLabel(p.type);
+  badge.className = 'prog-type-badge ' + p.type;
+
+  // Name
+  document.getElementById('prog-name').textContent = p.name;
+
+  // Meta
+  const metaEl = document.getElementById('prog-meta');
+  const metaItems = [p.duration, p.category, p.setting, p.gender, p.age];
+  metaEl.innerHTML = metaItems.map((item, i) =>
+    `<span class="prog-meta-item">${item}</span>${i < metaItems.length - 1 ? '<span class="prog-meta-dot">◆</span>' : ''}`
+  ).join('');
+
+  // Desc
+  document.getElementById('prog-desc').textContent = p.desc;
+
+  // Price
+  document.getElementById('prog-price').textContent = '$' + p.price;
+
+  // Image
+  const img = document.getElementById('prog-img');
+  img.src = p.img;
+  img.alt = p.name;
+
+  // Exercises
+  const exList = document.getElementById('ex-list');
+  const exercises = p.exercises || [];
+  exList.innerHTML = exercises.map((ex, i) =>
+    `<div class="ex-item"><span class="ex-num">${String(i+1).padStart(2,'0')}</span><span class="ex-name">${ex}</span></div>`
+  ).join('');
+  // Fix grid odd/even borders when odd count
+  if (exercises.length % 2 !== 0) {
+    const lastItem = exList.querySelector('.ex-item:last-child');
+    if (lastItem) lastItem.style.borderRight = 'none';
+  }
+
+  // For who
+  const forList = document.getElementById('for-list');
+  forList.innerHTML = (p.for || []).map(item =>
+    `<div class="for-item"><span class="for-check">✓</span><span class="for-text">${item}</span></div>`
+  ).join('');
+
+  // Science
+  document.getElementById('science-text').textContent = p.science || '';
+
+  // Bundle includes
+  const includesSection = document.getElementById('includes-section');
+  if (p.type === 'bundle' && p.includes) {
+    includesSection.style.display = '';
+    const includesList = document.getElementById('includes-list');
+    includesList.innerHTML = p.includes.map(item => {
+      const cls = item.type === 'PRO' ? 'is-pro' : '';
+      return `<div class="include-card ${cls}">
+        <span class="include-type ${item.type.toLowerCase()}">${item.type}</span>
+        <div class="include-name">${item.name}</div>
+      </div>`;
+    }).join('');
+  } else {
+    includesSection.style.display = 'none';
+  }
+
+  // Buy section
+  document.getElementById('buy-name').textContent = p.name;
+  document.getElementById('buy-type').textContent = typeLabel(p.type) + ' · ' + p.duration;
+  document.getElementById('buy-price').textContent = '$' + p.price;
+
+  // Related programs — same type first, then same category, limit 3, exclude self
+  const related = findRelated(slug, p);
+  const relatedGrid = document.getElementById('related-grid');
+  relatedGrid.innerHTML = related.map(([relSlug, relProg]) => {
+    const badgeCls = relProg.type;
+    return `<a href="./program.html?id=${relSlug}" class="related-card ${relProg.type === 'pro' ? 'is-pro' : relProg.type === 'bundle' ? 'is-bundle' : ''}">
+      <div class="related-img">
+        <img src="${relProg.img}" alt="${relProg.name}" loading="lazy">
+        <div class="related-img-overlay"></div>
+        <span class="related-badge ${badgeCls}">${typeLabel(relProg.type)}</span>
+        <span class="related-dur">${relProg.duration}</span>
+      </div>
+      <div class="related-body">
+        <div class="related-title">${relProg.name}</div>
+        <div class="related-desc">${relProg.desc.substring(0, 90)}...</div>
+        <div class="related-footer">
+          <span class="related-price">$${relProg.price}</span>
+          <span class="related-link">View Program →</span>
+        </div>
+      </div>
+    </a>`;
+  }).join('');
+}
+
+function findRelated(currentSlug, currentProg) {
+  // Prefer: same type, then same category, then anything — exclude self
+  const sameType = SLUG_ORDER.filter(s => s !== currentSlug && PROGRAMS[s].type === currentProg.type);
+  const sameCategory = SLUG_ORDER.filter(s => s !== currentSlug && PROGRAMS[s].type !== currentProg.type && PROGRAMS[s].category === currentProg.category);
+  const others = SLUG_ORDER.filter(s => s !== currentSlug && !sameType.includes(s) && !sameCategory.includes(s));
+  const pool = [...sameType, ...sameCategory, ...others];
+  return pool.slice(0, 3).map(s => [s, PROGRAMS[s]]);
+}
+
+// ── INIT ──
+const slug = getSlug();
+render(slug);
+
+// ── REVEAL ANIMATION ──
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); revealObserver.unobserve(e.target); } });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+// ── NAV SCROLL ──
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 60);
+}, { passive: true });
+
+// ── MOBILE MENU ──
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobileMenu');
+const mobileClose = document.getElementById('mobileClose');
+hamburger.addEventListener('click', () => mobileMenu.classList.add('open'));
+mobileClose.addEventListener('click', () => mobileMenu.classList.remove('open'));
+function closeMobile() { mobileMenu.classList.remove('open'); }
+
+// ── PAGE TRANSITION ──
+const pt = document.getElementById('page-transition');
+requestAnimationFrame(() => requestAnimationFrame(() => pt.classList.add('hidden')));
+document.addEventListener('click', e => {
+  const link = e.target.closest('a[href]');
+  if (!link) return;
+  const href = link.getAttribute('href');
+  if (!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('mailto') || link.target === '_blank') return;
+  e.preventDefault();
+  pt.classList.remove('hidden');
+  setTimeout(() => { window.location.href = href; }, 420);
+});
+</script>
+</body>
+</html>
