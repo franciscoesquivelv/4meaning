@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Agenda del Evento — Trascendencia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0a0a0a;
+      --surface:   #141414;
+      --surface2:  #1c1c1c;
+      --border:    #272727;
+      --border-hi: #3a3a3a;
+      --text:      #f8f7f5;
+      --muted:     #666666;
+      --error:     #c0504a;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 13px;
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    .page-header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 28px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .back-link {
+      display: flex; align-items: center; gap: 5px;
+      color: var(--muted); text-decoration: none;
+      font-size: 11px; font-weight: 500; letter-spacing: 0.04em;
+      transition: color 0.2s; flex-shrink: 0;
+    }
+    .back-link:hover { color: var(--text); }
+    .header-sep { width: 1px; height: 18px; background: var(--border); flex-shrink: 0; }
+    .header-logo { height: 18px; width: auto; filter: brightness(0) invert(1); opacity: 0.75; }
+    .header-title {
+      font-size: 10px; font-weight: 600; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--muted); margin-left: auto;
+    }
+
+    .main { max-width: 640px; margin: 0 auto; padding: 36px 24px 120px; }
+
+    .form-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 12px;
+    }
+    .section-label {
+      font-size: 9px; font-weight: 700; letter-spacing: 0.24em;
+      text-transform: uppercase; color: var(--muted);
+      margin-bottom: 18px; padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .fields { display: flex; flex-direction: column; gap: 14px; }
+    .fields-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .fields-row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+    .field { display: flex; flex-direction: column; gap: 5px; }
+    .field label {
+      font-size: 10px; font-weight: 600; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--muted);
+    }
+    .field label .req { color: var(--text); opacity: 0.4; margin-left: 2px; }
+    .field input, .field select {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 13px;
+      padding: 9px 12px;
+      outline: none;
+      transition: border-color 0.15s;
+      width: 100%;
+      -webkit-appearance: none;
+    }
+    .field input:focus, .field select:focus { border-color: var(--border-hi); }
+    .field input.invalid { border-color: var(--error); }
+    .field input::placeholder { color: #3a3a3a; }
+    .field select option { background: #141414; }
+    .field-hint { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+    /* version selector */
+    .version-tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 18px;
+    }
+    .vtab {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      color: var(--muted);
+      cursor: pointer;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      padding: 7px 14px;
+      transition: all 0.15s;
+      text-transform: uppercase;
+    }
+    .vtab:hover { border-color: var(--border-hi); color: var(--text); }
+    .vtab.active { background: var(--text); border-color: var(--text); color: var(--bg); }
+
+    .btn-generate {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: var(--text);
+      border: none;
+      border-radius: 6px;
+      color: var(--bg);
+      cursor: pointer;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 14px 28px;
+      width: 100%;
+      transition: opacity 0.15s;
+    }
+    .btn-generate:hover { opacity: 0.88; }
+    .btn-generate:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    .toast {
+      position: fixed; bottom: 28px; left: 50%;
+      transform: translateX(-50%) translateY(16px);
+      background: var(--surface); border: 1px solid var(--border-hi);
+      border-radius: 6px; padding: 11px 20px;
+      font-size: 12px; font-weight: 500; color: var(--text);
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.22s, transform 0.22s;
+      white-space: nowrap; z-index: 100;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .toast.error { border-color: rgba(192,80,74,0.5); color: #e07070; }
+  </style>
+</head>
+<body>
+
+<header class="page-header">
+  <a href="../" class="back-link">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    Hub
+  </a>
+  <div class="header-sep"></div>
+  <img class="header-logo" src="../../logos/logotrascendencia.png" alt="Trascendencia">
+  <span class="header-title">Agenda del Evento</span>
+</header>
+
+<main class="main">
+
+  <!-- Datos del evento -->
+  <div class="form-section">
+    <div class="section-label">Datos del Evento</div>
+    <div class="fields">
+      <div class="fields-row">
+        <div class="field">
+          <label for="evento">Capítulo YPO<span class="req">*</span></label>
+          <input type="text" id="evento" placeholder="Ej: YPO México Norte">
+        </div>
+        <div class="field">
+          <label for="ciudad">Ciudad<span class="req">*</span></label>
+          <input type="text" id="ciudad" placeholder="Ej: Antigua Guatemala">
+        </div>
+      </div>
+      <div class="fields-row3">
+        <div class="field">
+          <label for="fecha_dia1">Fecha Día 1<span class="req">*</span></label>
+          <input type="date" id="fecha_dia1">
+        </div>
+        <div class="field">
+          <label for="fecha_dia2">Fecha Día 2<span class="req">*</span></label>
+          <input type="date" id="fecha_dia2">
+        </div>
+        <div class="field">
+          <label for="fecha_dia3">Fecha Día 3<span class="req">*</span></label>
+          <input type="date" id="fecha_dia3">
+        </div>
+      </div>
+      <div class="fields-row">
+        <div class="field">
+          <label for="hora_inicio">Hora de inicio Día 1<span class="req">*</span></label>
+          <input type="time" id="hora_inicio" value="09:00">
+        </div>
+        <div class="field">
+          <label for="n_parejas">Número de parejas</label>
+          <input type="number" id="n_parejas" min="8" max="24" placeholder="8">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Roles del equipo -->
+  <div class="form-section">
+    <div class="section-label">Equipo</div>
+    <div class="fields">
+      <div class="fields-row">
+        <div class="field">
+          <label for="conductor">Conductor/a del Evento</label>
+          <input type="text" id="conductor" placeholder="Nombre">
+        </div>
+        <div class="field">
+          <label for="daychairs">Daychairs</label>
+          <input type="text" id="daychairs" placeholder="Nombre 1 y Nombre 2">
+        </div>
+      </div>
+      <div class="fields-row">
+        <div class="field">
+          <label for="facilitador_conexion">Facilitador/a de Conexión</label>
+          <input type="text" id="facilitador_conexion" placeholder="Nombre">
+        </div>
+        <div class="field">
+          <label for="facilitador_filosofico">Facilitador/a de Contenido</label>
+          <input type="text" id="facilitador_filosofico" placeholder="Nombre">
+        </div>
+      </div>
+      <div class="fields-row">
+        <div class="field">
+          <label for="speaker_internacional">Speaker Internacional</label>
+          <input type="text" id="speaker_internacional" placeholder="Nombre">
+        </div>
+        <div class="field">
+          <label for="coordinacion_produccion">Co-Coordinación de Producción</label>
+          <input type="text" id="coordinacion_produccion" placeholder="Nombre">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Versión -->
+  <div class="form-section">
+    <div class="section-label">Versión de la Agenda</div>
+    <div class="version-tabs" id="version-tabs">
+      <button class="vtab active" data-v="equipo">Equipo (detallada)</button>
+      <button class="vtab" data-v="participantes">Participantes (simplificada)</button>
+    </div>
+    <p style="font-size:11px;color:var(--muted);line-height:1.6">
+      <strong style="color:var(--text);font-weight:600">Equipo:</strong> incluye roles, notas y referencias de manual.<br>
+      <strong style="color:var(--text);font-weight:600">Participantes:</strong> solo actividades y horarios, sin detalles internos.
+    </p>
+  </div>
+
+  <button class="btn-generate" id="btn-generate">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+    </svg>
+    Generar Agenda PDF
+  </button>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─────────────────────────────────────────────
+// VERSION TOGGLE
+// ─────────────────────────────────────────────
+let currentVersion = 'equipo';
+document.getElementById('version-tabs').addEventListener('click', e => {
+  const btn = e.target.closest('.vtab');
+  if (!btn) return;
+  document.querySelectorAll('.vtab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  currentVersion = btn.dataset.v;
+});
+
+// ─────────────────────────────────────────────
+// PROGRAM DATA
+// ─────────────────────────────────────────────
+// Each item: [duration_min, activity, role_key, notes, internal_only]
+// role_key maps to team names entered in form
+// internal_only = true => only in equipo version
+
+const DIA1 = [
+  [0,    'Recibimiento de participantes',                     'coproduccion',   'Entrega de gafetes, foto por parejas',          false],
+  [30,   'Fotografía pre-inicio',                            'coproduccion',   'Fotos del evento por fotógrafo',                true ],
+  [30,   'Bienvenida e introducción',                        'conductor',      'Ver D2.1 — Daychairs + Conductor + Fac. Conexión', false],
+  [10,   'Presentación del equipo',                          'conexion',       'Ver D2.6',                                      true ],
+  [15,   'Testimonio de pareja Trascendencia',               'daychairs',      'Pareja que vivió el evento anteriormente',      false],
+  [15,   'Dinámica: El Calamondín',                          'conexion',       'Ver D3.1',                                      false],
+  [5,    'Entrega de mochilas',                              'equipo',         'No abrir aún — ver D2.4',                       true ],
+  [20,   'Explicación del álbum y los 7 temas',              'conductor',      'Ver C7',                                        false],
+  [15,   'Tema #1: Genealogía — "Existo antes de existir"',  'conductor',      '',                                              false],
+  [15,   'Formato F1.0 — Nuestra Historia. Yo',              'conductor',      'Parejas llenan el formato',                     false],
+  [60,   'Almuerzo',                                         'coproduccion',   '',                                              false],
+  [30,   'Descanso',                                         'coproduccion',   '',                                              false],
+  [45,   'Actividad IN ART y "La Esencia" (Temas 1.1–1.4)', 'conexion',       '',                                              false],
+  [30,   'Fechas que nos marcan · La Cuarta Fecha · Los regalos no tan buenos', 'conductor', '', false],
+  [0,    'Formatos F1.1–F1.4 — Nuestra Historia. Nosotros', 'conexion',       'Él llena el de ella y ella el de él',           false],
+  [45,   'Conferencia: De Hijo a Padre',                     'conductor',      'Ver Manual E',                                  false],
+  [30,   'Formato F2 — Los Hijos',                           'conductor',      '',                                              false],
+  [15,   'Coffee break',                                     'coproduccion',   '',                                              false],
+  [20,   'Dinámica: Las dos valijas',                        'conexion',       'Ver D3.1',                                      false],
+  [10,   'Formato F3.1',                                     'equipo',         '',                                              true ],
+  [10,   'Nuestra Receta Familiar',                          'conductor',      'Proyectar video V3.2 (opcional)',               false],
+  [20,   'Dinámica: La Tercera Valija — ¿A qué sabe tu familia?', 'filosofico', 'Palanca: Coco Sticks',                         false],
+  [10,   'Formato F3.2 — Nuestra Receta',                    'filosofico',     '',                                              false],
+  [60,   'Tiempo libre',                                     '',               '',                                              false],
+  [120,  'Cena',                                             'coproduccion',   '',                                              false],
+  [15,   'Traslado a habitaciones',                          'coproduccion',   '',                                              true ],
+];
+
+const DIA2 = [
+  [60,   'Desayuno',                                         'coproduccion',   'Proyectar video de bloopers',                   false],
+  [45,   'Conferencia: ¿Qué es un valor? Parte I',           'speaker',        'Ver Manual E',                                  false],
+  [15,   'Break',                                            'coproduccion',   '',                                              false],
+  [45,   'Conferencia: ¿Qué es un valor? Parte II',          'speaker',        '',                                              false],
+  [20,   'De Generación en Generación',                      'conductor',      'Proyectar video V4+5 (opcional)',               false],
+  [60,   'Actividad: Persona y Momento Importante',          'filosofico',     'Ver D3.4 — Fac. Contenido + Fac. Conexión',    false],
+  [10,   'Formatos F4 y F5',                                 'equipo',         '',                                              true ],
+  [60,   'Almuerzo',                                         'coproduccion',   '',                                              false],
+  [50,   'Tiempo libre',                                     '',               '',                                              false],
+  [10,   'Foto grupal',                                      'coproduccion',   '',                                              false],
+  [20,   'Dinámica: La Mochila de Valores',                  'filosofico',     'Ver D3.2',                                      false],
+  [20,   'Actividad: 7 Valores',                             'filosofico',     '',                                              false],
+  [30,   'Actividad: Los Cheques',                           'filosofico',     'Ver D3.5 — palanca: cheques',                   false],
+  [10,   'Formato F6 — Los Cheques',                         'filosofico',     '',                                              true ],
+  [0,    'Coffee break',                                     'coproduccion',   '',                                              false],
+  [20,   'Dinámica: El Avión',                               'filosofico',     'Ver D3.6',                                      false],
+  [10,   'Formato F7 — Nuestro Legado',                      'filosofico',     '',                                              true ],
+  [30,   'Panel: FotoLogos',                                 'conductor',      'Ver Manual E — Conferencia #5',                 false],
+  [10,   'Wrap up actividades y dinámicas',                  'conexion',       '',                                              true ],
+  [30,   'Take home value — 3 puntos finales',               'conductor',      '',                                              false],
+  [30,   'Descanso',                                         '',               '',                                              false],
+  [5,    'Centramiento',                                     '',               '',                                              false],
+  [15,   'Actividad: Lo Realmente Importante (Las Velas)',   'conexion',       'Ver D3.9',                                      false],
+  [120,  'Filmaciones',                                      'conductor',      'Ver C11',                                       false],
+  [0,    'Brindis',                                          'coproduccion',   '',                                              false],
+  [0,    'Cena de Gala',                                     'coproduccion',   '',                                              false],
+  [0,    'Cuestionario de evaluación + info filmaciones',    'conductor',      'Informar sobre filmaciones y Storybook',        true ],
+];
+
+const DIA3 = [
+  [60,   'Desayuno',                                         'coproduccion',   '',                                              false],
+  [300,  'Filmaciones',                                      'conductor',      'Ver C11 — orden según cuadro C11.2',            false],
+  [0,    'Coffee break',                                     'coproduccion',   '',                                              false],
+  [0,    'Actualización de hojas del álbum',                 '',               '',                                              false],
+];
+
+// ─────────────────────────────────────────────
+// LOGO LOADER
+// ─────────────────────────────────────────────
+let _logoCache = null;
+async function getLogo() {
+  if (_logoCache) return _logoCache;
+  return new Promise(resolve => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      const cv = document.createElement('canvas');
+      cv.width = img.naturalWidth; cv.height = img.naturalHeight;
+      const ctx = cv.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      const d = ctx.getImageData(0, 0, cv.width, cv.height);
+      for (let i = 0; i < d.data.length; i += 4) {
+        if (d.data[i+3] > 0) {
+          d.data[i] = 255-d.data[i]; d.data[i+1] = 255-d.data[i+1]; d.data[i+2] = 255-d.data[i+2];
+        }
+      }
+      ctx.putImageData(d, 0, 0);
+      _logoCache = cv.toDataURL('image/png');
+      resolve(_logoCache);
+    };
+    img.onerror = () => resolve(null);
+    img.src = '../../logos/logotrascendencia.png';
+  });
+}
+
+// ─────────────────────────────────────────────
+// COLLECT DATA
+// ─────────────────────────────────────────────
+function collectData() {
+  const required = ['evento','ciudad','fecha_dia1','fecha_dia2','fecha_dia3','hora_inicio'];
+  const data = {};
+  let valid = true;
+
+  required.forEach(id => {
+    const el = document.getElementById(id);
+    el.classList.remove('invalid');
+    if (!el.value.trim()) { el.classList.add('invalid'); valid = false; }
+    data[id] = el.value.trim();
+  });
+
+  ['n_parejas','conductor','daychairs','facilitador_conexion',
+   'facilitador_filosofico','speaker_internacional','coordinacion_produccion'].forEach(id => {
+    data[id] = document.getElementById(id).value.trim();
+  });
+
+  return valid ? data : null;
+}
+
+// ─────────────────────────────────────────────
+// TIME HELPERS
+// ─────────────────────────────────────────────
+function parseTime(hhmm) {
+  const [h, m] = hhmm.split(':').map(Number);
+  return h * 60 + m;
+}
+
+function formatTime(totalMin) {
+  const h = Math.floor(totalMin / 60) % 24;
+  const m = totalMin % 60;
+  return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+}
+
+function fmtDate(str) {
+  if (!str) return '';
+  const [y, m, d] = str.split('-');
+  const days = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+  const months = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  const dt = new Date(Number(y), Number(m)-1, Number(d));
+  return `${days[dt.getDay()]} ${parseInt(d)} de ${months[Number(m)-1]} de ${y}`;
+}
+
+function roleLabel(key, d) {
+  const map = {
+    conductor:    d.conductor     || 'Conductor/a del Evento',
+    daychairs:    d.daychairs     || 'Daychairs',
+    conexion:     d.facilitador_conexion   || 'Fac. de Conexión',
+    filosofico:   d.facilitador_filosofico || 'Fac. de Contenido',
+    speaker:      d.speaker_internacional  || 'Speaker Internacional',
+    coproduccion: d.coordinacion_produccion || 'Co-Coordinación de Producción',
+    equipo:       'Equipo',
+    '':           '',
+  };
+  return map[key] || key;
+}
+
+// ─────────────────────────────────────────────
+// PDF DESIGN CONSTANTS
+// ─────────────────────────────────────────────
+const W = 215.9, H = 279.4;
+const ML = 18, MR = 18, CW = W - ML - MR;
+const C_BLACK  = [10, 10, 10];
+const C_TEXT   = [30, 30, 30];
+const C_MUTED  = [120, 120, 120];
+const C_LIGHT  = [185, 185, 185];
+const C_RULE   = [218, 216, 212];
+const C_WHITE  = [255, 255, 255];
+const C_ALTROW = [249, 248, 246];
+const C_DAYBAND = [24, 24, 24]; // slightly lighter than black for day header
+
+function addPageHeader(doc, logo, d, dayLabel, dayDate) {
+  // Full black band
+  doc.setFillColor(...C_BLACK);
+  doc.rect(0, 0, W, 24, 'F');
+
+  // Logo left-center
+  if (logo) {
+    const lw = 52, lh = lw / 8.646;
+    doc.addImage(logo, 'PNG', ML, (24 - lh) / 2, lw, lh);
+  }
+
+  // Event name + city right
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(7);
+  doc.setTextColor(...C_LIGHT);
+  doc.text(d.evento, W - MR, 9.5, { align: 'right' });
+  doc.setFontSize(6.5);
+  doc.setTextColor(90, 90, 90);
+  doc.text(d.ciudad, W - MR, 14, { align: 'right' });
+
+  // Separator
+  doc.setDrawColor(...C_RULE);
+  doc.setLineWidth(0.25);
+  doc.line(0, 24, W, 24);
+
+  // Day header band
+  doc.setFillColor(...C_DAYBAND);
+  doc.rect(0, 24, W, 14, 'F');
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(9);
+  doc.setTextColor(...C_WHITE);
+  doc.text(dayLabel, ML, 33);
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(7.5);
+  doc.setTextColor(...C_LIGHT);
+  doc.text(fmtDate(dayDate), W - MR, 33, { align: 'right' });
+
+  doc.setDrawColor(...C_RULE);
+  doc.setLineWidth(0.25);
+  doc.line(0, 38, W, 38);
+}
+
+function addPageFooter(doc, d, pageNum, totalPages) {
+  doc.setDrawColor(...C_RULE);
+  doc.setLineWidth(0.25);
+  doc.line(ML, H - 14, W - MR, H - 14);
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(5.5);
+  doc.setTextColor(...C_MUTED);
+  doc.text('TRASCENDENCIA', ML, H - 9, { charSpace: 1.6 });
+
+  doc.setFont('helvetica', 'normal');
+  doc.text('Documento interno — uso exclusivo del equipo', W / 2, H - 9, { align: 'center' });
+
+  doc.setTextColor(...C_LIGHT);
+  doc.text(`${pageNum} / ${totalPages}`, W - MR, H - 9, { align: 'right' });
+}
+
+// ─────────────────────────────────────────────
+// RENDER ONE DAY
+// ─────────────────────────────────────────────
+function renderDay(doc, logo, d, dayNum, items, startHhmm, version) {
+  if (dayNum > 1) doc.addPage();
+
+  const dayLabels = ['DÍA 1 — LLEGADA Y APERTURA', 'DÍA 2 — TALLER PRINCIPAL', 'DÍA 3 — FILMACIONES Y CIERRE'];
+  const dayDates  = [d.fecha_dia1, d.fecha_dia2, d.fecha_dia3];
+
+  addPageHeader(doc, logo, d, dayLabels[dayNum - 1], dayDates[dayNum - 1]);
+
+  let currentMin = parseTime(startHhmm);
+  if (dayNum === 2) currentMin = parseTime('08:00');
+  if (dayNum === 3) currentMin = parseTime('08:00');
+
+  let y = 44;
+  const colTime  = ML;
+  const colAct   = ML + 22;
+  const colRole  = ML + 100;
+  const colNotes = ML + 142;
+  const actW     = 74;
+  const roleW    = 38;
+  const notesW   = CW - 142;
+
+  // Column headers
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(6.5);
+  doc.setTextColor(...C_MUTED);
+  doc.text('HORA', colTime, y, { charSpace: 0.8 });
+  doc.text('ACTIVIDAD', colAct, y, { charSpace: 0.8 });
+  if (version === 'equipo') {
+    doc.text('ROL', colRole, y, { charSpace: 0.8 });
+    doc.text('NOTAS', colNotes, y, { charSpace: 0.8 });
+  }
+  y += 3;
+  doc.setDrawColor(...C_RULE);
+  doc.setLineWidth(0.25);
+  doc.line(ML, y, W - MR, y);
+  y += 4;
+
+  let rowAlt = false;
+
+  items.forEach(([dur, act, roleKey, notes, internalOnly]) => {
+    if (version === 'participantes' && internalOnly) return;
+
+    // Row background
+    if (rowAlt) {
+      doc.setFillColor(...C_ALTROW);
+      const linesAct = doc.setFontSize(8.5) && doc.splitTextToSize(act, version === 'equipo' ? actW : CW - 22);
+      doc.setFontSize(8.5);
+      const actLines = doc.splitTextToSize(act, version === 'equipo' ? actW : CW - 22);
+      const rowH = Math.max(actLines.length * 4.8, 8);
+      doc.rect(ML - 1, y - 3.5, CW + 2, rowH + 2, 'F');
+    }
+    rowAlt = !rowAlt;
+
+    // Time
+    const timeStr = dur === 0 ? '—' : formatTime(currentMin);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(7.5);
+    doc.setTextColor(...C_MUTED);
+    doc.text(timeStr, colTime, y);
+
+    // Duration badge (small)
+    if (dur > 0 && version === 'equipo') {
+      doc.setFontSize(6);
+      doc.setTextColor(...C_LIGHT);
+      doc.text(`${dur} min`, colTime, y + 4.5);
+    }
+
+    // Activity
+    doc.setFont('helvetica', dur >= 45 ? 'bold' : 'normal');
+    doc.setFontSize(8.5);
+    doc.setTextColor(...C_TEXT);
+    const actW2 = version === 'equipo' ? actW : CW - 22;
+    const actLines = doc.splitTextToSize(act, actW2);
+    doc.text(actLines, colAct, y);
+
+    if (version === 'equipo') {
+      // Role
+      if (roleKey) {
+        const roleText = roleLabel(roleKey, d);
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(7);
+        doc.setTextColor(...C_MUTED);
+        const roleLines = doc.splitTextToSize(roleText, roleW);
+        doc.text(roleLines, colRole, y);
+      }
+
+      // Notes
+      if (notes) {
+        doc.setFont('helvetica', 'italic');
+        doc.setFontSize(6.5);
+        doc.setTextColor(...C_LIGHT);
+        const notesLines = doc.splitTextToSize(notes, notesW);
+        doc.text(notesLines, colNotes, y);
+      }
+    }
+
+    const rowH = Math.max(actLines.length * 4.8, 8);
+    y += rowH + 3.5;
+    if (dur > 0) currentMin += dur;
+
+    // Check for page overflow
+    if (y > H - 22) {
+      doc.addPage();
+      addPageHeader(doc, logo, d, `${dayLabels[dayNum - 1]} (cont.)`, dayDates[dayNum - 1]);
+      y = 44;
+      rowAlt = false;
+    }
+  });
+
+  return currentMin; // return end time
+}
+
+// ─────────────────────────────────────────────
+// MAIN GENERATOR
+// ─────────────────────────────────────────────
+async function generatePDF(d, version) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ format: 'letter', unit: 'mm' });
+  const logo = await getLogo();
+
+  // Render 3 days
+  renderDay(doc, logo, d, 1, DIA1, d.hora_inicio, version);
+  renderDay(doc, logo, d, 2, DIA2, '08:00', version);
+  renderDay(doc, logo, d, 3, DIA3, '08:00', version);
+
+  // Add footers to all pages
+  const totalPages = doc.internal.getNumberOfPages();
+  for (let p = 1; p <= totalPages; p++) {
+    doc.setPage(p);
+    addPageFooter(doc, d, p, totalPages);
+  }
+
+  const vLabel = version === 'equipo' ? 'Equipo' : 'Participantes';
+  doc.save(`Agenda_${vLabel}_${d.evento.replace(/\s+/g,'_')}_${new Date().toISOString().slice(0,10)}.pdf`);
+}
+
+// ─────────────────────────────────────────────
+// TOAST + INIT
+// ─────────────────────────────────────────────
+function showToast(msg, kind = 'success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast ${kind} show`;
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+document.getElementById('btn-generate').addEventListener('click', async () => {
+  const data = collectData();
+  if (!data) { showToast('Completa los campos requeridos', 'error'); return; }
+
+  const btn = document.getElementById('btn-generate');
+  btn.disabled = true;
+  btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Generando…`;
+
+  try {
+    await generatePDF(data, currentVersion);
+    showToast('Agenda generada correctamente');
+  } catch (e) {
+    showToast('Error al generar', 'error');
+    console.error(e);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Generar Agenda PDF`;
+  }
+});
+</script>
+</body>
+</html>
