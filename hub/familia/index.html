@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Materiales por Familia — Trascendencia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0a0a0a;
+      --surface:   #141414;
+      --surface2:  #1c1c1c;
+      --border:    #272727;
+      --border-hi: #3a3a3a;
+      --text:      #f8f7f5;
+      --muted:     #666666;
+      --error:     #c0504a;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 13px;
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    .page-header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 28px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .back-link {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      transition: color 0.2s;
+      flex-shrink: 0;
+    }
+    .back-link:hover { color: var(--text); }
+    .header-sep { width: 1px; height: 18px; background: var(--border); flex-shrink: 0; }
+    .header-logo {
+      height: 18px;
+      width: auto;
+      filter: brightness(0) invert(1);
+      opacity: 0.75;
+    }
+    .header-title {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-left: auto;
+    }
+
+    /* ── LAYOUT ── */
+    .main { max-width: 640px; margin: 0 auto; padding: 36px 24px 120px; }
+
+    /* ── FORM SECTION ── */
+    .form-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 12px;
+    }
+    .section-label {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 18px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .fields { display: flex; flex-direction: column; gap: 14px; }
+    .fields-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .field { display: flex; flex-direction: column; gap: 5px; }
+    .field label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .field label .req { color: var(--text); opacity: 0.4; margin-left: 2px; }
+    .field input, .field select {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 13px;
+      padding: 9px 12px;
+      outline: none;
+      transition: border-color 0.15s;
+      width: 100%;
+      -webkit-appearance: none;
+    }
+    .field input:focus, .field select:focus { border-color: var(--border-hi); }
+    .field input.invalid { border-color: var(--error); }
+    .field input::placeholder { color: #3a3a3a; }
+    .field-hint { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+    /* ── HIJOS LIST ── */
+    .hijos-list { display: flex; flex-direction: column; gap: 8px; }
+    .hijo-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: center;
+    }
+    .btn-remove-hijo {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 16px;
+      line-height: 1;
+      padding: 8px 10px;
+      transition: border-color 0.15s, color 0.15s;
+      flex-shrink: 0;
+    }
+    .btn-remove-hijo:hover { border-color: var(--error); color: var(--error); }
+    .btn-add-hijo {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--muted);
+      cursor: pointer;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      padding: 8px 14px;
+      text-transform: uppercase;
+      transition: border-color 0.15s, color 0.15s;
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      width: fit-content;
+    }
+    .btn-add-hijo:hover { border-color: var(--border-hi); color: var(--text); }
+
+    /* ── GENERATE BUTTONS ── */
+    .generate-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 12px;
+    }
+    .generate-section .section-label { margin-bottom: 16px; }
+    .doc-buttons { display: flex; flex-direction: column; gap: 8px; }
+    .btn-doc {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      cursor: pointer;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      padding: 12px 16px;
+      transition: border-color 0.15s, background 0.15s;
+      text-align: left;
+    }
+    .btn-doc:hover { border-color: var(--border-hi); background: #222; }
+    .btn-doc:disabled { opacity: 0.35; cursor: not-allowed; }
+    .btn-doc-meta { font-size: 10px; color: var(--muted); font-weight: 400; letter-spacing: 0.03em; }
+    .btn-generate-all {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: var(--text);
+      border: none;
+      border-radius: 6px;
+      color: var(--bg);
+      cursor: pointer;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 14px 28px;
+      width: 100%;
+      transition: opacity 0.15s;
+      margin-top: 12px;
+    }
+    .btn-generate-all:hover { opacity: 0.88; }
+    .btn-generate-all:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(16px);
+      background: var(--surface);
+      border: 1px solid var(--border-hi);
+      border-radius: 6px;
+      padding: 11px 20px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.22s, transform 0.22s;
+      white-space: nowrap;
+      z-index: 100;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .toast.error { border-color: rgba(192,80,74,0.5); color: #e07070; }
+  </style>
+</head>
+<body>
+
+<header class="page-header">
+  <a href="../" class="back-link">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    Hub
+  </a>
+  <div class="header-sep"></div>
+  <img class="header-logo" src="../../logos/logotrascendencia.png" alt="Trascendencia">
+  <span class="header-title">Materiales por Familia</span>
+</header>
+
+<main class="main">
+
+  <!-- Datos de la pareja -->
+  <div class="form-section">
+    <div class="section-label">Datos de la Pareja</div>
+    <div class="fields">
+      <div class="fields-row">
+        <div class="field">
+          <label for="apellido">Apellido familiar<span class="req">*</span></label>
+          <input type="text" id="apellido" placeholder="Ej: Rodríguez Sánchez">
+        </div>
+        <div class="field">
+          <label for="evento">Evento<span class="req">*</span></label>
+          <input type="text" id="evento" placeholder="Ej: YPO México Norte">
+        </div>
+      </div>
+      <div class="fields-row">
+        <div class="field">
+          <label for="persona1">Nombre — persona 1<span class="req">*</span></label>
+          <input type="text" id="persona1" placeholder="">
+        </div>
+        <div class="field">
+          <label for="persona2">Nombre — persona 2<span class="req">*</span></label>
+          <input type="text" id="persona2" placeholder="">
+        </div>
+      </div>
+      <div class="fields-row">
+        <div class="field">
+          <label for="fecha_evento">Fecha del evento<span class="req">*</span></label>
+          <input type="text" id="fecha_evento" placeholder="Ej: 14–16 de marzo, 2025">
+        </div>
+        <div class="field">
+          <label for="ciudad">Ciudad</label>
+          <input type="text" id="ciudad" placeholder="Ej: Antigua Guatemala">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hijos -->
+  <div class="form-section">
+    <div class="section-label">Hijos</div>
+    <div class="hijos-list" id="hijos-list"></div>
+    <button class="btn-add-hijo" id="btn-add-hijo" type="button">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Agregar hijo
+    </button>
+  </div>
+
+  <!-- Generar documentos -->
+  <div class="generate-section">
+    <div class="section-label">Generar Documentos</div>
+    <div class="doc-buttons">
+
+      <button class="btn-doc" id="btn-gafetes" type="button">
+        <span>
+          Gafetes de nombre
+          <span class="btn-doc-meta" style="display:block;margin-top:2px">2 gafetes · 1 por persona</span>
+        </span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.4"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      </button>
+
+      <button class="btn-doc" id="btn-cheques" type="button">
+        <span>
+          Cheques personalizados
+          <span class="btn-doc-meta" style="display:block;margin-top:2px">3 cheques · 1 hoja</span>
+        </span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.4"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+      </button>
+
+      <button class="btn-doc" id="btn-album" type="button">
+        <span>
+          Carátula del álbum
+          <span class="btn-doc-meta" style="display:block;margin-top:2px">1 página · tamaño carta</span>
+        </span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.4"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+      </button>
+
+    </div>
+
+    <button class="btn-generate-all" id="btn-generate-all" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Generar Todo (3 archivos)
+    </button>
+  </div>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─────────────────────────────────────────────
+// HIJOS MANAGER
+// ─────────────────────────────────────────────
+let hijoCount = 0;
+
+function addHijo(nombre = '') {
+  hijoCount++;
+  const list = document.getElementById('hijos-list');
+  const row = document.createElement('div');
+  row.className = 'hijo-row';
+  row.dataset.idx = hijoCount;
+  row.innerHTML = `
+    <input type="text" placeholder="Nombre del hijo/a" value="${nombre}" class="hijo-input"
+      style="background:#1c1c1c;border:1px solid #272727;border-radius:4px;color:#f8f7f5;font-family:Montserrat,sans-serif;font-size:13px;padding:9px 12px;outline:none;width:100%">
+    <button class="btn-remove-hijo" type="button" title="Eliminar">×</button>
+  `;
+  row.querySelector('.btn-remove-hijo').addEventListener('click', () => row.remove());
+  list.appendChild(row);
+}
+
+document.getElementById('btn-add-hijo').addEventListener('click', () => addHijo());
+
+// Start with 2 empty hijo rows
+addHijo(); addHijo();
+
+// ─────────────────────────────────────────────
+// COLLECT DATA
+// ─────────────────────────────────────────────
+function collectData() {
+  const fields = ['apellido','persona1','persona2','evento','fecha_evento'];
+  const data = {};
+  let valid = true;
+
+  fields.forEach(id => {
+    const el = document.getElementById(id);
+    el.classList.remove('invalid');
+    const val = el.value.trim();
+    if (['apellido','persona1','persona2','evento','fecha_evento'].includes(id) && !val) {
+      el.classList.add('invalid');
+      valid = false;
+    }
+    data[id] = val;
+  });
+
+  data.ciudad = document.getElementById('ciudad').value.trim();
+  data.hijos = Array.from(document.querySelectorAll('.hijo-input'))
+    .map(i => i.value.trim())
+    .filter(Boolean);
+
+  return valid ? data : null;
+}
+
+// ─────────────────────────────────────────────
+// LOGO LOADER (inverted to white)
+// ─────────────────────────────────────────────
+let _logoCache = null;
+async function getLogo() {
+  if (_logoCache) return _logoCache;
+  return new Promise(resolve => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      const cv = document.createElement('canvas');
+      cv.width = img.naturalWidth;
+      cv.height = img.naturalHeight;
+      const ctx = cv.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      const d = ctx.getImageData(0, 0, cv.width, cv.height);
+      for (let i = 0; i < d.data.length; i += 4) {
+        if (d.data[i + 3] > 0) {
+          d.data[i]   = 255 - d.data[i];
+          d.data[i+1] = 255 - d.data[i+1];
+          d.data[i+2] = 255 - d.data[i+2];
+        }
+      }
+      ctx.putImageData(d, 0, 0);
+      _logoCache = cv.toDataURL('image/png');
+      resolve(_logoCache);
+    };
+    img.onerror = () => resolve(null);
+    img.src = '../../logos/logotrascendencia.png';
+  });
+}
+
+// Original (dark) logo for light backgrounds
+let _logoDarkCache = null;
+async function getLogoDark() {
+  if (_logoDarkCache) return _logoDarkCache;
+  return new Promise(resolve => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      const cv = document.createElement('canvas');
+      cv.width = img.naturalWidth;
+      cv.height = img.naturalHeight;
+      cv.getContext('2d').drawImage(img, 0, 0);
+      _logoDarkCache = cv.toDataURL('image/png');
+      resolve(_logoDarkCache);
+    };
+    img.onerror = () => resolve(null);
+    img.src = '../../logos/logotrascendencia.png';
+  });
+}
+
+// ─────────────────────────────────────────────
+// PDF DESIGN CONSTANTS
+// ─────────────────────────────────────────────
+const W = 215.9, H = 279.4;
+const C_BLACK  = [10, 10, 10];
+const C_TEXT   = [30, 30, 30];
+const C_MUTED  = [120, 120, 120];
+const C_LIGHT  = [190, 190, 190];
+const C_RULE   = [220, 218, 214];
+const C_WHITE  = [255, 255, 255];
+
+function addStdHeader(doc, logo) {
+  doc.setFillColor(...C_BLACK);
+  doc.rect(0, 0, W, 28, 'F');
+  if (logo) {
+    const lw = 64, lh = lw / 8.646;
+    doc.addImage(logo, 'PNG', (W - lw) / 2, (28 - lh) / 2, lw, lh);
+  }
+  doc.setDrawColor(...C_RULE);
+  doc.setLineWidth(0.25);
+  doc.line(0, 28, W, 28);
+}
+
+function addStdFooter(doc) {
+  doc.setDrawColor(...C_RULE);
+  doc.setLineWidth(0.25);
+  doc.line(20, H - 16, W - 20, H - 16);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(6);
+  doc.setTextColor(...C_MUTED);
+  doc.text('TRASCENDENCIA', W / 2, H - 10, { align: 'center', charSpace: 1.8 });
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(5.5);
+  doc.setTextColor(...C_LIGHT);
+  doc.text('www.latrascendencia.com', W / 2, H - 6, { align: 'center' });
+}
+
+function fileName(prefix, apellido) {
+  const safe = apellido.replace(/\s+/g, '_').replace(/[^a-zA-ZáéíóúÁÉÍÓÚüÜñÑ_]/g, '');
+  return `${prefix}_${safe}_${new Date().toISOString().slice(0,10)}.pdf`;
+}
+
+// ─────────────────────────────────────────────
+// 1. GAFETES
+// ─────────────────────────────────────────────
+async function buildGafetes(d) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ format: 'letter', unit: 'mm', orientation: 'portrait' });
+  const logo = await getLogo();
+
+  const GAFETE_W = W - 40;
+  const GAFETE_H = 80;
+  const GAFETE_X = 20;
+
+  [d.persona1, d.persona2].forEach((nombre, idx) => {
+    if (idx > 0) doc.addPage();
+
+    // Centered vertically on the page
+    const gy = (H - GAFETE_H) / 2;
+
+    // Outer border
+    doc.setDrawColor(...C_BLACK);
+    doc.setLineWidth(0.6);
+    doc.rect(GAFETE_X, gy, GAFETE_W, GAFETE_H);
+
+    // Dark top band
+    doc.setFillColor(...C_BLACK);
+    doc.rect(GAFETE_X, gy, GAFETE_W, 24, 'F');
+
+    // Logo centered in top band
+    if (logo) {
+      const lw = 56, lh = lw / 8.646;
+      doc.addImage(logo, 'PNG', (W - lw) / 2, gy + (24 - lh) / 2, lw, lh);
+    }
+
+    // Event label
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(7);
+    doc.setTextColor(...C_MUTED);
+    doc.text(d.evento.toUpperCase(), W / 2, gy + 32, { align: 'center', charSpace: 1.2 });
+
+    // Name — large, bold, centered
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(28);
+    doc.setTextColor(...C_BLACK);
+    doc.text(nombre, W / 2, gy + 52, { align: 'center' });
+
+    // Thin separator line
+    doc.setDrawColor(...C_RULE);
+    doc.setLineWidth(0.3);
+    doc.line(GAFETE_X + 16, gy + 58, GAFETE_X + GAFETE_W - 16, gy + 58);
+
+    // Family name + date
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.setTextColor(...C_MUTED);
+    doc.text(`Familia ${d.apellido}`, W / 2, gy + 65, { align: 'center' });
+
+    doc.setFontSize(7);
+    doc.setTextColor(...C_LIGHT);
+    doc.text(d.fecha_evento || '', W / 2, gy + 71, { align: 'center' });
+
+    // Corner dots
+    [
+      [GAFETE_X + 4, gy + 4],
+      [GAFETE_X + GAFETE_W - 4, gy + 4],
+      [GAFETE_X + 4, gy + GAFETE_H - 4],
+      [GAFETE_X + GAFETE_W - 4, gy + GAFETE_H - 4],
+    ].forEach(([cx, cy]) => {
+      doc.setFillColor(...C_RULE);
+      doc.circle(cx, cy, 0.7, 'F');
+    });
+  });
+
+  doc.save(fileName('Gafetes', d.apellido));
+}
+
+// ─────────────────────────────────────────────
+// 2. CHEQUES
+// ─────────────────────────────────────────────
+async function buildCheques(d) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ format: 'letter', unit: 'mm', orientation: 'portrait' });
+  const logo = await getLogo();
+
+  const CHQ_W = W - 28;
+  const CHQ_H = 72;
+  const CHQ_X = 14;
+  const SPACING = 8;
+  const totalBlock = 3 * CHQ_H + 2 * SPACING;
+  const startY = (H - totalBlock) / 2;
+
+  for (let i = 0; i < 3; i++) {
+    const cy = startY + i * (CHQ_H + SPACING);
+
+    // Outer border
+    doc.setDrawColor(...C_BLACK);
+    doc.setLineWidth(0.5);
+    doc.rect(CHQ_X, cy, CHQ_W, CHQ_H);
+
+    // Dark left strip with logo
+    doc.setFillColor(...C_BLACK);
+    doc.rect(CHQ_X, cy, 22, CHQ_H, 'F');
+
+    if (logo) {
+      const lw = 16, lh = lw / 8.646;
+      // Rotated text on strip — draw logo vertically using rotate
+      doc.saveGraphicsState();
+      doc.addImage(logo, 'PNG',
+        CHQ_X + (22 - lh) / 2,
+        cy + (CHQ_H - lw) / 2,
+        lh, lw
+      );
+      doc.restoreGraphicsState();
+    }
+
+    // Check number top-right
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(7);
+    doc.setTextColor(...C_LIGHT);
+    doc.text(`No. ${String(i + 1).padStart(3, '0')}`, CHQ_X + CHQ_W - 4, cy + 7, { align: 'right' });
+
+    // "TRASCENDENCIA" header text
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(7.5);
+    doc.setTextColor(...C_MUTED);
+    doc.text('TRASCENDENCIA', CHQ_X + 28, cy + 9, { charSpace: 1.2 });
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(6.5);
+    doc.setTextColor(...C_LIGHT);
+    doc.text(d.evento, CHQ_X + 28, cy + 14);
+
+    // Separator
+    doc.setDrawColor(...C_RULE);
+    doc.setLineWidth(0.25);
+    doc.line(CHQ_X + 26, cy + 17, CHQ_X + CHQ_W - 4, cy + 17);
+
+    // "Páguese a nombre de"
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(7.5);
+    doc.setTextColor(...C_MUTED);
+    doc.text('Páguese a nombre de:', CHQ_X + 28, cy + 25);
+
+    // Family name — large
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(16);
+    doc.setTextColor(...C_TEXT);
+    doc.text(`Familia ${d.apellido}`, CHQ_X + 28, cy + 36);
+
+    // Writing lines
+    const lineStart = CHQ_X + 28;
+    const lineEnd = CHQ_X + CHQ_W - 6;
+    doc.setDrawColor(...C_RULE);
+    doc.setLineWidth(0.25);
+    [cy + 46, cy + 53].forEach(ly => doc.line(lineStart, ly, lineEnd, ly));
+
+    doc.setFontSize(7);
+    doc.setTextColor(...C_LIGHT);
+    doc.setFont('helvetica', 'italic');
+    doc.text('El valor de:', CHQ_X + 28, cy + 44);
+
+    // Bottom row: date + signature
+    doc.setDrawColor(...C_RULE);
+    doc.setLineWidth(0.3);
+    doc.line(CHQ_X + 28, cy + CHQ_H - 10, CHQ_X + 60, cy + CHQ_H - 10);
+    doc.line(CHQ_X + 80, cy + CHQ_H - 10, CHQ_X + CHQ_W - 6, cy + CHQ_H - 10);
+
+    doc.setFontSize(6.5);
+    doc.setTextColor(...C_LIGHT);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Fecha', CHQ_X + 28, cy + CHQ_H - 6);
+    doc.text('Firma', CHQ_X + 80, cy + CHQ_H - 6);
+  }
+
+  doc.save(fileName('Cheques', d.apellido));
+}
+
+// ─────────────────────────────────────────────
+// 3. CARÁTULA DEL ÁLBUM
+// ─────────────────────────────────────────────
+async function buildAlbum(d) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ format: 'letter', unit: 'mm', orientation: 'portrait' });
+  const logo = await getLogo();
+
+  // Full dark background
+  doc.setFillColor(...C_BLACK);
+  doc.rect(0, 0, W, H, 'F');
+
+  // Top logo band
+  if (logo) {
+    const lw = 72, lh = lw / 8.646;
+    doc.addImage(logo, 'PNG', (W - lw) / 2, 24, lw, lh);
+  }
+
+  // Thin top rule
+  doc.setDrawColor(50, 50, 50);
+  doc.setLineWidth(0.25);
+  doc.line(24, 38, W - 24, 38);
+
+  // "HISTORIA FAMILIAR" label
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(8);
+  doc.setTextColor(...C_MUTED);
+  doc.text('HISTORIA FAMILIAR', W / 2, H / 2 - 28, { align: 'center', charSpace: 2.2 });
+
+  // Family name — hero
+  const apellido = `Familia ${d.apellido}`;
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(32);
+  doc.setTextColor(...C_WHITE);
+
+  // Adjust font size if name is long
+  const maxW = W - 48;
+  let fs = 32;
+  while (doc.getStringUnitWidth(apellido) * fs / doc.internal.scaleFactor > maxW && fs > 18) fs -= 1;
+  doc.setFontSize(fs);
+  doc.text(apellido, W / 2, H / 2 - 10, { align: 'center' });
+
+  // Thin center rule
+  doc.setDrawColor(55, 55, 55);
+  doc.setLineWidth(0.3);
+  doc.line(W / 2 - 28, H / 2 + 2, W / 2 + 28, H / 2 + 2);
+
+  // Names below rule
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(10);
+  doc.setTextColor(200, 198, 195);
+  doc.text(`${d.persona1}  ·  ${d.persona2}`, W / 2, H / 2 + 12, { align: 'center' });
+
+  // Hijos (if any)
+  if (d.hijos.length > 0) {
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.setTextColor(...C_MUTED);
+    doc.text(d.hijos.join('   ·   '), W / 2, H / 2 + 22, { align: 'center' });
+  }
+
+  // Bottom: event info
+  doc.setDrawColor(40, 40, 40);
+  doc.setLineWidth(0.25);
+  doc.line(24, H - 38, W - 24, H - 38);
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(7.5);
+  doc.setTextColor(...C_MUTED);
+  doc.text(d.evento.toUpperCase(), W / 2, H - 28, { align: 'center', charSpace: 1.2 });
+
+  doc.setFontSize(7);
+  doc.setTextColor(80, 80, 80);
+  doc.text(d.fecha_evento || '', W / 2, H - 22, { align: 'center' });
+
+  if (d.ciudad) {
+    doc.text(d.ciudad, W / 2, H - 16.5, { align: 'center' });
+  }
+
+  doc.save(fileName('Album', d.apellido));
+}
+
+// ─────────────────────────────────────────────
+// TOAST
+// ─────────────────────────────────────────────
+function showToast(msg, kind = 'success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast ${kind} show`;
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ─────────────────────────────────────────────
+// BUTTON HANDLERS
+// ─────────────────────────────────────────────
+async function runDoc(fn, label) {
+  const data = collectData();
+  if (!data) { showToast('Completa los campos requeridos', 'error'); return; }
+  try {
+    await fn(data);
+    showToast(`${label} generado`);
+  } catch (e) {
+    showToast('Error al generar', 'error');
+    console.error(e);
+  }
+}
+
+document.getElementById('btn-gafetes').addEventListener('click',
+  () => runDoc(buildGafetes, 'Gafetes'));
+
+document.getElementById('btn-cheques').addEventListener('click',
+  () => runDoc(buildCheques, 'Cheques'));
+
+document.getElementById('btn-album').addEventListener('click',
+  () => runDoc(buildAlbum, 'Carátula del álbum'));
+
+document.getElementById('btn-generate-all').addEventListener('click', async () => {
+  const data = collectData();
+  if (!data) { showToast('Completa los campos requeridos', 'error'); return; }
+  const btn = document.getElementById('btn-generate-all');
+  btn.disabled = true;
+  btn.textContent = 'Generando…';
+  try {
+    await buildGafetes(data);
+    await new Promise(r => setTimeout(r, 300));
+    await buildCheques(data);
+    await new Promise(r => setTimeout(r, 300));
+    await buildAlbum(data);
+    showToast('3 archivos generados correctamente');
+  } catch (e) {
+    showToast('Error al generar', 'error');
+    console.error(e);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Generar Todo (3 archivos)`;
+  }
+});
+</script>
+</body>
+</html>
