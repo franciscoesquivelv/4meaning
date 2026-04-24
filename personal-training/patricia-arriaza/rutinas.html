@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mis Rutinas — Patricia Arriaza</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/png" href="../imagenes/logos/Artboard 1 copy 32.png" media="(prefers-color-scheme: dark)">
+  <link rel="icon" type="image/png" href="../imagenes/logos/Artboard 1 copy 22.png" media="(prefers-color-scheme: light)">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --orange: #FF4D00; --orange-dim: #cc3d00;
+      --black: #080808; --dark: #111111;
+      --surface: #181818; --surface2: #1e1e1e;
+      --border: #272727; --white: #ffffff;
+      --muted: #777777; --muted-light: #aaaaaa;
+      --green: #22c55e; --amber: #f59e0b;
+      --font-head: 'Barlow Condensed', sans-serif;
+      --font-body: 'Barlow', sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--black); color: var(--white); font-family: var(--font-body); font-size: 15px; line-height: 1.6; overflow-x: hidden; }
+
+    /* ── PAGE TRANSITION ── */
+    #page-transition { position: fixed; inset: 0; z-index: 9998; background: var(--black); display: flex; align-items: center; justify-content: center; opacity: 1; transition: opacity .38s ease; pointer-events: all; }
+    #page-transition.hidden { opacity: 0; pointer-events: none; }
+    .pt-wrap { position: relative; width: 72px; height: 72px; display: flex; align-items: center; justify-content: center; }
+    .pt-ring { position: absolute; inset: 0; border-radius: 50%; border: 2px solid rgba(255,77,0,.18); border-top-color: var(--orange); animation: pt-spin 1s linear infinite; }
+    .pt-logo { width: 36px; height: 36px; object-fit: contain; animation: pt-pulse 1.4s ease-in-out infinite; }
+    @keyframes pt-spin { to { transform: rotate(360deg); } }
+    @keyframes pt-pulse { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:.5; transform:scale(.88); } }
+
+    /* ── NAV ── */
+    .portal-nav { position: sticky; top: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 0 32px; height: 60px; background: rgba(8,8,8,.97); border-bottom: 1px solid var(--border); backdrop-filter: blur(12px); }
+    .pnav-left { display: flex; align-items: center; gap: 16px; }
+    .pnav-logo { height: 24px; width: auto; }
+    .pnav-divider { width: 1px; height: 16px; background: var(--border); }
+    .pnav-label { font-size: 10px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+    .pnav-right { display: flex; align-items: center; gap: 12px; }
+    .pnav-user { display: flex; align-items: center; gap: 8px; }
+    .pnav-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--orange); display: flex; align-items: center; justify-content: center; font-family: var(--font-head); font-size: 11px; font-weight: 900; color: var(--white); }
+    .pnav-name { font-size: 13px; font-weight: 600; }
+    .pnav-badge { display: flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); border: 1px solid var(--border); border-radius: 100px; padding: 4px 10px; }
+    .pnav-badge-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); }
+
+    /* ── LAYOUT ── */
+    .portal-body { display: grid; grid-template-columns: 232px 1fr; min-height: calc(100vh - 60px); }
+
+    /* ── SIDEBAR ── */
+    .portal-sidebar { border-right: 1px solid var(--border); padding: 28px 18px; background: var(--dark); display: flex; flex-direction: column; gap: 24px; position: sticky; top: 60px; height: calc(100vh - 60px); overflow-y: auto; }
+    .sb-profile { display: flex; flex-direction: column; align-items: center; text-align: center; padding-bottom: 22px; border-bottom: 1px solid var(--border); }
+    .sb-avatar { width: 52px; height: 52px; border-radius: 50%; background: var(--orange); display: flex; align-items: center; justify-content: center; font-family: var(--font-head); font-size: 18px; font-weight: 900; color: var(--white); margin-bottom: 10px; border: 2px solid rgba(255,77,0,.2); }
+    .sb-name { font-family: var(--font-head); font-size: 17px; font-weight: 900; text-transform: uppercase; letter-spacing: -.01em; margin-bottom: 4px; }
+    .sb-active { display: inline-flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--green); margin-bottom: 14px; }
+    .sb-active::before { content: ''; width: 4px; height: 4px; border-radius: 50%; background: var(--green); }
+    .sb-prog-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-bottom: 6px; }
+    .sb-prog-bar { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+    .sb-prog-fill { height: 100%; background: var(--orange); border-radius: 2px; width: 37.5%; }
+    .sb-section-title { font-size: 9px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+    .sb-nav { display: flex; flex-direction: column; gap: 2px; }
+    .sb-nav-item { display: flex; align-items: center; gap: 9px; padding: 9px 10px; border-radius: 5px; font-size: 13px; font-weight: 500; color: var(--muted-light); text-decoration: none; border: 1px solid transparent; transition: background .15s, color .15s; }
+    .sb-nav-item:hover { background: var(--surface); color: var(--white); }
+    .sb-nav-item.active { background: rgba(255,77,0,.08); color: var(--orange); border-color: rgba(255,77,0,.16); }
+    .sb-nav-dot { width: 4px; height: 4px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+
+    /* ── MAIN ── */
+    .portal-main { padding: 40px 48px 80px; display: flex; flex-direction: column; gap: 36px; }
+    .sec-label { display: inline-flex; align-items: center; gap: 9px; font-size: 10px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: var(--orange); margin-bottom: 14px; }
+    .sec-label::before { content: ''; display: block; width: 16px; height: 2px; background: var(--orange); }
+
+    /* Page header */
+    .page-header { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+    .page-title { font-family: var(--font-head); font-size: clamp(36px, 4vw, 54px); font-weight: 900; text-transform: uppercase; line-height: .92; letter-spacing: -.01em; }
+    .page-title em { font-style: normal; color: var(--orange); }
+    .page-sub { font-size: 14px; color: var(--muted-light); margin-top: 8px; }
+    .page-count { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); background: var(--surface); border: 1px solid var(--border); border-radius: 100px; padding: 7px 16px; flex-shrink: 0; align-self: flex-start; }
+
+    /* ── ROUTINE GRID ── */
+    .routine-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    .routine-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 26px 28px; text-decoration: none; display: flex; flex-direction: column; gap: 0; transition: border-color .2s, transform .15s, box-shadow .2s; position: relative; overflow: hidden; }
+    .routine-card::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: var(--orange); opacity: 0; transition: opacity .2s; }
+    .routine-card:hover { border-color: rgba(255,77,0,.3); transform: translateY(-2px); box-shadow: 0 12px 32px rgba(0,0,0,.4); }
+    .routine-card:hover::after { opacity: 1; }
+    .rc-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 18px; }
+    .rc-icon { width: 44px; height: 44px; border-radius: 9px; background: rgba(255,77,0,.1); display: flex; align-items: center; justify-content: center; font-family: var(--font-head); font-size: 12px; font-weight: 900; color: var(--orange); letter-spacing: .04em; }
+    .rc-day { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); background: var(--surface2); border: 1px solid var(--border); border-radius: 100px; padding: 4px 10px; white-space: nowrap; }
+    .rc-name { font-family: var(--font-head); font-size: 28px; font-weight: 900; text-transform: uppercase; letter-spacing: -.01em; line-height: .95; color: var(--white); margin-bottom: 8px; }
+    .rc-desc { font-size: 13px; color: var(--muted-light); line-height: 1.55; margin-bottom: 22px; flex: 1; }
+    .rc-footer { display: flex; align-items: center; justify-content: space-between; }
+    .rc-meta { display: flex; align-items: center; gap: 14px; }
+    .rc-meta-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--muted); }
+    .rc-meta-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--border); }
+    .rc-cta { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--orange); }
+    .rc-cta svg { transition: transform .2s; }
+    .routine-card:hover .rc-cta svg { transform: translateX(3px); }
+
+    /* Tag legend */
+    .legend { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; padding: 16px 22px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; }
+    .legend-label { font-size: 10px; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: var(--muted); margin-right: 4px; }
+    .legend-item { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; color: var(--muted-light); }
+    .tag { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; border-radius: 4px; padding: 3px 7px; }
+    .tag.ok { background: rgba(34,197,94,.1); color: var(--green); border: 1px solid rgba(34,197,94,.2); }
+    .tag.care { background: rgba(245,158,11,.1); color: var(--amber); border: 1px solid rgba(245,158,11,.2); }
+    .tag.info { background: rgba(255,255,255,.05); color: var(--muted-light); border: 1px solid var(--border); }
+
+    @media (max-width: 960px) { .portal-body { grid-template-columns: 1fr; } .portal-sidebar { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--border); flex-direction: row; flex-wrap: wrap; } }
+    @media (max-width: 760px) { .portal-main { padding: 28px 20px 60px; } .routine-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 500px) { .pnav-name, .pnav-badge { display: none; } }
+  </style>
+</head>
+<body>
+
+<!-- PAGE TRANSITION -->
+<div id="page-transition">
+  <div class="pt-wrap">
+    <div class="pt-ring"></div>
+    <img src="../imagenes/logos/Artboard 1 copy 32.png" alt="" class="pt-logo">
+  </div>
+</div>
+
+<nav class="portal-nav">
+  <div class="pnav-left">
+    <img src="../imagenes/logos/Artboard 1 copy 32.png" alt="OE" class="pnav-logo">
+    <div class="pnav-divider"></div>
+    <span class="pnav-label">Portal de Cliente</span>
+  </div>
+  <div class="pnav-right">
+    <div class="pnav-user">
+      <div class="pnav-avatar">PA</div>
+      <span class="pnav-name">Patricia Arriaza</span>
+    </div>
+    <div class="pnav-badge"><div class="pnav-badge-dot"></div>Sesi&oacute;n Privada</div>
+  </div>
+</nav>
+
+<div class="portal-body">
+  <aside class="portal-sidebar">
+    <div class="sb-profile">
+      <div class="sb-avatar">PA</div>
+      <div class="sb-name">Patricia Arriaza</div>
+      <div class="sb-active">Cliente Activa</div>
+      <div style="width:100%">
+        <div class="sb-prog-labels"><span>Semana 3 de 8</span><span>37%</span></div>
+        <div class="sb-prog-bar"><div class="sb-prog-fill"></div></div>
+      </div>
+    </div>
+    <div>
+      <div class="sb-section-title">Navegaci&oacute;n</div>
+      <div class="sb-nav">
+        <a href="./index.html" class="sb-nav-item"><span class="sb-nav-dot"></span>Dashboard</a>
+        <a href="./rutinas.html" class="sb-nav-item active"><span class="sb-nav-dot"></span>Mis Rutinas</a>
+        <a href="./perfil.html" class="sb-nav-item"><span class="sb-nav-dot"></span>Mi Perfil</a>
+        <a href="mailto:oscar@4meaning.life" class="sb-nav-item"><span class="sb-nav-dot"></span>Contactar a Oscar</a>
+      </div>
+    </div>
+  </aside>
+
+  <main class="portal-main">
+
+    <div class="page-header">
+      <div>
+        <div class="sec-label">Programa Personalizado</div>
+        <div class="page-title">Mis<br><em>Rutinas.</em></div>
+        <div class="page-sub">6 sesiones adaptadas &middot; Semana 3 de 8</div>
+      </div>
+      <div class="page-count">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>
+        6 rutinas activas
+      </div>
+    </div>
+
+    <!-- Tag legend -->
+    <div class="legend">
+      <span class="legend-label">Leyenda</span>
+      <span class="legend-item"><span class="tag ok">Adaptado</span>Ejercicio seguro para ti</span>
+      <span class="legend-item"><span class="tag care">Condición</span>Requiere atención especial</span>
+      <span class="legend-item"><span class="tag info">Info</span>Calentamiento / enfriamiento</span>
+    </div>
+
+    <!-- Routine grid -->
+    <div class="routine-grid" id="routine-grid"></div>
+
+  </main>
+</div>
+
+<script>
+const ROUTINES = [
+  {
+    id: 'piernas',
+    name: 'Piernas',
+    icon: 'LEG',
+    day: 'Martes',
+    duration: '35 min',
+    exercises: 6,
+    desc: 'Fortalecimiento del tren inferior con protecci\u00f3n articular. Sin carga unilateral en pierna derecha.'
+  },
+  {
+    id: 'hombro-brazo',
+    name: 'Hombro\u00a0/ Brazo',
+    icon: 'ARM',
+    day: 'Mi\u00e9rcoles',
+    duration: '30 min',
+    exercises: 6,
+    desc: 'Hombros, b\u00edceps y tr\u00edceps con banda el\u00e1stica. El face pull es el ejercicio prioritario de la sesi\u00f3n.'
+  },
+  {
+    id: 'resistencia',
+    name: 'Resistencia',
+    icon: 'RES',
+    day: 'Jueves',
+    duration: '35 min',
+    exercises: 6,
+    desc: 'Cardio de bajo impacto articular. Eleva el ritmo card\u00edaco de forma segura y sostenida.'
+  },
+  {
+    id: 'abdomen',
+    name: 'Abdomen',
+    icon: 'ABS',
+    day: 'S\u00e1bado',
+    duration: '25 min',
+    exercises: 6,
+    desc: 'Core estabilizador. Cero flexi\u00f3n de columna \u2014 trabajo antiflexi\u00f3n y antirotaci\u00f3n para proteger la lumbar.'
+  },
+  {
+    id: 'viajes',
+    name: 'Viajes',
+    icon: 'TRV',
+    day: 'Cualquier d\u00eda',
+    duration: '25 min',
+    exercises: 6,
+    desc: 'Para cuando est\u00e1s fuera de casa. Cero equipo, misma calidad de movimiento en cualquier espacio.'
+  },
+  {
+    id: 'mezclada',
+    name: 'Mezclada',
+    icon: 'MIX',
+    day: 'Domingo',
+    duration: '40 min',
+    exercises: 6,
+    desc: 'Cuerpo completo con transiciones lentas. La sesi\u00f3n m\u00e1s completa de la semana.'
+  }
+];
+
+document.getElementById('routine-grid').innerHTML = ROUTINES.map(r => `
+  <a href="./rutina.html?id=${r.id}" class="routine-card">
+    <div class="rc-top">
+      <div class="rc-icon">${r.icon}</div>
+      <div class="rc-day">${r.day}</div>
+    </div>
+    <div class="rc-name">${r.name}</div>
+    <div class="rc-desc">${r.desc}</div>
+    <div class="rc-footer">
+      <div class="rc-meta">
+        <span class="rc-meta-item">${r.duration}</span>
+        <span class="rc-meta-dot"></span>
+        <span class="rc-meta-item">${r.exercises} ejercicios</span>
+      </div>
+      <span class="rc-cta">
+        Ver rutina
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </span>
+    </div>
+  </a>
+`).join('');
+
+// Page transition
+const pt = document.getElementById('page-transition');
+requestAnimationFrame(() => requestAnimationFrame(() => pt.classList.add('hidden')));
+document.addEventListener('click', e => {
+  const link = e.target.closest('a[href]');
+  if (!link) return;
+  const href = link.getAttribute('href');
+  if (!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('mailto') || link.target === '_blank') return;
+  e.preventDefault();
+  pt.classList.remove('hidden');
+  setTimeout(() => { window.location.href = href; }, 420);
+});
+</script>
+</body>
+</html>

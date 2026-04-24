@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rutina — Patricia Arriaza</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/png" href="../imagenes/logos/Artboard 1 copy 32.png" media="(prefers-color-scheme: dark)">
+  <link rel="icon" type="image/png" href="../imagenes/logos/Artboard 1 copy 22.png" media="(prefers-color-scheme: light)">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --orange: #FF4D00; --orange-dim: #cc3d00;
+      --black: #080808; --dark: #111111;
+      --surface: #181818; --surface2: #1e1e1e;
+      --border: #272727; --white: #ffffff;
+      --muted: #777777; --muted-light: #aaaaaa;
+      --green: #22c55e; --amber: #f59e0b;
+      --font-head: 'Barlow Condensed', sans-serif;
+      --font-body: 'Barlow', sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--black); color: var(--white); font-family: var(--font-body); font-size: 15px; line-height: 1.6; overflow-x: hidden; }
+
+    /* ── PAGE TRANSITION ── */
+    #page-transition { position: fixed; inset: 0; z-index: 9998; background: var(--black); display: flex; align-items: center; justify-content: center; opacity: 1; transition: opacity .38s ease; pointer-events: all; }
+    #page-transition.hidden { opacity: 0; pointer-events: none; }
+    .pt-wrap { position: relative; width: 72px; height: 72px; display: flex; align-items: center; justify-content: center; }
+    .pt-ring { position: absolute; inset: 0; border-radius: 50%; border: 2px solid rgba(255,77,0,.18); border-top-color: var(--orange); animation: pt-spin 1s linear infinite; }
+    .pt-logo { width: 36px; height: 36px; object-fit: contain; animation: pt-pulse 1.4s ease-in-out infinite; }
+    @keyframes pt-spin { to { transform: rotate(360deg); } }
+    @keyframes pt-pulse { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:.5; transform:scale(.88); } }
+
+    /* ── NAV ── */
+    .portal-nav { position: sticky; top: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 0 32px; height: 60px; background: rgba(8,8,8,.97); border-bottom: 1px solid var(--border); backdrop-filter: blur(12px); }
+    .pnav-left { display: flex; align-items: center; gap: 16px; }
+    .pnav-logo { height: 24px; width: auto; }
+    .pnav-divider { width: 1px; height: 16px; background: var(--border); }
+    .pnav-label { font-size: 10px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+    .pnav-right { display: flex; align-items: center; gap: 12px; }
+    .pnav-user { display: flex; align-items: center; gap: 8px; }
+    .pnav-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--orange); display: flex; align-items: center; justify-content: center; font-family: var(--font-head); font-size: 11px; font-weight: 900; color: var(--white); }
+    .pnav-name { font-size: 13px; font-weight: 600; }
+    .pnav-badge { display: flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); border: 1px solid var(--border); border-radius: 100px; padding: 4px 10px; }
+    .pnav-badge-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); }
+
+    /* ── LAYOUT ── */
+    .portal-body { display: grid; grid-template-columns: 232px 1fr; min-height: calc(100vh - 60px); }
+
+    /* ── SIDEBAR ── */
+    .portal-sidebar { border-right: 1px solid var(--border); padding: 28px 18px; background: var(--dark); display: flex; flex-direction: column; gap: 24px; position: sticky; top: 60px; height: calc(100vh - 60px); overflow-y: auto; }
+    .sb-profile { display: flex; flex-direction: column; align-items: center; text-align: center; padding-bottom: 22px; border-bottom: 1px solid var(--border); }
+    .sb-avatar { width: 52px; height: 52px; border-radius: 50%; background: var(--orange); display: flex; align-items: center; justify-content: center; font-family: var(--font-head); font-size: 18px; font-weight: 900; color: var(--white); margin-bottom: 10px; border: 2px solid rgba(255,77,0,.2); }
+    .sb-name { font-family: var(--font-head); font-size: 17px; font-weight: 900; text-transform: uppercase; letter-spacing: -.01em; margin-bottom: 4px; }
+    .sb-active { display: inline-flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--green); margin-bottom: 14px; }
+    .sb-active::before { content: ''; width: 4px; height: 4px; border-radius: 50%; background: var(--green); }
+    .sb-prog-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-bottom: 6px; }
+    .sb-prog-bar { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+    .sb-prog-fill { height: 100%; background: var(--orange); border-radius: 2px; width: 37.5%; }
+    .sb-section-title { font-size: 9px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+    .sb-nav { display: flex; flex-direction: column; gap: 2px; }
+    .sb-nav-item { display: flex; align-items: center; gap: 9px; padding: 9px 10px; border-radius: 5px; font-size: 13px; font-weight: 500; color: var(--muted-light); text-decoration: none; border: 1px solid transparent; transition: background .15s, color .15s; }
+    .sb-nav-item:hover { background: var(--surface); color: var(--white); }
+    .sb-nav-item.active { background: rgba(255,77,0,.08); color: var(--orange); border-color: rgba(255,77,0,.16); }
+    .sb-nav-dot { width: 4px; height: 4px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+
+    /* Sidebar routine list */
+    .sb-routines { display: flex; flex-direction: column; gap: 2px; }
+    .sb-routine-item { display: flex; align-items: center; gap: 9px; padding: 8px 10px; border-radius: 5px; font-size: 12px; font-weight: 500; color: var(--muted-light); text-decoration: none; border: 1px solid transparent; transition: background .15s, color .15s; }
+    .sb-routine-item:hover { background: var(--surface); color: var(--white); }
+    .sb-routine-item.active { background: rgba(255,77,0,.08); color: var(--orange); border-color: rgba(255,77,0,.16); }
+    .sb-ri-icon { width: 22px; height: 22px; border-radius: 4px; background: rgba(255,255,255,.05); display: flex; align-items: center; justify-content: center; font-family: var(--font-head); font-size: 7px; font-weight: 900; color: inherit; flex-shrink: 0; }
+    .sb-routine-item.active .sb-ri-icon { background: rgba(255,77,0,.15); }
+
+    /* ── MAIN ── */
+    .portal-main { padding: 40px 48px 80px; display: flex; flex-direction: column; gap: 32px; }
+    .sec-label { display: inline-flex; align-items: center; gap: 9px; font-size: 10px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: var(--orange); margin-bottom: 14px; }
+    .sec-label::before { content: ''; display: block; width: 16px; height: 2px; background: var(--orange); }
+
+    /* Back link */
+    .back-link { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color .15s; }
+    .back-link:hover { color: var(--white); }
+    .back-link svg { transition: transform .2s; }
+    .back-link:hover svg { transform: translateX(-2px); }
+
+    /* Routine header */
+    .routine-header { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 32px 36px; display: flex; gap: 28px; align-items: flex-start; background-image: radial-gradient(ellipse at 95% 40%, rgba(255,77,0,.06), transparent 60%); }
+    .rh-icon { width: 64px; height: 64px; border-radius: 12px; background: rgba(255,77,0,.12); display: flex; align-items: center; justify-content: center; font-family: var(--font-head); font-size: 16px; font-weight: 900; color: var(--orange); letter-spacing: .04em; flex-shrink: 0; }
+    .rh-body { flex: 1; min-width: 0; }
+    .rh-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--orange); margin-bottom: 10px; }
+    .rh-name { font-family: var(--font-head); font-size: clamp(40px, 5vw, 64px); font-weight: 900; text-transform: uppercase; line-height: .88; letter-spacing: -.02em; margin-bottom: 12px; }
+    .rh-meta { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 14px; }
+    .rh-meta-item { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted-light); }
+    .rh-meta-item svg { color: var(--muted); flex-shrink: 0; }
+    .rh-desc { font-size: 14px; color: rgba(255,255,255,.65); line-height: 1.65; }
+
+    /* ── EXERCISE TABLE ── */
+    .exercise-section { display: flex; flex-direction: column; gap: 0; }
+    .exercise-table { width: 100%; border-collapse: collapse; }
+    .et-head { border-bottom: 1px solid var(--border); }
+    .et-head th { padding: 10px 14px; text-align: left; font-size: 9px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+    .et-head th:first-child { width: 36px; text-align: center; }
+    .et-head th.num-col { text-align: center; }
+    .et-row { border-bottom: 1px solid rgba(39,39,39,.5); transition: background .15s; }
+    .et-row:last-child { border-bottom: none; }
+    .et-row:hover { background: rgba(255,255,255,.02); }
+    .et-row td { padding: 16px 14px; vertical-align: top; }
+    .et-num { text-align: center; font-family: var(--font-head); font-size: 17px; font-weight: 900; color: var(--muted); line-height: 1; padding-top: 18px; }
+    .et-name { font-size: 14px; font-weight: 600; color: var(--white); line-height: 1.35; margin-bottom: 5px; }
+    .et-note { font-size: 12px; color: var(--muted); line-height: 1.5; }
+    .et-sets, .et-reps, .et-rest { font-family: var(--font-head); font-size: 18px; font-weight: 700; color: var(--white); white-space: nowrap; }
+    .et-rest { color: var(--muted-light); }
+    .et-meta { font-size: 11px; color: var(--muted); margin-top: 1px; }
+    .tag { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; border-radius: 4px; padding: 3px 7px; white-space: nowrap; }
+    .tag.ok { background: rgba(34,197,94,.1); color: var(--green); border: 1px solid rgba(34,197,94,.2); }
+    .tag.care { background: rgba(245,158,11,.1); color: var(--amber); border: 1px solid rgba(245,158,11,.2); }
+    .tag.info { background: rgba(255,255,255,.05); color: var(--muted-light); border: 1px solid var(--border); }
+
+    /* Oscar note */
+    .oscar-note { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--orange); border-radius: 10px; padding: 24px 28px; display: flex; gap: 18px; align-items: flex-start; }
+    .on-badge { width: 38px; height: 38px; border-radius: 50%; background: var(--black); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-family: var(--font-head); font-size: 12px; font-weight: 900; color: var(--orange); flex-shrink: 0; }
+    .on-from { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--orange); margin-bottom: 9px; }
+    .on-text { font-size: 14px; color: rgba(255,255,255,.8); line-height: 1.75; }
+    .on-text strong { color: var(--white); }
+
+    /* Prev / Next navigation */
+    .routine-nav { display: flex; gap: 10px; }
+    .rnav-btn { flex: 1; display: flex; align-items: center; gap: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 9px; padding: 16px 20px; text-decoration: none; transition: border-color .2s, background .2s; }
+    .rnav-btn:hover { border-color: rgba(255,77,0,.3); background: rgba(255,77,0,.03); }
+    .rnav-btn.next { justify-content: flex-end; text-align: right; flex-direction: row-reverse; }
+    .rnav-icon { width: 34px; height: 34px; border-radius: 7px; background: rgba(255,255,255,.04); display: flex; align-items: center; justify-content: center; font-family: var(--font-head); font-size: 9px; font-weight: 900; color: var(--muted); flex-shrink: 0; }
+    .rnav-label { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 2px; }
+    .rnav-name { font-family: var(--font-head); font-size: 17px; font-weight: 900; text-transform: uppercase; color: var(--white); line-height: 1; }
+
+    @media (max-width: 960px) { .portal-body { grid-template-columns: 1fr; } .portal-sidebar { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--border); flex-direction: row; flex-wrap: wrap; } }
+    @media (max-width: 760px) { .portal-main { padding: 28px 20px 60px; } .routine-header { flex-direction: column; gap: 16px; padding: 24px 22px; } .rh-icon { width: 48px; height: 48px; font-size: 13px; } .et-head th:nth-child(4), .et-row td:nth-child(4) { display: none; } }
+    @media (max-width: 500px) { .pnav-name, .pnav-badge { display: none; } .routine-nav { flex-direction: column; } }
+  </style>
+</head>
+<body>
+
+<!-- PAGE TRANSITION -->
+<div id="page-transition">
+  <div class="pt-wrap">
+    <div class="pt-ring"></div>
+    <img src="../imagenes/logos/Artboard 1 copy 32.png" alt="" class="pt-logo">
+  </div>
+</div>
+
+<nav class="portal-nav">
+  <div class="pnav-left">
+    <img src="../imagenes/logos/Artboard 1 copy 32.png" alt="OE" class="pnav-logo">
+    <div class="pnav-divider"></div>
+    <span class="pnav-label">Portal de Cliente</span>
+  </div>
+  <div class="pnav-right">
+    <div class="pnav-user">
+      <div class="pnav-avatar">PA</div>
+      <span class="pnav-name">Patricia Arriaza</span>
+    </div>
+    <div class="pnav-badge"><div class="pnav-badge-dot"></div>Sesi&oacute;n Privada</div>
+  </div>
+</nav>
+
+<div class="portal-body">
+  <aside class="portal-sidebar">
+    <div class="sb-profile">
+      <div class="sb-avatar">PA</div>
+      <div class="sb-name">Patricia Arriaza</div>
+      <div class="sb-active">Cliente Activa</div>
+      <div style="width:100%">
+        <div class="sb-prog-labels"><span>Semana 3 de 8</span><span>37%</span></div>
+        <div class="sb-prog-bar"><div class="sb-prog-fill"></div></div>
+      </div>
+    </div>
+    <div>
+      <div class="sb-section-title">Navegaci&oacute;n</div>
+      <div class="sb-nav">
+        <a href="./index.html" class="sb-nav-item"><span class="sb-nav-dot"></span>Dashboard</a>
+        <a href="./rutinas.html" class="sb-nav-item active"><span class="sb-nav-dot"></span>Mis Rutinas</a>
+        <a href="./perfil.html" class="sb-nav-item"><span class="sb-nav-dot"></span>Mi Perfil</a>
+        <a href="mailto:oscar@4meaning.life" class="sb-nav-item"><span class="sb-nav-dot"></span>Contactar a Oscar</a>
+      </div>
+    </div>
+    <div>
+      <div class="sb-section-title">Rutinas</div>
+      <div class="sb-routines" id="sb-routines"></div>
+    </div>
+  </aside>
+
+  <main class="portal-main" id="portal-main"></main>
+</div>
+
+<script>
+// ─── DATA ───────────────────────────────────────────────────────────────────
+const ROUTINES = {
+  piernas: {
+    id: 'piernas', name: 'Piernas', icon: 'LEG',
+    day: 'Martes', duration: '35 min', equipment: 'Banda de resistencia \u00b7 Silla resistente',
+    desc: 'Fortalecimiento del tren inferior con protecci\u00f3n articular. Sin carga unilateral en pierna derecha.',
+    oscarNote: 'El objetivo de hoy es activar gl\u00fateos, cu\u00e1driceps y pantorrillas sin comprometer la rodilla derecha ni la pr\u00f3tesis de cadera. Mu\u00e9vete lento, controla el retorno \u2014 la fase exc\u00e9ntrica es donde se construye la fuerza. <strong>Si sientes incomodidad en la cadera, para inmediatamente y esc\u00edbeme.</strong>',
+    prev: 'mezclada', next: 'hombro-brazo',
+    exercises: [
+      { num: 1, name: 'Sentadilla parcial en silla', sets: '3', reps: '12', rest: '60 seg', tag: 'ok', tagLabel: 'Adaptado', note: 'Solo bajar \u00be del recorrido. Mantener la espalda recta y los pies alineados.' },
+      { num: 2, name: 'Puente de gl\u00fateos (bilateral)', sets: '3', reps: '15', rest: '60 seg', tag: 'care', tagLabel: 'Cadera', note: 'Elevar la cadera de forma sim\u00e9trica. No torcer la pelvis ni empujar solo con una pierna.' },
+      { num: 3, name: 'Extensi\u00f3n de pierna sentada con banda', sets: '3', reps: '12 c/u', rest: '45 seg', tag: 'care', tagLabel: 'Rodilla', note: 'Pierna derecha: rango parcial (solo hasta 90\u00b0). Para si sientes dolor agudo.' },
+      { num: 4, name: 'Abducci\u00f3n de cadera de pie con banda', sets: '3', reps: '15 c/u', rest: '45 seg', tag: 'care', tagLabel: 'Pr\u00f3tesis', note: 'Ag\u00e1rrate de una silla. Rango de movimiento moderado, sin pasar la l\u00ednea media.' },
+      { num: 5, name: 'Elevaci\u00f3n de talones de pie', sets: '3', reps: '20', rest: '30 seg', tag: 'ok', tagLabel: 'Adaptado', note: 'Apoyo en pared o silla. Fortalece gemelos y mejora el equilibrio.' },
+      { num: 6, name: 'Marcha sentada (rodillas alternadas)', sets: '2', reps: '30 seg', rest: '30 seg', tag: 'info', tagLabel: 'Activaci\u00f3n', note: 'Para iniciar o cerrar la sesi\u00f3n. Ritmo c\u00f3modo, sin forzar la cadera.' }
+    ]
+  },
+  'hombro-brazo': {
+    id: 'hombro-brazo', name: 'Hombro\u00a0/ Brazo', icon: 'ARM',
+    day: 'Mi\u00e9rcoles', duration: '30 min', equipment: 'Banda de resistencia ligera o media',
+    desc: 'Hombros, b\u00edceps y tr\u00edceps con banda el\u00e1stica. El face pull es el ejercicio prioritario \u2014 correcci\u00f3n postural directa.',
+    oscarNote: 'A los 60+ la fuerza en manguito rotador y trapecios medios marca una diferencia enorme en postura y dolor de cuello. <strong>El face pull no es opcional \u2014 es el m\u00e1s importante de hoy.</strong> H\u00e1zlo con calma y contracci\u00f3n consciente en cada repetici\u00f3n.',
+    prev: 'piernas', next: 'resistencia',
+    exercises: [
+      { num: 1, name: 'Rotaci\u00f3n externa con banda (codo pegado)', sets: '3', reps: '15 c/u', rest: '45 seg', tag: 'ok', tagLabel: 'Adaptado', note: 'Activa el manguito rotador. Codo a 90\u00b0, pegado al costado en todo el movimiento.' },
+      { num: 2, name: 'Face pull con banda (a nivel del rostro)', sets: '4', reps: '15', rest: '45 seg', tag: 'ok', tagLabel: 'Prioritario', note: 'Ancla la banda a nivel de ojos. Codos altos y afuera al cerrar. Pausa 1 seg en el final.' },
+      { num: 3, name: 'Press de hombro con banda (sentada)', sets: '3', reps: '12', rest: '60 seg', tag: 'ok', tagLabel: 'Adaptado', note: 'Sentada con respaldo si es necesario. No arquear la espalda lumbar al subir.' },
+      { num: 4, name: 'Remo de pie o sentada con banda', sets: '3', reps: '15', rest: '45 seg', tag: 'ok', tagLabel: 'Adaptado', note: 'Jalar hacia el ombligo. Esc\u00e1pulas juntas al cerrar. Tronco estable durante todo el ejercicio.' },
+      { num: 5, name: 'Curl de b\u00edcep con banda', sets: '3', reps: '12', rest: '45 seg', tag: 'ok', tagLabel: 'Adaptado', note: 'Palmas hacia arriba. No balancear el tronco. Bajar de forma controlada (3 segundos).' },
+      { num: 6, name: 'Extensi\u00f3n de tr\u00edcep por encima (banda)', sets: '3', reps: '12', rest: '45 seg', tag: 'ok', tagLabel: 'Adaptado', note: 'Codo apuntando al techo. Rango completo si no hay molestia en el codo o hombro.' }
+    ]
+  },
+  resistencia: {
+    id: 'resistencia', name: 'Resistencia', icon: 'RES',
+    day: 'Jueves', duration: '35 min', equipment: 'Sin equipo \u00b7 Silla (opcional)',
+    desc: 'Cardio de bajo impacto articular. Elevar el ritmo card\u00edaco de forma segura y sostenida, sin estr\u00e9s en rodillas ni cadera.',
+    oscarNote: 'No buscamos agotamiento \u2014 buscamos que tu coraz\u00f3n trabaje a un 65\u201370% de su capacidad de manera sostenida. Si puedes hablar pero no cantar, est\u00e1s en la zona correcta. <strong>Para si sientes mareo, dolor de pecho o incomodidad articular.</strong> El objetivo es consistencia, no intensidad.',
+    prev: 'hombro-brazo', next: 'abdomen',
+    exercises: [
+      { num: 1, name: 'Marcha en el lugar (calentamiento)', sets: '1', reps: '3 min', rest: '\u2014', tag: 'info', tagLabel: 'Calentamiento', note: 'Ritmo c\u00f3modo. Rodillas a la altura de la cadera, brazos balanceando de forma natural.' },
+      { num: 2, name: 'Marcha lateral lenta (paso a paso)', sets: '3', reps: '45 seg', rest: '20 seg', tag: 'care', tagLabel: 'Rodilla', note: 'Pasos cortos y controlados. No cruzar las piernas. Mirada al frente.' },
+      { num: 3, name: 'Balanceo de brazos + marcha (simult\u00e1neo)', sets: '3', reps: '60 seg', rest: '20 seg', tag: 'ok', tagLabel: 'Adaptado', note: 'Coordinaci\u00f3n brazos-piernas. Core activo. Brazos desde el hombro, no desde el codo.' },
+      { num: 4, name: 'Subida de rodilla moderada (alternada)', sets: '3', reps: '30 seg', rest: '30 seg', tag: 'care', tagLabel: 'Rodilla', note: 'No elevar m\u00e1s de la altura de la cadera. Ag\u00e1rrate de una silla si es necesario.' },
+      { num: 5, name: 'Boxeo sentada (jabs de brazo)', sets: '3', reps: '45 seg', rest: '20 seg', tag: 'ok', tagLabel: 'Adaptado', note: 'R\u00e1pido pero controlado. Pecho levantado, core firme. Rotar ligeramente el tronco con cada golpe.' },
+      { num: 6, name: 'Enfriamiento: respiraci\u00f3n diafragm\u00e1tica', sets: '1', reps: '3 min', rest: '\u2014', tag: 'info', tagLabel: 'Enfriamiento', note: 'Inhala 4 seg, ret\u00e9n 2, exhala 6. Repite 6\u20138 veces. Bajar la frecuencia card\u00edaca de forma progresiva.' }
+    ]
+  },
+  abdomen: {
+    id: 'abdomen', name: 'Abdomen', icon: 'ABS',
+    day: 'S\u00e1bado', duration: '25 min', equipment: 'Colchoneta \u00b7 Banda de resistencia (opcional)',
+    desc: 'Core estabilizador. Cero flexi\u00f3n de columna \u2014 trabajo antiflexi\u00f3n y antirotaci\u00f3n para proteger la lumbar.',
+    oscarNote: 'No hacemos crunches ni sit-ups \u2014 eso comprime la columna lumbar. Lo que hacemos hoy activa el core profundo (transverso abdominal y mult\u00edfido) que es lo que de verdad protege tu espalda y mejora tu postura. <strong>Cada ejercicio es lento y consciente. La velocidad no importa.</strong>',
+    prev: 'resistencia', next: 'viajes',
+    exercises: [
+      { num: 1, name: 'Activaci\u00f3n de core sentada (compresi\u00f3n)', sets: '2', reps: '10 \u00d7 5 seg', rest: '30 seg', tag: 'info', tagLabel: 'Calentamiento', note: 'Sentada. Inhala y al exhalar aprieta el abdomen hacia adentro y arriba. Sin mover el tronco.' },
+      { num: 2, name: 'Bird dog en cuadrupedia', sets: '3', reps: '10 c/u', rest: '45 seg', tag: 'care', tagLabel: 'Lumbar', note: 'Columna completamente neutral en todo el ejercicio. No hundir ni arquear. Alarga desde la cabeza hasta el tal\u00f3n.' },
+      { num: 3, name: 'Plancha de rodillas (isom\u00e9trica)', sets: '3', reps: '20\u201330 seg', rest: '45 seg', tag: 'care', tagLabel: 'Lumbar', note: 'Caderas alineadas con hombros y rodillas. Si duele la espalda baja, acortar el tiempo o elevar la inclinaci\u00f3n.' },
+      { num: 4, name: 'Dead bug modificado (brazo alterno)', sets: '3', reps: '8 c/u', rest: '45 seg', tag: 'ok', tagLabel: 'Adaptado', note: 'Espalda baja pegada al suelo en todo momento. Muy lento. Solo bajar el brazo, sin mover las piernas al inicio.' },
+      { num: 5, name: 'Rotaci\u00f3n de tronco sentada con banda', sets: '3', reps: '12 c/u', rest: '30 seg', tag: 'ok', tagLabel: 'Adaptado', note: 'Girar desde el t\u00f3rax, no desde la cadera. Sin rebote. La cadera queda fija en la silla.' },
+      { num: 6, name: 'Superman (extensi\u00f3n de espalda baja)', sets: '3', reps: '10 \u00d7 3 seg', rest: '45 seg', tag: 'care', tagLabel: 'Lumbar', note: 'Elevar solo lo que el cuerpo permite sin esfuerzo. No forzar el cuello. Mirada hacia el suelo.' }
+    ]
+  },
+  viajes: {
+    id: 'viajes', name: 'Viajes', icon: 'TRV',
+    day: 'Cualquier d\u00eda', duration: '25 min', equipment: 'Sin equipo \u00b7 Silla o pared',
+    desc: 'Para cuando est\u00e1s fuera de casa. Cero equipo, cero excusas \u2014 misma calidad de movimiento en cualquier espacio.',
+    oscarNote: 'El entrenamiento de viaje es igual de v\u00e1lido que cualquier otra sesi\u00f3n. Con tu propio peso tienes suficiente resistencia. <strong>Lo m\u00e1s importante es mantener la frecuencia</strong> \u2014 tu cuerpo no sabe si est\u00e1s en casa o en un hotel. La consistencia construye resultados.',
+    prev: 'abdomen', next: 'mezclada',
+    exercises: [
+      { num: 1, name: 'Marcha en el lugar (calentamiento)', sets: '1', reps: '2 min', rest: '\u2014', tag: 'info', tagLabel: 'Calentamiento', note: 'Ritmo suave para elevar la temperatura muscular. Brazos activos.' },
+      { num: 2, name: 'Sentadilla en silla (levantarse sin manos)', sets: '3', reps: '12', rest: '45 seg', tag: 'care', tagLabel: 'Rodilla', note: 'Pie derecho ligeramente m\u00e1s atrasado. Gl\u00fateos al asiento, no dejarse caer. Subir con fuerza y control.' },
+      { num: 3, name: 'Press de pared (push-up de pie)', sets: '3', reps: '12', rest: '45 seg', tag: 'ok', tagLabel: 'Adaptado', note: 'Manos a la altura de los hombros en la pared. Codo a 45\u00b0 del cuerpo. Pecho toca la pared.' },
+      { num: 4, name: 'Rotaci\u00f3n de hombros y movilidad tor\u00e1cica', sets: '2', reps: '10 c/u', rest: '20 seg', tag: 'info', tagLabel: 'Movilidad', note: 'C\u00edrculos hacia adelante y atr\u00e1s. Luego retorci\u00f3n del tronco sentada. Sin tensar el cuello.' },
+      { num: 5, name: 'Elevaci\u00f3n de talones de pie', sets: '3', reps: '20', rest: '30 seg', tag: 'ok', tagLabel: 'Adaptado', note: 'Apoyo de pared. Subir lento (2 seg), bajar m\u00e1s lento a\u00fan (3 seg). Siente el gast\u00f3cnemio trabajar.' },
+      { num: 6, name: 'Plancha inclinada (manos en pared o cama)', sets: '3', reps: '20\u201330 seg', rest: '40 seg', tag: 'care', tagLabel: 'Lumbar', note: 'Cuerpo recto de cabeza a pies. Core firme. Si el \u00e1ngulo es muy horizontal, s\u00fabelo hasta sentirte estable.' }
+    ]
+  },
+  mezclada: {
+    id: 'mezclada', name: 'Mezclada', icon: 'MIX',
+    day: 'Domingo', duration: '40 min', equipment: 'Banda de resistencia \u00b7 Colchoneta',
+    desc: 'Cuerpo completo con transiciones lentas. La sesi\u00f3n m\u00e1s completa de la semana \u2014 une todos los patrones de movimiento.',
+    oscarNote: 'Esta sesi\u00f3n tiene todo: movilidad, fuerza y algo de cardio. <strong>Las transiciones lentas entre ejercicios son intencionadas</strong> \u2014 el sistema nervioso necesita tiempo para reclutar los grupos musculares correctos. No corras entre ejercicios. Respira entre series.',
+    prev: 'viajes', next: 'piernas',
+    exercises: [
+      { num: 1, name: 'Marcha en el lugar + balanceo de brazos', sets: '1', reps: '3 min', rest: '\u2014', tag: 'info', tagLabel: 'Calentamiento', note: 'Activaci\u00f3n general de cuerpo completo. Ritmo suave y progresivo.' },
+      { num: 2, name: 'Sentadilla parcial en silla', sets: '3', reps: '12', rest: '45 seg', tag: 'ok', tagLabel: 'Adaptado', note: 'Igual que en la sesi\u00f3n de piernas. \u00be de recorrido, espalda recta, pies alineados.' },
+      { num: 3, name: 'Remo con banda (de pie o sentada)', sets: '3', reps: '15', rest: '45 seg', tag: 'ok', tagLabel: 'Adaptado', note: 'Tronco estable. Jal\u00f3n desde el codo, no de la mano. Esc\u00e1pulas se juntan al cerrar.' },
+      { num: 4, name: 'Puente de gl\u00fateos (bilateral)', sets: '3', reps: '15', rest: '45 seg', tag: 'care', tagLabel: 'Cadera', note: 'Igual que en piernas. Elevaci\u00f3n sim\u00e9trica. Cadera y columna rectas en la posici\u00f3n alta.' },
+      { num: 5, name: 'Press de hombro con banda (sentada)', sets: '3', reps: '12', rest: '45 seg', tag: 'ok', tagLabel: 'Adaptado', note: 'Respaldo disponible si es necesario. Sin arquear la zona lumbar al subir.' },
+      { num: 6, name: 'Bird dog + respiraci\u00f3n de cierre', sets: '2', reps: '8 c/u + 2 min', rest: '\u2014', tag: 'care', tagLabel: 'Lumbar', note: 'Columna neutral. Al terminar el \u00faltimo set, recostarse y cerrar con 2 min de respiraci\u00f3n diafragm\u00e1tica.' }
+    ]
+  }
+};
+
+const ROUTINE_ORDER = ['piernas','hombro-brazo','resistencia','abdomen','viajes','mezclada'];
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+function getParam(key) {
+  return new URLSearchParams(window.location.search).get(key);
+}
+
+const id = getParam('id') || 'piernas';
+const routine = ROUTINES[id] || ROUTINES['piernas'];
+
+// Update title
+document.title = routine.name + ' \u2014 Patricia Arriaza';
+
+// ─── SIDEBAR ROUTINE LIST ────────────────────────────────────────────────────
+document.getElementById('sb-routines').innerHTML = ROUTINE_ORDER.map(rid => {
+  const r = ROUTINES[rid];
+  return `<a href="./rutina.html?id=${r.id}" class="sb-routine-item${r.id === id ? ' active' : ''}">
+    <div class="sb-ri-icon">${r.icon}</div>
+    ${r.name}
+  </a>`;
+}).join('');
+
+// ─── BUILD PAGE ──────────────────────────────────────────────────────────────
+const prevR = ROUTINES[routine.prev];
+const nextR = ROUTINES[routine.next];
+
+document.getElementById('portal-main').innerHTML = `
+  <a href="./rutinas.html" class="back-link">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    Todas las rutinas
+  </a>
+
+  <div class="routine-header">
+    <div class="rh-icon">${routine.icon}</div>
+    <div class="rh-body">
+      <div class="rh-eyebrow">Rutina Personalizada &middot; Semana 3</div>
+      <div class="rh-name">${routine.name}</div>
+      <div class="rh-meta">
+        <span class="rh-meta-item">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          ${routine.duration}
+        </span>
+        <span class="rh-meta-item">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+          ${routine.day}
+        </span>
+        <span class="rh-meta-item">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 16V8a2 2 0 0 0-1-1.73L13 2.27a2 2 0 0 0-2 0L4 6.27A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+          ${routine.equipment}
+        </span>
+      </div>
+      <div class="rh-desc">${routine.desc}</div>
+    </div>
+  </div>
+
+  <div class="exercise-section">
+    <div class="sec-label">Ejercicios &middot; ${routine.exercises.length} en total</div>
+    <table class="exercise-table">
+      <thead class="et-head">
+        <tr>
+          <th class="num-col">#</th>
+          <th>Ejercicio</th>
+          <th>Series</th>
+          <th>Reps / Tiempo</th>
+          <th>Descanso</th>
+          <th>Adaptaci\u00f3n</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${routine.exercises.map(ex => `
+          <tr class="et-row">
+            <td class="et-num">${String(ex.num).padStart(2,'0')}</td>
+            <td>
+              <div class="et-name">${ex.name}</div>
+              <div class="et-note">${ex.note}</div>
+            </td>
+            <td>
+              <div class="et-sets">${ex.sets}</div>
+              <div class="et-meta">series</div>
+            </td>
+            <td>
+              <div class="et-reps">${ex.reps}</div>
+            </td>
+            <td>
+              <div class="et-rest">${ex.rest}</div>
+            </td>
+            <td>
+              <span class="tag ${ex.tag}">${ex.tagLabel}</span>
+            </td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  </div>
+
+  <div>
+    <div class="sec-label">Nota de Oscar</div>
+    <div class="oscar-note">
+      <div class="on-badge">OE</div>
+      <div>
+        <div class="on-from">Para esta sesi\u00f3n &middot; Semana 3</div>
+        <div class="on-text">${routine.oscarNote}</div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="sec-label">Navegaci\u00f3n</div>
+    <div class="routine-nav">
+      <a href="./rutina.html?id=${prevR.id}" class="rnav-btn prev">
+        <div class="rnav-icon">${prevR.icon}</div>
+        <div>
+          <div class="rnav-label">&larr; Anterior</div>
+          <div class="rnav-name">${prevR.name}</div>
+        </div>
+      </a>
+      <a href="./rutina.html?id=${nextR.id}" class="rnav-btn next">
+        <div>
+          <div class="rnav-label">Siguiente &rarr;</div>
+          <div class="rnav-name">${nextR.name}</div>
+        </div>
+        <div class="rnav-icon">${nextR.icon}</div>
+      </a>
+    </div>
+  </div>
+`;
+
+// ─── PAGE TRANSITION ─────────────────────────────────────────────────────────
+const pt = document.getElementById('page-transition');
+requestAnimationFrame(() => requestAnimationFrame(() => pt.classList.add('hidden')));
+document.addEventListener('click', e => {
+  const link = e.target.closest('a[href]');
+  if (!link) return;
+  const href = link.getAttribute('href');
+  if (!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('mailto') || link.target === '_blank') return;
+  e.preventDefault();
+  pt.classList.remove('hidden');
+  setTimeout(() => { window.location.href = href; }, 420);
+});
+</script>
+</body>
+</html>

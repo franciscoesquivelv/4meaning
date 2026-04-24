@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi Perfil — Patricia Arriaza</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" type="image/png" href="../imagenes/logos/Artboard 1 copy 32.png" media="(prefers-color-scheme: dark)">
+  <link rel="icon" type="image/png" href="../imagenes/logos/Artboard 1 copy 22.png" media="(prefers-color-scheme: light)">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --orange: #FF4D00; --orange-dim: #cc3d00;
+      --black: #080808; --dark: #111111;
+      --surface: #181818; --surface2: #1e1e1e;
+      --border: #272727; --white: #ffffff;
+      --muted: #777777; --muted-light: #aaaaaa;
+      --green: #22c55e; --amber: #f59e0b; --blue: #60a5fa;
+      --font-head: 'Barlow Condensed', sans-serif;
+      --font-body: 'Barlow', sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body { background: var(--black); color: var(--white); font-family: var(--font-body); font-size: 15px; line-height: 1.6; overflow-x: hidden; }
+
+    /* ── PAGE TRANSITION ── */
+    #page-transition { position: fixed; inset: 0; z-index: 9998; background: var(--black); display: flex; align-items: center; justify-content: center; opacity: 1; transition: opacity .38s ease; pointer-events: all; }
+    #page-transition.hidden { opacity: 0; pointer-events: none; }
+    .pt-wrap { position: relative; width: 72px; height: 72px; display: flex; align-items: center; justify-content: center; }
+    .pt-ring { position: absolute; inset: 0; border-radius: 50%; border: 2px solid rgba(255,77,0,.18); border-top-color: var(--orange); animation: pt-spin 1s linear infinite; }
+    .pt-logo { width: 36px; height: 36px; object-fit: contain; animation: pt-pulse 1.4s ease-in-out infinite; }
+    @keyframes pt-spin { to { transform: rotate(360deg); } }
+    @keyframes pt-pulse { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:.5; transform:scale(.88); } }
+
+    /* ── NAV ── */
+    .portal-nav { position: sticky; top: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 0 32px; height: 60px; background: rgba(8,8,8,.97); border-bottom: 1px solid var(--border); backdrop-filter: blur(12px); }
+    .pnav-left { display: flex; align-items: center; gap: 16px; }
+    .pnav-logo { height: 24px; width: auto; }
+    .pnav-divider { width: 1px; height: 16px; background: var(--border); }
+    .pnav-label { font-size: 10px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+    .pnav-right { display: flex; align-items: center; gap: 12px; }
+    .pnav-user { display: flex; align-items: center; gap: 8px; }
+    .pnav-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--orange); display: flex; align-items: center; justify-content: center; font-family: var(--font-head); font-size: 11px; font-weight: 900; color: var(--white); }
+    .pnav-name { font-size: 13px; font-weight: 600; }
+    .pnav-badge { display: flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); border: 1px solid var(--border); border-radius: 100px; padding: 4px 10px; }
+    .pnav-badge-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); }
+
+    /* ── LAYOUT ── */
+    .portal-body { display: grid; grid-template-columns: 232px 1fr; min-height: calc(100vh - 60px); }
+
+    /* ── SIDEBAR ── */
+    .portal-sidebar { border-right: 1px solid var(--border); padding: 28px 18px; background: var(--dark); display: flex; flex-direction: column; gap: 24px; position: sticky; top: 60px; height: calc(100vh - 60px); overflow-y: auto; }
+    .sb-profile { display: flex; flex-direction: column; align-items: center; text-align: center; padding-bottom: 22px; border-bottom: 1px solid var(--border); }
+    .sb-avatar { width: 52px; height: 52px; border-radius: 50%; background: var(--orange); display: flex; align-items: center; justify-content: center; font-family: var(--font-head); font-size: 18px; font-weight: 900; color: var(--white); margin-bottom: 10px; border: 2px solid rgba(255,77,0,.2); }
+    .sb-name { font-family: var(--font-head); font-size: 17px; font-weight: 900; text-transform: uppercase; letter-spacing: -.01em; margin-bottom: 4px; }
+    .sb-active { display: inline-flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--green); margin-bottom: 14px; }
+    .sb-active::before { content: ''; width: 4px; height: 4px; border-radius: 50%; background: var(--green); }
+    .sb-prog-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-bottom: 6px; }
+    .sb-prog-bar { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+    .sb-prog-fill { height: 100%; background: var(--orange); border-radius: 2px; width: 37.5%; }
+    .sb-section-title { font-size: 9px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+    .sb-nav { display: flex; flex-direction: column; gap: 2px; }
+    .sb-nav-item { display: flex; align-items: center; gap: 9px; padding: 9px 10px; border-radius: 5px; font-size: 13px; font-weight: 500; color: var(--muted-light); text-decoration: none; border: 1px solid transparent; transition: background .15s, color .15s; }
+    .sb-nav-item:hover { background: var(--surface); color: var(--white); }
+    .sb-nav-item.active { background: rgba(255,77,0,.08); color: var(--orange); border-color: rgba(255,77,0,.16); }
+    .sb-nav-dot { width: 4px; height: 4px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+
+    /* ── MAIN ── */
+    .portal-main { padding: 40px 48px 80px; display: flex; flex-direction: column; gap: 32px; }
+    .sec-label { display: inline-flex; align-items: center; gap: 9px; font-size: 10px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: var(--orange); margin-bottom: 14px; }
+    .sec-label::before { content: ''; display: block; width: 16px; height: 2px; background: var(--orange); }
+
+    /* Page header */
+    .page-title { font-family: var(--font-head); font-size: clamp(36px, 4vw, 54px); font-weight: 900; text-transform: uppercase; line-height: .92; letter-spacing: -.01em; }
+    .page-title em { font-style: normal; color: var(--orange); }
+    .page-sub { font-size: 14px; color: var(--muted-light); margin-top: 8px; }
+
+    /* Profile card */
+    .profile-hero { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 32px 36px; display: flex; gap: 28px; align-items: center; background-image: radial-gradient(ellipse at 95% 50%, rgba(255,77,0,.05), transparent 60%); flex-wrap: wrap; }
+    .profile-avatar-lg { width: 80px; height: 80px; border-radius: 50%; background: var(--orange); display: flex; align-items: center; justify-content: center; font-family: var(--font-head); font-size: 26px; font-weight: 900; color: var(--white); flex-shrink: 0; border: 3px solid rgba(255,77,0,.2); box-shadow: 0 0 32px rgba(255,77,0,.12); }
+    .profile-hero-body { flex: 1; min-width: 200px; }
+    .profile-name { font-family: var(--font-head); font-size: 38px; font-weight: 900; text-transform: uppercase; line-height: .9; letter-spacing: -.01em; margin-bottom: 8px; }
+    .profile-plan { font-size: 13px; color: var(--muted-light); margin-bottom: 14px; }
+    .profile-badges { display: flex; gap: 8px; flex-wrap: wrap; }
+    .pbadge { display: inline-flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; border-radius: 100px; padding: 5px 12px; }
+    .pbadge.green { background: rgba(34,197,94,.1); color: var(--green); border: 1px solid rgba(34,197,94,.2); }
+    .pbadge.orange { background: rgba(255,77,0,.1); color: var(--orange); border: 1px solid rgba(255,77,0,.2); }
+    .pbadge.muted { background: rgba(255,255,255,.05); color: var(--muted-light); border: 1px solid var(--border); }
+
+    /* Info grid */
+    .info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    .info-card { background: var(--surface); border: 1px solid var(--border); border-radius: 11px; padding: 22px 26px; }
+    .ic-label { font-size: 9px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
+    .ic-list { display: flex; flex-direction: column; gap: 10px; }
+    .ic-item { display: flex; align-items: flex-start; gap: 11px; }
+    .ic-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; margin-top: 7px; }
+    .ic-dot.green { background: var(--green); }
+    .ic-dot.amber { background: var(--amber); }
+    .ic-dot.blue { background: var(--blue); }
+    .ic-dot.orange { background: var(--orange); }
+    .ic-text { font-size: 13px; color: rgba(255,255,255,.8); line-height: 1.5; }
+    .ic-text strong { color: var(--white); font-weight: 600; }
+
+    /* Trainer card */
+    .trainer-card { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--orange); border-radius: 10px; padding: 24px 28px; display: flex; gap: 18px; align-items: flex-start; }
+    .tc-badge { width: 38px; height: 38px; border-radius: 50%; background: var(--black); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-family: var(--font-head); font-size: 12px; font-weight: 900; color: var(--orange); flex-shrink: 0; }
+    .tc-from { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--orange); margin-bottom: 9px; }
+    .tc-text { font-size: 14px; color: rgba(255,255,255,.8); line-height: 1.75; }
+    .tc-text strong { color: var(--white); }
+    .tc-contact { display: inline-flex; align-items: center; gap: 6px; margin-top: 14px; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--orange); text-decoration: none; transition: opacity .15s; }
+    .tc-contact:hover { opacity: .75; }
+
+    @media (max-width: 960px) { .portal-body { grid-template-columns: 1fr; } .portal-sidebar { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--border); flex-direction: row; flex-wrap: wrap; } }
+    @media (max-width: 760px) { .portal-main { padding: 28px 20px 60px; } .info-grid { grid-template-columns: 1fr; } .profile-hero { padding: 24px 22px; } }
+    @media (max-width: 500px) { .pnav-name, .pnav-badge { display: none; } }
+  </style>
+</head>
+<body>
+
+<!-- PAGE TRANSITION -->
+<div id="page-transition">
+  <div class="pt-wrap">
+    <div class="pt-ring"></div>
+    <img src="../imagenes/logos/Artboard 1 copy 32.png" alt="" class="pt-logo">
+  </div>
+</div>
+
+<nav class="portal-nav">
+  <div class="pnav-left">
+    <img src="../imagenes/logos/Artboard 1 copy 32.png" alt="OE" class="pnav-logo">
+    <div class="pnav-divider"></div>
+    <span class="pnav-label">Portal de Cliente</span>
+  </div>
+  <div class="pnav-right">
+    <div class="pnav-user">
+      <div class="pnav-avatar">PA</div>
+      <span class="pnav-name">Patricia Arriaza</span>
+    </div>
+    <div class="pnav-badge"><div class="pnav-badge-dot"></div>Sesi&oacute;n Privada</div>
+  </div>
+</nav>
+
+<div class="portal-body">
+  <aside class="portal-sidebar">
+    <div class="sb-profile">
+      <div class="sb-avatar">PA</div>
+      <div class="sb-name">Patricia Arriaza</div>
+      <div class="sb-active">Cliente Activa</div>
+      <div style="width:100%">
+        <div class="sb-prog-labels"><span>Semana 3 de 8</span><span>37%</span></div>
+        <div class="sb-prog-bar"><div class="sb-prog-fill"></div></div>
+      </div>
+    </div>
+    <div>
+      <div class="sb-section-title">Navegaci&oacute;n</div>
+      <div class="sb-nav">
+        <a href="./index.html" class="sb-nav-item"><span class="sb-nav-dot"></span>Dashboard</a>
+        <a href="./rutinas.html" class="sb-nav-item"><span class="sb-nav-dot"></span>Mis Rutinas</a>
+        <a href="./perfil.html" class="sb-nav-item active"><span class="sb-nav-dot"></span>Mi Perfil</a>
+        <a href="mailto:oscar@4meaning.life" class="sb-nav-item"><span class="sb-nav-dot"></span>Contactar a Oscar</a>
+      </div>
+    </div>
+  </aside>
+
+  <main class="portal-main">
+
+    <div>
+      <div class="sec-label">Ficha de Cliente</div>
+      <div class="page-title">Mi<br><em>Perfil.</em></div>
+      <div class="page-sub">Programa personalizado 60+ &middot; Entrenamiento remoto</div>
+    </div>
+
+    <!-- Profile hero -->
+    <div class="profile-hero">
+      <div class="profile-avatar-lg">PA</div>
+      <div class="profile-hero-body">
+        <div class="profile-name">Patricia Arriaza</div>
+        <div class="profile-plan">Plan Personalizado 60+ &middot; Supervisado por Oscar Esquivel &middot; 8 semanas</div>
+        <div class="profile-badges">
+          <span class="pbadge green">Cliente Activa</span>
+          <span class="pbadge orange">Semana 3 / 8</span>
+          <span class="pbadge muted">Entrenamiento Remoto</span>
+          <span class="pbadge muted">Sin acceso a gimnasio</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Info grid -->
+    <div>
+      <div class="sec-label">Condiciones F&iacute;sicas</div>
+      <div class="info-grid">
+
+        <div class="info-card">
+          <div class="ic-label">Consideraciones prioritarias</div>
+          <div class="ic-list">
+            <div class="ic-item">
+              <div class="ic-dot amber"></div>
+              <div class="ic-text"><strong>Pr&oacute;tesis de cadera</strong> &mdash; Evitar movimientos de alto impacto, rotaciones extremas y ejercicios unilaterales de carga completa.</div>
+            </div>
+            <div class="ic-item">
+              <div class="ic-dot amber"></div>
+              <div class="ic-text"><strong>Rodilla derecha inestable</strong> &mdash; Sin carga unilateral completa. Rango parcial en ejercicios de rodilla derecha. Apoyo bilateral siempre disponible.</div>
+            </div>
+            <div class="ic-item">
+              <div class="ic-dot amber"></div>
+              <div class="ic-text"><strong>Sensibilidad lumbar</strong> &mdash; Cero flexi&oacute;n de columna (sin crunches ni sit-ups). Todo el trabajo de core es antiflexión y antirotaci&oacute;n.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <div class="ic-label">Objetivos del programa</div>
+          <div class="ic-list">
+            <div class="ic-item">
+              <div class="ic-dot green"></div>
+              <div class="ic-text"><strong>Fuerza funcional</strong> &mdash; Mejorar la capacidad de levantarse, caminar y moverse con seguridad e independencia.</div>
+            </div>
+            <div class="ic-item">
+              <div class="ic-dot green"></div>
+              <div class="ic-text"><strong>Estabilidad articular</strong> &mdash; Fortalecer los m&uacute;sculos estabilizadores de rodilla, cadera y columna.</div>
+            </div>
+            <div class="ic-item">
+              <div class="ic-dot green"></div>
+              <div class="ic-text"><strong>Salud cardiovascular</strong> &mdash; Mantener y mejorar la capacidad card&iacute;aca con trabajo de bajo impacto.</div>
+            </div>
+            <div class="ic-item">
+              <div class="ic-dot blue"></div>
+              <div class="ic-text"><strong>Bienestar general</strong> &mdash; Mejor postura, menos dolor de espalda, m&aacute;s energ&iacute;a diaria.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <div class="ic-label">Equipamiento disponible</div>
+          <div class="ic-list">
+            <div class="ic-item">
+              <div class="ic-dot green"></div>
+              <div class="ic-text"><strong>Bandas de resistencia</strong> (ligera y media)</div>
+            </div>
+            <div class="ic-item">
+              <div class="ic-dot green"></div>
+              <div class="ic-text"><strong>Colchoneta</strong> para ejercicios de suelo</div>
+            </div>
+            <div class="ic-item">
+              <div class="ic-dot green"></div>
+              <div class="ic-text"><strong>Silla resistente</strong> como apoyo y para sentadillas</div>
+            </div>
+            <div class="ic-item">
+              <div class="ic-dot green"></div>
+              <div class="ic-text"><strong>Pared</strong> para ejercicios de equilibrio y press</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <div class="ic-label">Estructura semanal</div>
+          <div class="ic-list">
+            <div class="ic-item">
+              <div class="ic-dot orange"></div>
+              <div class="ic-text"><strong>Mar</strong> &mdash; Piernas (35 min)</div>
+            </div>
+            <div class="ic-item">
+              <div class="ic-dot orange"></div>
+              <div class="ic-text"><strong>Mi&eacute;</strong> &mdash; Hombro / Brazo (30 min)</div>
+            </div>
+            <div class="ic-item">
+              <div class="ic-dot orange"></div>
+              <div class="ic-text"><strong>Jue</strong> &mdash; Resistencia (35 min)</div>
+            </div>
+            <div class="ic-item">
+              <div class="ic-dot orange"></div>
+              <div class="ic-text"><strong>S&aacute;b</strong> &mdash; Abdomen (25 min)</div>
+            </div>
+            <div class="ic-item">
+              <div class="ic-dot orange"></div>
+              <div class="ic-text"><strong>Dom</strong> &mdash; Mezclada (40 min)</div>
+            </div>
+            <div class="ic-item">
+              <div class="ic-dot amber"></div>
+              <div class="ic-text"><strong>Lun / Vie</strong> &mdash; Descanso activo</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Trainer note -->
+    <div>
+      <div class="sec-label">Tu Entrenador</div>
+      <div class="trainer-card">
+        <div class="tc-badge">OE</div>
+        <div>
+          <div class="tc-from">Oscar Esquivel &middot; Entrenador Personal</div>
+          <div class="tc-text">
+            Dise&ntilde;&eacute; este programa espec&iacute;ficamente para tus condiciones y objetivos. <strong>Cada ejercicio fue seleccionado pensando en tu pr&oacute;tesis, tu rodilla derecha y tu lumbar</strong> &mdash; nada es al azar. Si en algún momento algo no se siente bien, para y esc&iacute;beme. Prefiero ajustar el plan que arriesgarte a una lesi&oacute;n.
+          </div>
+          <a href="mailto:oscar@4meaning.life" class="tc-contact">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            Escribir a Oscar
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+const pt = document.getElementById('page-transition');
+requestAnimationFrame(() => requestAnimationFrame(() => pt.classList.add('hidden')));
+document.addEventListener('click', e => {
+  const link = e.target.closest('a[href]');
+  if (!link) return;
+  const href = link.getAttribute('href');
+  if (!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('mailto') || link.target === '_blank') return;
+  e.preventDefault();
+  pt.classList.remove('hidden');
+  setTimeout(() => { window.location.href = href; }, 420);
+});
+</script>
+</body>
+</html>
