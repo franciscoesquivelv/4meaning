@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Portal de Cliente — Patricia Arriaza</title>
+  <title>Dashboard — Patricia Arriaza</title>
   <meta name="robots" content="noindex, nofollow">
   <link rel="icon" type="image/png" href="../imagenes/logos/Artboard 1 copy 32.png" media="(prefers-color-scheme: dark)">
   <link rel="icon" type="image/png" href="../imagenes/logos/Artboard 1 copy 22.png" media="(prefers-color-scheme: light)">
@@ -12,871 +12,173 @@
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --orange: #FF4D00;
-      --orange-dim: #cc3d00;
-      --black: #080808;
-      --dark: #111111;
-      --surface: #181818;
-      --surface2: #1e1e1e;
-      --border: #272727;
-      --border-subtle: #1e1e1e;
-      --white: #ffffff;
-      --muted: #777777;
-      --muted-light: #aaaaaa;
+      --orange: #FF4D00; --orange-dim: #cc3d00;
+      --black: #080808; --dark: #111111;
+      --surface: #181818; --surface2: #1e1e1e;
+      --border: #272727; --white: #ffffff;
+      --muted: #777777; --muted-light: #aaaaaa;
       --green: #22c55e;
-      --amber: #f59e0b;
       --font-head: 'Barlow Condensed', sans-serif;
       --font-body: 'Barlow', sans-serif;
     }
-
     html { scroll-behavior: smooth; }
-    body {
-      background: var(--black);
-      color: var(--white);
-      font-family: var(--font-body);
-      font-size: 15px;
-      line-height: 1.6;
-      overflow-x: hidden;
-    }
+    body { background: var(--black); color: var(--white); font-family: var(--font-body); font-size: 15px; line-height: 1.6; overflow-x: hidden; }
 
-    /* ─────────────────────────────────────
-       ACCESS GATE
-    ───────────────────────────────────── */
-    #access-gate {
-      position: fixed;
-      inset: 0;
-      z-index: 9999;
-      background: var(--black);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      transition: opacity .5s ease;
-    }
+    /* ── GATE ── */
+    #access-gate { position: fixed; inset: 0; z-index: 9999; background: var(--black); display: flex; align-items: center; justify-content: center; padding: 24px; transition: opacity .5s ease; }
     #access-gate.fading { opacity: 0; pointer-events: none; }
-
-    .gate-inner {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      max-width: 400px;
-      width: 100%;
-    }
-
-    .gate-logo { height: 36px; margin-bottom: 52px; opacity: .65; }
-
-    .gate-lock-wrap {
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 36px;
-    }
-    .gate-lock-svg { width: 22px; height: 22px; }
-
-    .gate-eyebrow {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: .22em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 28px;
-    }
-
-    .gate-avatar {
-      width: 88px;
-      height: 88px;
-      border-radius: 50%;
-      background: var(--orange);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: var(--font-head);
-      font-size: 30px;
-      font-weight: 900;
-      color: var(--white);
-      letter-spacing: -.01em;
-      margin-bottom: 20px;
-      border: 3px solid rgba(255,77,0,.25);
-      box-shadow: 0 0 48px rgba(255,77,0,.18), 0 0 0 8px rgba(255,77,0,.05);
-    }
-
-    .gate-name {
-      font-family: var(--font-head);
-      font-size: 42px;
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: -.01em;
-      line-height: .95;
-      margin-bottom: 8px;
-    }
-
-    .gate-plan {
-      font-size: 13px;
-      color: var(--muted-light);
-      margin-bottom: 28px;
-      line-height: 1.4;
-    }
-
-    .gate-verified {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: .1em;
-      text-transform: uppercase;
-      color: var(--green);
-      background: rgba(34,197,94,.08);
-      border: 1px solid rgba(34,197,94,.2);
-      border-radius: 100px;
-      padding: 7px 18px;
-      margin-bottom: 40px;
-    }
-    .gate-verified-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--green);
-      flex-shrink: 0;
-    }
-
-    .gate-btn {
-      width: 100%;
-      background: var(--orange);
-      color: var(--white);
-      border: none;
-      cursor: pointer;
-      font-family: var(--font-body);
-      font-size: 14px;
-      font-weight: 700;
-      letter-spacing: .1em;
-      text-transform: uppercase;
-      padding: 17px 32px;
-      border-radius: 4px;
-      margin-bottom: 20px;
-      transition: background .2s;
-    }
+    .gate-inner { display: flex; flex-direction: column; align-items: center; text-align: center; max-width: 400px; width: 100%; }
+    .gate-logo { height: 34px; margin-bottom: 52px; opacity: .6; }
+    .gate-lock { width: 52px; height: 52px; border-radius: 50%; background: var(--surface); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; margin-bottom: 36px; }
+    .gate-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; color: var(--muted); margin-bottom: 28px; }
+    .gate-avatar { width: 84px; height: 84px; border-radius: 50%; background: var(--orange); display: flex; align-items: center; justify-content: center; font-family: var(--font-head); font-size: 28px; font-weight: 900; color: var(--white); margin-bottom: 18px; border: 3px solid rgba(255,77,0,.2); box-shadow: 0 0 48px rgba(255,77,0,.15), 0 0 0 8px rgba(255,77,0,.04); }
+    .gate-name { font-family: var(--font-head); font-size: 40px; font-weight: 900; text-transform: uppercase; letter-spacing: -.01em; line-height: .95; margin-bottom: 8px; }
+    .gate-plan { font-size: 13px; color: var(--muted-light); margin-bottom: 26px; line-height: 1.4; }
+    .gate-verified { display: inline-flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--green); background: rgba(34,197,94,.08); border: 1px solid rgba(34,197,94,.2); border-radius: 100px; padding: 7px 18px; margin-bottom: 36px; }
+    .gate-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); }
+    .gate-btn { width: 100%; background: var(--orange); color: var(--white); border: none; cursor: pointer; font-family: var(--font-body); font-size: 14px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 16px 32px; border-radius: 4px; margin-bottom: 18px; transition: background .2s; }
     .gate-btn:hover { background: var(--orange-dim); }
+    .gate-note { font-size: 12px; color: var(--muted); line-height: 1.6; }
 
-    .gate-note {
-      font-size: 12px;
-      color: var(--muted);
-      line-height: 1.6;
-    }
+    /* ── PAGE TRANSITION ── */
+    #page-transition { position: fixed; inset: 0; z-index: 9998; background: var(--black); display: flex; align-items: center; justify-content: center; opacity: 1; transition: opacity .38s ease; pointer-events: all; }
+    #page-transition.hidden { opacity: 0; pointer-events: none; }
+    .pt-wrap { position: relative; width: 72px; height: 72px; display: flex; align-items: center; justify-content: center; }
+    .pt-ring { position: absolute; inset: 0; border-radius: 50%; border: 2px solid rgba(255,77,0,.18); border-top-color: var(--orange); animation: pt-spin 1s linear infinite; }
+    .pt-logo { width: 36px; height: 36px; object-fit: contain; animation: pt-pulse 1.4s ease-in-out infinite; }
+    @keyframes pt-spin { to { transform: rotate(360deg); } }
+    @keyframes pt-pulse { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:.5; transform:scale(.88); } }
 
-    /* ─────────────────────────────────────
-       PORTAL WRAPPER
-    ───────────────────────────────────── */
-    #portal { display: none; min-height: 100vh; }
+    /* ── NAV ── */
+    .portal-nav { position: sticky; top: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 0 32px; height: 60px; background: rgba(8,8,8,.97); border-bottom: 1px solid var(--border); backdrop-filter: blur(12px); }
+    .pnav-left { display: flex; align-items: center; gap: 16px; }
+    .pnav-logo { height: 24px; width: auto; }
+    .pnav-divider { width: 1px; height: 16px; background: var(--border); }
+    .pnav-label { font-size: 10px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+    .pnav-right { display: flex; align-items: center; gap: 12px; }
+    .pnav-user { display: flex; align-items: center; gap: 8px; }
+    .pnav-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--orange); display: flex; align-items: center; justify-content: center; font-family: var(--font-head); font-size: 11px; font-weight: 900; color: var(--white); }
+    .pnav-name { font-size: 13px; font-weight: 600; }
+    .pnav-badge { display: flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); border: 1px solid var(--border); border-radius: 100px; padding: 4px 10px; }
+    .pnav-badge-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); }
 
-    /* ─────────────────────────────────────
-       PORTAL NAV
-    ───────────────────────────────────── */
-    .portal-nav {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 36px;
-      height: 62px;
-      background: rgba(8,8,8,.97);
-      border-bottom: 1px solid var(--border);
-      backdrop-filter: blur(12px);
-    }
+    /* ── LAYOUT ── */
+    .portal-body { display: grid; grid-template-columns: 232px 1fr; min-height: calc(100vh - 60px); }
 
-    .pnav-left { display: flex; align-items: center; gap: 18px; }
-    .pnav-logo { height: 26px; width: auto; }
-    .pnav-divider { width: 1px; height: 18px; background: var(--border); }
-    .pnav-label {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: .18em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-
-    .pnav-right { display: flex; align-items: center; gap: 14px; }
-
-    .pnav-user { display: flex; align-items: center; gap: 10px; }
-    .pnav-avatar {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      background: var(--orange);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: var(--font-head);
-      font-size: 12px;
-      font-weight: 900;
-      color: var(--white);
-      flex-shrink: 0;
-    }
-    .pnav-name { font-size: 13px; font-weight: 600; color: var(--white); }
-
-    .pnav-badge {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: .1em;
-      text-transform: uppercase;
-      color: var(--muted);
-      border: 1px solid var(--border);
-      border-radius: 100px;
-      padding: 5px 12px;
-    }
-    .pnav-badge-dot {
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: var(--green);
-      flex-shrink: 0;
-    }
-
-    /* ─────────────────────────────────────
-       PORTAL LAYOUT
-    ───────────────────────────────────── */
-    .portal-body {
-      display: grid;
-      grid-template-columns: 268px 1fr;
-      min-height: calc(100vh - 62px);
-    }
-
-    /* ─────────────────────────────────────
-       SIDEBAR
-    ───────────────────────────────────── */
-    .portal-sidebar {
-      border-right: 1px solid var(--border);
-      padding: 28px 20px 40px;
-      background: var(--dark);
-      display: flex;
-      flex-direction: column;
-      gap: 28px;
-      position: sticky;
-      top: 62px;
-      height: calc(100vh - 62px);
-      overflow-y: auto;
-    }
-
-    /* Profile block */
-    .sb-profile {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      padding-bottom: 24px;
-      border-bottom: 1px solid var(--border);
-    }
-    .sb-avatar {
-      width: 62px;
-      height: 62px;
-      border-radius: 50%;
-      background: var(--orange);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: var(--font-head);
-      font-size: 22px;
-      font-weight: 900;
-      color: var(--white);
-      margin-bottom: 12px;
-      border: 2px solid rgba(255,77,0,.25);
-    }
-    .sb-name {
-      font-family: var(--font-head);
-      font-size: 20px;
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: -.01em;
-      margin-bottom: 5px;
-    }
-    .sb-active {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: .1em;
-      text-transform: uppercase;
-      color: var(--green);
-      margin-bottom: 16px;
-    }
-    .sb-active::before {
-      content: '';
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: var(--green);
-    }
-    .sb-progress { width: 100%; }
-    .sb-prog-labels {
-      display: flex;
-      justify-content: space-between;
-      font-size: 11px;
-      color: var(--muted);
-      margin-bottom: 8px;
-    }
-    .sb-prog-bar {
-      height: 4px;
-      background: var(--border);
-      border-radius: 2px;
-      overflow: hidden;
-    }
-    .sb-prog-fill {
-      height: 100%;
-      background: var(--orange);
-      border-radius: 2px;
-      width: 37.5%;
-    }
-
-    /* Sidebar sections */
-    .sb-section-title {
-      font-size: 9px;
-      font-weight: 700;
-      letter-spacing: .2em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 10px;
-    }
-
-    /* Data rows */
-    .sb-data { display: flex; flex-direction: column; }
-    .sb-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 8px;
-      font-size: 12px;
-      padding: 7px 0;
-      border-bottom: 1px solid var(--border-subtle);
-    }
-    .sb-row:last-child { border-bottom: none; }
-    .sb-row-label { color: var(--muted); white-space: nowrap; }
-    .sb-row-val { color: var(--white); font-weight: 500; text-align: right; }
-
-    /* Conditions */
-    .sb-conditions { display: flex; flex-direction: column; gap: 7px; }
-    .sb-cond {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 10px 12px;
-    }
-    .sb-cond-icon {
-      width: 20px;
-      height: 20px;
-      flex-shrink: 0;
-      margin-top: 1px;
-    }
-    .sb-cond-text { font-size: 11px; color: rgba(255,255,255,.75); line-height: 1.45; }
-
-    /* Sidebar nav */
+    /* ── SIDEBAR ── */
+    .portal-sidebar { border-right: 1px solid var(--border); padding: 28px 18px; background: var(--dark); display: flex; flex-direction: column; gap: 24px; position: sticky; top: 60px; height: calc(100vh - 60px); overflow-y: auto; }
+    .sb-profile { display: flex; flex-direction: column; align-items: center; text-align: center; padding-bottom: 22px; border-bottom: 1px solid var(--border); }
+    .sb-avatar { width: 52px; height: 52px; border-radius: 50%; background: var(--orange); display: flex; align-items: center; justify-content: center; font-family: var(--font-head); font-size: 18px; font-weight: 900; color: var(--white); margin-bottom: 10px; border: 2px solid rgba(255,77,0,.2); }
+    .sb-name { font-family: var(--font-head); font-size: 17px; font-weight: 900; text-transform: uppercase; letter-spacing: -.01em; margin-bottom: 4px; }
+    .sb-active { display: inline-flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--green); margin-bottom: 14px; }
+    .sb-active::before { content: ''; width: 4px; height: 4px; border-radius: 50%; background: var(--green); }
+    .sb-prog-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-bottom: 6px; }
+    .sb-prog-bar { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+    .sb-prog-fill { height: 100%; background: var(--orange); border-radius: 2px; width: 37.5%; }
+    .sb-section-title { font-size: 9px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
     .sb-nav { display: flex; flex-direction: column; gap: 2px; }
-    .sb-nav-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 9px 11px;
-      border-radius: 5px;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--muted-light);
-      cursor: pointer;
-      transition: background .15s, color .15s;
-      text-decoration: none;
-      border: 1px solid transparent;
-    }
+    .sb-nav-item { display: flex; align-items: center; gap: 9px; padding: 9px 10px; border-radius: 5px; font-size: 13px; font-weight: 500; color: var(--muted-light); text-decoration: none; border: 1px solid transparent; transition: background .15s, color .15s; }
     .sb-nav-item:hover { background: var(--surface); color: var(--white); }
-    .sb-nav-item.active {
-      background: rgba(255,77,0,.08);
-      color: var(--orange);
-      border-color: rgba(255,77,0,.18);
-    }
-    .sb-nav-dot {
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: currentColor;
-      flex-shrink: 0;
-    }
+    .sb-nav-item.active { background: rgba(255,77,0,.08); color: var(--orange); border-color: rgba(255,77,0,.16); }
+    .sb-nav-dot { width: 4px; height: 4px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
 
-    /* ─────────────────────────────────────
-       MAIN CONTENT
-    ───────────────────────────────────── */
-    .portal-main {
-      padding: 44px 52px 80px;
-      display: flex;
-      flex-direction: column;
-      gap: 48px;
-    }
+    /* ── MAIN ── */
+    .portal-main { padding: 40px 48px 80px; display: flex; flex-direction: column; gap: 36px; }
+    .sec-label { display: inline-flex; align-items: center; gap: 9px; font-size: 10px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: var(--orange); margin-bottom: 14px; }
+    .sec-label::before { content: ''; display: block; width: 16px; height: 2px; background: var(--orange); }
 
-    /* Section label */
-    .sec-label {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: .2em;
-      text-transform: uppercase;
-      color: var(--orange);
-      margin-bottom: 16px;
-    }
-    .sec-label::before {
-      content: '';
-      display: block;
-      width: 18px;
-      height: 2px;
-      background: var(--orange);
-    }
+    /* Welcome */
+    .dash-welcome { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+    .dash-greeting { font-family: var(--font-head); font-size: clamp(36px, 4vw, 56px); font-weight: 900; text-transform: uppercase; line-height: .93; letter-spacing: -.01em; }
+    .dash-greeting em { font-style: normal; color: var(--orange); }
+    .dash-sub { font-size: 14px; color: var(--muted-light); margin-top: 10px; }
+    .week-pill { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px 22px; text-align: center; flex-shrink: 0; }
+    .week-pill-num { font-family: var(--font-head); font-size: 46px; font-weight: 900; line-height: 1; color: var(--orange); }
+    .week-pill-label { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-top: 2px; }
 
-    /* Welcome header */
-    .welcome-wrap {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 24px;
-      flex-wrap: wrap;
-    }
-    .welcome-greeting {
-      font-family: var(--font-head);
-      font-size: clamp(40px, 4.5vw, 64px);
-      font-weight: 900;
-      text-transform: uppercase;
-      line-height: .93;
-      letter-spacing: -.01em;
-    }
-    .welcome-greeting em { font-style: normal; color: var(--orange); }
-    .welcome-sub {
-      font-size: 14px;
-      color: var(--muted-light);
-      margin-top: 12px;
-      font-weight: 400;
-    }
+    /* Today card */
+    .today-card { background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--orange); border-radius: 10px; padding: 28px 32px; display: flex; align-items: center; gap: 28px; flex-wrap: wrap; background-image: radial-gradient(ellipse at 95% 50%, rgba(255,77,0,.05), transparent 65%); }
+    .today-left { flex-shrink: 0; display: flex; flex-direction: column; gap: 10px; }
+    .today-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--orange); }
+    .today-icon { width: 48px; height: 48px; border-radius: 9px; background: rgba(255,77,0,.12); display: flex; align-items: center; justify-content: center; font-family: var(--font-head); font-size: 13px; font-weight: 900; color: var(--orange); letter-spacing: .04em; }
+    .today-icon.rest { background: var(--surface2); color: var(--muted); }
+    .today-center { flex: 1; min-width: 200px; }
+    .today-name { font-family: var(--font-head); font-size: 38px; font-weight: 900; text-transform: uppercase; line-height: .95; letter-spacing: -.01em; margin-bottom: 6px; }
+    .today-name.muted { color: var(--muted); font-size: 28px; }
+    .today-meta { font-size: 13px; color: var(--muted-light); margin-bottom: 8px; }
+    .today-note { font-size: 13px; color: rgba(255,255,255,.55); font-style: italic; }
 
-    .week-pill {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 18px 28px;
-      text-align: center;
-      flex-shrink: 0;
-    }
-    .week-pill-num {
-      font-family: var(--font-head);
-      font-size: 58px;
-      font-weight: 900;
-      line-height: 1;
-      color: var(--orange);
-    }
-    .week-pill-label {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: .14em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-top: 4px;
-    }
+    /* Week strip */
+    .week-strip { display: flex; gap: 6px; }
+    .day-pill { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 7px; padding: 12px 6px; text-align: center; }
+    .day-pill.today { border-color: var(--orange); background: rgba(255,77,0,.07); }
+    .day-pill.rest { opacity: .35; }
+    .day-pill-name { font-size: 9px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+    .day-pill.today .day-pill-name { color: var(--orange); }
+    .day-pill-icon { width: 22px; height: 22px; border-radius: 4px; margin: 0 auto 6px; display: flex; align-items: center; justify-content: center; font-family: var(--font-head); font-size: 8px; font-weight: 900; color: var(--orange); background: rgba(255,77,0,.1); }
+    .day-pill.today .day-pill-icon { background: var(--orange); color: var(--white); }
+    .day-pill.rest .day-pill-icon { background: var(--border); color: var(--muted); }
+    .day-pill-label { font-size: 9px; font-weight: 600; color: var(--white); line-height: 1.25; }
+    .day-pill.rest .day-pill-label { color: var(--muted); }
 
-    /* Oscar's note */
-    .oscar-note {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-left: 3px solid var(--orange);
-      border-radius: 8px;
-      padding: 28px 32px;
-      display: flex;
-      gap: 22px;
-      align-items: flex-start;
-    }
-    .oscar-note-badge {
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      background: var(--black);
-      border: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: var(--font-head);
-      font-size: 14px;
-      font-weight: 900;
-      color: var(--orange);
-      flex-shrink: 0;
-    }
-    .oscar-note-from {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: .14em;
-      text-transform: uppercase;
-      color: var(--orange);
-      margin-bottom: 12px;
-    }
-    .oscar-note-body-text {
-      font-size: 14px;
-      color: rgba(255,255,255,.82);
-      line-height: 1.78;
-    }
-    .oscar-note-body-text strong { color: var(--white); }
-    .oscar-note-date {
-      font-size: 11px;
-      color: var(--muted);
-      margin-top: 14px;
-    }
+    /* Quick nav */
+    .quick-nav { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .qn-tile { background: var(--surface); border: 1px solid var(--border); border-radius: 9px; padding: 20px 20px; text-decoration: none; display: flex; flex-direction: column; transition: border-color .2s, transform .15s; }
+    .qn-tile:hover { border-color: rgba(255,77,0,.35); transform: translateY(-1px); }
+    .qn-icon { font-family: var(--font-head); font-size: 10px; font-weight: 900; letter-spacing: .1em; color: var(--orange); background: rgba(255,77,0,.1); display: inline-flex; padding: 4px 9px; border-radius: 4px; margin-bottom: 10px; width: fit-content; }
+    .qn-title { font-family: var(--font-head); font-size: 18px; font-weight: 900; text-transform: uppercase; letter-spacing: -.01em; color: var(--white); margin-bottom: 2px; }
+    .qn-sub { font-size: 12px; color: var(--muted); }
 
-    /* Week schedule */
-    .week-grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 8px;
-    }
-    .day-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 16px 10px;
-      text-align: center;
-      position: relative;
-      transition: border-color .2s;
-    }
-    .day-card.today {
-      border-color: var(--orange);
-      background: rgba(255,77,0,.05);
-    }
-    .day-card.rest {
-      background: transparent;
-      border-color: var(--border-subtle);
-      opacity: .45;
-    }
-    .day-name {
-      font-size: 9px;
-      font-weight: 700;
-      letter-spacing: .14em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 14px;
-    }
-    .day-card.today .day-name { color: var(--orange); }
+    /* Oscar note */
+    .oscar-snippet { background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--orange); border-radius: 8px; padding: 22px 26px; display: flex; gap: 18px; align-items: flex-start; }
+    .oscar-badge { width: 36px; height: 36px; border-radius: 50%; background: var(--black); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-family: var(--font-head); font-size: 12px; font-weight: 900; color: var(--orange); flex-shrink: 0; }
+    .oscar-from { font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--orange); margin-bottom: 8px; }
+    .oscar-text { font-size: 14px; color: rgba(255,255,255,.8); line-height: 1.72; }
+    .oscar-text strong { color: var(--white); }
+    .oscar-date { font-size: 11px; color: var(--muted); margin-top: 10px; }
 
-    .day-icon-wrap {
-      width: 32px;
-      height: 32px;
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 10px;
-      font-family: var(--font-head);
-      font-size: 11px;
-      font-weight: 900;
-      letter-spacing: .04em;
-    }
-    .day-card:not(.rest) .day-icon-wrap {
-      background: rgba(255,77,0,.12);
-      color: var(--orange);
-    }
-    .day-card.today .day-icon-wrap {
-      background: var(--orange);
-      color: var(--white);
-    }
-    .day-card.rest .day-icon-wrap {
-      background: var(--border-subtle);
-      color: var(--muted);
-    }
+    /* CTA button */
+    .btn-primary { display: inline-flex; align-items: center; gap: 6px; background: var(--orange); color: var(--white); border: none; cursor: pointer; font-family: var(--font-body); font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; padding: 13px 24px; border-radius: 4px; text-decoration: none; transition: background .2s; flex-shrink: 0; }
+    .btn-primary:hover { background: var(--orange-dim); }
 
-    .day-label {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--white);
-      line-height: 1.25;
-    }
-    .day-card.rest .day-label { color: var(--muted); }
-
-    .today-pip {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: var(--orange);
-    }
-
-    /* Programs grid */
-    .programs-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
-    }
-
-    .prog-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      overflow: hidden;
-      transition: border-color .2s, transform .2s;
-    }
-    .prog-card:hover {
-      border-color: rgba(255,77,0,.35);
-      transform: translateY(-2px);
-    }
-
-    .pc-header {
-      padding: 18px 20px 16px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 10px;
-    }
-
-    .pc-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 7px;
-      background: rgba(255,77,0,.1);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: var(--font-head);
-      font-size: 11px;
-      font-weight: 900;
-      letter-spacing: .04em;
-      color: var(--orange);
-      margin-bottom: 10px;
-    }
-
-    .pc-type-badge {
-      font-size: 9px;
-      font-weight: 900;
-      letter-spacing: .16em;
-      text-transform: uppercase;
-      background: rgba(255,77,0,.1);
-      border: 1px solid rgba(255,77,0,.2);
-      color: var(--orange);
-      padding: 3px 8px;
-      border-radius: 3px;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-
-    .pc-name {
-      font-family: var(--font-head);
-      font-size: 21px;
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: -.01em;
-      line-height: 1;
-      margin-bottom: 4px;
-    }
-    .pc-meta {
-      font-size: 11px;
-      color: var(--muted);
-    }
-
-    .pc-body { padding: 16px 20px 18px; }
-
-    .ex-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-      margin-bottom: 14px;
-    }
-    .ex-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 12px;
-      color: rgba(255,255,255,.75);
-      padding: 7px 0;
-      border-bottom: 1px solid rgba(255,255,255,.035);
-    }
-    .ex-row:last-child { border-bottom: none; }
-    .ex-n {
-      font-family: var(--font-head);
-      font-size: 17px;
-      font-weight: 900;
-      color: rgba(255,77,0,.2);
-      width: 22px;
-      text-align: right;
-      flex-shrink: 0;
-    }
-    .ex-name { flex: 1; line-height: 1.3; }
-    .ex-tag {
-      font-size: 9px;
-      font-weight: 700;
-      letter-spacing: .07em;
-      text-transform: uppercase;
-      padding: 2px 7px;
-      border-radius: 3px;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-    .ex-tag.ok   { background: rgba(34,197,94,.1);  color: var(--green); }
-    .ex-tag.care { background: rgba(245,158,11,.1); color: var(--amber); }
-    .ex-tag.info { background: var(--surface2); color: var(--muted-light); }
-
-    .pc-note {
-      background: var(--surface2);
-      border-radius: 6px;
-      padding: 10px 13px;
-      font-size: 11px;
-      color: var(--muted-light);
-      line-height: 1.55;
-      margin-bottom: 14px;
-    }
-    .pc-note strong { color: var(--orange); }
-
-    .pc-btn {
-      display: block;
-      width: 100%;
-      text-align: center;
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--muted-light);
-      font-family: var(--font-body);
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: .1em;
-      text-transform: uppercase;
-      padding: 10px;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: border-color .2s, color .2s, background .2s;
-    }
-    .pc-btn:hover {
-      border-color: var(--orange);
-      color: var(--orange);
-      background: rgba(255,77,0,.05);
-    }
-
-    /* Contact Oscar bar */
-    .contact-bar {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 32px 40px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 28px;
-      flex-wrap: wrap;
-    }
-    .contact-bar-left {}
-    .contact-bar-title {
-      font-family: var(--font-head);
-      font-size: 28px;
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: -.01em;
-      line-height: 1;
-      margin-bottom: 6px;
-    }
-    .contact-bar-title em { font-style: normal; color: var(--orange); }
-    .contact-bar-sub {
-      font-size: 13px;
-      color: var(--muted-light);
-      line-height: 1.5;
-    }
-    .contact-bar-btn {
-      background: var(--orange);
-      color: var(--white);
-      border: none;
-      cursor: pointer;
-      font-family: var(--font-body);
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      padding: 14px 30px;
-      border-radius: 4px;
-      transition: background .2s;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-    .contact-bar-btn:hover { background: var(--orange-dim); }
-
-    /* Responsive */
-    @media (max-width: 1100px) {
-      .programs-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-    @media (max-width: 900px) {
-      .portal-body { grid-template-columns: 1fr; }
-      .portal-sidebar {
-        position: static;
-        height: auto;
-        border-right: none;
-        border-bottom: 1px solid var(--border);
-      }
-      .portal-main { padding: 32px 24px 60px; }
-      .week-grid { grid-template-columns: repeat(4, 1fr); }
-    }
-    @media (max-width: 640px) {
-      .programs-grid { grid-template-columns: 1fr; }
-      .week-grid { grid-template-columns: repeat(2, 1fr); }
-      .welcome-greeting { font-size: 40px; }
-    }
+    @media (max-width: 960px) { .portal-body { grid-template-columns: 1fr; } .portal-sidebar { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--border); flex-direction: row; flex-wrap: wrap; } }
+    @media (max-width: 700px) { .portal-main { padding: 28px 20px 60px; } .quick-nav { grid-template-columns: 1fr 1fr; } .week-strip { flex-wrap: wrap; } .day-pill { min-width: calc(25% - 6px); } }
+    @media (max-width: 500px) { .quick-nav { grid-template-columns: 1fr; } .pnav-name, .pnav-badge { display: none; } }
   </style>
 </head>
 <body>
 
-<!-- ─────────────────────────────────────
-     ACCESS GATE (decorativo)
-───────────────────────────────────── -->
+<!-- GATE -->
 <div id="access-gate">
   <div class="gate-inner">
-
-    <img src="../imagenes/logos/Artboard 1 copy 32.png" alt="Oscar Esquivel" class="gate-logo">
-
-    <div class="gate-lock-wrap">
-      <svg class="gate-lock-svg" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.45)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="3" y="11" width="18" height="11" rx="2"/>
-        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+    <img src="../imagenes/logos/Artboard 1 copy 32.png" alt="OE" class="gate-logo">
+    <div class="gate-lock">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
       </svg>
     </div>
-
     <div class="gate-eyebrow">Portal de Cliente &middot; Acceso Privado</div>
-
     <div class="gate-avatar">PA</div>
     <div class="gate-name">Patricia Arriaza</div>
     <div class="gate-plan">Plan Personalizado 60+ &middot; Entrenamiento Remoto<br>Supervisado por Oscar Esquivel</div>
-
-    <div class="gate-verified">
-      <div class="gate-verified-dot"></div>
-      Acceso Verificado
-    </div>
-
+    <div class="gate-verified"><div class="gate-dot"></div>Acceso Verificado</div>
     <button class="gate-btn" onclick="enterPortal()">Continuar al portal &rarr;</button>
-
-    <div class="gate-note">
-      Este es un espacio privado gestionado por Oscar Esquivel.<br>
-      Solo Patricia Arriaza tiene acceso a este contenido.
-    </div>
-
+    <div class="gate-note">Espacio privado gestionado por Oscar Esquivel.<br>Solo Patricia Arriaza tiene acceso a este contenido.</div>
   </div>
 </div>
 
-<!-- ─────────────────────────────────────
-     PORTAL
-───────────────────────────────────── -->
-<div id="portal">
+<!-- PAGE TRANSITION -->
+<div id="page-transition">
+  <div class="pt-wrap">
+    <div class="pt-ring"></div>
+    <img src="../imagenes/logos/Artboard 1 copy 32.png" alt="" class="pt-logo">
+  </div>
+</div>
 
-  <!-- Portal Nav -->
+<!-- PORTAL -->
+<div id="portal" style="display:none">
+
   <nav class="portal-nav">
     <div class="pnav-left">
       <img src="../imagenes/logos/Artboard 1 copy 32.png" alt="OE" class="pnav-logo">
@@ -888,350 +190,87 @@
         <div class="pnav-avatar">PA</div>
         <span class="pnav-name">Patricia Arriaza</span>
       </div>
-      <div class="pnav-badge">
-        <div class="pnav-badge-dot"></div>
-        Sesi&oacute;n Privada
-      </div>
+      <div class="pnav-badge"><div class="pnav-badge-dot"></div>Sesi&oacute;n Privada</div>
     </div>
   </nav>
 
   <div class="portal-body">
-
-    <!-- ── SIDEBAR ── -->
     <aside class="portal-sidebar">
-
-      <!-- Profile -->
       <div class="sb-profile">
         <div class="sb-avatar">PA</div>
         <div class="sb-name">Patricia Arriaza</div>
         <div class="sb-active">Cliente Activa</div>
-        <div class="sb-progress">
-          <div class="sb-prog-labels">
-            <span>Semana 3 de 8</span>
-            <span>37%</span>
-          </div>
+        <div style="width:100%">
+          <div class="sb-prog-labels"><span>Semana 3 de 8</span><span>37%</span></div>
           <div class="sb-prog-bar"><div class="sb-prog-fill"></div></div>
         </div>
       </div>
-
-      <!-- Nav -->
       <div>
         <div class="sb-section-title">Navegaci&oacute;n</div>
         <div class="sb-nav">
-          <a href="#dashboard" class="sb-nav-item active"><span class="sb-nav-dot"></span>Dashboard</a>
-          <a href="#nota-oscar" class="sb-nav-item"><span class="sb-nav-dot"></span>Nota de Oscar</a>
-          <a href="#semana" class="sb-nav-item"><span class="sb-nav-dot"></span>Esta Semana</a>
-          <a href="#rutinas" class="sb-nav-item"><span class="sb-nav-dot"></span>Mis Rutinas</a>
+          <a href="./index.html" class="sb-nav-item active"><span class="sb-nav-dot"></span>Dashboard</a>
+          <a href="./rutinas.html" class="sb-nav-item"><span class="sb-nav-dot"></span>Mis Rutinas</a>
+          <a href="./perfil.html" class="sb-nav-item"><span class="sb-nav-dot"></span>Mi Perfil</a>
+          <a href="mailto:oscar@4meaning.life" class="sb-nav-item"><span class="sb-nav-dot"></span>Contactar a Oscar</a>
         </div>
       </div>
-
-      <!-- Plan data -->
-      <div>
-        <div class="sb-section-title">Datos del Plan</div>
-        <div class="sb-data">
-          <div class="sb-row"><span class="sb-row-label">Edad</span><span class="sb-row-val">60+</span></div>
-          <div class="sb-row"><span class="sb-row-label">Modalidad</span><span class="sb-row-val">Remoto &middot; Sin gym</span></div>
-          <div class="sb-row"><span class="sb-row-label">Frecuencia</span><span class="sb-row-val">5 d&iacute;as / semana</span></div>
-          <div class="sb-row"><span class="sb-row-label">Duraci&oacute;n</span><span class="sb-row-val">30&ndash;40 min</span></div>
-          <div class="sb-row"><span class="sb-row-label">Equipo</span><span class="sb-row-val">Bandas &middot; Silla &middot; Piso</span></div>
-          <div class="sb-row"><span class="sb-row-label">Inicio</span><span class="sb-row-val">14 Abr 2026</span></div>
-        </div>
-      </div>
-
-      <!-- Conditions -->
-      <div>
-        <div class="sb-section-title">Consideraciones M&eacute;dicas</div>
-        <div class="sb-conditions">
-
-          <div class="sb-cond">
-            <svg class="sb-cond-icon" viewBox="0 0 20 20" fill="none">
-              <circle cx="10" cy="10" r="9" stroke="var(--amber)" stroke-width="1.4"/>
-              <path d="M10 6v5" stroke="var(--amber)" stroke-width="1.6" stroke-linecap="round"/>
-              <circle cx="10" cy="14.5" r=".8" fill="var(--amber)"/>
-            </svg>
-            <span class="sb-cond-text">Pr&oacute;tesis de cadera &mdash; sin carga profunda ni rotaci&oacute;n forzada</span>
-          </div>
-
-          <div class="sb-cond">
-            <svg class="sb-cond-icon" viewBox="0 0 20 20" fill="none">
-              <circle cx="10" cy="10" r="9" stroke="var(--amber)" stroke-width="1.4"/>
-              <path d="M10 6v5" stroke="var(--amber)" stroke-width="1.6" stroke-linecap="round"/>
-              <circle cx="10" cy="14.5" r=".8" fill="var(--amber)"/>
-            </svg>
-            <span class="sb-cond-text">Rodilla derecha inestable &mdash; rango reducido, sin carga unilateral</span>
-          </div>
-
-          <div class="sb-cond">
-            <svg class="sb-cond-icon" viewBox="0 0 20 20" fill="none">
-              <circle cx="10" cy="10" r="9" stroke="var(--amber)" stroke-width="1.4"/>
-              <path d="M10 6v5" stroke="var(--amber)" stroke-width="1.6" stroke-linecap="round"/>
-              <circle cx="10" cy="14.5" r=".8" fill="var(--amber)"/>
-            </svg>
-            <span class="sb-cond-text">Lumbares sensibles &mdash; solo trabajo antiflexi&oacute;n y estabilizador</span>
-          </div>
-
-        </div>
-      </div>
-
-      <!-- Goals -->
-      <div>
-        <div class="sb-section-title">Objetivos</div>
-        <div class="sb-data">
-          <div class="sb-row"><span class="sb-row-label">Primario</span><span class="sb-row-val">Masa muscular</span></div>
-          <div class="sb-row"><span class="sb-row-label">Secundario</span><span class="sb-row-val">Resistencia</span></div>
-          <div class="sb-row"><span class="sb-row-label">Contexto</span><span class="sb-row-val">Viajes frecuentes</span></div>
-        </div>
-      </div>
-
     </aside>
 
-    <!-- ── MAIN CONTENT ── -->
     <main class="portal-main">
 
-      <!-- Welcome -->
-      <div id="dashboard">
-        <div class="welcome-wrap">
-          <div>
-            <div class="welcome-greeting">Bienvenida,<br><em>Patricia.</em></div>
-            <div class="welcome-sub">Semana 3 de 8 &middot; Tu programa est&aacute; al d&iacute;a.</div>
-          </div>
-          <div class="week-pill">
-            <div class="week-pill-num">3</div>
-            <div class="week-pill-label">de 8 semanas</div>
-          </div>
+      <div class="dash-welcome">
+        <div>
+          <div class="dash-greeting">Bienvenida,<br><em>Patricia.</em></div>
+          <div class="dash-sub">Semana 3 de 8 &middot; Tu programa est&aacute; al d&iacute;a.</div>
+        </div>
+        <div class="week-pill">
+          <div class="week-pill-num">3</div>
+          <div class="week-pill-label">de 8 semanas</div>
         </div>
       </div>
 
-      <!-- Oscar's note -->
-      <div id="nota-oscar">
-        <div class="sec-label">De Oscar</div>
-        <div class="oscar-note">
-          <div class="oscar-note-badge">OE</div>
-          <div>
-            <div class="oscar-note-from">Nota Semanal &middot; Oscar Esquivel</div>
-            <div class="oscar-note-body-text">
-              Patricia, esta semana <strong>aumentamos levemente la resistencia en bandas para piernas y hombros</strong>. Llevamos tres semanas muy consistentes y tu patr&oacute;n de movimiento est&aacute; mejorando notablemente &mdash; eso no es poco a los 60+, es exactamente el objetivo.
-              <br><br>
-              Recuerda que en la sesi&oacute;n de piernas seguimos con ambas piernas al mismo tiempo. Tu rodilla derecha todav&iacute;a no est&aacute; lista para trabajo unilateral y no vamos a forzarla. En las sesiones de abdomen, <strong>evita cualquier movimiento de flexi&oacute;n de columna</strong> &mdash; todo el trabajo de core que tienes es antiflexi&oacute;n y estabilizador. Eso no es una limitaci&oacute;n, es estrategia basada en lo que tus lumbares realmente necesitan.
-              <br><br>
-              Si en alg&uacute;n momento sientes presi&oacute;n en la cadera durante los puentes de gl&uacute;teo, reduce el rango y esc&iacute;beme de inmediato. <strong>Progresamos a tu ritmo, no al del programa.</strong>
-            </div>
-            <div class="oscar-note-date">Actualizado el 21 de abril, 2026</div>
-          </div>
-        </div>
-      </div>
+      <!-- Today (built by JS) -->
+      <div id="today-section"></div>
 
-      <!-- Week schedule -->
-      <div id="semana">
-        <div class="sec-label">Esta Semana</div>
-        <div class="week-grid">
-
-          <div class="day-card rest">
-            <div class="day-name">Lun</div>
-            <div class="day-icon-wrap">&mdash;</div>
-            <div class="day-label">Descanso</div>
-          </div>
-
-          <div class="day-card">
-            <div class="day-name">Mar</div>
-            <div class="day-icon-wrap">LEG</div>
-            <div class="day-label">Piernas</div>
-          </div>
-
-          <div class="day-card">
-            <div class="day-name">Mi&eacute;</div>
-            <div class="day-icon-wrap">ARM</div>
-            <div class="day-label">Hombro / Brazo</div>
-          </div>
-
-          <div class="day-card today">
-            <div class="today-pip"></div>
-            <div class="day-name">Jue &mdash; Hoy</div>
-            <div class="day-icon-wrap">RES</div>
-            <div class="day-label">Resistencia</div>
-          </div>
-
-          <div class="day-card rest">
-            <div class="day-name">Vie</div>
-            <div class="day-icon-wrap">&mdash;</div>
-            <div class="day-label">Descanso</div>
-          </div>
-
-          <div class="day-card">
-            <div class="day-name">S&aacute;b</div>
-            <div class="day-icon-wrap">ABS</div>
-            <div class="day-label">Abdomen</div>
-          </div>
-
-          <div class="day-card">
-            <div class="day-name">Dom</div>
-            <div class="day-icon-wrap">MIX</div>
-            <div class="day-label">Mezclada</div>
-          </div>
-
-        </div>
-      </div>
-
-      <!-- Routines -->
-      <div id="rutinas">
-        <div class="sec-label">Mis Rutinas</div>
-        <div class="programs-grid">
-
-          <!-- 1. Piernas -->
-          <div class="prog-card">
-            <div class="pc-header">
-              <div>
-                <div class="pc-icon">LEG</div>
-                <div class="pc-name">Piernas</div>
-                <div class="pc-meta">35 min &middot; Martes &middot; Bandas + Silla</div>
-              </div>
-              <span class="pc-type-badge">Fuerza</span>
-            </div>
-            <div class="pc-body">
-              <div class="ex-list">
-                <div class="ex-row"><span class="ex-n">01</span><span class="ex-name">Sentadilla asistida con silla</span><span class="ex-tag ok">Adaptado</span></div>
-                <div class="ex-row"><span class="ex-n">02</span><span class="ex-name">Extensi&oacute;n de cadera de pie con banda</span><span class="ex-tag care">Cadera</span></div>
-                <div class="ex-row"><span class="ex-n">03</span><span class="ex-name">Abducci&oacute;n lateral de cadera con banda</span><span class="ex-tag care">Pr&oacute;tesis</span></div>
-                <div class="ex-row"><span class="ex-n">04</span><span class="ex-name">Puente de gl&uacute;teo (bilateral)</span><span class="ex-tag ok">Adaptado</span></div>
-                <div class="ex-row"><span class="ex-n">05</span><span class="ex-name">Extensi&oacute;n de rodilla sentada con banda</span><span class="ex-tag care">Rodilla</span></div>
-                <div class="ex-row"><span class="ex-n">06</span><span class="ex-name">Elevaci&oacute;n de talones bilateral</span><span class="ex-tag info">Gemelos</span></div>
-              </div>
-              <div class="pc-note"><strong>Oscar:</strong> Sin carga unilateral en pierna derecha. Sentadilla m&aacute;ximo 60&deg; de flexi&oacute;n de rodilla. Si sientes presi&oacute;n en la cadera, para y esc&iacute;beme.</div>
-              <button class="pc-btn">Ver rutina completa &rarr;</button>
-            </div>
-          </div>
-
-          <!-- 2. Hombro / Brazo -->
-          <div class="prog-card">
-            <div class="pc-header">
-              <div>
-                <div class="pc-icon">ARM</div>
-                <div class="pc-name">Hombro / Brazo</div>
-                <div class="pc-meta">30 min &middot; Mi&eacute;rcoles &middot; Bandas</div>
-              </div>
-              <span class="pc-type-badge">Fuerza</span>
-            </div>
-            <div class="pc-body">
-              <div class="ex-list">
-                <div class="ex-row"><span class="ex-n">01</span><span class="ex-name">Press de hombro sentado con banda</span><span class="ex-tag info">Hombro</span></div>
-                <div class="ex-row"><span class="ex-n">02</span><span class="ex-name">Elevaci&oacute;n lateral con banda (rango parcial)</span><span class="ex-tag ok">Adaptado</span></div>
-                <div class="ex-row"><span class="ex-n">03</span><span class="ex-name">Rotaci&oacute;n externa con banda</span><span class="ex-tag ok">Manguito</span></div>
-                <div class="ex-row"><span class="ex-n">04</span><span class="ex-name">Curl de b&iacute;ceps con banda</span><span class="ex-tag info">B&iacute;ceps</span></div>
-                <div class="ex-row"><span class="ex-n">05</span><span class="ex-name">Extensi&oacute;n de tr&iacute;ceps sobre cabeza</span><span class="ex-tag info">Tr&iacute;ceps</span></div>
-                <div class="ex-row"><span class="ex-n">06</span><span class="ex-name">Face pull con banda (salud escapular)</span><span class="ex-tag ok">Postura</span></div>
-              </div>
-              <div class="pc-note"><strong>Oscar:</strong> El face pull es el ejercicio m&aacute;s importante de esta sesi&oacute;n. Mantiene la cabeza humeral centrada y protege el hombro a largo plazo. No lo saltees.</div>
-              <button class="pc-btn">Ver rutina completa &rarr;</button>
-            </div>
-          </div>
-
-          <!-- 3. Resistencia -->
-          <div class="prog-card">
-            <div class="pc-header">
-              <div>
-                <div class="pc-icon">RES</div>
-                <div class="pc-name">Resistencia</div>
-                <div class="pc-meta">35 min &middot; Jueves &middot; Sin equipo</div>
-              </div>
-              <span class="pc-type-badge">Cardio</span>
-            </div>
-            <div class="pc-body">
-              <div class="ex-list">
-                <div class="ex-row"><span class="ex-n">01</span><span class="ex-name">Marcha en el lugar (2 min)</span><span class="ex-tag ok">Bajo impacto</span></div>
-                <div class="ex-row"><span class="ex-n">02</span><span class="ex-name">Paso lateral con banda (sin salto)</span><span class="ex-tag care">Rodilla</span></div>
-                <div class="ex-row"><span class="ex-n">03</span><span class="ex-name">Swing de brazos sentado + respiraci&oacute;n</span><span class="ex-tag ok">Adaptado</span></div>
-                <div class="ex-row"><span class="ex-n">04</span><span class="ex-name">Isométrica de pared (sentadilla parcial)</span><span class="ex-tag care">Cadera</span></div>
-                <div class="ex-row"><span class="ex-n">05</span><span class="ex-name">Boxeo de brazos sentado (1 min)</span><span class="ex-tag info">Cardio</span></div>
-                <div class="ex-row"><span class="ex-n">06</span><span class="ex-name">Respiraci&oacute;n diafragm&aacute;tica (cierre)</span><span class="ex-tag ok">Recovery</span></div>
-              </div>
-              <div class="pc-note"><strong>Oscar:</strong> Resistencia sin impacto articular. El objetivo es elevar la frecuencia card&iacute;aca de forma segura y sostenida &mdash; no velocidad ni potencia.</div>
-              <button class="pc-btn">Ver rutina completa &rarr;</button>
-            </div>
-          </div>
-
-          <!-- 4. Abdomen -->
-          <div class="prog-card">
-            <div class="pc-header">
-              <div>
-                <div class="pc-icon">ABS</div>
-                <div class="pc-name">Abdomen</div>
-                <div class="pc-meta">25 min &middot; S&aacute;bado &middot; Piso + Banda</div>
-              </div>
-              <span class="pc-type-badge">Core</span>
-            </div>
-            <div class="pc-body">
-              <div class="ex-list">
-                <div class="ex-row"><span class="ex-n">01</span><span class="ex-name">Respiraci&oacute;n abdominal profunda</span><span class="ex-tag ok">Activaci&oacute;n</span></div>
-                <div class="ex-row"><span class="ex-n">02</span><span class="ex-name">Dead Bug (pierna alterna, lento)</span><span class="ex-tag ok">Antiflexi&oacute;n</span></div>
-                <div class="ex-row"><span class="ex-n">03</span><span class="ex-name">Bird Dog (cuadrupedia controlada)</span><span class="ex-tag ok">Estabilizador</span></div>
-                <div class="ex-row"><span class="ex-n">04</span><span class="ex-name">McGill Curl-Up modificado</span><span class="ex-tag care">Lumbar</span></div>
-                <div class="ex-row"><span class="ex-n">05</span><span class="ex-name">Pallof Press con banda (antirrotaci&oacute;n)</span><span class="ex-tag ok">Adaptado</span></div>
-                <div class="ex-row"><span class="ex-n">06</span><span class="ex-name">Plancha desde rodillas (sostenida)</span><span class="ex-tag care">Lumbar</span></div>
-              </div>
-              <div class="pc-note"><strong>Oscar:</strong> Cero flexi&oacute;n de columna bajo carga. Tu core trabaja resist&iacute;endo el movimiento &mdash; exactamente lo que la investigaci&oacute;n indica para lumbares sensibles.</div>
-              <button class="pc-btn">Ver rutina completa &rarr;</button>
-            </div>
-          </div>
-
-          <!-- 5. Viajes -->
-          <div class="prog-card">
-            <div class="pc-header">
-              <div>
-                <div class="pc-icon">TRV</div>
-                <div class="pc-name">Viajes</div>
-                <div class="pc-meta">25 min &middot; Cualquier lugar &middot; Sin equipo</div>
-              </div>
-              <span class="pc-type-badge">Travel</span>
-            </div>
-            <div class="pc-body">
-              <div class="ex-list">
-                <div class="ex-row"><span class="ex-n">01</span><span class="ex-name">Marcha con brazos (calentamiento)</span><span class="ex-tag ok">Bajo impacto</span></div>
-                <div class="ex-row"><span class="ex-n">02</span><span class="ex-name">Sentadilla asistida con silla de hotel</span><span class="ex-tag care">Rodilla</span></div>
-                <div class="ex-row"><span class="ex-n">03</span><span class="ex-name">Push-up de pared (modificado)</span><span class="ex-tag ok">Adaptado</span></div>
-                <div class="ex-row"><span class="ex-n">04</span><span class="ex-name">Bird Dog en piso</span><span class="ex-tag ok">Estabilizador</span></div>
-                <div class="ex-row"><span class="ex-n">05</span><span class="ex-name">Estiramiento de cadera 90/90 (suave)</span><span class="ex-tag care">Pr&oacute;tesis</span></div>
-                <div class="ex-row"><span class="ex-n">06</span><span class="ex-name">Respiraci&oacute;n de cierre + movilidad cervical</span><span class="ex-tag info">Cool-down</span></div>
-              </div>
-              <div class="pc-note"><strong>Oscar:</strong> Esta rutina va contigo a cualquier destino. Sin excusas y sin riesgo &mdash; dise&ntilde;ada para que nunca pierdas el hilo del programa, estés donde estés.</div>
-              <button class="pc-btn">Ver rutina completa &rarr;</button>
-            </div>
-          </div>
-
-          <!-- 6. Mezclada -->
-          <div class="prog-card">
-            <div class="pc-header">
-              <div>
-                <div class="pc-icon">MIX</div>
-                <div class="pc-name">Mezclada</div>
-                <div class="pc-meta">40 min &middot; Domingo &middot; Bandas + Piso</div>
-              </div>
-              <span class="pc-type-badge">Full Body</span>
-            </div>
-            <div class="pc-body">
-              <div class="ex-list">
-                <div class="ex-row"><span class="ex-n">01</span><span class="ex-name">Calentamiento global (movilidad articular)</span><span class="ex-tag info">Warm-up</span></div>
-                <div class="ex-row"><span class="ex-n">02</span><span class="ex-name">Sentadilla + press de hombro con banda</span><span class="ex-tag ok">Compuesta</span></div>
-                <div class="ex-row"><span class="ex-n">03</span><span class="ex-name">Remo con banda sentado</span><span class="ex-tag info">Espalda</span></div>
-                <div class="ex-row"><span class="ex-n">04</span><span class="ex-name">Puente de gl&uacute;teo bilateral (sostenido)</span><span class="ex-tag ok">Gl&uacute;teo</span></div>
-                <div class="ex-row"><span class="ex-n">05</span><span class="ex-name">Dead Bug (core + respiraci&oacute;n)</span><span class="ex-tag care">Lumbar</span></div>
-                <div class="ex-row"><span class="ex-n">06</span><span class="ex-name">Estiramiento de cuerpo completo</span><span class="ex-tag info">Cool-down</span></div>
-              </div>
-              <div class="pc-note"><strong>Oscar:</strong> La sesi&oacute;n m&aacute;s completa de la semana. Trabajamos todo el cuerpo con transiciones lentas y controladas. Ideal para cerrar bien.</div>
-              <button class="pc-btn">Ver rutina completa &rarr;</button>
-            </div>
-          </div>
-
-        </div>
-      </div>
-
-      <!-- Contact Oscar -->
+      <!-- Esta semana -->
       <div>
-        <div class="contact-bar">
-          <div class="contact-bar-left">
-            <div class="contact-bar-title">&iquest;Preguntas para <em>Oscar?</em></div>
-            <div class="contact-bar-sub">Tu entrenador revisa cada consulta personalmente.<br>Responde en menos de 24 horas.</div>
+        <div class="sec-label">Esta Semana</div>
+        <div class="week-strip" id="week-strip"></div>
+      </div>
+
+      <!-- Quick nav -->
+      <div>
+        <div class="quick-nav">
+          <a href="./rutinas.html" class="qn-tile">
+            <span class="qn-icon">6 RUT</span>
+            <div class="qn-title">Mis Rutinas</div>
+            <div class="qn-sub">Ver todas las sesiones</div>
+          </a>
+          <a href="./perfil.html" class="qn-tile">
+            <span class="qn-icon">PERFIL</span>
+            <div class="qn-title">Mi Perfil</div>
+            <div class="qn-sub">Objetivos y condiciones</div>
+          </a>
+          <a href="mailto:oscar@4meaning.life" class="qn-tile">
+            <span class="qn-icon">MSG</span>
+            <div class="qn-title">Contactar Oscar</div>
+            <div class="qn-sub">Responde en menos de 24 h</div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Oscar note -->
+      <div>
+        <div class="sec-label">De Oscar</div>
+        <div class="oscar-snippet">
+          <div class="oscar-badge">OE</div>
+          <div>
+            <div class="oscar-from">Nota Semanal &middot; Semana 3</div>
+            <div class="oscar-text">
+              Esta semana <strong>aumentamos la resistencia en bandas para piernas y hombros</strong>. Tu patr&oacute;n de movimiento est&aacute; mejorando notablemente &mdash; eso no es poco a los 60+, es exactamente el objetivo. Si sientes cualquier incomodidad en la cadera, para y esc&iacute;beme de inmediato.
+            </div>
+            <div class="oscar-date">21 de abril, 2026</div>
           </div>
-          <button class="contact-bar-btn">Enviar mensaje &rarr;</button>
         </div>
       </div>
 
@@ -1240,32 +279,91 @@
 </div>
 
 <script>
+const SCHEDULE = {
+  0: { id:'mezclada', name:'Mezclada', icon:'MIX', duration:'40 min', note:'Cuerpo completo con transiciones lentas. La sesi\u00f3n m\u00e1s completa de la semana.' },
+  1: null,
+  2: { id:'piernas', name:'Piernas', icon:'LEG', duration:'35 min', note:'Fortalecimiento de tren inferior. Sin carga unilateral en pierna derecha.' },
+  3: { id:'hombro-brazo', name:'Hombro \/ Brazo', icon:'ARM', duration:'30 min', note:'Hombros y brazos con banda. El face pull es prioritario hoy.' },
+  4: { id:'resistencia', name:'Resistencia', icon:'RES', duration:'35 min', note:'Cardio sin impacto articular. El objetivo es elevar el ritmo cardíaco de forma segura.' },
+  5: null,
+  6: { id:'abdomen', name:'Abdomen', icon:'ABS', duration:'25 min', note:'Core estabilizador. Sin flexi\u00f3n de columna — solo trabajo antiflexión y antirotaci\u00f3n.' }
+};
+const DAY_SHORT = ['Dom','Lun','Mar','Mi\u00e9','Jue','Vie','S\u00e1b'];
+const DAY_FULL  = ['Domingo','Lunes','Martes','Mi\u00e9rcoles','Jueves','Viernes','S\u00e1bado'];
+
+function buildToday() {
+  const d = new Date().getDay();
+  const entry = SCHEDULE[d];
+  const sec = document.getElementById('today-section');
+  if (!entry) {
+    sec.innerHTML = `<div class="today-card">
+      <div class="today-left">
+        <div class="today-eyebrow">HOY &middot; ${DAY_FULL[d].toUpperCase()}</div>
+        <div class="today-icon rest">&mdash;</div>
+      </div>
+      <div class="today-center">
+        <div class="today-name muted">D\u00eda de Descanso</div>
+        <div class="today-meta">El descanso es parte del programa.</div>
+        <div class="today-note">Hoy se activan los procesos de recuperaci\u00f3n muscular. Aprovecha para hidratarte bien.</div>
+      </div>
+    </div>`;
+  } else {
+    sec.innerHTML = `<div class="today-card">
+      <div class="today-left">
+        <div class="today-eyebrow">HOY &middot; ${DAY_FULL[d].toUpperCase()}</div>
+        <div class="today-icon">${entry.icon}</div>
+      </div>
+      <div class="today-center">
+        <div class="today-name">${entry.name}</div>
+        <div class="today-meta">${entry.duration} &middot; Adaptado para ti</div>
+        <div class="today-note">${entry.note}</div>
+      </div>
+      <a href="./rutina.html?id=${entry.id}" class="btn-primary">Ir a la rutina &rarr;</a>
+    </div>`;
+  }
+}
+
+function buildWeekStrip() {
+  const today = new Date().getDay();
+  const order = [1,2,3,4,5,6,0];
+  const names = ['Lun','Mar','Mi\u00e9','Jue','Vie','S\u00e1b','Dom'];
+  document.getElementById('week-strip').innerHTML = order.map((di, i) => {
+    const entry = SCHEDULE[di];
+    const isToday = di === today;
+    const isRest = !entry;
+    return `<div class="day-pill${isToday?' today':''}${isRest?' rest':''}">
+      <div class="day-pill-name">${names[i]}</div>
+      <div class="day-pill-icon">${isRest ? '&mdash;' : entry.icon}</div>
+      <div class="day-pill-label">${isRest ? 'Descanso' : entry.name}</div>
+    </div>`;
+  }).join('');
+}
+
 function enterPortal() {
+  sessionStorage.setItem('pa-portal','1');
   const gate = document.getElementById('access-gate');
   const portal = document.getElementById('portal');
   gate.classList.add('fading');
   setTimeout(() => {
     gate.style.display = 'none';
     portal.style.display = 'block';
+    buildToday();
+    buildWeekStrip();
   }, 500);
 }
 
-// Sidebar nav active state on scroll
-const navItems = document.querySelectorAll('.sb-nav-item');
-const sections = ['dashboard','nota-oscar','semana','rutinas'];
-
-function updateActive() {
-  let current = sections[0];
-  sections.forEach(id => {
-    const el = document.getElementById(id);
-    if (el && el.getBoundingClientRect().top < 140) current = id;
-  });
-  navItems.forEach(item => {
-    item.classList.toggle('active', item.getAttribute('href') === '#' + current);
-  });
-}
-window.addEventListener('scroll', updateActive, { passive: true });
+// Page transition
+const pt = document.getElementById('page-transition');
+requestAnimationFrame(() => requestAnimationFrame(() => pt.classList.add('hidden')));
+document.addEventListener('click', e => {
+  const link = e.target.closest('a[href]');
+  if (!link) return;
+  const href = link.getAttribute('href');
+  if (!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('mailto') || link.target === '_blank') return;
+  e.preventDefault();
+  pt.classList.remove('hidden');
+  setTimeout(() => { window.location.href = href; }, 420);
+});
 </script>
-
 </body>
 </html>
