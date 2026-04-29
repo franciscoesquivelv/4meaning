@@ -13,14 +13,13 @@ export async function loginAction(
 
   const supabase = await createClient()
 
-  const { error } = await supabase.auth.signInWithPassword({ email, password })
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password })
 
-  if (error) {
+  if (error || !data.user) {
     return { error: 'Correo o contraseña incorrectos.' }
   }
 
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return { error: 'Error de autenticación.' }
+  const user = data.user
 
   const { data: profile } = await supabase
     .from('profiles')
