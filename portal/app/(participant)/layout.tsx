@@ -39,7 +39,7 @@ export default async function ParticipantLayout({ children }: { children: React.
     <div className="min-h-screen bg-[#0C0C0C] text-[#F5F0E8]">
       {/* Header */}
       <header className="sticky top-0 bg-[#111111] border-b border-[#2A2A2A] h-14 flex items-center justify-between px-5 z-40">
-        <Image src="/logo-wht.png" alt="Trascendencia" width={110} height={28} className="h-6 w-auto object-contain" priority />
+        <Image src="/logo.png" alt="Trascendencia" width={130} height={16} className="h-4 w-auto object-contain" priority />
         <div className="text-right">
           {eventName && <div className="text-xs text-[#A09A8F]">{eventName}</div>}
           {firstName && <div className="text-sm font-medium text-[#F5F0E8]">{firstName}</div>}

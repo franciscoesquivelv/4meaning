@@ -55,11 +55,11 @@ export default function AdminNav({ userEmail, activeEventId, activeEventName }: 
       <div className="px-5 py-5 border-b border-[#1F2937]">
         <Link href="/dashboard" className="block">
           <Image
-            src="/logo-wht.png"
+            src="/logo.png"
             alt="Trascendencia"
-            width={140}
-            height={36}
-            className="h-7 w-auto object-contain"
+            width={160}
+            height={20}
+            className="h-5 w-auto object-contain"
             priority
           />
         </Link>
