@@ -31,7 +31,7 @@ export default async function MiRetiroPage() {
 
   const { data: family } = await supabase
     .from('families')
-    .select('id, nombre_familia, event_id, events(id, nombre, ubicacion, fecha_inicio, fecha_fin, ciudad)')
+    .select('id, nombre_familia, event_id, events(id, nombre, ubicacion, fecha_inicio, fecha_fin, ciudad, nube_url)')
     .or(`user_id1.eq.${user.id},user_id2.eq.${user.id}`)
     .limit(1)
     .maybeSingle()
@@ -43,6 +43,7 @@ export default async function MiRetiroPage() {
     fecha_inicio: string | null
     fecha_fin: string | null
     ciudad: string | null
+    nube_url: string | null
   } | null) : null
 
   let pendingCount = 0
@@ -174,6 +175,22 @@ export default async function MiRetiroPage() {
             )
           )}
         </div>
+      )}
+
+      {/* La Nube CTA */}
+      {family && evento?.nube_url && (
+        <a
+          href={evento.nube_url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center justify-between p-4 mb-4 bg-[#181818] border border-[#C9A96E]/30 rounded-xl hover:border-[#C9A96E]/70 transition-colors"
+        >
+          <div>
+            <div className="font-semibold text-[#F5F0E8] text-sm mb-0.5">La Nube — Álbum compartido</div>
+            <div className="text-xs text-[#A09A8F]">Sube tus fotos del retiro al álbum del grupo</div>
+          </div>
+          <span className="text-[#C9A96E] text-base">↗</span>
+        </a>
       )}
 
       {/* Quick links */}

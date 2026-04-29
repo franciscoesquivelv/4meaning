@@ -33,7 +33,7 @@ export default async function FamiliasPage({ params }: { params: { id: string } 
 
   const { data: families } = await supabase
     .from('families')
-    .select('id, nombre_familia, nombre1, email1, nombre2, email2, habitacion, status, notas')
+    .select('id, nombre_familia, nombre1, email1, nombre2, email2, habitacion, status, notas, fotos_nube_recibidas')
     .eq('event_id', params.id)
     .order('nombre_familia')
 
@@ -79,6 +79,7 @@ export default async function FamiliasPage({ params }: { params: { id: string } 
                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Persona 2</th>
                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Habitación</th>
                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Estado</th>
+                <th className="text-center px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Nube</th>
                 <th className="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Acciones</th>
               </tr>
             </thead>
@@ -104,6 +105,15 @@ export default async function FamiliasPage({ params }: { params: { id: string } 
                   </td>
                   <td className="px-4 py-3 text-slate-600">{f.habitacion || '—'}</td>
                   <td className="px-4 py-3"><StatusBadge status={f.status} /></td>
+                  <td className="px-4 py-3 text-center">
+                    <span title={f.fotos_nube_recibidas ? 'Fotos recibidas' : 'Sin fotos'}>
+                      {f.fotos_nube_recibidas ? (
+                        <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-[#DCFCE7] text-[#16A34A] text-xs font-bold">✓</span>
+                      ) : (
+                        <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-slate-100 text-slate-300 text-xs">—</span>
+                      )}
+                    </span>
+                  </td>
                   <td className="px-4 py-3">
                     <Link
                       href={`/eventos/${params.id}/familias/${f.id}/editar`}

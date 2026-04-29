@@ -252,6 +252,29 @@ export default async function EventoDetailPage({ params }: { params: { id: strin
             </dl>
           </div>
 
+          {/* La Nube */}
+          <div className="bg-white border border-slate-200 rounded-xl shadow-sm p-4">
+            <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">La Nube</h3>
+            {evento.nube_url ? (
+              <a
+                href={evento.nube_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs text-blue-600 hover:underline break-all"
+              >
+                Abrir álbum →
+              </a>
+            ) : (
+              <p className="text-xs text-slate-400">Sin enlace configurado.</p>
+            )}
+            <Link
+              href={`/eventos/${params.id}/editar`}
+              className="block mt-2 text-xs text-slate-400 hover:text-slate-600 transition-colors"
+            >
+              {evento.nube_url ? 'Cambiar enlace' : '+ Agregar enlace'}
+            </Link>
+          </div>
+
           {/* Notas internas */}
           {evento.notas_internas && (
             <div className="bg-[#FEF9C3] border border-yellow-200 rounded-xl p-4">
