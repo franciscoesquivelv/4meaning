@@ -1,41 +1,21 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server'
+import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import { createClient } from '@/lib/supabase/server'
 
-export async function loginAction(
-  _prevState: { error: string } | null,
-  formData: FormData
-): Promise<{ error: string }> {
-  const email    = formData.get('email') as string
-  const password = formData.get('password') as string
-  const next     = (formData.get('next') as string) || '/'
+export async function loginAction(formData: FormData) {
+  const supabase = createClient()
 
-  const supabase = await createClient()
+  const { error } = await supabase.auth.signInWithPassword({
+    email:    formData.get('email')    as string,
+    password: formData.get('password') as string,
+  })
 
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password })
-
-  if (error || !data.user) {
-    return { error: 'Correo o contraseña incorrectos.' }
+  if (error) {
+    redirect('/login?error=1')
   }
 
-  const user = data.user
-
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', user.id)
-    .single()
-
-  const role = profile?.role ?? 'participant'
-
-  if (next !== '/') {
-    redirect(next)
-  }
-
-  if (['super_admin', 'admin', 'staff'].includes(role)) {
-    redirect('/dashboard')
-  }
-
-  redirect('/mi-retiro')
+  revalidatePath('/', 'layout')
+  redirect('/')
 }

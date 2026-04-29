@@ -25,71 +25,22 @@ export async function updateSession(request: NextRequest) {
     }
   )
 
-  // Refresh session — IMPORTANT: do not remove
+  // IMPORTANT: Do not add any logic between createServerClient and getUser()
   const { data: { user } } = await supabase.auth.getUser()
 
   const { pathname } = request.nextUrl
 
-  // Helper: build a redirect that preserves session cookies
-  function redirectWithCookies(url: URL) {
-    const res = NextResponse.redirect(url)
-    supabaseResponse.cookies.getAll().forEach(cookie => {
-      res.cookies.set(cookie.name, cookie.value, cookie)
-    })
-    return res
-  }
+  // Public paths — no auth required
+  const isPublic = ['/login', '/auth/', '/invite'].some(p => pathname.startsWith(p))
 
-  // ── Public routes (no auth needed) ──────────────────────
-  const publicRoutes = ['/login', '/invite', '/auth/callback', '/auth/confirm', '/api/auth']
-  const isPublic = publicRoutes.some(r => pathname.startsWith(r))
-
-  // ── Unauthenticated → login ──────────────────────────────
+  // Redirect unauthenticated users to login
   if (!user && !isPublic) {
-    const loginUrl = request.nextUrl.clone()
-    loginUrl.pathname = '/login'
-    loginUrl.searchParams.set('redirectTo', pathname)
-    return redirectWithCookies(loginUrl)
+    const url = request.nextUrl.clone()
+    url.pathname = '/login'
+    url.searchParams.set('redirectTo', pathname)
+    return NextResponse.redirect(url)
   }
 
-  // ── Authenticated on login page → redirect to portal ────
-  if (user && pathname === '/login') {
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single()
-
-    const role = profile?.role ?? 'participant'
-    const dest = request.nextUrl.clone()
-
-    if (['super_admin', 'admin', 'staff'].includes(role)) {
-      dest.pathname = '/dashboard'
-    } else {
-      dest.pathname = '/mi-retiro'
-    }
-
-    return redirectWithCookies(dest)
-  }
-
-  // ── Role-based route protection ──────────────────────────
-  const adminPaths = ['/dashboard', '/eventos', '/equipo', '/herramientas']
-  const needsAdmin = user && adminPaths.some(p => pathname.startsWith(p))
-
-  if (needsAdmin) {
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single()
-
-    const role = profile?.role ?? 'participant'
-
-    if (!['super_admin', 'admin', 'staff'].includes(role)) {
-      const dest = request.nextUrl.clone()
-      dest.pathname = '/mi-retiro'
-      return redirectWithCookies(dest)
-    }
-  }
-
+  // IMPORTANT: must return supabaseResponse to preserve session cookies
   return supabaseResponse
 }

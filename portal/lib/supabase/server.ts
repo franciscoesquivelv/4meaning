@@ -2,8 +2,9 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
 
-export async function createClient() {
-  const cookieStore = await cookies()
+// Standard server client — uses session cookies
+export function createClient() {
+  const cookieStore = cookies()
 
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -19,7 +20,7 @@ export async function createClient() {
               cookieStore.set(name, value, options ?? {})
             )
           } catch {
-            // Called from Server Component — cookies will be set by middleware
+            // Called from Server Component — middleware handles session refresh
           }
         },
       },
@@ -27,8 +28,7 @@ export async function createClient() {
   )
 }
 
-// Service role client — ONLY for server-side admin operations
-// Never expose to client
+// Service role client — bypasses RLS, server-side only
 export function createServiceClient() {
   return createSupabaseClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
