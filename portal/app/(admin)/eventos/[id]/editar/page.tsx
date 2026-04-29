@@ -1,3 +1,12 @@
+/*
+ * SQL to run in Supabase:
+ *
+ * alter table public.events
+ *   add column if not exists info_logistica text,
+ *   add column if not exists info_que_llevar text,
+ *   add column if not exists info_vestimenta text,
+ *   add column if not exists info_emergencia text;
+ */
 'use client'
 
 import { createBrowserClient } from '@supabase/ssr'
@@ -17,6 +26,10 @@ interface EventData {
   status: string
   notas_internas: string
   nube_url: string
+  info_logistica: string
+  info_que_llevar: string
+  info_vestimenta: string
+  info_emergencia: string
 }
 
 const field = (
@@ -63,6 +76,10 @@ export default function EditarEventoPage({ params }: { params: { id: string } })
     status: 'draft',
     notas_internas: '',
     nube_url: '',
+    info_logistica: '',
+    info_que_llevar: '',
+    info_vestimenta: '',
+    info_emergencia: '',
   })
 
   useEffect(() => {
@@ -89,6 +106,10 @@ export default function EditarEventoPage({ params }: { params: { id: string } })
         status: data.status ?? 'draft',
         notas_internas: data.notas_internas ?? '',
         nube_url: data.nube_url ?? '',
+        info_logistica: data.info_logistica ?? '',
+        info_que_llevar: data.info_que_llevar ?? '',
+        info_vestimenta: data.info_vestimenta ?? '',
+        info_emergencia: data.info_emergencia ?? '',
       })
       setLoading(false)
     }
@@ -114,6 +135,10 @@ export default function EditarEventoPage({ params }: { params: { id: string } })
         status: form.status,
         notas_internas: form.notas_internas || null,
         nube_url: form.nube_url || null,
+        info_logistica: form.info_logistica || null,
+        info_que_llevar: form.info_que_llevar || null,
+        info_vestimenta: form.info_vestimenta || null,
+        info_emergencia: form.info_emergencia || null,
       })
       .eq('id', params.id)
     setSaving(false)
@@ -203,6 +228,54 @@ export default function EditarEventoPage({ params }: { params: { id: string } })
             rows={4}
             className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 bg-white resize-none"
           />
+        </div>
+
+        {/* Información para participantes */}
+        <div className="bg-white border border-slate-200 rounded-xl p-5 space-y-4 shadow-sm">
+          <div>
+            <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Información para participantes</h2>
+            <p className="text-xs text-slate-400 mt-0.5">Visible para las familias en el portal. Puedes usar saltos de línea.</p>
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-slate-500 mb-1.5 uppercase tracking-wider">Logística</label>
+            <textarea
+              value={form.info_logistica}
+              onChange={e => setForm(f => ({ ...f, info_logistica: e.target.value }))}
+              placeholder="El check-in en el hotel es a partir de las 3pm. Traslado desde aeropuerto..."
+              rows={4}
+              className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 bg-white resize-none"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-slate-500 mb-1.5 uppercase tracking-wider">Qué llevar</label>
+            <textarea
+              value={form.info_que_llevar}
+              onChange={e => setForm(f => ({ ...f, info_que_llevar: e.target.value }))}
+              placeholder="Ropa cómoda para actividades, ropa formal para cena del sábado..."
+              rows={4}
+              className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 bg-white resize-none"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-slate-500 mb-1.5 uppercase tracking-wider">Código de vestimenta</label>
+            <textarea
+              value={form.info_vestimenta}
+              onChange={e => setForm(f => ({ ...f, info_vestimenta: e.target.value }))}
+              placeholder="Viernes: casual. Sábado cena: formal. Domingo: casual cómodo."
+              rows={3}
+              className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 bg-white resize-none"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-slate-500 mb-1.5 uppercase tracking-wider">Contacto de emergencia</label>
+            <textarea
+              value={form.info_emergencia}
+              onChange={e => setForm(f => ({ ...f, info_emergencia: e.target.value }))}
+              placeholder="Coordinadora: María López +52 55 1234 5678. Emergencias médicas: 911."
+              rows={3}
+              className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 bg-white resize-none"
+            />
+          </div>
         </div>
 
         <div className="flex gap-3 pt-2">
