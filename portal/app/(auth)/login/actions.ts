@@ -1,10 +1,14 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 
-export async function loginAction(formData: FormData) {
+export type LoginState = { error?: string; success?: boolean } | null
+
+export async function loginAction(
+  _prev: LoginState,
+  formData: FormData
+): Promise<LoginState> {
   const supabase = createClient()
 
   const { error } = await supabase.auth.signInWithPassword({
@@ -13,9 +17,9 @@ export async function loginAction(formData: FormData) {
   })
 
   if (error) {
-    redirect('/login?error=1')
+    return { error: 'Correo o contraseña incorrectos.' }
   }
 
   revalidatePath('/', 'layout')
-  redirect('/')
+  return { success: true }
 }
