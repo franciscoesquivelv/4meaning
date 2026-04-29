@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import ParticipantNav from '@/components/participant/ParticipantNav'
 
 export default async function ParticipantLayout({ children }: { children: React.ReactNode }) {
-  const supabase = await createClient()
+  const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) redirect('/login')

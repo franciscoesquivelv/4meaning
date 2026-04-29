@@ -1,45 +1,43 @@
 'use client'
 
-import { useFormState, useFormStatus } from 'react-dom'
-import { useEffect, useCallback, Suspense } from 'react'
+import { useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { loginAction, type LoginState } from './actions'
+import { createBrowserClient } from '@supabase/ssr'
 
-/* ─── Submit button with pending state ─── */
-function SubmitButton() {
-  const { pending } = useFormStatus()
-  return (
-    <button
-      type="submit"
-      disabled={pending}
-      className="w-full mt-1 bg-ink text-bg text-[11px] font-bold uppercase
-        tracking-[0.14em] py-3 rounded-lg hover:bg-ink/90 transition-colors
-        cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-    >
-      {pending ? 'Entrando…' : 'Entrar'}
-    </button>
-  )
-}
-
-/* ─── Inner form — needs useSearchParams so must be inside Suspense ─── */
 function LoginForm() {
   const searchParams = useSearchParams()
   const redirectTo = searchParams.get('redirectTo') ?? '/mi-retiro'
 
-  const [state, action] = useFormState<LoginState, FormData>(loginAction, null)
+  const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(false)
 
-  const navigate = useCallback(() => {
-    window.location.href = redirectTo
-  }, [redirectTo])
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
 
-  useEffect(() => {
-    if (state?.success) {
-      navigate()
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    setError(null)
+    setLoading(true)
+
+    const form = e.currentTarget
+    const email = (form.elements.namedItem('email') as HTMLInputElement).value
+    const password = (form.elements.namedItem('password') as HTMLInputElement).value
+
+    const { error: authError } = await supabase.auth.signInWithPassword({ email, password })
+
+    if (authError) {
+      setError('Correo o contraseña incorrectos.')
+      setLoading(false)
+      return
     }
-  }, [state?.success, navigate])
+
+    window.location.href = redirectTo
+  }
 
   return (
-    <form action={action} className="flex flex-col gap-4">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
 
       <div className="flex flex-col gap-1.5">
         <label htmlFor="email"
@@ -69,19 +67,26 @@ function LoginForm() {
         />
       </div>
 
-      {state?.error && (
+      {error && (
         <p className="text-[11px] text-error bg-error/8 border border-error/20
           rounded px-3 py-2">
-          {state.error}
+          {error}
         </p>
       )}
 
-      <SubmitButton />
+      <button
+        type="submit"
+        disabled={loading}
+        className="w-full mt-1 bg-ink text-bg text-[11px] font-bold uppercase
+          tracking-[0.14em] py-3 rounded-lg hover:bg-ink/90 transition-colors
+          cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        {loading ? 'Entrando…' : 'Entrar'}
+      </button>
     </form>
   )
 }
 
-/* ─── Page ─── */
 export default function LoginPage() {
   return (
     <div className="w-full max-w-sm">
