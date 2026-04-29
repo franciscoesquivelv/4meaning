@@ -30,17 +30,19 @@ function LoginForm() {
       return
     }
 
-    router.push(redirectTo)
-    router.refresh()
+    // Hard redirect so middleware sees fresh session cookies
+    window.location.href = redirectTo
   }
 
   return (
     <div className="w-full max-w-sm">
       {/* Logo */}
       <div className="flex flex-col items-center gap-3 mb-10">
-        <p className="text-[13px] font-bold tracking-[0.32em] uppercase text-ink">
-          Trascendencia
-        </p>
+        <img
+          src="/logo.png"
+          alt="Trascendencia"
+          className="h-7 w-auto"
+        />
         <p className="text-[8px] font-bold tracking-[0.28em] uppercase text-muted">
           Portal
         </p>
