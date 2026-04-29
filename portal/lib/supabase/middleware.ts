@@ -30,6 +30,15 @@ export async function updateSession(request: NextRequest) {
 
   const { pathname } = request.nextUrl
 
+  // Helper: build a redirect that preserves session cookies
+  function redirectWithCookies(url: URL) {
+    const res = NextResponse.redirect(url)
+    supabaseResponse.cookies.getAll().forEach(cookie => {
+      res.cookies.set(cookie.name, cookie.value, cookie)
+    })
+    return res
+  }
+
   // ── Public routes (no auth needed) ──────────────────────
   const publicRoutes = ['/login', '/invite', '/auth/callback', '/auth/confirm']
   const isPublic = publicRoutes.some(r => pathname.startsWith(r))
@@ -39,12 +48,11 @@ export async function updateSession(request: NextRequest) {
     const loginUrl = request.nextUrl.clone()
     loginUrl.pathname = '/login'
     loginUrl.searchParams.set('redirectTo', pathname)
-    return NextResponse.redirect(loginUrl)
+    return redirectWithCookies(loginUrl)
   }
 
   // ── Authenticated on login page → redirect to portal ────
   if (user && pathname === '/login') {
-    // Fetch role to decide where to redirect
     const { data: profile } = await supabase
       .from('profiles')
       .select('role')
@@ -60,7 +68,7 @@ export async function updateSession(request: NextRequest) {
       dest.pathname = '/mi-retiro'
     }
 
-    return NextResponse.redirect(dest)
+    return redirectWithCookies(dest)
   }
 
   // ── Role-based route protection ──────────────────────────
@@ -71,7 +79,7 @@ export async function updateSession(request: NextRequest) {
     const { data: profile } = await supabase
       .from('profiles')
       .select('role')
-      .eq('id', user!.id)
+      .eq('id', user.id)
       .single()
 
     const role = profile?.role ?? 'participant'
@@ -79,7 +87,7 @@ export async function updateSession(request: NextRequest) {
     if (!['super_admin', 'admin', 'staff'].includes(role)) {
       const dest = request.nextUrl.clone()
       dest.pathname = '/mi-retiro'
-      return NextResponse.redirect(dest)
+      return redirectWithCookies(dest)
     }
   }
 
