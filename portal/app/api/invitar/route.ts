@@ -2,9 +2,9 @@ import { NextResponse } from 'next/server'
 import { createServiceClient } from '@/lib/supabase/server'
 import { Resend } from 'resend'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
-
 export async function POST(request: Request) {
+  // Instantiate inside handler so missing key only fails at runtime, not build time
+  const resend = new Resend(process.env.RESEND_API_KEY ?? 're_placeholder')
   try {
     const body = await request.json()
     const {
@@ -18,6 +18,10 @@ export async function POST(request: Request) {
 
     if (!email || !full_name) {
       return NextResponse.json({ error: 'email y full_name son requeridos' }, { status: 400 })
+    }
+
+    if (!process.env.RESEND_API_KEY || process.env.RESEND_API_KEY === 're_PENDIENTE') {
+      console.warn('RESEND_API_KEY not configured — skipping branded email')
     }
 
     const supabase = createServiceClient()
