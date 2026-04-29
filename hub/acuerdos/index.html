@@ -9,7 +9,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -59,18 +58,8 @@
       flex-shrink: 0;
     }
     .back-link:hover { color: var(--text); }
-    .header-sep {
-      width: 1px;
-      height: 18px;
-      background: var(--border);
-      flex-shrink: 0;
-    }
-    .header-logo {
-      height: 18px;
-      width: auto;
-      filter: brightness(0) invert(1);
-      opacity: 0.75;
-    }
+    .header-sep { width: 1px; height: 18px; background: var(--border); flex-shrink: 0; }
+    .header-logo { height: 18px; width: auto; filter: brightness(0) invert(1); opacity: 0.75; }
     .header-title {
       font-size: 10px;
       font-weight: 600;
@@ -81,7 +70,11 @@
     }
 
     /* ── LAYOUT ── */
-    .main { max-width: 640px; margin: 0 auto; padding: 36px 24px 120px; }
+    .main { max-width: 680px; margin: 0 auto; padding: 36px 24px 120px; }
+
+    /* ── STEP VISIBILITY ── */
+    .step { }
+    .step.hidden { display: none; }
 
     /* ── TYPE TABS ── */
     .type-tabs {
@@ -105,11 +98,7 @@
       text-transform: uppercase;
     }
     .tab:hover { border-color: var(--border-hi); color: var(--text); }
-    .tab.active {
-      background: var(--text);
-      border-color: var(--text);
-      color: var(--bg);
-    }
+    .tab.active { background: var(--text); border-color: var(--text); color: var(--bg); }
 
     /* ── FORM SECTION ── */
     .form-section {
@@ -165,13 +154,8 @@
     .field textarea::placeholder { color: #3a3a3a; }
     .field select option { background: #141414; }
     .field textarea { resize: vertical; min-height: 80px; }
-    .field-hint {
-      font-size: 10px;
-      color: var(--muted);
-      margin-top: 2px;
-    }
+    .field-hint { font-size: 10px; color: var(--muted); margin-top: 2px; }
 
-    /* cost preview */
     .cost-preview {
       background: rgba(255,255,255,0.03);
       border: 1px solid var(--border);
@@ -185,8 +169,8 @@
     .cost-preview-label { font-size: 10px; color: var(--muted); font-weight: 500; letter-spacing: 0.06em; }
     .cost-preview-value { font-size: 15px; font-weight: 700; color: var(--text); }
 
-    /* ── GENERATE BTN ── */
-    .btn-generate {
+    /* ── BUTTONS ── */
+    .btn-primary {
       display: flex;
       align-items: center;
       justify-content: center;
@@ -206,9 +190,185 @@
       transition: opacity 0.15s;
       margin-top: 4px;
     }
-    .btn-generate:hover { opacity: 0.88; }
-    .btn-generate:disabled { opacity: 0.35; cursor: not-allowed; }
-    .btn-generate svg { width: 15px; height: 15px; flex-shrink: 0; }
+    .btn-primary:hover { opacity: 0.88; }
+    .btn-primary:disabled { opacity: 0.35; cursor: not-allowed; }
+    .btn-primary svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      color: var(--muted);
+      cursor: pointer;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 9px 16px;
+      transition: all 0.15s;
+    }
+    .btn-ghost:hover { border-color: var(--border-hi); color: var(--text); }
+
+    .btn-solid-sm {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--text);
+      border: none;
+      border-radius: 5px;
+      color: var(--bg);
+      cursor: pointer;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 9px 20px;
+      transition: opacity 0.15s;
+    }
+    .btn-solid-sm:hover { opacity: 0.88; }
+    .btn-solid-sm:disabled { opacity: 0.35; cursor: not-allowed; }
+    .btn-solid-sm svg { width: 13px; height: 13px; flex-shrink: 0; }
+
+    /* ── PREVIEW BAR ── */
+    .preview-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      gap: 12px;
+    }
+    .preview-bar-hint {
+      font-size: 10px;
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    /* ── DOCUMENT SHEET ── */
+    .doc-sheet {
+      background: #ffffff;
+      border-radius: 6px;
+      padding: 60px 64px 56px;
+      color: #1a1a1a;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 10.5px;
+      line-height: 1.75;
+      box-shadow: 0 4px 32px rgba(0,0,0,0.6);
+    }
+
+    .doc-logo-row {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .doc-logo { height: 20px; width: auto; }
+
+    .doc-eyebrow {
+      text-align: center;
+      font-size: 6.5px;
+      font-weight: 700;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: #999;
+      margin-bottom: 5px;
+    }
+    .doc-title {
+      text-align: center;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #111;
+    }
+    .doc-title-rule {
+      width: 44px;
+      height: 1px;
+      background: #d8d6d2;
+      margin: 12px auto 32px;
+    }
+
+    /* contenteditable affordance */
+    [contenteditable] {
+      outline: none;
+      border-radius: 3px;
+      transition: background 0.15s, outline 0.15s;
+    }
+    [contenteditable]:hover {
+      background: rgba(66, 99, 235, 0.04);
+    }
+    [contenteditable]:focus {
+      background: rgba(66, 99, 235, 0.06);
+      outline: 1px solid rgba(66, 99, 235, 0.18);
+    }
+
+    .doc-intro {
+      font-size: 10.5px;
+      color: #1a1a1a;
+      margin-bottom: 28px;
+      padding: 3px 5px;
+    }
+
+    .doc-article {
+      margin-bottom: 20px;
+    }
+
+    .doc-art-hd {
+      font-size: 7px;
+      font-weight: 700;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      color: #555;
+      padding: 2px 5px 8px;
+      border-bottom: 1px solid #e6e4e0;
+      margin-bottom: 10px;
+    }
+
+    .doc-art-body {
+      font-size: 10.5px;
+      color: #222;
+      padding: 3px 5px;
+      line-height: 1.78;
+    }
+
+    .doc-meta {
+      margin-top: 32px;
+      font-size: 9px;
+      color: #aaa;
+      padding: 2px 5px;
+    }
+
+    .doc-sigs {
+      display: flex;
+      gap: 36px;
+      margin-top: 32px;
+    }
+    .doc-sig { flex: 1; }
+    .doc-sig-bar {
+      height: 1px;
+      background: #ccc;
+      margin-bottom: 7px;
+    }
+    .doc-sig-label {
+      font-size: 8.5px;
+      color: #aaa;
+      font-weight: 500;
+    }
+
+    .doc-footer {
+      text-align: center;
+      margin-top: 44px;
+      padding-top: 18px;
+      border-top: 1px solid #ece9e4;
+      font-size: 6.5px;
+      font-weight: 700;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: #bbb;
+    }
 
     /* ── TOAST ── */
     .toast {
@@ -231,6 +391,11 @@
     }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
     .toast.error { border-color: rgba(192,80,74,0.5); color: #e07070; }
+
+    @media (max-width: 600px) {
+      .doc-sheet { padding: 36px 28px 40px; }
+      .doc-sigs { flex-direction: column; gap: 24px; }
+    }
   </style>
 </head>
 <body>
@@ -247,23 +412,51 @@
 
 <main class="main">
 
-  <div class="type-tabs" id="type-tabs">
-    <button class="tab active" data-type="evento">Evento</button>
-    <button class="tab" data-type="video">Equipo de Video</button>
-    <button class="tab" data-type="storybook">Storybook</button>
-    <button class="tab" data-type="staff">Staff</button>
-    <button class="tab" data-type="participante">Participante</button>
-    <button class="tab" data-type="fotografo">Fotógrafo</button>
+  <!-- ── STEP 1: FORM ── -->
+  <div id="step-form" class="step">
+
+    <div class="type-tabs" id="type-tabs">
+      <button class="tab active" data-type="evento">Evento</button>
+      <button class="tab" data-type="video">Equipo de Video</button>
+      <button class="tab" data-type="storybook">Storybook</button>
+      <button class="tab" data-type="staff">Staff</button>
+      <button class="tab" data-type="participante">Participante</button>
+      <button class="tab" data-type="fotografo">Fotógrafo</button>
+    </div>
+
+    <div id="form-container"></div>
+
+    <button class="btn-primary" id="btn-preview">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+      </svg>
+      Ver Documento
+    </button>
+
   </div>
 
-  <div id="form-container"></div>
+  <!-- ── STEP 2: PREVIEW ── -->
+  <div id="step-preview" class="step hidden">
 
-  <button class="btn-generate" id="btn-generate">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
-    </svg>
-    Generar PDF
-  </button>
+    <div class="preview-bar">
+      <button class="btn-ghost" id="btn-back">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Editar datos
+      </button>
+      <span class="preview-bar-hint">Haz clic en el texto para editar antes de imprimir</span>
+      <button class="btn-solid-sm" id="btn-pdf">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        Generar PDF
+      </button>
+    </div>
+
+    <div class="doc-sheet">
+      <div id="doc-content"></div>
+    </div>
+
+  </div>
 
 </main>
 
@@ -271,98 +464,308 @@
 
 <script>
 // ─────────────────────────────────────────────
-// AGREEMENT DEFINITIONS
+// FORM DEFINITIONS
 // ─────────────────────────────────────────────
 const TYPES = {
   evento: {
     label: 'Evento Trascendencia',
-    sections: [
-      {
-        title: 'Datos del Evento',
-        fields: [
-          { id: 'capitulo',    label: 'Capítulo YPO',               type: 'text',   req: true, placeholder: 'Ej: YPO México Norte' },
-          { id: 'contacto',   label: 'Representante del capítulo',  type: 'text',   req: true, placeholder: 'Nombre completo' },
-          { id: 'ciudad',     label: 'Ciudad del evento',           type: 'text',   req: true, placeholder: 'Ej: Antigua Guatemala' },
-          { id: 'fecha_evento',label: 'Fecha del evento',           type: 'text',   req: true, placeholder: 'Ej: 14–16 de marzo, 2025' },
-          { id: 'n_parejas',  label: 'Número de parejas',           type: 'number', req: true, min: 8, max: 24, placeholder: '8' },
-          { id: 'fecha_firma',label: 'Fecha de este acuerdo',       type: 'date',   req: true },
-        ]
-      }
-    ]
+    sections: [{
+      title: 'Datos del Evento',
+      fields: [
+        { id: 'capitulo',     label: 'Capítulo / Organización',      type: 'text',   req: true,  placeholder: 'Ej: YPO México Norte' },
+        { id: 'contacto',     label: 'Representante',                type: 'text',   req: true,  placeholder: 'Nombre completo' },
+        { id: 'ciudad',       label: 'Ciudad del evento',            type: 'text',   req: true,  placeholder: 'Ej: Antigua, Guatemala' },
+        { id: 'fecha_evento', label: 'Fecha del evento',             type: 'text',   req: true,  placeholder: 'Ej: 14–16 de marzo, 2025' },
+        { id: 'n_parejas',    label: 'Número de parejas',            type: 'number', req: true,  min: 8, max: 24, placeholder: '8' },
+        { id: 'fecha_firma',  label: 'Fecha de este acuerdo',        type: 'date',   req: true },
+      ]
+    }]
   },
   video: {
     label: 'Equipo de Video',
-    sections: [
-      {
-        title: 'Datos del Proveedor',
-        fields: [
-          { id: 'empresa',    label: 'Empresa / Responsable', type: 'text', req: true, placeholder: 'Ej: Maleta Films' },
-          { id: 'evento',     label: 'Evento',                type: 'text', req: true, placeholder: 'Ej: YPO México Norte — Marzo 2025' },
-          { id: 'fecha_firma',label: 'Fecha de este acuerdo', type: 'date', req: true },
-        ]
-      }
-    ]
+    sections: [{
+      title: 'Datos del Prestador',
+      fields: [
+        { id: 'empresa',     label: 'Empresa / Responsable',  type: 'text', req: true, placeholder: 'Ej: Maleta Films' },
+        { id: 'evento',      label: 'Evento',                 type: 'text', req: true, placeholder: 'Ej: YPO México Norte — Marzo 2025' },
+        { id: 'fecha_firma', label: 'Fecha de este acuerdo',  type: 'date', req: true },
+      ]
+    }]
   },
   storybook: {
     label: 'Storybook',
-    sections: [
-      {
-        title: 'Datos del Encargo',
-        fields: [
-          { id: 'familia',     label: 'Familia',              type: 'text',   req: true, placeholder: 'Ej: Familia Rodríguez Sánchez' },
-          { id: 'evento',      label: 'Evento de referencia', type: 'text',   req: true, placeholder: 'Ej: YPO México Norte — Marzo 2025' },
-          { id: 'n_libros',    label: 'Número de libros',     type: 'number', req: true, min: 1, max: 10, placeholder: '1' },
-          { id: 'copias_extra',label: 'Copias adicionales',   type: 'number', req: false, min: 0, max: 20, placeholder: '0',
-            hint: 'Cada copia adicional tiene un costo de $70 USD' },
-          { id: 'fecha_firma', label: 'Fecha de este acuerdo',type: 'date',   req: true },
-        ]
-      }
-    ]
+    sections: [{
+      title: 'Datos del Encargo',
+      fields: [
+        { id: 'familia',      label: 'Familia',               type: 'text',   req: true,  placeholder: 'Ej: Familia Rodríguez Sánchez' },
+        { id: 'disenadora',   label: 'Coordinadora de diseño',type: 'text',   req: true,  placeholder: 'Nombre completo' },
+        { id: 'evento',       label: 'Evento de referencia',  type: 'text',   req: true,  placeholder: 'Ej: YPO México Norte — Marzo 2025' },
+        { id: 'n_libros',     label: 'Número de libros',      type: 'number', req: true,  min: 1, max: 10, placeholder: '1' },
+        { id: 'copias_extra', label: 'Copias adicionales',    type: 'number', req: false, min: 0, max: 20, placeholder: '0',
+          hint: 'Cada copia adicional: $70 USD' },
+        { id: 'fecha_firma',  label: 'Fecha de este acuerdo', type: 'date',   req: true },
+      ]
+    }]
   },
   staff: {
     label: 'Staff',
-    sections: [
-      {
-        title: 'Datos del Integrante',
-        fields: [
-          { id: 'nombre',     label: 'Nombre completo',           type: 'text', req: true, placeholder: '' },
-          { id: 'rol',        label: 'Rol / función en el evento', type: 'text', req: true, placeholder: 'Ej: Coordinadora de Logística' },
-          { id: 'evento',     label: 'Evento',                    type: 'text', req: true, placeholder: 'Ej: YPO México Norte — Marzo 2025' },
-          { id: 'fecha_firma',label: 'Fecha de este acuerdo',     type: 'date', req: true },
-        ]
-      }
-    ]
+    sections: [{
+      title: 'Datos del Colaborador',
+      fields: [
+        { id: 'nombre',      label: 'Nombre completo',            type: 'text', req: true, placeholder: '' },
+        { id: 'rol',         label: 'Rol en el evento',           type: 'text', req: true, placeholder: 'Ej: Coordinadora de Logística' },
+        { id: 'evento',      label: 'Evento',                     type: 'text', req: true, placeholder: 'Ej: YPO México Norte — Marzo 2025' },
+        { id: 'fecha_firma', label: 'Fecha de este acuerdo',      type: 'date', req: true },
+      ]
+    }]
   },
   participante: {
     label: 'Participante',
-    sections: [
-      {
-        title: 'Datos de la Pareja',
-        fields: [
-          { id: 'nombre1',    label: 'Nombre — persona 1',    type: 'text', req: true, placeholder: '' },
-          { id: 'nombre2',    label: 'Nombre — persona 2',    type: 'text', req: true, placeholder: '' },
-          { id: 'evento',     label: 'Evento',                type: 'text', req: true, placeholder: 'Ej: YPO México Norte — Marzo 2025' },
-          { id: 'fecha_firma',label: 'Fecha de este acuerdo', type: 'date', req: true },
-        ]
-      }
-    ]
+    sections: [{
+      title: 'Datos de la Pareja',
+      fields: [
+        { id: 'nombre1',     label: 'Nombre — persona 1',    type: 'text', req: true,  placeholder: '' },
+        { id: 'nombre2',     label: 'Nombre — persona 2',    type: 'text', req: false, placeholder: '(opcional si asiste solo/a)' },
+        { id: 'evento',      label: 'Evento',                type: 'text', req: true,  placeholder: 'Ej: YPO México Norte — Marzo 2025' },
+        { id: 'fecha_firma', label: 'Fecha de este acuerdo', type: 'date', req: true },
+      ]
+    }]
   },
   fotografo: {
     label: 'Fotógrafo',
-    sections: [
-      {
-        title: 'Datos del Fotógrafo',
-        fields: [
-          { id: 'nombre',     label: 'Fotógrafo / Empresa',   type: 'text', req: true, placeholder: '' },
-          { id: 'evento',     label: 'Evento',                type: 'text', req: true, placeholder: 'Ej: YPO México Norte — Marzo 2025' },
-          { id: 'fecha_firma',label: 'Fecha de este acuerdo', type: 'date', req: true },
-        ]
-      }
-    ]
+    sections: [{
+      title: 'Datos del Fotógrafo',
+      fields: [
+        { id: 'nombre',      label: 'Fotógrafo / Empresa',   type: 'text', req: true, placeholder: '' },
+        { id: 'evento',      label: 'Evento',                type: 'text', req: true, placeholder: 'Ej: YPO México Norte — Marzo 2025' },
+        { id: 'fecha_firma', label: 'Fecha de este acuerdo', type: 'date', req: true },
+      ]
+    }]
   }
 };
 
 let currentType = 'evento';
+
+// ─────────────────────────────────────────────
+// DOCUMENT BUILDERS — full legal text
+// ─────────────────────────────────────────────
+const DOCS = {
+  evento: {
+    title: 'Evento Trascendencia',
+    build: (d) => ({
+      intro: `El Capítulo ${d.capitulo || '___'}, representado por ${d.contacto || '___'} (en adelante, "El Capítulo"), y TRASCENDENCIA (en adelante, "La Empresa"), acuerdan los siguientes términos para la realización del evento que tendrá lugar en ${d.ciudad || '___'}, el ${d.fecha_evento || '___'}.`,
+      articles: [
+        {
+          heading: 'Art. 1 · Objeto del Acuerdo',
+          body: 'El presente documento formaliza los compromisos de participación, confidencialidad, inversión y políticas de cancelación para el evento TRASCENDENCIA descrito en el encabezado.'
+        },
+        {
+          heading: 'Art. 2 · Compromisos de Participación',
+          body: '1. Las parejas participantes deberán asistir un mínimo de dos días completos con disposición de apertura y comunicación.\n2. El Capítulo nombrará un contacto de logística con comunicación fluida y periódica con La Empresa.\n3. El contacto designado será el canal oficial de coordinación durante todo el proceso previo y durante el evento.'
+        },
+        {
+          heading: 'Art. 3 · Confidencialidad',
+          body: 'Todo lo compartido durante el evento se rige por el Protocolo de Foro: Nunca. Nada a Nadie.\n\nEl material de TRASCENDENCIA no podrá ser compartido, reproducido ni publicado sin autorización escrita por parte de La Empresa. Esta obligación es permanente y no se extingue al finalizar el evento.'
+        },
+        {
+          heading: 'Art. 4 · Inversión y Forma de Pago',
+          body: `Número de parejas acordado: ${d.n_parejas || '___'}\n\nEscala de costo por pareja:\n· 8–12 parejas   →   $4,000 USD\n· 13–16 parejas  →   $4,200 USD\n· 17–20 parejas  →   $4,500 USD\n· 21–24 parejas  →   $4,700 USD\n\nForma de pago: 50 % al confirmar el evento · 50 % una semana antes del evento.`
+        },
+        {
+          heading: 'Art. 5 · Política de Cancelación',
+          body: 'En caso de cancelación por parte del Capítulo, el monto abonado no será reembolsado.\n\nCláusula de fuerza mayor: ante inundación, terremoto, erupción volcánica o conflicto político grave, ambas partes acordarán de común acuerdo una nueva fecha para la realización del evento.'
+        },
+        {
+          heading: 'Art. 6 · Aceptación',
+          body: 'Al firmar el presente acuerdo, El Capítulo declara haber leído, comprendido y aceptado en su totalidad las condiciones aquí establecidas.'
+        }
+      ],
+      meta: `${d.ciudad || '_______________'}   ·   ${fmtDate(d.fecha_firma)}`,
+      sigs: [{ label: `${d.contacto || 'Representante del Capítulo'}  ·  ${d.capitulo || ''}` }]
+    })
+  },
+
+  video: {
+    title: 'Equipo de Video',
+    build: (d) => ({
+      intro: `Por medio del presente, ${d.empresa || '___'} (en adelante, "El Prestador") acepta los términos de confidencialidad establecidos por TRASCENDENCIA para la prestación de servicios de edición y producción de video en el evento "${d.evento || '___'}".`,
+      articles: [
+        {
+          heading: 'Art. 1 · Objeto del Acuerdo',
+          body: 'El presente acuerdo regula la relación de confidencialidad entre El Prestador y TRASCENDENCIA en el marco del evento referenciado, garantizando la protección del contenido, la identidad de las personas y los materiales producidos.'
+        },
+        {
+          heading: 'Art. 2 · Confidencialidad',
+          body: '1. Guardar absoluta confidencialidad sobre las personas, historias y testimonios compartidos durante el evento.\n2. Conservar el anonimato de los participantes, absteniéndose de comentarios, murmuraciones o referencias externas a las historias escuchadas.\n3. Bajo ninguna condición difundir el material filmado, el detalle de las actividades ni el material de los participantes.\n4. No publicar material relacionado con el evento en redes sociales ni utilizarlo para publicidad o portafolio propio.\n5. El material filmado es propiedad exclusiva de cada familia y de TRASCENDENCIA. Su uso está estrictamente restringido a la entrega final acordada.'
+        },
+        {
+          heading: 'Art. 3 · Propiedad Intelectual',
+          body: 'El material filmado y producido durante el evento es propiedad exclusiva de TRASCENDENCIA y de cada familia participante. El Prestador renuncia expresamente a cualquier derecho de uso, reproducción o distribución sobre dicho material.'
+        },
+        {
+          heading: 'Art. 4 · Calidad y Correcciones',
+          body: 'El Prestador se compromete a entregar el material con los estándares de calidad acordados previamente. Las correcciones solicitadas por TRASCENDENCIA deberán realizarse dentro del plazo pactado, sin costo adicional.'
+        },
+        {
+          heading: 'Art. 5 · Duración',
+          body: 'Las obligaciones de confidencialidad establecidas en este acuerdo son de carácter permanente y no se extinguen con la finalización de la prestación de servicios.'
+        },
+        {
+          heading: 'Art. 6 · Aceptación',
+          body: 'Al firmar el presente acuerdo, El Prestador declara haber leído, comprendido y aceptado en su totalidad las condiciones aquí establecidas.'
+        }
+      ],
+      meta: `Evento: ${d.evento || '_______________'}   ·   ${fmtDate(d.fecha_firma)}`,
+      sigs: [{ label: d.empresa || 'El Prestador' }]
+    })
+  },
+
+  storybook: {
+    title: 'Storybook',
+    build: (d) => {
+      const n     = parseInt(d.n_libros)     || 1;
+      const extra = parseInt(d.copias_extra) || 0;
+      const total = n * 500 + extra * 70;
+      return {
+        intro: `El presente acuerdo formaliza el encargo del Storybook de TRASCENDENCIA para la ${d.familia || '___'}, en el marco del evento "${d.evento || '___'}". La coordinación de diseño estará a cargo de ${d.disenadora || '___'}.`,
+        articles: [
+          {
+            heading: 'Art. 1 · Descripción del Servicio',
+            body: 'El Storybook de TRASCENDENCIA es un libro impreso en pasta dura de aproximadamente 100 páginas que recopila la Historia Familiar con texto y fotografía, creado de manera personalizada para cada familia participante.'
+          },
+          {
+            heading: 'Art. 2 · Términos del Encargo',
+            body: `Familia:                   ${d.familia || '___'}\nEvento de referencia:   ${d.evento || '___'}\nNúmero de libros:         ${n}\nCopias adicionales:       ${extra > 0 ? extra + ' copia(s) × $70 USD' : 'Ninguna'}\nTotal acordado:           $${total.toLocaleString()} USD\nPlazo de entrega:          3 meses a partir del evento`
+          },
+          {
+            heading: 'Art. 3 · Confidencialidad',
+            body: '1. El contenido del Storybook pertenece exclusivamente a la familia. No podrá ser reproducido, compartido ni publicado sin autorización expresa.\n2. La coordinadora de diseño se compromete a guardar absoluta reserva sobre la historia, fotografías y valores documentados en el libro.'
+          },
+          {
+            heading: 'Art. 4 · Propiedad del Contenido',
+            body: 'El Storybook y la totalidad de su contenido son propiedad exclusiva de la familia. TRASCENDENCIA conserva el derecho de uso interno para la mejora continua de sus procesos, sin divulgar el contenido familiar bajo ninguna circunstancia.'
+          },
+          {
+            heading: 'Art. 5 · Aceptación',
+            body: 'Al firmar el presente acuerdo, la familia y la coordinadora de diseño declaran haber leído, comprendido y aceptado en su totalidad las condiciones aquí establecidas.'
+          }
+        ],
+        meta: `Fecha: ${fmtDate(d.fecha_firma)}`,
+        sigs: [
+          { label: d.familia    || 'La Familia' },
+          { label: d.disenadora || 'Coordinadora de Diseño' }
+        ]
+      };
+    }
+  },
+
+  staff: {
+    title: 'Staff',
+    build: (d) => ({
+      intro: `${d.nombre || '___'}, con el rol de ${d.rol || '___'} (en adelante, "El Colaborador"), acepta los términos de confidencialidad establecidos por TRASCENDENCIA para su participación en el evento "${d.evento || '___'}".`,
+      articles: [
+        {
+          heading: 'Art. 1 · Objeto',
+          body: 'El presente acuerdo establece los compromisos de confidencialidad y uso del material que El Colaborador asume al ser parte del equipo de TRASCENDENCIA.'
+        },
+        {
+          heading: 'Art. 2 · Compromisos de Confidencialidad',
+          body: '1. Conservar el anonimato de las personas que comparten su historia personal, su testimonio de vida y el contenido de las dinámicas del evento.\n2. Respetar el contenido de los testimonios escuchados durante el evento, renunciando a cualquier comentario, murmuración o referencia a las historias compartidas.\n3. Bajo ninguna condición difundir el material de los participantes, el detalle de las actividades ni el material propio del evento.\n4. No publicar ningún material en redes sociales ni utilizarlo para publicidad personal o corporativa.'
+        },
+        {
+          heading: 'Art. 3 · Material del Evento',
+          body: 'Todo el material de TRASCENDENCIA entregado al Colaborador es de uso exclusivo para las funciones propias del evento. Su reproducción o distribución sin autorización escrita previa está estrictamente prohibida.'
+        },
+        {
+          heading: 'Art. 4 · Duración',
+          body: 'Los compromisos de confidencialidad establecidos en este acuerdo son permanentes y permanecen vigentes tras la finalización del evento.'
+        },
+        {
+          heading: 'Art. 5 · Aceptación',
+          body: 'Al firmar el presente acuerdo, El Colaborador declara haber leído, comprendido y aceptado en su totalidad las condiciones aquí establecidas.'
+        }
+      ],
+      meta: `Evento: ${d.evento || '_______________'}   ·   ${fmtDate(d.fecha_firma)}`,
+      sigs: [{ label: `${d.nombre || 'El Colaborador'}  ·  ${d.rol || ''}` }]
+    })
+  },
+
+  participante: {
+    title: 'Participantes',
+    build: (d) => {
+      const nombre2 = (d.nombre2 || '').trim();
+      const introPartes = nombre2
+        ? `${d.nombre1 || '___'} y ${nombre2} (en adelante, "Los Participantes")`
+        : `${d.nombre1 || '___'} (en adelante, "El Participante")`;
+      return {
+        intro: `${introPartes} se comprometen a respetar el Protocolo de Foro de TRASCENDENCIA durante y después del evento "${d.evento || '___'}".`,
+        articles: [
+          {
+            heading: 'Art. 1 · Protocolo de Foro',
+            body: 'El Protocolo de Foro de TRASCENDENCIA establece que todo lo que se comparte en el evento permanece en el evento. Su principio fundamental es: Nunca. Nada a Nadie.'
+          },
+          {
+            heading: 'Art. 2 · Compromisos de Confidencialidad',
+            body: '1. Respetaremos el contenido de los testimonios escuchados en el evento, renunciando a cualquier tipo de comentario, murmuración, referencia o alusión a las historias que se comparten.\n2. Cuidaremos no difundir el detalle de las actividades del evento a personas fuera del grupo de participantes.\n3. No publicaremos ni compartiremos el material del evento en ninguna plataforma.\n4. Escucharemos y aportaremos sin juzgar.\n5. Somos conscientes de que guardar esta confidencialidad contribuye a la continuidad del evento y al factor sorpresa para futuras familias.'
+          },
+          {
+            heading: 'Art. 3 · Material',
+            body: 'El material entregado durante el evento es de uso personal y exclusivo. No podrá ser reproducido ni compartido sin autorización expresa de TRASCENDENCIA.'
+          },
+          {
+            heading: 'Art. 4 · Duración',
+            body: 'Los compromisos de confidencialidad asumidos en este acuerdo son permanentes y no tienen fecha de expiración.'
+          },
+          {
+            heading: 'Art. 5 · Aceptación',
+            body: nombre2
+              ? 'Al firmar el presente acuerdo, Los Participantes declaran haber leído, comprendido y aceptado en su totalidad las condiciones aquí establecidas.'
+              : 'Al firmar el presente acuerdo, El Participante declara haber leído, comprendido y aceptado en su totalidad las condiciones aquí establecidas.'
+          }
+        ],
+        meta: `Evento: ${d.evento || '_______________'}   ·   ${fmtDate(d.fecha_firma)}`,
+        sigs: nombre2
+          ? [{ label: d.nombre1 || 'Persona 1' }, { label: nombre2 }]
+          : [{ label: d.nombre1 || 'El Participante' }]
+      };
+    }
+  },
+
+  fotografo: {
+    title: 'Fotógrafo',
+    build: (d) => ({
+      intro: `${d.nombre || '___'} (en adelante, "El Fotógrafo") acepta los términos de confidencialidad establecidos por TRASCENDENCIA para la prestación de servicios fotográficos en el evento "${d.evento || '___'}".`,
+      articles: [
+        {
+          heading: 'Art. 1 · Objeto del Acuerdo',
+          body: 'El presente acuerdo regula la relación de confidencialidad entre El Fotógrafo y TRASCENDENCIA, garantizando la protección de la identidad de los participantes y el uso correcto del material visual producido.'
+        },
+        {
+          heading: 'Art. 2 · Confidencialidad',
+          body: '1. El Fotógrafo conservará el anonimato de las personas fotografiadas y el contenido visual del evento.\n2. No difundirá, publicará ni compartirá fotografías de participantes en redes sociales, portafolio personal o cualquier otro medio.\n3. El uso de imágenes generales del evento (sin rostros ni datos identificables) requiere autorización escrita previa de TRASCENDENCIA.'
+        },
+        {
+          heading: 'Art. 3 · Propiedad Intelectual',
+          body: 'Las fotografías del evento son propiedad exclusiva de TRASCENDENCIA y de las familias fotografiadas. El Fotógrafo renuncia expresamente a cualquier derecho de uso, reproducción o distribución sin autorización escrita previa.'
+        },
+        {
+          heading: 'Art. 4 · Entrega y Archivos',
+          body: 'El Fotógrafo entregará la totalidad de los archivos en alta resolución, en los formatos y plazos acordados. Los archivos originales (RAW o equivalente) serán entregados junto con la edición final.'
+        },
+        {
+          heading: 'Art. 5 · Duración',
+          body: 'Las obligaciones de confidencialidad establecidas en este acuerdo son permanentes y no se extinguen con la finalización de la prestación de servicios.'
+        },
+        {
+          heading: 'Art. 6 · Aceptación',
+          body: 'Al firmar el presente acuerdo, El Fotógrafo declara haber leído, comprendido y aceptado en su totalidad las condiciones aquí establecidas.'
+        }
+      ],
+      meta: `Evento: ${d.evento || '_______________'}   ·   ${fmtDate(d.fecha_firma)}`,
+      sigs: [{ label: d.nombre || 'El Fotógrafo' }]
+    })
+  }
+};
 
 // ─────────────────────────────────────────────
 // RENDER FORM
@@ -375,7 +778,7 @@ function renderForm(type) {
   def.sections.forEach(section => {
     const card = document.createElement('div');
     card.className = 'form-section';
-    card.innerHTML = `<div class="section-label">${section.title}</div><div class="fields" id="fields-${section.title.replace(/\s/g,'_')}"></div>`;
+    card.innerHTML = `<div class="section-label">${section.title}</div><div class="fields"></div>`;
     container.appendChild(card);
 
     const fieldsEl = card.querySelector('.fields');
@@ -396,7 +799,7 @@ function renderForm(type) {
         inputEl.min = f.min ?? 0;
         if (f.max) inputEl.max = f.max;
         inputEl.placeholder = f.placeholder ?? '';
-        if (f.id === 'n_parejas') inputEl.addEventListener('input', updateCostPreview);
+        if (f.id === 'n_parejas')   inputEl.addEventListener('input', updateEventoPreview);
         if (['n_libros','copias_extra'].includes(f.id)) inputEl.addEventListener('input', updateStorybookPreview);
       } else if (f.type === 'date') {
         inputEl = document.createElement('input');
@@ -439,7 +842,7 @@ function renderForm(type) {
   });
 }
 
-function updateCostPreview() {
+function updateEventoPreview() {
   const n = parseInt(document.getElementById('n_parejas')?.value) || 0;
   const cost = n <= 12 ? 4000 : n <= 16 ? 4200 : n <= 20 ? 4500 : 4700;
   const el = document.getElementById('cost-value');
@@ -447,7 +850,7 @@ function updateCostPreview() {
 }
 
 function updateStorybookPreview() {
-  const n = parseInt(document.getElementById('n_libros')?.value) || 1;
+  const n     = parseInt(document.getElementById('n_libros')?.value)     || 1;
   const extra = parseInt(document.getElementById('copias_extra')?.value) || 0;
   const el = document.getElementById('cost-value');
   if (el) el.textContent = `$${(n * 500 + extra * 70).toLocaleString()} USD`;
@@ -476,7 +879,72 @@ function collectData() {
 }
 
 // ─────────────────────────────────────────────
-// LOGO LOADER — inverts dark logo to white for PDF header
+// DOCUMENT PREVIEW RENDERER
+// ─────────────────────────────────────────────
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/\n/g, '<br>');
+}
+
+function renderPreview(type, data) {
+  const docDef = DOCS[type].build(data);
+  const container = document.getElementById('doc-content');
+
+  let html = '';
+
+  // Logo + title block
+  html += `
+    <div class="doc-logo-row">
+      <img class="doc-logo" src="../../logos/logotrascendencia.png" alt="Trascendencia">
+    </div>
+    <div class="doc-eyebrow">Acuerdo de Confidencialidad</div>
+    <div class="doc-title">${escHtml(DOCS[type].title)}</div>
+    <div class="doc-title-rule"></div>
+  `;
+
+  // Intro paragraph
+  if (docDef.intro) {
+    html += `<div class="doc-intro" contenteditable="true" data-doc="intro">${escHtml(docDef.intro)}</div>`;
+  }
+
+  // Articles
+  docDef.articles.forEach((art, i) => {
+    html += `
+      <div class="doc-article">
+        <div class="doc-art-hd" contenteditable="true" data-doc="art-hd-${i}">${escHtml(art.heading)}</div>
+        <div class="doc-art-body" contenteditable="true" data-doc="art-body-${i}">${escHtml(art.body)}</div>
+      </div>
+    `;
+  });
+
+  // Meta line (date/city)
+  if (docDef.meta) {
+    html += `<div class="doc-meta" contenteditable="true" data-doc="meta">${escHtml(docDef.meta)}</div>`;
+  }
+
+  // Signature lines
+  html += `<div class="doc-sigs">`;
+  docDef.sigs.forEach((sig, i) => {
+    html += `
+      <div class="doc-sig">
+        <div class="doc-sig-bar"></div>
+        <div class="doc-sig-label" data-doc="sig-${i}">${escHtml(sig.label)}</div>
+      </div>
+    `;
+  });
+  html += `</div>`;
+
+  // Footer
+  html += `<div class="doc-footer">TRASCENDENCIA &nbsp;·&nbsp; www.latrascendencia.com</div>`;
+
+  container.innerHTML = html;
+}
+
+// ─────────────────────────────────────────────
+// LOGO LOADER
 // ─────────────────────────────────────────────
 let _logoCache = null;
 async function getLogo() {
@@ -486,11 +954,10 @@ async function getLogo() {
     img.crossOrigin = 'anonymous';
     img.onload = () => {
       const cv = document.createElement('canvas');
-      cv.width = img.naturalWidth;
-      cv.height = img.naturalHeight;
+      cv.width = img.naturalWidth; cv.height = img.naturalHeight;
       const ctx = cv.getContext('2d');
       ctx.drawImage(img, 0, 0);
-      // Invert pixels to white, preserve transparency
+      // Invert dark logo to white for PDF header
       const d = ctx.getImageData(0, 0, cv.width, cv.height);
       for (let i = 0; i < d.data.length; i += 4) {
         if (d.data[i + 3] > 0) {
@@ -514,13 +981,11 @@ async function getLogo() {
 const W = 215.9, H = 279.4;
 const ML = 22, MR = 22, CW = W - ML - MR;
 
-// Colors — pure B&W, no café/dorado
 const C_BLACK  = [10, 10, 10];
 const C_TEXT   = [30, 30, 30];
 const C_MUTED  = [120, 120, 120];
 const C_LIGHT  = [180, 180, 180];
 const C_RULE   = [220, 218, 214];
-const C_ALTROW = [250, 249, 247];
 const C_WHITE  = [255, 255, 255];
 
 function pText(doc, text, x, y, maxW, { size=10, color=C_TEXT, weight='normal', lh=5.4 }={}) {
@@ -538,15 +1003,26 @@ function pBullet(doc, text, x, y, maxW, opts={}) {
   return pText(doc, text, x + 5.2, y, maxW - 5.2, { size: 9.5, lh: 5.2, ...opts });
 }
 
+function pNumbered(doc, num, text, x, y, maxW) {
+  doc.setFontSize(9.5);
+  doc.setTextColor(...C_TEXT);
+  doc.setFont('helvetica', 'bold');
+  doc.text(String(num) + '.', x, y);
+  doc.setFont('helvetica', 'normal');
+  const lines = doc.splitTextToSize(text, maxW - 8);
+  doc.text(lines, x + 7, y);
+  return y + lines.length * 5.2;
+}
+
 function pSectionLabel(doc, text, x, y) {
   doc.setFontSize(7);
   doc.setTextColor(...C_MUTED);
   doc.setFont('helvetica', 'bold');
-  doc.text(text, x, y, { charSpace: 1.6 });
+  doc.text(text.toUpperCase(), x, y, { charSpace: 1.4 });
   doc.setDrawColor(...C_RULE);
   doc.setLineWidth(0.25);
   doc.line(x, y + 2.5, x + CW, y + 2.5);
-  return y + 9;
+  return y + 10;
 }
 
 function pSigLine(doc, label, x, y, lineW=72) {
@@ -556,7 +1032,8 @@ function pSigLine(doc, label, x, y, lineW=72) {
   doc.setFontSize(7.5);
   doc.setTextColor(...C_LIGHT);
   doc.setFont('helvetica', 'normal');
-  doc.text(label, x, y + 4.5);
+  const lines = doc.splitTextToSize(label, lineW);
+  doc.text(lines, x, y + 4.5);
   return y + 14;
 }
 
@@ -570,20 +1047,12 @@ function checkBreak(doc, y, needed=30) {
 }
 
 function addHeader(doc, logo) {
-  // Solid black header band
   doc.setFillColor(...C_BLACK);
   doc.rect(0, 0, W, 32, 'F');
-
-  // White logo centered in header
   if (logo) {
-    const lw = 72;
-    const lh = lw / 8.646;
-    const lx = (W - lw) / 2;
-    const ly = (32 - lh) / 2;
-    doc.addImage(logo, 'PNG', lx, ly, lw, lh);
+    const lw = 72, lh = lw / 8.646;
+    doc.addImage(logo, 'PNG', (W - lw) / 2, (32 - lh) / 2, lw, lh);
   }
-
-  // Thin separator line
   doc.setDrawColor(...C_RULE);
   doc.setLineWidth(0.3);
   doc.line(0, 32, W, 32);
@@ -593,12 +1062,10 @@ function addFooter(doc) {
   doc.setDrawColor(...C_RULE);
   doc.setLineWidth(0.25);
   doc.line(ML, H - 18, W - MR, H - 18);
-
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(6.5);
   doc.setTextColor(...C_MUTED);
   doc.text('TRASCENDENCIA', W / 2, H - 11, { align: 'center', charSpace: 1.8 });
-
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(6);
   doc.setTextColor(...C_LIGHT);
@@ -606,19 +1073,14 @@ function addFooter(doc) {
 }
 
 function addTitle(doc, subtitle) {
-  // Eyebrow label
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(7);
   doc.setTextColor(...C_MUTED);
   doc.text('ACUERDO DE CONFIDENCIALIDAD', W / 2, 43, { align: 'center', charSpace: 1.6 });
-
-  // Main title — bold, black, centered
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(18);
   doc.setTextColor(...C_BLACK);
-  doc.text(subtitle, W / 2, 54, { align: 'center' });
-
-  // Thin rule under title
+  doc.text(subtitle.toUpperCase(), W / 2, 54, { align: 'center' });
   doc.setDrawColor(...C_RULE);
   doc.setLineWidth(0.3);
   doc.line(W / 2 - 24, 58, W / 2 + 24, 58);
@@ -638,281 +1100,88 @@ function fileName(type) {
 }
 
 // ─────────────────────────────────────────────
-// PDF CONTENT BUILDERS
+// PDF BUILDER — reads from contenteditable DOM
 // ─────────────────────────────────────────────
-
-function buildEvento(doc, d) {
-  let y = 68;
-
-  y = pText(doc,
-    'TRASCENDENCIA es un Proyecto de Vida, personal y de pareja, que busca explorar las raíces de la propia historia en base a los valores familiares. El objetivo es trasladar a las futuras generaciones un concepto completo de Sentido de Vida y una recopilación fotográfico-histórica narrada por los propios padres a sus hijos.',
-    ML, y, CW, { size: 9.5 });
-  y += 10;
-
-  y = pSectionLabel(doc, 'DATOS DEL EVENTO', ML, y);
-  [
-    ['Capítulo YPO',   d.capitulo],
-    ['Representante',  d.contacto],
-    ['Ciudad',         d.ciudad],
-    ['Fecha del evento', d.fecha_evento],
-  ].forEach(([lbl, val]) => {
-    doc.setFontSize(8.5);
-    doc.setTextColor(...C_MUTED);
-    doc.setFont('helvetica', 'normal');
-    doc.text(lbl, ML, y);
-    doc.setTextColor(...C_TEXT);
-    doc.setFont('helvetica', 'bold');
-    doc.text(val || '—', ML + 40, y);
-    y += 6.2;
-  });
-  y += 6;
-
-  y = pSectionLabel(doc, 'COMPROMISOS DEL EVENTO', ML, y);
-  [
-    'Compromiso. Es fundamental y determinante participar dos días completos como mínimo, con disposición de apertura y comunicación que permita desarrollar el concepto en su totalidad.',
-    'Confidencialidad. Todo lo que se comparta en el evento se maneja bajo el Protocolo de Foro: Nunca. Nada a Nadie.',
-    'Comunicación. Es mandatorio nombrar una persona de total confianza a cargo de la logística y entrega de material, con comunicación fluida y periódica.',
-    'Material. El material de Trascendencia no podrá ser compartido sin previa autorización escrita por parte de la autoría.',
-  ].forEach(c => {
-    y = checkBreak(doc, y);
-    y = pBullet(doc, c, ML, y, CW);
-    y += 3;
-  });
-  y += 6;
-
-  y = checkBreak(doc, y, 65);
-  y = pSectionLabel(doc, 'COSTO Y FORMA DE PAGO', ML, y);
-
-  const n = parseInt(d.n_parejas) || 0;
-  const tierCost = n <= 12 ? 4000 : n <= 16 ? 4200 : n <= 20 ? 4500 : 4700;
-
-  doc.autoTable({
-    startY: y,
-    margin: { left: ML, right: MR },
-    head: [['Número de parejas', 'Costo por pareja']],
-    body: [
-      ['8 a 12 parejas',  '$4,000 USD'],
-      ['13 a 16 parejas', '$4,200 USD'],
-      ['17 a 20 parejas', '$4,500 USD'],
-      ['21 a 24 parejas', '$4,700 USD'],
-    ],
-    headStyles:  { fillColor: C_BLACK, textColor: C_WHITE, fontStyle: 'bold', fontSize: 8, cellPadding: 4 },
-    bodyStyles:  { fontSize: 9, textColor: C_TEXT, cellPadding: 3.5 },
-    alternateRowStyles: { fillColor: C_ALTROW },
-    styles: { lineColor: C_RULE, lineWidth: 0.25 },
-    didDrawCell: (data) => {
-      if (data.section === 'body' && data.column.index === 0) {
-        const rowCosts = [4000, 4200, 4500, 4700];
-        if (rowCosts[data.row.index] === tierCost) {
-          doc.setFillColor(...C_TEXT);
-          doc.rect(data.cell.x, data.cell.y, 1.8, data.cell.height, 'F');
-        }
-      }
-    }
-  });
-
-  y = doc.lastAutoTable.finalY + 7;
-  doc.setFontSize(9.5);
-  doc.setTextColor(...C_TEXT);
-  doc.setFont('helvetica', 'normal');
-  doc.text('Número de parejas acordado para este evento:', ML, y);
-  doc.setFont('helvetica', 'bold');
-  doc.text(`${d.n_parejas} parejas`, ML + 91, y);
-  y += 6;
-  doc.setFont('helvetica', 'normal');
-  doc.text('Forma de pago:', ML, y);
-  doc.setFont('helvetica', 'bold');
-  doc.text('50% al confirmar · 50% una semana antes del evento', ML + 36, y);
-  y += 11;
-
-  y = checkBreak(doc, y, 40);
-  y = pSectionLabel(doc, 'POLÍTICAS DE CANCELACIÓN', ML, y);
-  y = pBullet(doc, 'En caso de cancelación el monto no será reembolsado.', ML, y, CW);
-  y += 3;
-  y = pBullet(doc, 'Cláusula de fuerza mayor: En caso de inundación, terremoto, erupción volcánica o problemas políticos, ambas partes de común acuerdo encontrarán la fecha que mejor les convenga para realizar el evento posteriormente.', ML, y, CW);
-  y += 14;
-
-  y = checkBreak(doc, y, 35);
-  doc.setFontSize(8);
-  doc.setTextColor(...C_LIGHT);
-  doc.setFont('helvetica', 'italic');
-  doc.text(`Ciudad: ${d.ciudad || '_______________'}   ·   Fecha: ${fmtDate(d.fecha_firma)}`, ML, y);
-  y += 12;
-
-  pSigLine(doc, 'Firma del capítulo / representante', ML, y, 110);
-}
-
-function buildConfidencialidad(doc, sigName, eventRef, date, bullets) {
-  let y = 68;
-  y = pText(doc,
-    'A través de este acuerdo, el firmante se compromete a guardar con prudencia la confidencialidad en torno a todos los aspectos del evento Trascendencia, concretamente:',
-    ML, y, CW, { size: 9.5 });
-  y += 9;
-
-  bullets.forEach(b => {
-    y = checkBreak(doc, y);
-    y = pBullet(doc, b, ML, y, CW);
-    y += 3.5;
-  });
-  y += 7;
-
-  y = checkBreak(doc, y, 30);
-  y = pText(doc,
-    'Soy consciente de que guardar esta confidencialidad es una de las razones por las que fui seleccionado/a para ser parte del equipo de Trascendencia.',
-    ML, y, CW, { size: 9, color: C_MUTED });
-  y += 13;
-
-  y = checkBreak(doc, y, 50);
-  if (eventRef) {
-    doc.setFontSize(8);
-    doc.setTextColor(...C_LIGHT);
-    doc.setFont('helvetica', 'normal');
-    doc.text(`Evento: ${eventRef}`, ML, y);
-    y += 5.5;
-  }
-  doc.setFontSize(8);
-  doc.setTextColor(...C_LIGHT);
-  doc.text(`Fecha: ${fmtDate(date)}`, ML, y);
-  y += 13;
-
-  pSigLine(doc, sigName, ML, y, 110);
-}
-
-function buildVideo(doc, d) {
-  buildConfidencialidad(doc, d.empresa || 'Empresa / Responsable', d.evento, d.fecha_firma, [
-    'Conservar el anonimato de las personas que comparten su historia personal, su testimonio de vida y el contenido de las sesiones del taller.',
-    'Respetar el contenido de los testimonios filmados, renunciando a cualquier tipo de comentario, murmuración, referencia o alusión a las historias que comparten las familias.',
-    'Bajo ninguna condición difundir el material filmado, las actividades del evento ni el material propio de los participantes.',
-    'No publicar ningún material relacionado con el evento en redes sociales o plataformas públicas, ni utilizarlo para fines de publicidad propia.',
-    'El material filmado es propiedad exclusiva de cada familia y de Trascendencia. Su uso está estrictamente restringido a la entrega final acordada.',
-  ]);
-}
-
-function buildStorybook(doc, d) {
-  let y = 68;
-  const n = parseInt(d.n_libros) || 1;
-  const extra = parseInt(d.copias_extra) || 0;
-  const total = n * 500 + extra * 70;
-
-  y = pText(doc,
-    'El Storybook de Trascendencia es un libro impreso en pasta dura de aproximadamente 100 páginas, que recopila la Historia Familiar con texto y fotografía, creado de manera personalizada para cada familia participante.',
-    ML, y, CW, { size: 9.5 });
-  y += 10;
-
-  y = pSectionLabel(doc, 'TÉRMINOS DEL SERVICIO', ML, y);
-  [
-    ['Familia solicitante',  d.familia || '—'],
-    ['Evento de referencia', d.evento || '—'],
-    ['Número de libros',     `${n} libro${n > 1 ? 's' : ''}`],
-    ['Copias adicionales',   extra > 0 ? `${extra} copia${extra > 1 ? 's' : ''} (× $70 USD)` : 'Ninguna'],
-    ['Total acordado',       `$${total.toLocaleString()} USD`],
-    ['Plazo de entrega',     '3 meses a partir del evento'],
-  ].forEach(([lbl, val]) => {
-    doc.setFontSize(8.5);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(...C_MUTED);
-    doc.text(lbl, ML, y);
-    doc.setFont('helvetica', lbl === 'Total acordado' ? 'bold' : 'bold');
-    doc.setTextColor(...C_TEXT);
-    doc.text(val, ML + 50, y);
-    y += 6.2;
-  });
-  y += 9;
-
-  y = pSectionLabel(doc, 'CONFIDENCIALIDAD', ML, y);
-  [
-    'El contenido del Storybook pertenece exclusivamente a la familia. No podrá ser reproducido, compartido ni publicado sin autorización expresa.',
-    'La coordinadora de diseño se compromete a guardar absoluta reserva sobre la historia, fotografías y valores documentados en el libro.',
-  ].forEach(b => {
-    y = pBullet(doc, b, ML, y, CW);
-    y += 3.5;
-  });
-  y += 11;
-
-  doc.setFontSize(8);
-  doc.setTextColor(...C_LIGHT);
-  doc.setFont('helvetica', 'normal');
-  doc.text(`Fecha: ${fmtDate(d.fecha_firma)}`, ML, y);
-  y += 13;
-  pSigLine(doc, d.familia || 'Familia', ML, y, 90);
-}
-
-function buildStaff(doc, d) {
-  buildConfidencialidad(doc, `${d.nombre || '—'} · ${d.rol || ''}`, d.evento, d.fecha_firma, [
-    'Conservar el anonimato de las personas que comparten su historia personal, su testimonio de vida y el contenido de las conferencias y dinámicas.',
-    'Respetar el contenido de los testimonios escuchados durante el evento, renunciando a cualquier comentario, murmuración o referencia a las historias compartidas.',
-    'Bajo ninguna condición difundir el material propio de los participantes, el detalle de las actividades ni el material del evento.',
-    'No publicar el material en redes sociales ni utilizarlo para publicidad personal o corporativa.',
-  ]);
-}
-
-function buildParticipante(doc, d) {
-  let y = 68;
-  y = pText(doc,
-    'A través de este acuerdo, los participantes se comprometen a guardar con prudencia la confidencialidad en torno a todos los aspectos del evento Trascendencia:',
-    ML, y, CW, { size: 9.5 });
-  y += 9;
-
-  [
-    'Respetaremos el contenido de los testimonios escuchados en el evento, renunciando a cualquier tipo de comentario, murmuración, referencia o alusión a las historias que comparten.',
-    'Cuidaremos no difundir el detalle de las actividades del evento a personas fuera del grupo de participantes.',
-    'No publicaremos, ni compartiremos el material del evento en ninguna plataforma.',
-    'Utilizamos el Protocolo de Foro: escuchar y aportar, no juzgar y muy importante el sigilo fraternal — Nunca. Nada a Nadie.',
-    'Somos conscientes de que guardar esta confidencialidad contribuye a la continuidad del evento, colaborando con el factor sorpresa para que futuras familias puedan disfrutarlo con igual profundidad.',
-  ].forEach(b => {
-    y = checkBreak(doc, y);
-    y = pBullet(doc, b, ML, y, CW);
-    y += 3.5;
-  });
-  y += 11;
-
-  doc.setFontSize(8);
-  doc.setTextColor(...C_LIGHT);
-  doc.setFont('helvetica', 'normal');
-  doc.text(`Evento: ${d.evento || '—'}   ·   Fecha: ${fmtDate(d.fecha_firma)}`, ML, y);
-  y += 13;
-
-  pSigLine(doc, d.nombre1 || 'Persona 1', ML, y, 80);
-  pSigLine(doc, d.nombre2 || 'Persona 2', ML + 95, y, 80);
-}
-
-function buildFotografo(doc, d) {
-  buildConfidencialidad(doc, d.nombre || 'Fotógrafo', d.evento, d.fecha_firma, [
-    'Conservar el anonimato de las personas fotografiadas y el contenido visual del evento.',
-    'No difundir, publicar ni compartir las fotografías del evento sin autorización expresa de Trascendencia y de cada familia participante.',
-    'Bajo ninguna condición utilizar las fotografías para portafolio personal, publicidad o redes sociales sin autorización escrita previa.',
-    'Las imágenes son propiedad exclusiva de las familias participantes y de Trascendencia.',
-  ]);
-}
-
-// ─────────────────────────────────────────────
-// MAIN GENERATOR
-// ─────────────────────────────────────────────
-async function generatePDF(type, data) {
+async function generatePDFFromDoc(type) {
   const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ format: 'letter', unit: 'mm' });
+  const doc  = new jsPDF({ format: 'letter', unit: 'mm' });
   const logo = await getLogo();
-
-  const subtitles = {
-    evento:       'Evento Trascendencia',
-    video:        'Equipo de Video',
-    storybook:    'Storybook',
-    staff:        'Staff',
-    participante: 'Participantes',
-    fotografo:    'Fotógrafo',
-  };
 
   addHeader(doc, logo);
   addFooter(doc);
-  addTitle(doc, subtitles[type]);
+  addTitle(doc, DOCS[type].title);
 
-  switch (type) {
-    case 'evento':       buildEvento(doc, data);       break;
-    case 'video':        buildVideo(doc, data);        break;
-    case 'storybook':    buildStorybook(doc, data);    break;
-    case 'staff':        buildStaff(doc, data);        break;
-    case 'participante': buildParticipante(doc, data); break;
-    case 'fotografo':    buildFotografo(doc, data);    break;
+  let y = 68;
+
+  // ── Intro
+  const introEl = document.querySelector('[data-doc="intro"]');
+  if (introEl) {
+    const introText = introEl.innerText.trim();
+    if (introText) {
+      y = pText(doc, introText, ML, y, CW, { size: 9.5 });
+      y += 10;
+    }
+  }
+
+  // ── Articles
+  const hdEls   = document.querySelectorAll('[data-doc^="art-hd-"]');
+  const bodyEls = document.querySelectorAll('[data-doc^="art-body-"]');
+
+  hdEls.forEach((hdEl, i) => {
+    const heading  = hdEl.innerText.trim();
+    const bodyText = bodyEls[i]?.innerText.trim() || '';
+
+    y = checkBreak(doc, y, 32);
+    y = pSectionLabel(doc, heading, ML, y);
+
+    if (bodyText) {
+      const lines = bodyText.split('\n').filter(l => l.trim());
+      lines.forEach(line => {
+        const t = line.trim();
+        const numberedMatch = t.match(/^(\d+)\.\s+([\s\S]+)/);
+        const bulletMatch   = t.match(/^[·•\-]\s+([\s\S]+)/);
+
+        if (numberedMatch) {
+          y = checkBreak(doc, y, 14);
+          y = pNumbered(doc, numberedMatch[1], numberedMatch[2], ML, y, CW);
+          y += 3;
+        } else if (bulletMatch) {
+          y = checkBreak(doc, y);
+          y = pBullet(doc, bulletMatch[1], ML, y, CW);
+          y += 3;
+        } else if (t) {
+          y = checkBreak(doc, y);
+          y = pText(doc, t, ML, y, CW, { size: 9.5 });
+          y += 4;
+        }
+      });
+      y += 4;
+    }
+  });
+
+  // ── Meta
+  const metaEl = document.querySelector('[data-doc="meta"]');
+  if (metaEl) {
+    const metaText = metaEl.innerText.trim();
+    if (metaText) {
+      y = checkBreak(doc, y, 20);
+      doc.setFontSize(8);
+      doc.setTextColor(...C_LIGHT);
+      doc.setFont('helvetica', 'normal');
+      doc.text(metaText, ML, y);
+      y += 13;
+    }
+  }
+
+  // ── Signatures
+  const sigEls = document.querySelectorAll('[data-doc^="sig-"]');
+  y = checkBreak(doc, y, 30);
+
+  if (sigEls.length === 1) {
+    pSigLine(doc, sigEls[0].innerText.trim(), ML, y, 110);
+  } else if (sigEls.length >= 2) {
+    pSigLine(doc, sigEls[0].innerText.trim(), ML,      y, 82);
+    pSigLine(doc, sigEls[1].innerText.trim(), ML + 98, y, 82);
   }
 
   doc.save(fileName(type));
@@ -925,14 +1194,15 @@ function showToast(msg, kind='success') {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.className = `toast ${kind} show`;
-  setTimeout(() => t.classList.remove('show'), 3000);
+  setTimeout(() => t.classList.remove('show'), 3200);
 }
 
 // ─────────────────────────────────────────────
 // INIT
 // ─────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
-  // Hash navigation — activates tab from URL hash (e.g. #staff)
+
+  // Hash navigation
   const hashType = window.location.hash.slice(1);
   if (hashType && TYPES[hashType]) {
     currentType = hashType;
@@ -943,6 +1213,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   renderForm(currentType);
 
+  // Tab switching
   document.getElementById('type-tabs').addEventListener('click', e => {
     const btn = e.target.closest('.tab');
     if (!btn) return;
@@ -953,23 +1224,42 @@ document.addEventListener('DOMContentLoaded', () => {
     renderForm(currentType);
   });
 
-  document.getElementById('btn-generate').addEventListener('click', async () => {
+  // "Ver Documento" — validate → render preview → show step 2
+  document.getElementById('btn-preview').addEventListener('click', () => {
     const data = collectData();
     if (!data) { showToast('Completa los campos requeridos', 'error'); return; }
-    const btn = document.getElementById('btn-generate');
+
+    renderPreview(currentType, data);
+    document.getElementById('step-form').classList.add('hidden');
+    document.getElementById('step-preview').classList.remove('hidden');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // "← Editar datos" — back to form
+  document.getElementById('btn-back').addEventListener('click', () => {
+    document.getElementById('step-preview').classList.add('hidden');
+    document.getElementById('step-form').classList.remove('hidden');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // "Generar PDF" — build from DOM
+  document.getElementById('btn-pdf').addEventListener('click', async () => {
+    const btn = document.getElementById('btn-pdf');
     btn.disabled = true;
-    btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Generando…`;
+    const original = btn.innerHTML;
+    btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Generando…`;
     try {
-      await generatePDF(currentType, data);
+      await generatePDFFromDoc(currentType);
       showToast('PDF generado correctamente');
     } catch (err) {
       showToast('Error al generar el PDF', 'error');
       console.error(err);
     } finally {
       btn.disabled = false;
-      btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Generar PDF`;
+      btn.innerHTML = original;
     }
   });
+
 });
 </script>
 </body>
