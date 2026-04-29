@@ -58,14 +58,11 @@ export default function SetPasswordPage() {
     <div className="min-h-screen bg-background flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         {/* Logo */}
-        <div className="flex flex-col items-center gap-4 mb-10">
-          <img
-            src="/logo.png"
-            alt="Trascendencia"
-            className="h-8 w-auto"
-            style={{ filter: 'brightness(0) invert(1)' }}
-          />
-          <p className="text-[9px] font-bold tracking-[0.28em] uppercase text-muted">
+        <div className="flex flex-col items-center gap-3 mb-10">
+          <p className="text-[13px] font-bold tracking-[0.32em] uppercase text-ink">
+            Trascendencia
+          </p>
+          <p className="text-[8px] font-bold tracking-[0.28em] uppercase text-muted">
             Portal
           </p>
         </div>
