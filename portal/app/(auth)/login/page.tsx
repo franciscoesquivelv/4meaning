@@ -1,15 +1,14 @@
 'use client'
 
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import Image from 'next/image'
 
-export default function LoginPage() {
-  const router    = useRouter()
-  const params    = useSearchParams()
+function LoginForm() {
+  const router     = useRouter()
+  const params     = useSearchParams()
   const redirectTo = params.get('redirectTo') || '/'
 
   const [email,    setEmail]    = useState('')
@@ -42,7 +41,7 @@ export default function LoginPage() {
         <img
           src="/logo.png"
           alt="Trascendencia"
-          className="h-8 w-auto opacity-90 invert"
+          className="h-8 w-auto opacity-90"
           style={{ filter: 'brightness(0) invert(1)' }}
         />
         <p className="text-[9px] font-bold tracking-[0.28em] uppercase text-muted">
@@ -95,5 +94,13 @@ export default function LoginPage() {
         <span className="text-ink/60">Contacta al equipo de Trascendencia.</span>
       </p>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="w-full max-w-sm" />}>
+      <LoginForm />
+    </Suspense>
   )
 }
