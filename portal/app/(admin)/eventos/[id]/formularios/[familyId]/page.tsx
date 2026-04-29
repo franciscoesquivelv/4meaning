@@ -2,23 +2,25 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
 
-function Field({ label, value }: { label: string; value: string | number | boolean | null | undefined }) {
-  if (value === null || value === undefined || value === '') return null
+function formatDate(d: string | null) {
+  if (!d) return '—'
+  return new Date(d).toLocaleDateString('es-MX', {
+    day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit',
+  })
+}
+
+function Block({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div style={{ marginBottom: 20 }}>
-      <div style={{ fontSize: 12, fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>
-        {label}
-      </div>
-      <div style={{ fontSize: 15, color: '#111', lineHeight: 1.6 }}>
-        {typeof value === 'boolean' ? (value ? 'Sí' : 'No') : String(value)}
-      </div>
+    <div className="py-4 border-b border-slate-100 last:border-0">
+      <div className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mb-1.5">{label}</div>
+      <div className="text-sm text-slate-900 leading-relaxed">{children}</div>
     </div>
   )
 }
 
-function formatDate(d: string | null) {
-  if (!d) return '—'
-  return new Date(d).toLocaleDateString('es-MX', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+function TextField({ label, value }: { label: string; value: string | number | null | undefined }) {
+  if (!value && value !== 0) return null
+  return <Block label={label}>{String(value)}</Block>
 }
 
 interface Hijo {
@@ -54,57 +56,140 @@ export default async function FormularioFamiliaPage({ params }: { params: { id: 
 
   if (!response) {
     return (
-      <div style={{ padding: 32, maxWidth: 680 }}>
-        <Link href={`/eventos/${params.id}/formularios`} style={{ color: '#6b7280', fontSize: 14, textDecoration: 'none' }}>
-          ← Formularios
-        </Link>
-        <h1 style={{ fontSize: 22, fontWeight: 700, marginTop: 12, marginBottom: 16 }}>{family.nombre_familia}</h1>
-        <div style={{ background: '#fef9c3', border: '1px solid #fde68a', borderRadius: 10, padding: 20, color: '#78350f', fontSize: 14 }}>
-          Esta familia aún no ha enviado su formulario de intake.
+      <div className="p-8 max-w-2xl">
+        <nav className="flex items-center gap-2 text-sm text-slate-500 mb-6">
+          <Link href={`/eventos/${params.id}/formularios`} className="hover:text-slate-700 transition-colors">← Formularios</Link>
+        </nav>
+        <h1 className="text-xl font-bold text-slate-900 mb-4">{family.nombre_familia}</h1>
+        <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-5 text-yellow-800 text-sm">
+          Esta familia aún no ha enviado su formulario de admisión.
         </div>
       </div>
     )
   }
 
   const hijos: Hijo[] = Array.isArray(response.hijos) ? (response.hijos as Hijo[]) : []
+  const valores: string[] = Array.isArray(response.valores) ? (response.valores as string[]).filter(Boolean) : []
 
   return (
-    <div style={{ padding: 32, maxWidth: 680 }}>
-      <div style={{ marginBottom: 28 }}>
-        <Link href={`/eventos/${params.id}/formularios`} style={{ color: '#6b7280', fontSize: 14, textDecoration: 'none' }}>
-          ← Formularios
-        </Link>
-        <h1 style={{ fontSize: 22, fontWeight: 700, marginTop: 12, marginBottom: 4 }}>{family.nombre_familia}</h1>
-        <p style={{ color: '#6b7280', fontSize: 14, margin: 0 }}>
-          {family.nombre1}{family.nombre2 ? ` & ${family.nombre2}` : ''} · Enviado el {formatDate(response.submitted_at)}
+    <div className="p-8 max-w-2xl">
+      {/* Header */}
+      <nav className="flex items-center gap-2 text-sm text-slate-500 mb-6">
+        <Link href={`/eventos/${params.id}/formularios`} className="hover:text-slate-700 transition-colors">← Formularios</Link>
+      </nav>
+
+      <div className="mb-6">
+        <h1 className="text-xl font-bold text-slate-900">{family.nombre_familia}</h1>
+        <p className="text-sm text-slate-500 mt-1">
+          {family.nombre1}{family.nombre2 ? ` & ${family.nombre2}` : ''}
+          <span className="mx-2 text-slate-300">·</span>
+          Enviado el {formatDate(response.submitted_at)}
         </p>
       </div>
 
-      <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 12, padding: 28 }}>
-        <Field label="¿Cómo se conocieron?" value={response.como_se_conocieron} />
-        <Field label="Historia de su relación" value={response.historia_pareja} />
-        <Field label="Años juntos" value={response.anos_juntos} />
-        <Field label="¿Tienen hijos?" value={response.tienen_hijos} />
+      <div className="space-y-4">
 
-        {response.tienen_hijos && hijos.length > 0 && (
-          <div style={{ marginBottom: 20 }}>
-            <div style={{ fontSize: 12, fontWeight: 600, color: '#6b7280', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>
-              Hijos
+        {/* Su historia */}
+        <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+          <div className="px-5 py-3 border-b border-slate-100 bg-slate-50">
+            <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Su historia</h2>
+          </div>
+          <div className="px-5">
+            <TextField label="¿Cómo se conocieron?" value={response.como_se_conocieron} />
+            <TextField label="Historia de su relación" value={response.historia_pareja} />
+            <TextField label="Años juntos" value={response.anos_juntos} />
+          </div>
+        </div>
+
+        {/* Momentos importantes */}
+        {response.momentos_importantes && (
+          <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+            <div className="px-5 py-3 border-b border-slate-100 bg-slate-50">
+              <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Momentos que los definen</h2>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              {hijos.map((hijo, i) => (
-                <div key={i} style={{ padding: '8px 12px', background: '#f9fafb', borderRadius: 8, fontSize: 14, color: '#374151' }}>
-                  {hijo.nombre ?? 'Sin nombre'} — {hijo.edad ? `${hijo.edad} años` : 'edad no especificada'}
-                </div>
-              ))}
+            <div className="px-5">
+              <TextField label="Momentos importantes" value={response.momentos_importantes} />
             </div>
           </div>
         )}
 
-        <Field label="Legado que quieren dejar" value={response.legado} />
-        <Field label="Expectativas para el retiro" value={response.expectativas} />
-        <Field label="Restricciones alimentarias" value={response.restricciones_alimentarias} />
-        <Field label="Notas adicionales" value={response.notas_adicionales} />
+        {/* Valores */}
+        {valores.length > 0 && (
+          <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+            <div className="px-5 py-3 border-b border-slate-100 bg-slate-50">
+              <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Valores que transmiten</h2>
+            </div>
+            <div className="px-5 py-4">
+              <div className="flex flex-wrap gap-2">
+                {valores.map((v, i) => (
+                  <span
+                    key={i}
+                    className="inline-flex items-center px-3 py-1.5 bg-slate-900 text-white text-sm font-medium rounded-full"
+                  >
+                    {v}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Familia */}
+        <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+          <div className="px-5 py-3 border-b border-slate-100 bg-slate-50">
+            <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Su familia</h2>
+          </div>
+          <div className="px-5">
+            <Block label="¿Tienen hijos?">
+              {response.tienen_hijos ? 'Sí' : 'No'}
+            </Block>
+            {response.tienen_hijos && hijos.length > 0 && (
+              <Block label={`Hijos (${hijos.length})`}>
+                <div className="flex flex-wrap gap-2 mt-1">
+                  {hijos.map((hijo, i) => (
+                    <span key={i} className="inline-flex items-center px-2.5 py-1 bg-slate-100 text-slate-700 text-xs rounded-lg">
+                      {hijo.nombre ?? 'Sin nombre'}
+                      {hijo.edad ? `, ${hijo.edad} años` : ''}
+                    </span>
+                  ))}
+                </div>
+              </Block>
+            )}
+          </div>
+        </div>
+
+        {/* El retiro */}
+        <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+          <div className="px-5 py-3 border-b border-slate-100 bg-slate-50">
+            <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">El retiro</h2>
+          </div>
+          <div className="px-5">
+            <TextField label="Legado que quieren dejar" value={response.legado} />
+            <TextField label="Expectativas" value={response.expectativas} />
+          </div>
+        </div>
+
+        {/* Mensaje especial */}
+        {response.mensaje_especial && (
+          <div className="bg-[#FEF9C3] border border-yellow-200 rounded-xl p-5">
+            <div className="text-[10px] font-semibold text-yellow-700 uppercase tracking-widest mb-2">Mensaje especial para su familia</div>
+            <p className="text-sm text-yellow-900 leading-relaxed italic">&ldquo;{response.mensaje_especial}&rdquo;</p>
+          </div>
+        )}
+
+        {/* Logística */}
+        {(response.restricciones_alimentarias || response.notas_adicionales) && (
+          <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+            <div className="px-5 py-3 border-b border-slate-100 bg-slate-50">
+              <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Logística</h2>
+            </div>
+            <div className="px-5">
+              <TextField label="Restricciones alimentarias" value={response.restricciones_alimentarias} />
+              <TextField label="Notas adicionales" value={response.notas_adicionales} />
+            </div>
+          </div>
+        )}
+
       </div>
     </div>
   )

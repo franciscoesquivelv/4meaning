@@ -8,6 +8,10 @@ interface Hijo {
   edad: string
 }
 
+const INPUT = "w-full px-4 py-3 bg-[#1E1E1E] border border-[#2A2A2A] rounded-xl text-[#F5F0E8] text-sm placeholder-[#6B7280] focus:outline-none focus:border-[#C9A96E] transition-colors resize-y"
+const SECTION_TITLE = "text-xs font-semibold text-[#C9A96E] uppercase tracking-widest mb-4"
+const LABEL = "block text-sm font-medium text-[#F5F0E8] mb-2"
+
 export default function FormularioPage() {
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -29,10 +33,14 @@ export default function FormularioPage() {
     tienen_hijos: false,
     legado: '',
     expectativas: '',
+    momentos_importantes: '',
+    mensaje_especial: '',
     restricciones_alimentarias: '',
     notas_adicionales: '',
   })
   const [hijos, setHijos] = useState<Hijo[]>([])
+  // Valores que transmiten — hasta 5
+  const [valores, setValores] = useState<string[]>(['', '', '', '', ''])
 
   useEffect(() => {
     async function load() {
@@ -68,12 +76,6 @@ export default function FormularioPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  function addHijo() { setHijos(h => [...h, { nombre: '', edad: '' }]) }
-  function removeHijo(i: number) { setHijos(h => h.filter((_, idx) => idx !== i)) }
-  function updateHijo(i: number, field: keyof Hijo, val: string) {
-    setHijos(h => h.map((hijo, idx) => idx === i ? { ...hijo, [field]: val } : hijo))
-  }
-
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!familyId || !eventId) return
@@ -81,6 +83,8 @@ export default function FormularioPage() {
     setError(null)
 
     const { data: { user } } = await supabase.auth.getUser()
+
+    const valoresFiltrados = valores.filter(v => v.trim() !== '')
 
     const { error } = await supabase.from('intake_responses').upsert({
       family_id: familyId,
@@ -92,6 +96,9 @@ export default function FormularioPage() {
       hijos: form.tienen_hijos ? hijos : [],
       legado: form.legado,
       expectativas: form.expectativas,
+      momentos_importantes: form.momentos_importantes || null,
+      mensaje_especial: form.mensaje_especial || null,
+      valores: valoresFiltrados,
       restricciones_alimentarias: form.restricciones_alimentarias || null,
       notas_adicionales: form.notas_adicionales || null,
       submitted_at: new Date().toISOString(),
@@ -103,11 +110,7 @@ export default function FormularioPage() {
     setSubmitted(true)
   }
 
-  if (loading) {
-    return (
-      <div className="px-5 pt-6 text-[#A09A8F] text-sm">Cargando...</div>
-    )
-  }
+  if (loading) return <div className="px-5 pt-6 text-[#A09A8F] text-sm">Cargando...</div>
 
   if (noFamily) {
     return (
@@ -126,7 +129,7 @@ export default function FormularioPage() {
         <div className="text-5xl text-[#4ADE80] mb-4">✓</div>
         <h1 className="text-xl font-bold text-[#F5F0E8] mb-3">Formulario enviado</h1>
         <p className="text-sm text-[#A09A8F] leading-relaxed max-w-xs mx-auto">
-          Gracias por completar su formulario de intake. El equipo de Trascendencia lo revisará antes del retiro.
+          Gracias por completarlo. El equipo de Trascendencia lo revisará antes del retiro.
         </p>
       </div>
     )
@@ -135,9 +138,9 @@ export default function FormularioPage() {
   return (
     <div className="px-5 pt-6 pb-6">
       <div className="mb-8">
-        <h1 className="text-xl font-bold text-[#F5F0E8] mb-2">Formulario de intake</h1>
+        <h1 className="text-xl font-bold text-[#F5F0E8] mb-2">Formulario de admisión</h1>
         <p className="text-sm text-[#A09A8F] leading-relaxed">
-          Este formulario nos ayuda a personalizar su experiencia en Trascendencia. Tómense el tiempo para responder con profundidad.
+          Este formulario nos ayuda a personalizar su experiencia. Tómense el tiempo para responder con profundidad — sus respuestas se usan para preparar materiales únicos para su familia.
         </p>
       </div>
 
@@ -147,33 +150,34 @@ export default function FormularioPage() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Section: Historia */}
-        <div>
-          <h2 className="text-xs font-semibold text-[#C9A96E] uppercase tracking-widest mb-4">Su historia</h2>
+      <form onSubmit={handleSubmit} className="space-y-8">
+
+        {/* ── Su historia ── */}
+        <section>
+          <h2 className={SECTION_TITLE}>Su historia</h2>
           <div className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-[#F5F0E8] mb-2">¿Cómo se conocieron?</label>
+              <label className={LABEL}>¿Cómo se conocieron?</label>
               <textarea
                 value={form.como_se_conocieron}
                 onChange={e => setForm(f => ({ ...f, como_se_conocieron: e.target.value }))}
-                className="w-full px-4 py-3 bg-[#1E1E1E] border border-[#2A2A2A] rounded-xl text-[#F5F0E8] text-sm placeholder-[#6B7280] focus:outline-none focus:border-[#C9A96E] transition-colors resize-y min-h-[80px]"
+                className={`${INPUT} min-h-[80px]`}
                 placeholder="Cuéntenme la historia de cómo se conocieron..."
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[#F5F0E8] mb-2">Historia de su relación</label>
+              <label className={LABEL}>Historia de su relación</label>
               <textarea
                 value={form.historia_pareja}
                 onChange={e => setForm(f => ({ ...f, historia_pareja: e.target.value }))}
-                className="w-full px-4 py-3 bg-[#1E1E1E] border border-[#2A2A2A] rounded-xl text-[#F5F0E8] text-sm placeholder-[#6B7280] focus:outline-none focus:border-[#C9A96E] transition-colors resize-y min-h-[120px]"
-                placeholder="Compartan los momentos más importantes de su historia juntos..."
+                className={`${INPUT} min-h-[120px]`}
+                placeholder="Los momentos más importantes de su historia juntos..."
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[#F5F0E8] mb-2">Años juntos</label>
+              <label className={LABEL}>Años juntos</label>
               <input
                 type="number"
                 min={0}
@@ -184,49 +188,81 @@ export default function FormularioPage() {
               />
             </div>
           </div>
-        </div>
+        </section>
 
-        {/* Section: Familia */}
-        <div>
-          <h2 className="text-xs font-semibold text-[#C9A96E] uppercase tracking-widest mb-4">Su familia</h2>
+        {/* ── Momentos importantes ── */}
+        <section>
+          <h2 className={SECTION_TITLE}>Momentos que los definen</h2>
+          <div>
+            <label className={LABEL}>¿Cuáles son los momentos más importantes que han vivido como familia?</label>
+            <p className="text-xs text-[#6B7280] mb-2">
+              Nacimientos, logros, crisis superadas, viajes, pérdidas, cambios de vida... Los momentos que los han moldeado.
+            </p>
+            <textarea
+              value={form.momentos_importantes}
+              onChange={e => setForm(f => ({ ...f, momentos_importantes: e.target.value }))}
+              className={`${INPUT} min-h-[120px]`}
+              placeholder="Compártenos los momentos más significativos de su historia juntos..."
+            />
+          </div>
+        </section>
+
+        {/* ── Valores ── */}
+        <section>
+          <h2 className={SECTION_TITLE}>Sus valores</h2>
+          <div>
+            <label className={LABEL}>¿Qué valores quieren transmitir a su familia?</label>
+            <p className="text-xs text-[#6B7280] mb-3">
+              Escribe hasta 5 valores que guían su vida y quieren que sus hijos y generaciones futuras hereden.
+            </p>
+            <div className="space-y-2">
+              {valores.map((v, i) => (
+                <div key={i} className="flex items-center gap-3">
+                  <span className="text-xs text-[#6B7280] w-4 text-right flex-shrink-0">{i + 1}</span>
+                  <input
+                    value={v}
+                    onChange={e => setValores(vals => vals.map((x, idx) => idx === i ? e.target.value : x))}
+                    className="flex-1 px-4 py-2.5 bg-[#1E1E1E] border border-[#2A2A2A] rounded-xl text-[#F5F0E8] text-sm placeholder-[#6B7280] focus:outline-none focus:border-[#C9A96E] transition-colors"
+                    placeholder={['Fe, familia, integridad...', 'Amor, servicio...', 'Resiliencia...', 'Gratitud...', 'Legado...'][i]}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── Familia ── */}
+        <section>
+          <h2 className={SECTION_TITLE}>Su familia</h2>
           <div className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-[#F5F0E8] mb-3">¿Tienen hijos?</label>
+              <label className={LABEL}>¿Tienen hijos?</label>
               <div className="flex gap-3">
-                <button
-                  type="button"
-                  onClick={() => setForm(f => ({ ...f, tienen_hijos: true }))}
-                  className={[
-                    'px-5 py-2.5 rounded-xl text-sm font-medium border transition-colors cursor-pointer',
-                    form.tienen_hijos
-                      ? 'bg-[#C9A96E] border-[#C9A96E] text-[#0C0C0C]'
-                      : 'bg-[#1E1E1E] border-[#2A2A2A] text-[#A09A8F] hover:border-[#3A3A3A]',
-                  ].join(' ')}
-                >
-                  Sí
-                </button>
-                <button
-                  type="button"
-                  onClick={() => { setForm(f => ({ ...f, tienen_hijos: false })); setHijos([]) }}
-                  className={[
-                    'px-5 py-2.5 rounded-xl text-sm font-medium border transition-colors cursor-pointer',
-                    !form.tienen_hijos
-                      ? 'bg-[#C9A96E] border-[#C9A96E] text-[#0C0C0C]'
-                      : 'bg-[#1E1E1E] border-[#2A2A2A] text-[#A09A8F] hover:border-[#3A3A3A]',
-                  ].join(' ')}
-                >
-                  No
-                </button>
+                {[{ val: true, label: 'Sí' }, { val: false, label: 'No' }].map(opt => (
+                  <button
+                    key={String(opt.val)}
+                    type="button"
+                    onClick={() => { setForm(f => ({ ...f, tienen_hijos: opt.val })); if (!opt.val) setHijos([]) }}
+                    className={[
+                      'px-5 py-2.5 rounded-xl text-sm font-medium border transition-colors cursor-pointer',
+                      form.tienen_hijos === opt.val
+                        ? 'bg-[#C9A96E] border-[#C9A96E] text-[#0C0C0C]'
+                        : 'bg-[#1E1E1E] border-[#2A2A2A] text-[#A09A8F] hover:border-[#3A3A3A]',
+                    ].join(' ')}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
               </div>
             </div>
 
             {form.tienen_hijos && (
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <label className="text-sm font-medium text-[#F5F0E8]">Sus hijos</label>
+                  <label className={LABEL} style={{ marginBottom: 0 }}>Sus hijos</label>
                   <button
                     type="button"
-                    onClick={addHijo}
+                    onClick={() => setHijos(h => [...h, { nombre: '', edad: '' }])}
                     className="text-xs text-[#C9A96E] border border-[#C9A96E]/30 px-3 py-1.5 rounded-lg hover:bg-[#C9A96E]/10 transition-colors cursor-pointer bg-transparent"
                   >
                     + Agregar hijo
@@ -237,13 +273,13 @@ export default function FormularioPage() {
                     <div key={i} className="flex gap-2 items-center">
                       <input
                         value={hijo.nombre}
-                        onChange={e => updateHijo(i, 'nombre', e.target.value)}
+                        onChange={e => setHijos(h => h.map((x, idx) => idx === i ? { ...x, nombre: e.target.value } : x))}
                         className="flex-[2] px-3 py-2.5 bg-[#1E1E1E] border border-[#2A2A2A] rounded-xl text-[#F5F0E8] text-sm placeholder-[#6B7280] focus:outline-none focus:border-[#C9A96E] transition-colors"
                         placeholder="Nombre"
                       />
                       <input
                         value={hijo.edad}
-                        onChange={e => updateHijo(i, 'edad', e.target.value)}
+                        onChange={e => setHijos(h => h.map((x, idx) => idx === i ? { ...x, edad: e.target.value } : x))}
                         className="flex-1 px-3 py-2.5 bg-[#1E1E1E] border border-[#2A2A2A] rounded-xl text-[#F5F0E8] text-sm placeholder-[#6B7280] focus:outline-none focus:border-[#C9A96E] transition-colors"
                         placeholder="Edad"
                         type="number"
@@ -251,7 +287,7 @@ export default function FormularioPage() {
                       />
                       <button
                         type="button"
-                        onClick={() => removeHijo(i)}
+                        onClick={() => setHijos(h => h.filter((_, idx) => idx !== i))}
                         className="text-[#DC2626] text-xl leading-none px-1 py-1 cursor-pointer bg-transparent border-none"
                       >
                         ×
@@ -259,65 +295,82 @@ export default function FormularioPage() {
                     </div>
                   ))}
                   {hijos.length === 0 && (
-                    <p className="text-xs text-[#6B7280]">Haz clic en &ldquo;Agregar hijo&rdquo; para registrar a sus hijos.</p>
+                    <p className="text-xs text-[#6B7280]">Agrega a sus hijos para que podamos mencionarlos en sus materiales.</p>
                   )}
                 </div>
               </div>
             )}
           </div>
-        </div>
+        </section>
 
-        {/* Section: Retiro */}
-        <div>
-          <h2 className="text-xs font-semibold text-[#C9A96E] uppercase tracking-widest mb-4">El retiro</h2>
+        {/* ── El retiro ── */}
+        <section>
+          <h2 className={SECTION_TITLE}>El retiro</h2>
           <div className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-[#F5F0E8] mb-2">¿Qué legado quieren dejar?</label>
+              <label className={LABEL}>¿Qué legado quieren dejar?</label>
               <textarea
                 value={form.legado}
                 onChange={e => setForm(f => ({ ...f, legado: e.target.value }))}
-                className="w-full px-4 py-3 bg-[#1E1E1E] border border-[#2A2A2A] rounded-xl text-[#F5F0E8] text-sm placeholder-[#6B7280] focus:outline-none focus:border-[#C9A96E] transition-colors resize-y min-h-[96px]"
+                className={`${INPUT} min-h-[96px]`}
                 placeholder="¿Qué quieren que recuerden de ustedes como pareja y familia?..."
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[#F5F0E8] mb-2">Expectativas para el retiro</label>
+              <label className={LABEL}>Expectativas para el retiro</label>
               <textarea
                 value={form.expectativas}
                 onChange={e => setForm(f => ({ ...f, expectativas: e.target.value }))}
-                className="w-full px-4 py-3 bg-[#1E1E1E] border border-[#2A2A2A] rounded-xl text-[#F5F0E8] text-sm placeholder-[#6B7280] focus:outline-none focus:border-[#C9A96E] transition-colors resize-y min-h-[96px]"
+                className={`${INPUT} min-h-[96px]`}
                 placeholder="¿Qué esperan vivir, aprender o transformar en Trascendencia?..."
               />
             </div>
           </div>
-        </div>
+        </section>
 
-        {/* Section: Otros */}
-        <div>
-          <h2 className="text-xs font-semibold text-[#C9A96E] uppercase tracking-widest mb-4">Otros</h2>
+        {/* ── Mensaje especial ── */}
+        <section>
+          <h2 className={SECTION_TITLE}>Mensaje para sus hijos</h2>
+          <div>
+            <label className={LABEL}>¿Qué mensaje quieren dejarle a su familia?</label>
+            <p className="text-xs text-[#6B7280] mb-2">
+              Este mensaje puede aparecer en su material personalizado del retiro.
+            </p>
+            <textarea
+              value={form.mensaje_especial}
+              onChange={e => setForm(f => ({ ...f, mensaje_especial: e.target.value }))}
+              className={`${INPUT} min-h-[120px]`}
+              placeholder="Escríbanlo desde el corazón..."
+            />
+          </div>
+        </section>
+
+        {/* ── Logística ── */}
+        <section>
+          <h2 className={SECTION_TITLE}>Logística</h2>
           <div className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-[#F5F0E8] mb-2">Restricciones alimentarias</label>
+              <label className={LABEL}>Restricciones alimentarias</label>
               <textarea
                 value={form.restricciones_alimentarias}
                 onChange={e => setForm(f => ({ ...f, restricciones_alimentarias: e.target.value }))}
-                className="w-full px-4 py-3 bg-[#1E1E1E] border border-[#2A2A2A] rounded-xl text-[#F5F0E8] text-sm placeholder-[#6B7280] focus:outline-none focus:border-[#C9A96E] transition-colors resize-y min-h-[60px]"
+                className={`${INPUT} min-h-[60px]`}
                 placeholder="Alergias, intolerancias, preferencias... (dejar en blanco si no aplica)"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-[#F5F0E8] mb-2">Notas adicionales</label>
+              <label className={LABEL}>Notas adicionales</label>
               <textarea
                 value={form.notas_adicionales}
                 onChange={e => setForm(f => ({ ...f, notas_adicionales: e.target.value }))}
-                className="w-full px-4 py-3 bg-[#1E1E1E] border border-[#2A2A2A] rounded-xl text-[#F5F0E8] text-sm placeholder-[#6B7280] focus:outline-none focus:border-[#C9A96E] transition-colors resize-y min-h-[64px]"
+                className={`${INPUT} min-h-[64px]`}
                 placeholder="Cualquier otra cosa que quieran que el equipo sepa..."
               />
             </div>
           </div>
-        </div>
+        </section>
 
         <button
           type="submit"
