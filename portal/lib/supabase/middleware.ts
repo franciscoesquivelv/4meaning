@@ -31,7 +31,7 @@ export async function updateSession(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // ── Public routes (no auth needed) ──────────────────────
-  const publicRoutes = ['/login', '/invite', '/auth/callback']
+  const publicRoutes = ['/login', '/invite', '/auth/callback', '/auth/confirm']
   const isPublic = publicRoutes.some(r => pathname.startsWith(r))
 
   // ── Unauthenticated → login ──────────────────────────────
