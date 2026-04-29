@@ -18,7 +18,7 @@ export async function POST(request: Request) {
     {
       cookies: {
         getAll: () => [],   // No existing cookies on this fresh request
-        setAll: (list) => {
+        setAll: (list: { name: string; value: string; options?: Record<string, unknown> }[]) => {
           list.forEach(({ name, value, options }) =>
             cookiesToSet.push({ name, value, options: options ?? {} })
           )
