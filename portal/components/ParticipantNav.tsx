@@ -7,8 +7,9 @@ import { createBrowserClient } from '@supabase/ssr'
 const navItems = [
   { href: '/mi-retiro', label: 'Inicio' },
   { href: '/acuerdos', label: 'Acuerdos' },
-  { href: '/itinerario', label: 'Itinerario' },
-  { href: '/documentos', label: 'Documentos' },
+  { href: '/programa', label: 'Programa' },
+  { href: '/documentos', label: 'Docs' },
+  { href: '/info', label: 'Info' },
 ]
 
 export default function ParticipantNav() {
@@ -35,6 +36,7 @@ export default function ParticipantNav() {
       borderTop: '1px solid #e5e7eb',
       display: 'flex',
       zIndex: 50,
+      paddingBottom: 'env(safe-area-inset-bottom)',
     }}>
       {navItems.map(item => {
         const active = pathname === item.href || pathname.startsWith(item.href + '/')
@@ -48,7 +50,7 @@ export default function ParticipantNav() {
               alignItems: 'center',
               justifyContent: 'center',
               padding: '12px 4px',
-              fontSize: 12,
+              fontSize: 11,
               fontWeight: active ? 700 : 400,
               color: active ? '#111' : '#9ca3af',
               textDecoration: 'none',
@@ -67,7 +69,7 @@ export default function ParticipantNav() {
           alignItems: 'center',
           justifyContent: 'center',
           padding: '12px 4px',
-          fontSize: 12,
+          fontSize: 11,
           fontWeight: 400,
           color: '#9ca3af',
           background: 'transparent',

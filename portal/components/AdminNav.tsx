@@ -39,6 +39,7 @@ export default function AdminNav() {
         <span style={{ fontWeight: 700, fontSize: 18, letterSpacing: '-0.5px' }}>
           Trascendencia
         </span>
+        <div style={{ fontSize: 11, color: '#666', marginTop: 2 }}>Portal Admin</div>
       </div>
 
       <nav style={{ flex: 1, padding: '16px 0' }}>
