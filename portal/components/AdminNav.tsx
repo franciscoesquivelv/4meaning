@@ -113,6 +113,7 @@ export default function AdminNav({ userEmail, activeEventId, activeEventName }: 
 
         {/* Spacer */}
         <div className="mt-4 border-t border-[#1F2937] pt-4">
+          <NavLink href="/usuarios" label="Usuarios" active={pathname === '/usuarios' || pathname.startsWith('/usuarios/')} />
           <NavLink href="/eventos" label="Todos los eventos" active={pathname === '/eventos'} />
           <NavLink href="/eventos/nuevo" label="+ Nuevo evento" active={pathname === '/eventos/nuevo'} />
         </div>
