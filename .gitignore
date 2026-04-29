@@ -1,0 +1,9 @@
+# Portal (Next.js)
+portal/node_modules
+portal/.next
+portal/.env*.local
+portal/.env
+
+# OS
+.DS_Store
+Thumbs.db
