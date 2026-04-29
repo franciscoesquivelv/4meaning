@@ -7,11 +7,17 @@ export default async function RootPage() {
 
   if (!user) redirect('/login')
 
-  // TODO: redirect based on role once roles are set up
-  return (
-    <div style={{ padding: 40 }}>
-      <h1>Bienvenido</h1>
-      <p>Sesión activa: {user.email}</p>
-    </div>
-  )
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single()
+
+  if (!profile) redirect('/login')
+
+  if (profile.role === 'participant') {
+    redirect('/mi-retiro')
+  } else {
+    redirect('/dashboard')
+  }
 }
