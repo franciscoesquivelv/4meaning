@@ -3,23 +3,18 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 
 function StatusBadge({ status }: { status: string }) {
-  const colors: Record<string, { bg: string; color: string }> = {
-    draft:     { bg: '#f3f4f6', color: '#374151' },
-    active:    { bg: '#dcfce7', color: '#166534' },
-    completed: { bg: '#dbeafe', color: '#1e40af' },
-    archived:  { bg: '#f3f4f6', color: '#6b7280' },
+  const map: Record<string, string> = {
+    draft:     'bg-slate-100 text-slate-600',
+    active:    'bg-[#DCFCE7] text-[#16A34A]',
+    completed: 'bg-[#DBEAFE] text-[#2563EB]',
+    archived:  'bg-slate-100 text-slate-500',
   }
-  const s = colors[status] ?? { bg: '#f3f4f6', color: '#374151' }
+  const labels: Record<string, string> = {
+    draft: 'Borrador', active: 'Activo', completed: 'Completado', archived: 'Archivado',
+  }
   return (
-    <span style={{
-      padding: '2px 8px',
-      borderRadius: 12,
-      fontSize: 12,
-      fontWeight: 600,
-      background: s.bg,
-      color: s.color,
-    }}>
-      {status}
+    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${map[status] ?? 'bg-slate-100 text-slate-600'}`}>
+      {labels[status] ?? status}
     </span>
   )
 }
@@ -40,59 +35,65 @@ export default async function EventosPage() {
     .order('fecha_inicio', { ascending: false })
 
   return (
-    <div style={{ padding: 32, maxWidth: 960 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 32 }}>
-        <h1 style={{ fontSize: 24, fontWeight: 700 }}>Eventos</h1>
+    <div className="p-8 max-w-5xl">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-8">
+        <h1 className="text-2xl font-bold text-slate-900">Eventos</h1>
         <Link
           href="/eventos/nuevo"
-          style={{
-            padding: '9px 18px',
-            background: '#111',
-            color: '#fff',
-            borderRadius: 6,
-            fontSize: 14,
-            fontWeight: 500,
-            textDecoration: 'none',
-          }}
+          className="px-4 py-2 bg-[#111827] text-white text-sm font-medium rounded-lg hover:bg-slate-800 transition-colors"
         >
           + Nuevo evento
         </Link>
       </div>
 
       {!eventos?.length ? (
-        <p style={{ color: '#9ca3af', fontSize: 14 }}>Sin eventos registrados.</p>
+        <div className="bg-white border border-slate-200 rounded-xl p-12 text-center shadow-sm">
+          <p className="text-slate-400 text-sm mb-4">No hay eventos registrados.</p>
+          <Link
+            href="/eventos/nuevo"
+            className="px-4 py-2 bg-[#111827] text-white text-sm font-medium rounded-lg hover:bg-slate-800 transition-colors inline-block"
+          >
+            Crear primer evento
+          </Link>
+        </div>
       ) : (
-        <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 8, overflow: 'hidden' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
+        <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+          <table className="w-full text-sm border-collapse">
             <thead>
-              <tr style={{ background: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
-                <th style={{ textAlign: 'left', padding: '10px 16px', fontWeight: 600, color: '#374151' }}>Nombre</th>
-                <th style={{ textAlign: 'left', padding: '10px 16px', fontWeight: 600, color: '#374151' }}>Ciudad</th>
-                <th style={{ textAlign: 'left', padding: '10px 16px', fontWeight: 600, color: '#374151' }}>Fechas</th>
-                <th style={{ textAlign: 'left', padding: '10px 16px', fontWeight: 600, color: '#374151' }}>Parejas</th>
-                <th style={{ textAlign: 'left', padding: '10px 16px', fontWeight: 600, color: '#374151' }}>Estado</th>
+              <tr className="bg-slate-50 border-b border-slate-200">
+                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Nombre</th>
+                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Ciudad / País</th>
+                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Fechas</th>
+                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Parejas</th>
+                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Estado</th>
+                <th className="px-4 py-3"></th>
               </tr>
             </thead>
             <tbody>
               {eventos.map((ev, i) => (
-                <tr
-                  key={ev.id}
-                  style={{ borderBottom: i < eventos.length - 1 ? '1px solid #f3f4f6' : 'none' }}
-                >
-                  <td style={{ padding: '12px 16px' }}>
+                <tr key={ev.id} className={`hover:bg-slate-50 transition-colors ${i < eventos.length - 1 ? 'border-b border-slate-100' : ''}`}>
+                  <td className="px-4 py-3">
                     <Link
                       href={`/eventos/${ev.id}`}
-                      style={{ fontWeight: 500, color: '#111', textDecoration: 'none' }}
+                      className="font-medium text-slate-900 hover:text-slate-600 transition-colors"
                     >
                       {ev.nombre}
                     </Link>
                   </td>
-                  <td style={{ padding: '12px 16px', color: '#6b7280' }}>{ev.ciudad ?? '—'}</td>
-                  <td style={{ padding: '12px 16px', color: '#6b7280' }}>
+                  <td className="px-4 py-3 text-slate-500">
+                    {[ev.ciudad, ev.pais].filter(Boolean).join(', ') || '—'}
+                  </td>
+                  <td className="px-4 py-3 text-slate-500">
                     {formatDate(ev.fecha_inicio)} – {formatDate(ev.fecha_fin)}
                   </td>
-                  <td style={{ padding: '12px 16px', color: '#6b7280' }}>{ev.n_parejas ?? 0}</td>
-                  <td style={{ padding: '12px 16px' }}><StatusBadge status={ev.status} /></td>
+                  <td className="px-4 py-3 text-slate-500">{ev.n_parejas ?? 0}</td>
+                  <td className="px-4 py-3"><StatusBadge status={ev.status} /></td>
+                  <td className="px-4 py-3">
+                    <Link href={`/eventos/${ev.id}`} className="text-xs text-slate-400 hover:text-slate-600 transition-colors">
+                      Ver →
+                    </Link>
+                  </td>
                 </tr>
               ))}
             </tbody>

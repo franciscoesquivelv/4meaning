@@ -16,17 +16,14 @@ export default async function ParticipantLayout({ children }: { children: React.
 
   if (!profile) redirect('/login')
 
-  // Staff/admin can also access participant views (e.g. for impersonation / preview)
   if (!['participant', 'super_admin', 'admin', 'staff'].includes(profile.role)) {
     redirect('/login')
   }
 
-  // Redirect non-participants who shouldn't be here back to admin dashboard
   if (['super_admin', 'admin', 'staff'].includes(profile.role)) {
     redirect('/dashboard')
   }
 
-  // Try to get family / event for header
   const { data: family } = await supabase
     .from('families')
     .select('nombre_familia, event_id, events(nombre)')
@@ -38,29 +35,18 @@ export default async function ParticipantLayout({ children }: { children: React.
   const eventName = family ? (family.events as unknown as { nombre: string } | null)?.nombre : null
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f9fafb' }}>
+    <div className="min-h-screen bg-[#0C0C0C] text-[#F5F0E8]">
       {/* Header */}
-      <header style={{
-        position: 'sticky',
-        top: 0,
-        background: '#fff',
-        borderBottom: '1px solid #e5e7eb',
-        padding: '0 20px',
-        height: 56,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        zIndex: 40,
-      }}>
-        <span style={{ fontWeight: 700, fontSize: 16 }}>Trascendencia</span>
-        <div style={{ textAlign: 'right' }}>
-          {eventName && <div style={{ fontSize: 12, color: '#6b7280' }}>{eventName}</div>}
-          {firstName && <div style={{ fontSize: 13, fontWeight: 500 }}>{firstName}</div>}
+      <header className="sticky top-0 bg-[#111111] border-b border-[#2A2A2A] h-14 flex items-center justify-between px-5 z-40">
+        <span className="text-xs font-medium tracking-widest text-[#A09A8F] uppercase">Trascendencia</span>
+        <div className="text-right">
+          {eventName && <div className="text-xs text-[#A09A8F]">{eventName}</div>}
+          {firstName && <div className="text-sm font-medium text-[#F5F0E8]">{firstName}</div>}
         </div>
       </header>
 
-      {/* Content with bottom padding for nav */}
-      <main style={{ paddingBottom: 72 }}>
+      {/* Content */}
+      <main className="pb-20 max-w-lg mx-auto">
         {children}
       </main>
 

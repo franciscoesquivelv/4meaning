@@ -31,18 +31,10 @@ export default function ApproveButton({ agreementId, adminId }: { agreementId: s
     <button
       onClick={handleApprove}
       disabled={loading}
-      style={{
-        padding: '6px 14px',
-        background: '#166534',
-        color: '#fff',
-        border: 'none',
-        borderRadius: 6,
-        fontSize: 12,
-        fontWeight: 600,
-        cursor: loading ? 'not-allowed' : 'pointer',
-        opacity: loading ? 0.7 : 1,
-        whiteSpace: 'nowrap',
-      }}
+      className={[
+        'px-3 py-1.5 bg-[#16A34A] text-white text-xs font-semibold rounded-lg transition-opacity whitespace-nowrap cursor-pointer',
+        loading ? 'opacity-60 cursor-not-allowed' : 'hover:bg-green-700',
+      ].join(' ')}
     >
       {loading ? 'Aprobando...' : 'Aprobar'}
     </button>

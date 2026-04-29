@@ -5,12 +5,24 @@ import { usePathname } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
 import { useRouter } from 'next/navigation'
 
-const navItems = [
-  { href: '/dashboard', label: 'Dashboard' },
-  { href: '/eventos', label: 'Eventos' },
+interface NavItem {
+  href: string
+  label: string
+  icon: string
+  comingSoon?: boolean
+}
+
+const navItems: NavItem[] = [
+  { href: '/dashboard', label: 'Dashboard', icon: '▣' },
+  { href: '/eventos', label: 'Eventos', icon: '◫' },
+  { href: '/equipo', label: 'Equipo', icon: '◈', comingSoon: true },
 ]
 
-export default function AdminNav() {
+interface AdminNavProps {
+  userEmail?: string
+}
+
+export default function AdminNav({ userEmail }: AdminNavProps) {
   const pathname = usePathname()
   const router = useRouter()
 
@@ -25,60 +37,55 @@ export default function AdminNav() {
   }
 
   return (
-    <aside style={{
-      width: 220,
-      minHeight: '100vh',
-      background: '#111',
-      color: '#fff',
-      display: 'flex',
-      flexDirection: 'column',
-      padding: '24px 0',
-      flexShrink: 0,
-    }}>
-      <div style={{ padding: '0 20px 24px', borderBottom: '1px solid #333' }}>
-        <span style={{ fontWeight: 700, fontSize: 18, letterSpacing: '-0.5px' }}>
-          Trascendencia
-        </span>
-        <div style={{ fontSize: 11, color: '#666', marginTop: 2 }}>Portal Admin</div>
+    <aside className="w-[240px] min-h-screen bg-[#111111] flex flex-col flex-shrink-0 border-r border-[#1F2937]">
+      {/* Brand */}
+      <div className="px-5 py-6 border-b border-[#1F2937]">
+        <div className="text-white font-semibold text-base tracking-tight">Trascendencia</div>
+        <div className="text-[#6B7280] text-xs mt-0.5">Portal de gestión</div>
       </div>
 
-      <nav style={{ flex: 1, padding: '16px 0' }}>
+      {/* Nav */}
+      <nav className="flex-1 py-4">
         {navItems.map(item => {
           const active = pathname === item.href || pathname.startsWith(item.href + '/')
+          if (item.comingSoon) {
+            return (
+              <div
+                key={item.href}
+                className="flex items-center gap-3 px-5 py-2.5 text-sm text-[#374151] cursor-default"
+              >
+                <span className="text-base w-5 text-center opacity-40">{item.icon}</span>
+                <span className="opacity-40">{item.label}</span>
+                <span className="ml-auto text-[10px] text-[#374151] opacity-50 font-medium uppercase tracking-wider">pronto</span>
+              </div>
+            )
+          }
           return (
             <Link
               key={item.href}
               href={item.href}
-              style={{
-                display: 'block',
-                padding: '10px 20px',
-                color: active ? '#fff' : '#aaa',
-                background: active ? '#222' : 'transparent',
-                textDecoration: 'none',
-                fontSize: 14,
-                fontWeight: active ? 600 : 400,
-                borderLeft: active ? '3px solid #fff' : '3px solid transparent',
-              }}
+              className={[
+                'flex items-center gap-3 px-5 py-2.5 text-sm transition-colors',
+                active
+                  ? 'text-white bg-white/5 border-l-2 border-white'
+                  : 'text-[#9CA3AF] border-l-2 border-transparent hover:text-white hover:bg-white/5',
+              ].join(' ')}
             >
-              {item.label}
+              <span className="text-base w-5 text-center">{item.icon}</span>
+              <span className={active ? 'font-medium' : ''}>{item.label}</span>
             </Link>
           )
         })}
       </nav>
 
-      <div style={{ padding: '16px 20px', borderTop: '1px solid #333' }}>
+      {/* Bottom */}
+      <div className="px-5 py-4 border-t border-[#1F2937]">
+        {userEmail && (
+          <div className="text-[#6B7280] text-xs mb-3 truncate">{userEmail}</div>
+        )}
         <button
           onClick={handleLogout}
-          style={{
-            width: '100%',
-            padding: '8px 0',
-            background: 'transparent',
-            color: '#aaa',
-            border: '1px solid #333',
-            borderRadius: 6,
-            fontSize: 13,
-            cursor: 'pointer',
-          }}
+          className="w-full py-2 text-sm text-[#9CA3AF] border border-[#374151] rounded-lg hover:text-white hover:border-[#6B7280] transition-colors cursor-pointer bg-transparent"
         >
           Cerrar sesión
         </button>

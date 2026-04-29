@@ -3,16 +3,18 @@ import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
 
 function StatusBadge({ status }: { status: string }) {
-  const map: Record<string, { bg: string; color: string; label: string }> = {
-    invited:   { bg: '#ede9fe', color: '#6d28d9', label: 'Invitado' },
-    confirmed: { bg: '#dbeafe', color: '#1e40af', label: 'Confirmado' },
-    completed: { bg: '#f3f4f6', color: '#6b7280', label: 'Completado' },
-    pending:   { bg: '#fef9c3', color: '#854d0e', label: 'Pendiente' },
+  const map: Record<string, string> = {
+    invited:   'bg-violet-100 text-violet-700',
+    confirmed: 'bg-[#DBEAFE] text-[#2563EB]',
+    completed: 'bg-slate-100 text-slate-500',
+    pending:   'bg-[#FEF9C3] text-[#D97706]',
   }
-  const s = map[status] ?? { bg: '#f3f4f6', color: '#374151', label: status }
+  const labels: Record<string, string> = {
+    invited: 'Invitado', confirmed: 'Confirmado', completed: 'Completado', pending: 'Pendiente',
+  }
   return (
-    <span style={{ padding: '2px 8px', borderRadius: 12, fontSize: 12, fontWeight: 600, background: s.bg, color: s.color }}>
-      {s.label}
+    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${map[status] ?? 'bg-slate-100 text-slate-600'}`}>
+      {labels[status] ?? status}
     </span>
   )
 }
@@ -36,73 +38,79 @@ export default async function FamiliasPage({ params }: { params: { id: string } 
     .order('nombre_familia')
 
   return (
-    <div style={{ padding: 32, maxWidth: 900 }}>
-      <div style={{ marginBottom: 24 }}>
-        <Link href={`/eventos/${params.id}`} style={{ color: '#6b7280', fontSize: 14, textDecoration: 'none' }}>
-          ← {evento.nombre}
+    <div className="p-8 max-w-5xl">
+      {/* Breadcrumb */}
+      <nav className="flex items-center gap-2 text-sm text-slate-500 mb-4">
+        <Link href="/eventos" className="hover:text-slate-700 transition-colors">Eventos</Link>
+        <span>/</span>
+        <Link href={`/eventos/${params.id}`} className="hover:text-slate-700 transition-colors">{evento.nombre}</Link>
+        <span>/</span>
+        <span className="text-slate-900 font-medium">Familias</span>
+      </nav>
+
+      {/* Header */}
+      <div className="flex items-center justify-between mb-8">
+        <h1 className="text-2xl font-bold text-slate-900">Familias — {evento.nombre}</h1>
+        <Link
+          href={`/eventos/${params.id}/familias/nueva`}
+          className="px-4 py-2 bg-[#111827] text-white text-sm font-medium rounded-lg hover:bg-slate-800 transition-colors"
+        >
+          + Agregar familia
         </Link>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 12 }}>
-          <h1 style={{ fontSize: 22, fontWeight: 700, margin: 0 }}>Familias</h1>
-          <Link
-            href={`/eventos/${params.id}/familias/nueva`}
-            style={{ padding: '8px 16px', background: '#111', color: '#fff', borderRadius: 6, fontSize: 13, fontWeight: 600, textDecoration: 'none' }}
-          >
-            + Agregar familia
-          </Link>
-        </div>
       </div>
 
       {!families?.length ? (
-        <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 10, padding: 32, textAlign: 'center', color: '#9ca3af' }}>
-          <p style={{ fontSize: 15, marginBottom: 16 }}>No hay familias registradas en este evento.</p>
+        <div className="bg-white border border-slate-200 rounded-xl p-12 text-center shadow-sm">
+          <p className="text-slate-400 text-sm mb-4">No hay familias registradas en este evento.</p>
           <Link
             href={`/eventos/${params.id}/familias/nueva`}
-            style={{ padding: '8px 16px', background: '#111', color: '#fff', borderRadius: 6, fontSize: 13, fontWeight: 600, textDecoration: 'none' }}
+            className="px-4 py-2 bg-[#111827] text-white text-sm font-medium rounded-lg hover:bg-slate-800 transition-colors inline-block"
           >
             Agregar primera familia
           </Link>
         </div>
       ) : (
-        <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 10, overflow: 'hidden' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+          <table className="w-full text-sm border-collapse">
             <thead>
-              <tr style={{ background: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
-                <th style={thStyle}>Familia</th>
-                <th style={thStyle}>Integrantes</th>
-                <th style={thStyle}>Habitación</th>
-                <th style={thStyle}>Status</th>
-                <th style={thStyle}>Acciones</th>
+              <tr className="bg-slate-50 border-b border-slate-200">
+                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Familia</th>
+                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Persona 1</th>
+                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Persona 2</th>
+                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Habitación</th>
+                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Estado</th>
+                <th className="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Acciones</th>
               </tr>
             </thead>
             <tbody>
               {families.map((f, i) => (
-                <tr key={f.id} style={{ borderBottom: i < families.length - 1 ? '1px solid #f3f4f6' : 'none' }}>
-                  <td style={tdStyle}>
-                    <div style={{ fontWeight: 600, fontSize: 14 }}>{f.nombre_familia}</div>
+                <tr key={f.id} className={`hover:bg-slate-50 transition-colors ${i < families.length - 1 ? 'border-b border-slate-100' : ''}`}>
+                  <td className="px-4 py-3">
+                    <div className="font-semibold text-slate-900">{f.nombre_familia}</div>
                   </td>
-                  <td style={tdStyle}>
-                    <div style={{ fontSize: 13 }}>
-                      <div>{f.nombre1} <span style={{ color: '#9ca3af', fontSize: 12 }}>{f.email1}</span></div>
-                      {f.nombre2 && (
-                        <div style={{ marginTop: 2 }}>{f.nombre2} <span style={{ color: '#9ca3af', fontSize: 12 }}>{f.email2}</span></div>
-                      )}
-                    </div>
+                  <td className="px-4 py-3">
+                    <div className="text-slate-900">{f.nombre1}</div>
+                    {f.email1 && <div className="text-xs text-slate-400 mt-0.5">{f.email1}</div>}
                   </td>
-                  <td style={tdStyle}>
-                    <span style={{ fontSize: 13, color: '#374151' }}>{f.habitacion || '—'}</span>
+                  <td className="px-4 py-3">
+                    {f.nombre2 ? (
+                      <>
+                        <div className="text-slate-900">{f.nombre2}</div>
+                        {f.email2 && <div className="text-xs text-slate-400 mt-0.5">{f.email2}</div>}
+                      </>
+                    ) : (
+                      <span className="text-slate-300">—</span>
+                    )}
                   </td>
-                  <td style={tdStyle}>
-                    <StatusBadge status={f.status} />
-                  </td>
-                  <td style={tdStyle}>
-                    <div style={{ display: 'flex', gap: 8 }}>
-                      <Link
-                        href={`/eventos/${params.id}/familias/${f.id}/editar`}
-                        style={{ fontSize: 12, color: '#374151', textDecoration: 'none', padding: '4px 10px', border: '1px solid #d1d5db', borderRadius: 5, fontWeight: 500 }}
-                      >
-                        Editar
-                      </Link>
-                    </div>
+                  <td className="px-4 py-3 text-slate-600">{f.habitacion || '—'}</td>
+                  <td className="px-4 py-3"><StatusBadge status={f.status} /></td>
+                  <td className="px-4 py-3">
+                    <Link
+                      href={`/eventos/${params.id}/familias/${f.id}/editar`}
+                      className="text-xs text-slate-600 border border-slate-200 px-2.5 py-1 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-colors font-medium"
+                    >
+                      Editar
+                    </Link>
                   </td>
                 </tr>
               ))}
@@ -112,19 +120,4 @@ export default async function FamiliasPage({ params }: { params: { id: string } 
       )}
     </div>
   )
-}
-
-const thStyle: React.CSSProperties = {
-  padding: '10px 16px',
-  textAlign: 'left',
-  fontSize: 12,
-  fontWeight: 600,
-  color: '#6b7280',
-  textTransform: 'uppercase',
-  letterSpacing: '0.05em',
-}
-
-const tdStyle: React.CSSProperties = {
-  padding: '12px 16px',
-  verticalAlign: 'middle',
 }

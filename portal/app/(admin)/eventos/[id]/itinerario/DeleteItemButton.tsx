@@ -25,17 +25,10 @@ export default function DeleteItemButton({ itemId }: { itemId: string }) {
     <button
       onClick={handleDelete}
       disabled={loading}
-      style={{
-        padding: '4px 10px',
-        background: 'transparent',
-        border: '1px solid #fca5a5',
-        borderRadius: 6,
-        color: '#ef4444',
-        fontSize: 12,
-        cursor: loading ? 'not-allowed' : 'pointer',
-        opacity: loading ? 0.6 : 1,
-        whiteSpace: 'nowrap',
-      }}
+      className={[
+        'px-2.5 py-1 text-xs text-[#DC2626] border border-[#FCA5A5] rounded-lg transition-colors whitespace-nowrap cursor-pointer bg-transparent',
+        loading ? 'opacity-60 cursor-not-allowed' : 'hover:bg-[#FEE2E2]',
+      ].join(' ')}
     >
       {loading ? '...' : 'Eliminar'}
     </button>

@@ -19,9 +19,11 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   }
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh' }}>
-      <AdminNav />
-      <main style={{ flex: 1, background: '#f9fafb', minHeight: '100vh', overflowY: 'auto' }}>
+    <div className="flex min-h-screen">
+      <div className="fixed top-0 left-0 h-full z-30">
+        <AdminNav userEmail={user.email} />
+      </div>
+      <main className="ml-[240px] flex-1 bg-slate-50 min-h-screen overflow-y-auto">
         {children}
       </main>
     </div>

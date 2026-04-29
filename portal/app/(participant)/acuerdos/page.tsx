@@ -2,28 +2,9 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 
-function StatusBadge({ status }: { status: string }) {
-  const colors: Record<string, { bg: string; color: string }> = {
-    draft:   { bg: '#f3f4f6', color: '#374151' },
-    sent:    { bg: '#fef9c3', color: '#854d0e' },
-    viewed:  { bg: '#e0f2fe', color: '#075985' },
-    signed:  { bg: '#dcfce7', color: '#166534' },
-    approved:{ bg: '#dcfce7', color: '#166534' },
-    rejected:{ bg: '#fee2e2', color: '#991b1b' },
-  }
-  const s = colors[status] ?? { bg: '#f3f4f6', color: '#374151' }
-  return (
-    <span style={{
-      padding: '2px 8px',
-      borderRadius: 12,
-      fontSize: 11,
-      fontWeight: 600,
-      background: s.bg,
-      color: s.color,
-    }}>
-      {status}
-    </span>
-  )
+const statusLabels: Record<string, string> = {
+  draft: 'Borrador', sent: 'Enviado', viewed: 'Visto',
+  signed: 'Firmado', approved: 'Aprobado', rejected: 'Rechazado',
 }
 
 export default async function AcuerdosPage() {
@@ -40,9 +21,11 @@ export default async function AcuerdosPage() {
 
   if (!family) {
     return (
-      <div style={{ padding: 24, maxWidth: 480, margin: '0 auto' }}>
-        <h1 style={{ fontSize: 22, fontWeight: 700, marginBottom: 16 }}>Acuerdos</h1>
-        <p style={{ color: '#6b7280', fontSize: 14 }}>No tienes una familia asignada todavía.</p>
+      <div className="px-5 pt-6">
+        <h1 className="text-xl font-bold text-[#F5F0E8] mb-4">Acuerdos</h1>
+        <div className="bg-[#181818] border border-[#2A2A2A] rounded-xl p-5 text-[#A09A8F] text-sm">
+          No tienes una familia asignada todavía.
+        </div>
       </div>
     )
   }
@@ -60,58 +43,48 @@ export default async function AcuerdosPage() {
   const pct = total > 0 ? Math.round((doneCount / total) * 100) : 0
 
   return (
-    <div style={{ padding: 24, maxWidth: 480, margin: '0 auto' }}>
-      <h1 style={{ fontSize: 22, fontWeight: 700, marginBottom: 4 }}>Acuerdos</h1>
-      <p style={{ color: '#6b7280', fontSize: 14, marginBottom: 24 }}>Familia {family.nombre_familia}</p>
+    <div className="px-5 pt-6">
+      <h1 className="text-xl font-bold text-[#F5F0E8] mb-1">Acuerdos</h1>
+      <p className="text-sm text-[#A09A8F] mb-6">Familia {family.nombre_familia}</p>
 
       {/* Progress bar */}
       {total > 0 && (
-        <div style={{ marginBottom: 32 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8, fontSize: 13 }}>
-            <span style={{ color: '#374151', fontWeight: 500 }}>Progreso</span>
-            <span style={{ color: '#6b7280' }}>{doneCount}/{total} completados</span>
+        <div className="mb-8 bg-[#181818] border border-[#2A2A2A] rounded-xl p-4">
+          <div className="flex items-center justify-between mb-3 text-sm">
+            <span className="text-[#F5F0E8] font-medium">Progreso</span>
+            <span className="text-[#A09A8F]">{doneCount}/{total} completados</span>
           </div>
-          <div style={{ background: '#e5e7eb', borderRadius: 8, height: 8, overflow: 'hidden' }}>
-            <div style={{
-              width: `${pct}%`,
-              height: '100%',
-              background: pct === 100 ? '#16a34a' : '#111',
-              borderRadius: 8,
-              transition: 'width 0.3s',
-            }} />
+          <div className="bg-[#2A2A2A] rounded-full h-2 overflow-hidden">
+            <div
+              className="h-full rounded-full transition-all duration-500"
+              style={{
+                width: `${pct}%`,
+                background: pct === 100 ? '#4ADE80' : '#C9A96E',
+              }}
+            />
           </div>
-          <div style={{ marginTop: 4, fontSize: 12, color: '#9ca3af' }}>{pct}%</div>
+          <div className="text-right text-xs text-[#6B7280] mt-1">{pct}%</div>
         </div>
       )}
 
       {/* Pending */}
       {pending.length > 0 && (
-        <section style={{ marginBottom: 32 }}>
-          <h2 style={{ fontSize: 14, fontWeight: 600, color: '#374151', marginBottom: 12, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+        <section className="mb-8">
+          <h2 className="text-xs font-semibold text-[#A09A8F] uppercase tracking-wider mb-3">
             Por completar ({pending.length})
           </h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div className="space-y-2">
             {pending.map(ag => (
               <Link
                 key={ag.id}
                 href={`/acuerdos/${ag.id}`}
-                style={{
-                  background: '#fff',
-                  border: '1px solid #e5e7eb',
-                  borderRadius: 10,
-                  padding: '14px 16px',
-                  textDecoration: 'none',
-                  color: '#111',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                }}
+                className="flex items-center justify-between p-4 bg-[#181818] border border-[#2A2A2A] rounded-xl hover:border-[#C9A96E]/40 transition-colors"
               >
                 <div>
-                  <div style={{ fontWeight: 500, fontSize: 14 }}>{ag.nombre}</div>
-                  <div style={{ color: '#9ca3af', fontSize: 12, marginTop: 2 }}>{ag.type}</div>
+                  <div className="font-medium text-[#F5F0E8] text-sm">{ag.nombre}</div>
+                  <div className="text-xs text-[#6B7280] mt-0.5 uppercase">{ag.type}</div>
                 </div>
-                <StatusBadge status={ag.status} />
+                <span className="text-[#C9A96E] text-lg ml-4 flex-shrink-0">→</span>
               </Link>
             ))}
           </div>
@@ -121,31 +94,21 @@ export default async function AcuerdosPage() {
       {/* Completed */}
       {completed.length > 0 && (
         <section>
-          <h2 style={{ fontSize: 14, fontWeight: 600, color: '#374151', marginBottom: 12, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+          <h2 className="text-xs font-semibold text-[#A09A8F] uppercase tracking-wider mb-3">
             Completados ({completed.length})
           </h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div className="space-y-2">
             {completed.map(ag => (
               <Link
                 key={ag.id}
                 href={`/acuerdos/${ag.id}`}
-                style={{
-                  background: '#f9fafb',
-                  border: '1px solid #e5e7eb',
-                  borderRadius: 10,
-                  padding: '14px 16px',
-                  textDecoration: 'none',
-                  color: '#6b7280',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                }}
+                className="flex items-center justify-between p-4 bg-[#181818] border border-[#2A2A2A] rounded-xl opacity-70 hover:opacity-100 transition-opacity"
               >
                 <div>
-                  <div style={{ fontWeight: 500, fontSize: 14, color: '#374151' }}>{ag.nombre}</div>
-                  <div style={{ fontSize: 12, marginTop: 2 }}>{ag.type}</div>
+                  <div className="font-medium text-[#F5F0E8] text-sm">{ag.nombre}</div>
+                  <div className="text-xs text-[#6B7280] mt-0.5 uppercase">{ag.type}</div>
                 </div>
-                <StatusBadge status={ag.status} />
+                <span className="text-[#4ADE80] text-lg flex-shrink-0">✓</span>
               </Link>
             ))}
           </div>
@@ -153,7 +116,9 @@ export default async function AcuerdosPage() {
       )}
 
       {total === 0 && (
-        <p style={{ color: '#9ca3af', fontSize: 14 }}>No tienes acuerdos asignados.</p>
+        <div className="bg-[#181818] border border-[#2A2A2A] rounded-xl p-6 text-center text-[#A09A8F] text-sm">
+          No tienes acuerdos asignados aún.
+        </div>
       )}
     </div>
   )

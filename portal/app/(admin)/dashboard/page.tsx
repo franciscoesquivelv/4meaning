@@ -1,26 +1,23 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import Link from 'next/link'
 
 function StatusBadge({ status }: { status: string }) {
-  const colors: Record<string, { bg: string; color: string }> = {
-    draft:     { bg: '#f3f4f6', color: '#374151' },
-    active:    { bg: '#dcfce7', color: '#166534' },
-    completed: { bg: '#dbeafe', color: '#1e40af' },
-    archived:  { bg: '#f3f4f6', color: '#6b7280' },
-    signed:    { bg: '#fef9c3', color: '#854d0e' },
-    approved:  { bg: '#dcfce7', color: '#166534' },
+  const map: Record<string, string> = {
+    draft:     'bg-slate-100 text-slate-600',
+    active:    'bg-[#DCFCE7] text-[#16A34A]',
+    completed: 'bg-[#DBEAFE] text-[#2563EB]',
+    archived:  'bg-slate-100 text-slate-500',
+    signed:    'bg-[#FEF9C3] text-[#D97706]',
+    approved:  'bg-[#DCFCE7] text-[#16A34A]',
   }
-  const s = colors[status] ?? { bg: '#f3f4f6', color: '#374151' }
+  const labels: Record<string, string> = {
+    draft: 'Borrador', active: 'Activo', completed: 'Completado',
+    archived: 'Archivado', signed: 'Firmado', approved: 'Aprobado',
+  }
   return (
-    <span style={{
-      padding: '2px 8px',
-      borderRadius: 12,
-      fontSize: 12,
-      fontWeight: 600,
-      background: s.bg,
-      color: s.color,
-    }}>
-      {status}
+    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${map[status] ?? 'bg-slate-100 text-slate-600'}`}>
+      {labels[status] ?? status}
     </span>
   )
 }
@@ -28,6 +25,17 @@ function StatusBadge({ status }: { status: string }) {
 function formatDate(d: string | null) {
   if (!d) return '—'
   return new Date(d).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' })
+}
+
+function getGreeting() {
+  const h = new Date().getHours()
+  if (h < 12) return 'Buenos días'
+  if (h < 19) return 'Buenas tardes'
+  return 'Buenas noches'
+}
+
+function getTodayStr() {
+  return new Date().toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
 }
 
 export default async function DashboardPage() {
@@ -48,12 +56,12 @@ export default async function DashboardPage() {
     { data: activeEvents },
     { data: pendingAgreements },
   ] = await Promise.all([
-    supabase.from('events').select('*', { count: 'exact', head: true }),
+    supabase.from('events').select('*', { count: 'exact', head: true }).in('status', ['draft', 'active']),
     supabase.from('families').select('*', { count: 'exact', head: true }),
     supabase.from('agreements').select('*', { count: 'exact', head: true }).eq('status', 'signed'),
     supabase
       .from('events')
-      .select('id, nombre, ciudad, fecha_inicio, fecha_fin, status')
+      .select('id, nombre, ciudad, pais, fecha_inicio, fecha_fin, n_parejas, status')
       .in('status', ['draft', 'active'])
       .order('fecha_inicio', { ascending: false }),
     supabase
@@ -64,57 +72,67 @@ export default async function DashboardPage() {
       .limit(10),
   ])
 
+  const firstName = profile?.full_name?.split(' ')[0] ?? user.email?.split('@')[0] ?? 'Admin'
+
   return (
-    <div style={{ padding: 32, maxWidth: 960 }}>
-      <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 4 }}>
-        Hola, {profile?.full_name ?? user.email}
-      </h1>
-      <p style={{ color: '#6b7280', marginBottom: 32 }}>Resumen del portal Trascendencia</p>
+    <div className="p-8 max-w-5xl">
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-slate-900">
+          {getGreeting()}, {firstName}
+        </h1>
+        <p className="text-slate-500 text-sm mt-1 capitalize">{getTodayStr()}</p>
+      </div>
 
       {/* Stats */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 40 }}>
+      <div className="grid grid-cols-3 gap-4 mb-8">
         {[
-          { label: 'Eventos', value: eventsCount ?? 0 },
-          { label: 'Familias', value: familiesCount ?? 0 },
-          { label: 'Acuerdos pendientes (firmados)', value: pendingAgreementsCount ?? 0 },
+          { label: 'Eventos activos', value: eventsCount ?? 0 },
+          { label: 'Familias totales', value: familiesCount ?? 0 },
+          { label: 'Acuerdos por aprobar', value: pendingAgreementsCount ?? 0 },
         ].map(stat => (
-          <div key={stat.label} style={{
-            background: '#fff',
-            border: '1px solid #e5e7eb',
-            borderRadius: 8,
-            padding: '20px 24px',
-          }}>
-            <div style={{ fontSize: 32, fontWeight: 700 }}>{stat.value}</div>
-            <div style={{ fontSize: 13, color: '#6b7280', marginTop: 4 }}>{stat.label}</div>
+          <div key={stat.label} className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+            <div className="text-2xl font-bold text-slate-900">{stat.value}</div>
+            <div className="text-sm text-slate-500 mt-1">{stat.label}</div>
           </div>
         ))}
       </div>
 
       {/* Active Events */}
-      <section style={{ marginBottom: 40 }}>
-        <h2 style={{ fontSize: 16, fontWeight: 600, marginBottom: 16 }}>Eventos activos / borrador</h2>
+      <section className="mb-8">
+        <h2 className="text-sm font-semibold text-slate-900 mb-4">Eventos activos</h2>
         {!activeEvents?.length ? (
-          <p style={{ color: '#9ca3af', fontSize: 14 }}>Sin eventos activos.</p>
+          <div className="bg-white border border-slate-200 rounded-xl p-8 text-center">
+            <p className="text-slate-400 text-sm">Sin eventos activos.</p>
+          </div>
         ) : (
-          <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 8, overflow: 'hidden' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
+          <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+            <table className="w-full text-sm border-collapse">
               <thead>
-                <tr style={{ background: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
-                  <th style={{ textAlign: 'left', padding: '10px 16px', fontWeight: 600, color: '#374151' }}>Nombre</th>
-                  <th style={{ textAlign: 'left', padding: '10px 16px', fontWeight: 600, color: '#374151' }}>Ciudad</th>
-                  <th style={{ textAlign: 'left', padding: '10px 16px', fontWeight: 600, color: '#374151' }}>Fechas</th>
-                  <th style={{ textAlign: 'left', padding: '10px 16px', fontWeight: 600, color: '#374151' }}>Estado</th>
+                <tr className="bg-slate-50 border-b border-slate-200">
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Nombre</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Ubicación</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Fechas</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Parejas</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Estado</th>
                 </tr>
               </thead>
               <tbody>
                 {activeEvents.map((ev, i) => (
-                  <tr key={ev.id} style={{ borderBottom: i < activeEvents.length - 1 ? '1px solid #f3f4f6' : 'none' }}>
-                    <td style={{ padding: '12px 16px', fontWeight: 500 }}>{ev.nombre}</td>
-                    <td style={{ padding: '12px 16px', color: '#6b7280' }}>{ev.ciudad ?? '—'}</td>
-                    <td style={{ padding: '12px 16px', color: '#6b7280' }}>
+                  <tr key={ev.id} className={`hover:bg-slate-50 transition-colors ${i < activeEvents.length - 1 ? 'border-b border-slate-100' : ''}`}>
+                    <td className="px-4 py-3">
+                      <Link href={`/eventos/${ev.id}`} className="font-medium text-slate-900 hover:text-slate-600 transition-colors">
+                        {ev.nombre}
+                      </Link>
+                    </td>
+                    <td className="px-4 py-3 text-slate-500">
+                      {[ev.ciudad, ev.pais].filter(Boolean).join(', ') || '—'}
+                    </td>
+                    <td className="px-4 py-3 text-slate-500">
                       {formatDate(ev.fecha_inicio)} – {formatDate(ev.fecha_fin)}
                     </td>
-                    <td style={{ padding: '12px 16px' }}><StatusBadge status={ev.status} /></td>
+                    <td className="px-4 py-3 text-slate-500">{ev.n_parejas ?? 0}</td>
+                    <td className="px-4 py-3"><StatusBadge status={ev.status} /></td>
                   </tr>
                 ))}
               </tbody>
@@ -125,27 +143,33 @@ export default async function DashboardPage() {
 
       {/* Pending Agreements */}
       <section>
-        <h2 style={{ fontSize: 16, fontWeight: 600, marginBottom: 16 }}>Acuerdos pendientes de aprobación</h2>
+        <h2 className="text-sm font-semibold text-slate-900 mb-4">Pendientes de aprobación</h2>
         {!pendingAgreements?.length ? (
-          <p style={{ color: '#9ca3af', fontSize: 14 }}>Sin acuerdos pendientes.</p>
+          <div className="bg-white border border-slate-200 rounded-xl p-8 text-center">
+            <p className="text-slate-400 text-sm">Sin acuerdos pendientes. Todo al día.</p>
+          </div>
         ) : (
-          <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 8, overflow: 'hidden' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 14 }}>
+          <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+            <table className="w-full text-sm border-collapse">
               <thead>
-                <tr style={{ background: '#f9fafb', borderBottom: '1px solid #e5e7eb' }}>
-                  <th style={{ textAlign: 'left', padding: '10px 16px', fontWeight: 600, color: '#374151' }}>Familia</th>
-                  <th style={{ textAlign: 'left', padding: '10px 16px', fontWeight: 600, color: '#374151' }}>Acuerdo</th>
-                  <th style={{ textAlign: 'left', padding: '10px 16px', fontWeight: 600, color: '#374151' }}>Firmado</th>
+                <tr className="bg-slate-50 border-b border-slate-200">
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Familia</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Acuerdo</th>
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Firmado</th>
+                  <th className="px-4 py-3"></th>
                 </tr>
               </thead>
               <tbody>
                 {pendingAgreements.map((ag, i) => {
                   const family = ag.families as unknown as { nombre_familia: string } | null
                   return (
-                    <tr key={ag.id} style={{ borderBottom: i < pendingAgreements.length - 1 ? '1px solid #f3f4f6' : 'none' }}>
-                      <td style={{ padding: '12px 16px', fontWeight: 500 }}>{family?.nombre_familia ?? '—'}</td>
-                      <td style={{ padding: '12px 16px', color: '#6b7280' }}>{ag.nombre}</td>
-                      <td style={{ padding: '12px 16px', color: '#6b7280' }}>{ag.signed_at ? formatDate(ag.signed_at) : '—'}</td>
+                    <tr key={ag.id} className={`hover:bg-slate-50 transition-colors ${i < pendingAgreements.length - 1 ? 'border-b border-slate-100' : ''}`}>
+                      <td className="px-4 py-3 font-medium text-slate-900">{family?.nombre_familia ?? '—'}</td>
+                      <td className="px-4 py-3 text-slate-600">{ag.nombre}</td>
+                      <td className="px-4 py-3 text-slate-500">{ag.signed_at ? formatDate(ag.signed_at) : '—'}</td>
+                      <td className="px-4 py-3">
+                        <span className="text-xs text-slate-400">Ver →</span>
+                      </td>
                     </tr>
                   )
                 })}

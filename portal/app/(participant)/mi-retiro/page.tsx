@@ -65,61 +65,57 @@ export default async function MiRetiroPage() {
   const isHappening = daysUntil !== null && daysUntilEnd !== null && daysUntil <= 0 && daysUntilEnd >= 0
 
   return (
-    <div style={{ padding: 24, maxWidth: 480, margin: '0 auto' }}>
-      {/* Greeting */}
-      <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontSize: 26, fontWeight: 700, marginBottom: 4 }}>Hola, {firstName}</h1>
-        {family && (
-          <p style={{ color: '#6b7280', fontSize: 15, margin: 0 }}>Familia {family.nombre_familia}</p>
-        )}
-      </div>
-
+    <div className="px-5 pt-6 pb-4">
       {/* No family */}
       {!family && (
-        <div style={{ background: '#fef9c3', border: '1px solid #fde68a', borderRadius: 10, padding: 20, marginBottom: 24, fontSize: 14, color: '#78350f' }}>
-          Tu cuenta aún no tiene una familia asignada. Contacta al equipo de Trascendencia.
+        <div className="flex flex-col items-center justify-center text-center py-16 px-4">
+          <div className="w-12 h-12 rounded-full bg-[#181818] border border-[#2A2A2A] flex items-center justify-center mb-4 text-[#A09A8F] text-xl">
+            ◎
+          </div>
+          <p className="text-[#F5F0E8] font-medium mb-2">Tu acceso está siendo configurado</p>
+          <p className="text-[#A09A8F] text-sm leading-relaxed">
+            Contacta al equipo de Trascendencia para que asignen tu familia al evento.
+          </p>
         </div>
       )}
 
-      {/* Countdown / Event status */}
+      {/* Event card */}
       {evento && (
-        <div style={{
-          background: isHappening ? '#111' : '#fff',
-          border: `1px solid ${isHappening ? '#111' : '#e5e7eb'}`,
-          borderRadius: 14,
-          padding: 20,
-          marginBottom: 20,
-        }}>
+        <div className="mb-6">
           {isHappening ? (
-            <div style={{ color: '#fff' }}>
-              <div style={{ fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.05em', opacity: 0.7, marginBottom: 6 }}>
-                Ahora mismo
-              </div>
-              <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 4 }}>¡Estás en el retiro!</div>
-              <div style={{ fontSize: 14, opacity: 0.8 }}>{evento.nombre}</div>
+            /* Happening now */
+            <div className="bg-[#C9A96E]/10 border border-[#C9A96E]/30 rounded-2xl p-5 mb-4">
+              <div className="text-xs font-semibold text-[#C9A96E] uppercase tracking-widest mb-2">Ahora mismo</div>
+              <div className="text-xl font-bold text-[#F5F0E8] mb-1">Estás en el retiro</div>
+              <div className="text-sm text-[#A09A8F]">{evento.nombre}</div>
             </div>
           ) : daysUntil !== null && daysUntil > 0 ? (
-            <div>
-              <div style={{ fontSize: 12, fontWeight: 600, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>
-                Cuenta regresiva
+            /* Countdown */
+            <div className="bg-[#181818] border border-[#2A2A2A] rounded-2xl p-5 mb-4">
+              <div className="text-xs font-medium text-[#A09A8F] uppercase tracking-widest mb-3">Cuenta regresiva</div>
+              <div className="flex items-baseline gap-2 mb-3">
+                <span className="text-5xl font-bold text-[#C9A96E] leading-none">{daysUntil}</span>
+                <span className="text-lg text-[#A09A8F] font-medium">días</span>
               </div>
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, marginBottom: 6 }}>
-                <span style={{ fontSize: 40, fontWeight: 800, lineHeight: 1 }}>{daysUntil}</span>
-                <span style={{ fontSize: 16, color: '#6b7280', fontWeight: 500 }}>días</span>
+              <div className="text-base font-semibold text-[#F5F0E8]">{evento.nombre}</div>
+              <div className="mt-3 pt-3 border-t border-[#2A2A2A] flex items-center gap-2 text-xs text-[#A09A8F]">
+                {evento.ubicacion && <span>{evento.ubicacion}</span>}
+                {evento.ciudad && <span>· {evento.ciudad}</span>}
               </div>
-              <div style={{ fontSize: 14, color: '#374151', fontWeight: 500 }}>{evento.nombre}</div>
+              <div className="mt-1 text-xs text-[#6B7280]">
+                {formatDate(evento.fecha_inicio)} – {formatDate(evento.fecha_fin)}
+              </div>
             </div>
           ) : (
-            <div>
-              <div style={{ fontSize: 12, fontWeight: 600, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6 }}>Tu retiro</div>
-              <div style={{ fontSize: 17, fontWeight: 700, marginBottom: 4 }}>{evento.nombre}</div>
-              {evento.ubicacion && <div style={{ fontSize: 14, color: '#6b7280' }}>{evento.ubicacion}</div>}
-            </div>
-          )}
-          {!isHappening && (
-            <div style={{ marginTop: 10, paddingTop: 10, borderTop: '1px solid #f3f4f6', fontSize: 13, color: '#9ca3af' }}>
-              {formatDate(evento.fecha_inicio)} – {formatDate(evento.fecha_fin)}
-              {evento.ciudad && ` · ${evento.ciudad}`}
+            /* Default / past */
+            <div className="bg-[#181818] border border-[#2A2A2A] rounded-2xl p-5 mb-4">
+              <div className="text-xs font-medium text-[#A09A8F] uppercase tracking-widest mb-2">Tu retiro</div>
+              <div className="text-lg font-bold text-[#F5F0E8] mb-1">{evento.nombre}</div>
+              {evento.ubicacion && <div className="text-sm text-[#A09A8F]">{evento.ubicacion}</div>}
+              <div className="mt-3 pt-3 border-t border-[#2A2A2A] text-xs text-[#6B7280]">
+                {formatDate(evento.fecha_inicio)} – {formatDate(evento.fecha_fin)}
+                {evento.ciudad && ` · ${evento.ciudad}`}
+              </div>
             </div>
           )}
         </div>
@@ -127,96 +123,76 @@ export default async function MiRetiroPage() {
 
       {/* Action items */}
       {family && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 24 }}>
+        <div className="space-y-3 mb-6">
           {/* Intake form */}
           {!intakeSubmitted && (
             <Link
               href="/formulario"
-              style={{
-                background: '#fff',
-                border: '2px solid #111',
-                borderRadius: 12,
-                padding: 18,
-                textDecoration: 'none',
-                color: '#111',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
+              className="flex items-center justify-between p-4 bg-[#181818] border border-[#C9A96E]/40 rounded-xl hover:border-[#C9A96E] transition-colors"
             >
               <div>
-                <div style={{ fontWeight: 600, fontSize: 15, marginBottom: 2 }}>Completa tu formulario</div>
-                <div style={{ color: '#6b7280', fontSize: 13 }}>Cuéntanos su historia antes del retiro</div>
+                <div className="font-semibold text-[#F5F0E8] text-sm mb-0.5">Completa tu perfil</div>
+                <div className="text-xs text-[#A09A8F]">Cuéntanos su historia antes del retiro</div>
               </div>
-              <span style={{ fontSize: 20 }}>→</span>
+              <span className="text-[#C9A96E] text-lg">→</span>
             </Link>
           )}
 
           {intakeSubmitted && (
-            <div style={{ background: '#f0fdf4', border: '1px solid #bbf7d0', borderRadius: 12, padding: 16, display: 'flex', alignItems: 'center', gap: 12 }}>
-              <span style={{ fontSize: 20, color: '#16a34a' }}>✓</span>
+            <div className="flex items-center gap-3 p-4 bg-[#181818] border border-[#2A2A2A] rounded-xl">
+              <span className="text-[#4ADE80] text-lg">✓</span>
               <div>
-                <div style={{ fontWeight: 600, fontSize: 14, color: '#166534' }}>Formulario enviado</div>
-                <div style={{ fontSize: 13, color: '#4ade80' }}>Gracias por completarlo</div>
+                <div className="font-semibold text-sm text-[#F5F0E8]">Perfil completado</div>
+                <div className="text-xs text-[#A09A8F]">Gracias por completarlo</div>
               </div>
             </div>
           )}
 
           {/* Agreements */}
           {totalCount > 0 && (
-            <div style={{
-              background: allSigned ? '#f0fdf4' : '#fff',
-              border: `1px solid ${allSigned ? '#bbf7d0' : '#e5e7eb'}`,
-              borderRadius: 12,
-              padding: 18,
-            }}>
-              {allSigned ? (
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <span style={{ fontSize: 20, color: '#16a34a' }}>✓</span>
-                  <div>
-                    <div style={{ fontWeight: 600, color: '#166534', fontSize: 14 }}>Acuerdos completados</div>
-                    <div style={{ color: '#6b7280', fontSize: 13, marginTop: 2 }}>{totalCount}/{totalCount} firmados</div>
-                  </div>
+            allSigned ? (
+              <div className="flex items-center gap-3 p-4 bg-[#181818] border border-[#2A2A2A] rounded-xl">
+                <span className="text-[#4ADE80] text-lg">✓</span>
+                <div>
+                  <div className="font-semibold text-sm text-[#F5F0E8]">Acuerdos completados</div>
+                  <div className="text-xs text-[#A09A8F]">{totalCount}/{totalCount} firmados</div>
                 </div>
-              ) : (
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <div>
-                    <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 2 }}>Acuerdos pendientes</div>
-                    <div style={{ color: '#6b7280', fontSize: 13 }}>{totalCount - pendingCount} de {totalCount} firmados</div>
-                  </div>
-                  <Link
-                    href="/acuerdos"
-                    style={{ padding: '7px 14px', background: '#111', color: '#fff', borderRadius: 6, fontSize: 13, fontWeight: 500, textDecoration: 'none' }}
-                  >
-                    Ver ({pendingCount})
-                  </Link>
+              </div>
+            ) : (
+              <div className="flex items-center justify-between p-4 bg-[#181818] border border-[#2A2A2A] rounded-xl">
+                <div>
+                  <div className="font-semibold text-sm text-[#F5F0E8] mb-0.5">Acuerdos pendientes</div>
+                  <div className="text-xs text-[#A09A8F]">{totalCount - pendingCount} de {totalCount} firmados</div>
                 </div>
-              )}
-            </div>
+                <Link
+                  href="/acuerdos"
+                  className="px-3 py-1.5 bg-[#181818] border border-[#FBBF24] text-[#FBBF24] text-xs font-semibold rounded-lg hover:bg-[#FBBF24]/10 transition-colors"
+                >
+                  Ver ({pendingCount})
+                </Link>
+              </div>
+            )
           )}
         </div>
       )}
 
       {/* Quick links */}
       {family && (
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+        <div className="grid grid-cols-2 gap-3">
           {[
-            { href: '/programa', label: 'Programa', sub: 'Ver el itinerario', icon: '📅' },
-            { href: '/documentos', label: 'Documentos', sub: 'Materiales del retiro', icon: '📄' },
-            { href: '/info', label: 'Información', sub: 'Logística y contactos', icon: 'ℹ️' },
-            { href: '/acuerdos', label: 'Acuerdos', sub: 'Documentos legales', icon: '✍️' },
+            { href: '/programa', label: 'Programa', sub: 'Ver el itinerario', icon: '◫' },
+            { href: '/documentos', label: 'Documentos', sub: 'Materiales del retiro', icon: '◻' },
+            { href: '/info', label: 'Información', sub: 'Logística y contactos', icon: 'ℹ' },
+            { href: '/acuerdos', label: 'Acuerdos', sub: 'Documentos legales', icon: '✍' },
           ].map(link => (
-            <Link key={link.href} href={link.href} style={{
-              background: '#fff',
-              border: '1px solid #e5e7eb',
-              borderRadius: 10,
-              padding: 16,
-              textDecoration: 'none',
-              color: '#111',
-            }}>
-              <div style={{ fontSize: 22, marginBottom: 8 }}>{link.icon}</div>
-              <div style={{ fontWeight: 600, fontSize: 14 }}>{link.label}</div>
-              <div style={{ color: '#9ca3af', fontSize: 12, marginTop: 2 }}>{link.sub}</div>
+            <Link
+              key={link.href}
+              href={link.href}
+              className="p-4 bg-[#181818] border border-[#2A2A2A] rounded-xl hover:border-[#3A3A3A] transition-colors"
+            >
+              <div className="text-xl text-[#A09A8F] mb-2">{link.icon}</div>
+              <div className="font-semibold text-sm text-[#F5F0E8]">{link.label}</div>
+              <div className="text-xs text-[#6B7280] mt-0.5">{link.sub}</div>
             </Link>
           ))}
         </div>

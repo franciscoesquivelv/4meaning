@@ -13,6 +13,16 @@ interface Profile {
   role: string
 }
 
+const queLlevar = [
+  'Ropa cómoda para actividades vivenciales',
+  'Ropa formal para la cena de gala',
+  'Zapatos cómodos para caminar',
+  'Medicamentos personales',
+  'Artículos de tocador básicos',
+  'Documento de identidad',
+  'Actitud abierta y disposición para el encuentro',
+]
+
 export default async function InfoPage() {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -43,22 +53,12 @@ export default async function InfoPage() {
     staff = (staffProfiles ?? []) as Profile[]
   }
 
-  const queLlevar = [
-    'Ropa cómoda para actividades vivenciales',
-    'Ropa formal para la cena de gala',
-    'Zapatos cómodos para caminar',
-    'Medicamentos personales',
-    'Artículos de tocador básicos',
-    'Documento de identidad',
-    'Actitud abierta y disposición para el encuentro',
-  ]
-
   return (
-    <div style={{ padding: 24, maxWidth: 520, margin: '0 auto' }}>
-      <h1 style={{ fontSize: 22, fontWeight: 700, marginBottom: 24 }}>Información del retiro</h1>
+    <div className="px-5 pt-6 pb-4">
+      <h1 className="text-xl font-bold text-[#F5F0E8] mb-6">Información del retiro</h1>
 
       {!family && (
-        <div style={{ background: '#fef9c3', border: '1px solid #fde68a', borderRadius: 10, padding: 20, color: '#78350f', fontSize: 14 }}>
+        <div className="bg-[#181818] border border-[#2A2A2A] rounded-xl p-5 text-[#A09A8F] text-sm">
           Tu cuenta no tiene una familia asignada todavía. Contacta al equipo de Trascendencia.
         </div>
       )}
@@ -66,57 +66,54 @@ export default async function InfoPage() {
       {evento && (
         <>
           {/* Event card */}
-          <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 12, padding: 20, marginBottom: 20 }}>
-            <div style={{ fontSize: 12, fontWeight: 600, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>
-              Evento
-            </div>
-            <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 8, marginTop: 0 }}>{evento.nombre}</h2>
+          <div className="bg-[#181818] border border-[#2A2A2A] rounded-xl p-5 mb-4">
+            <div className="text-xs font-semibold text-[#C9A96E] uppercase tracking-widest mb-3">Evento</div>
+            <h2 className="text-lg font-bold text-[#F5F0E8] mb-3">{evento.nombre}</h2>
+
             {evento.ubicacion && (
-              <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6, marginBottom: 6 }}>
-                <span style={{ fontSize: 16 }}>📍</span>
+              <div className="flex items-start gap-2 mb-3">
+                <span className="text-sm mt-0.5 flex-shrink-0">📍</span>
                 <div>
-                  <div style={{ fontSize: 15, fontWeight: 500, color: '#374151' }}>{evento.ubicacion}</div>
+                  <div className="text-sm font-medium text-[#F5F0E8]">{evento.ubicacion}</div>
                   {(evento.ciudad || evento.pais) && (
-                    <div style={{ fontSize: 13, color: '#6b7280', marginTop: 2 }}>
+                    <div className="text-xs text-[#A09A8F] mt-0.5">
                       {[evento.ciudad, evento.pais].filter(Boolean).join(', ')}
                     </div>
                   )}
                 </div>
               </div>
             )}
-            <div style={{ height: 1, background: '#f3f4f6', margin: '12px 0' }} />
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              <div style={{ display: 'flex', gap: 10, fontSize: 14 }}>
-                <span style={{ color: '#9ca3af', minWidth: 80 }}>Check-in</span>
-                <span style={{ color: '#374151', fontWeight: 500 }}>{formatDate(evento.fecha_inicio)}</span>
+
+            <div className="border-t border-[#2A2A2A] pt-3 space-y-2">
+              <div className="flex gap-4 text-sm">
+                <span className="text-[#6B7280] w-20 flex-shrink-0">Check-in</span>
+                <span className="text-[#F5F0E8] font-medium capitalize">{formatDate(evento.fecha_inicio)}</span>
               </div>
-              <div style={{ display: 'flex', gap: 10, fontSize: 14 }}>
-                <span style={{ color: '#9ca3af', minWidth: 80 }}>Check-out</span>
-                <span style={{ color: '#374151', fontWeight: 500 }}>{formatDate(evento.fecha_fin)}</span>
+              <div className="flex gap-4 text-sm">
+                <span className="text-[#6B7280] w-20 flex-shrink-0">Check-out</span>
+                <span className="text-[#F5F0E8] font-medium capitalize">{formatDate(evento.fecha_fin)}</span>
               </div>
             </div>
           </div>
 
           {/* Staff */}
           {staff.length > 0 && (
-            <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 12, padding: 20, marginBottom: 20 }}>
-              <div style={{ fontSize: 12, fontWeight: 600, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 12 }}>
-                Equipo Trascendencia
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div className="bg-[#181818] border border-[#2A2A2A] rounded-xl p-5 mb-4">
+              <div className="text-xs font-semibold text-[#C9A96E] uppercase tracking-widest mb-4">Equipo Trascendencia</div>
+              <div className="space-y-4">
                 {staff.map((s, i) => (
-                  <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                  <div key={i} className="flex items-start justify-between gap-4">
                     <div>
-                      <div style={{ fontWeight: 500, fontSize: 14 }}>{s.full_name ?? 'Sin nombre'}</div>
-                      <div style={{ fontSize: 12, color: '#9ca3af', textTransform: 'capitalize', marginTop: 2 }}>{s.role}</div>
+                      <div className="text-sm font-medium text-[#F5F0E8]">{s.full_name ?? 'Sin nombre'}</div>
+                      <div className="text-xs text-[#A09A8F] capitalize mt-0.5">{s.role}</div>
                     </div>
-                    <div style={{ textAlign: 'right' }}>
+                    <div className="text-right">
                       {s.phone && (
-                        <a href={`tel:${s.phone}`} style={{ fontSize: 13, color: '#374151', textDecoration: 'none', display: 'block' }}>
+                        <a href={`tel:${s.phone}`} className="text-sm text-[#C9A96E] block hover:opacity-80 transition-opacity">
                           {s.phone}
                         </a>
                       )}
-                      <a href={`mailto:${s.email}`} style={{ fontSize: 12, color: '#6b7280', textDecoration: 'none' }}>
+                      <a href={`mailto:${s.email}`} className="text-xs text-[#6B7280] hover:text-[#A09A8F] transition-colors">
                         {s.email}
                       </a>
                     </div>
@@ -129,15 +126,13 @@ export default async function InfoPage() {
       )}
 
       {/* Qué llevar */}
-      <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 12, padding: 20 }}>
-        <div style={{ fontSize: 12, fontWeight: 600, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 12 }}>
-          Qué llevar
-        </div>
-        <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
+      <div className="bg-[#181818] border border-[#2A2A2A] rounded-xl p-5">
+        <div className="text-xs font-semibold text-[#C9A96E] uppercase tracking-widest mb-4">Qué llevar</div>
+        <ul className="space-y-3">
           {queLlevar.map((item, i) => (
-            <li key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', paddingBottom: i < queLlevar.length - 1 ? 10 : 0, marginBottom: i < queLlevar.length - 1 ? 0 : 0 }}>
-              <span style={{ color: '#9ca3af', marginTop: 1, flexShrink: 0 }}>•</span>
-              <span style={{ fontSize: 14, color: '#374151', lineHeight: 1.5 }}>{item}</span>
+            <li key={i} className="flex items-start gap-3">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#C9A96E] flex-shrink-0 mt-1.5" />
+              <span className="text-sm text-[#F5F0E8] leading-relaxed">{item}</span>
             </li>
           ))}
         </ul>

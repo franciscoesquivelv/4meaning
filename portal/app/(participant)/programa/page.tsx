@@ -1,22 +1,14 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 
-function TipoBadge({ tipo }: { tipo: string }) {
-  const map: Record<string, { bg: string; color: string }> = {
-    sesion:     { bg: '#ede9fe', color: '#6d28d9' },
-    comida:     { bg: '#fef9c3', color: '#854d0e' },
-    actividad:  { bg: '#dbeafe', color: '#1e40af' },
-    libre:      { bg: '#f3f4f6', color: '#6b7280' },
-    traslado:   { bg: '#e0f2fe', color: '#075985' },
-    bienvenida: { bg: '#dcfce7', color: '#166534' },
-    cierre:     { bg: '#fee2e2', color: '#991b1b' },
-  }
-  const s = map[tipo] ?? { bg: '#f3f4f6', color: '#374151' }
-  return (
-    <span style={{ padding: '2px 8px', borderRadius: 8, fontSize: 11, fontWeight: 600, background: s.bg, color: s.color }}>
-      {tipo}
-    </span>
-  )
+const tipoDot: Record<string, string> = {
+  sesion:     'bg-violet-400',
+  comida:     'bg-[#C9A96E]',
+  actividad:  'bg-sky-400',
+  libre:      'bg-[#A09A8F]',
+  traslado:   'bg-slate-400',
+  bienvenida: 'bg-emerald-400',
+  cierre:     'bg-rose-400',
 }
 
 function formatTime(t: string | null) {
@@ -62,9 +54,9 @@ export default async function ProgramaPage() {
 
   if (!family) {
     return (
-      <div style={{ padding: 24, maxWidth: 480, margin: '0 auto' }}>
-        <h1 style={{ fontSize: 22, fontWeight: 700, marginBottom: 16 }}>Programa</h1>
-        <div style={{ background: '#fef9c3', border: '1px solid #fde68a', borderRadius: 10, padding: 20, color: '#78350f', fontSize: 14 }}>
+      <div className="px-5 pt-6">
+        <h1 className="text-xl font-bold text-[#F5F0E8] mb-4">Programa</h1>
+        <div className="bg-[#181818] border border-[#2A2A2A] rounded-xl p-5 text-[#A09A8F] text-sm">
           Tu cuenta no tiene una familia asignada todavía.
         </div>
       </div>
@@ -93,118 +85,98 @@ export default async function ProgramaPage() {
   })
 
   return (
-    <div style={{ padding: 24, maxWidth: 520, margin: '0 auto' }}>
-      <h1 style={{ fontSize: 22, fontWeight: 700, marginBottom: 24 }}>Programa</h1>
+    <div className="px-5 pt-6">
+      <h1 className="text-xl font-bold text-[#F5F0E8] mb-6">Programa</h1>
 
       {!items?.length ? (
-        <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 10, padding: 24, textAlign: 'center', color: '#9ca3af' }}>
+        <div className="bg-[#181818] border border-[#2A2A2A] rounded-xl p-6 text-center text-[#A09A8F] text-sm">
           El programa estará disponible próximamente.
         </div>
       ) : (
-        days.map(dia => {
-          const dayItems = byDay[dia]
-          const dayDate = dayItems?.[0]?.fecha ?? null
-          const today = dia === todayDia
-          return (
-            <div key={dia} style={{ marginBottom: 28 }}>
-              <div style={{
-                padding: '8px 12px',
-                background: today ? '#111' : '#f9fafb',
-                borderRadius: 8,
-                marginBottom: 10,
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}>
-                <div>
-                  <span style={{ fontWeight: 700, fontSize: 14, color: today ? '#fff' : '#374151' }}>Día {dia}</span>
-                  {dayDate && (
-                    <span style={{ fontSize: 13, color: today ? '#d1d5db' : '#6b7280', marginLeft: 8 }}>
-                      {formatDate(dayDate)}
+        <>
+          {/* Day selector tabs */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 mb-6 scrollbar-hide">
+            {days.map(dia => {
+              const isActive = dia === (todayDia ?? days[0])
+              return (
+                <a
+                  key={dia}
+                  href={`#dia-${dia}`}
+                  className={[
+                    'px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors flex-shrink-0',
+                    isActive
+                      ? 'bg-[#C9A96E] text-[#0C0C0C]'
+                      : 'bg-[#181818] text-[#A09A8F] border border-[#2A2A2A] hover:border-[#3A3A3A]',
+                  ].join(' ')}
+                >
+                  Día {dia}
+                </a>
+              )
+            })}
+          </div>
+
+          {/* Days */}
+          {days.map(dia => {
+            const dayItems = byDay[dia]
+            const dayDate = dayItems?.[0]?.fecha ?? null
+            const today = dia === todayDia
+
+            return (
+              <div key={dia} id={`dia-${dia}`} className="mb-8">
+                {/* Day header */}
+                <div className={`flex items-center justify-between px-3 py-2 rounded-lg mb-4 ${today ? 'bg-[#C9A96E]/10 border border-[#C9A96E]/20' : 'bg-[#181818] border border-[#2A2A2A]'}`}>
+                  <div>
+                    <span className={`font-bold text-sm ${today ? 'text-[#C9A96E]' : 'text-[#F5F0E8]'}`}>Día {dia}</span>
+                    {dayDate && (
+                      <span className={`text-xs ml-2 capitalize ${today ? 'text-[#C9A96E]/70' : 'text-[#A09A8F]'}`}>
+                        {formatDate(dayDate)}
+                      </span>
+                    )}
+                  </div>
+                  {today && (
+                    <span className="text-[10px] font-bold text-[#C9A96E] bg-[#C9A96E]/10 border border-[#C9A96E]/30 px-2 py-0.5 rounded-full uppercase tracking-wide">
+                      HOY
                     </span>
                   )}
                 </div>
-                {today && (
-                  <span style={{ fontSize: 11, fontWeight: 600, color: '#fff', background: '#333', padding: '2px 8px', borderRadius: 10 }}>
-                    HOY
-                  </span>
-                )}
-              </div>
 
-              <div style={{ position: 'relative' }}>
-                {/* Timeline line */}
-                <div style={{
-                  position: 'absolute',
-                  left: 52,
-                  top: 0,
-                  bottom: 0,
-                  width: 1,
-                  background: '#e5e7eb',
-                }} />
+                {/* Timeline */}
+                <div className="relative pl-16">
+                  {/* Vertical line */}
+                  <div className="absolute left-[52px] top-0 bottom-0 w-px bg-[#2A2A2A]" />
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-                  {(dayItems ?? []).map((item, i) => (
-                    <div key={item.id} style={{
-                      display: 'flex',
-                      gap: 0,
-                      paddingBottom: i < (dayItems?.length ?? 0) - 1 ? 16 : 0,
-                    }}>
-                      {/* Time */}
-                      <div style={{
-                        minWidth: 52,
-                        fontSize: 12,
-                        color: '#9ca3af',
-                        paddingTop: 2,
-                        textAlign: 'right',
-                        paddingRight: 12,
-                        lineHeight: 1.3,
-                        flexShrink: 0,
-                      }}>
-                        {formatTime(item.hora_inicio)}
-                      </div>
-
-                      {/* Dot */}
-                      <div style={{
-                        width: 8,
-                        height: 8,
-                        borderRadius: '50%',
-                        background: today ? '#111' : '#d1d5db',
-                        border: `2px solid ${today ? '#111' : '#e5e7eb'}`,
-                        marginTop: 4,
-                        flexShrink: 0,
-                        position: 'relative',
-                        zIndex: 1,
-                      }} />
-
-                      {/* Content */}
-                      <div style={{
-                        flex: 1,
-                        paddingLeft: 12,
-                        paddingBottom: 4,
-                      }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                          <span style={{ fontWeight: 600, fontSize: 14, color: '#111' }}>{item.titulo}</span>
-                          <TipoBadge tipo={item.tipo} />
+                  <div className="space-y-5">
+                    {(dayItems ?? []).map(item => (
+                      <div key={item.id} className="relative">
+                        {/* Time */}
+                        <div className="absolute -left-16 top-0 text-xs text-[#6B7280] text-right w-12 pt-0.5 leading-tight">
+                          {formatTime(item.hora_inicio)}
                         </div>
-                        {item.hora_fin && (
-                          <div style={{ fontSize: 12, color: '#9ca3af', marginTop: 1 }}>
-                            hasta {formatTime(item.hora_fin)}
-                          </div>
-                        )}
-                        {item.ubicacion && (
-                          <div style={{ fontSize: 12, color: '#6b7280', marginTop: 2 }}>📍 {item.ubicacion}</div>
-                        )}
-                        {item.descripcion && (
-                          <div style={{ fontSize: 13, color: '#6b7280', marginTop: 4, lineHeight: 1.5 }}>{item.descripcion}</div>
-                        )}
+
+                        {/* Dot */}
+                        <div className={`absolute -left-[7px] top-1.5 w-2.5 h-2.5 rounded-full border-2 border-[#0C0C0C] z-10 ${tipoDot[item.tipo] ?? 'bg-[#A09A8F]'}`} />
+
+                        {/* Content */}
+                        <div className={`bg-[#181818] border rounded-xl p-4 ${today ? 'border-[#C9A96E]/20' : 'border-[#2A2A2A]'}`}>
+                          <div className="font-semibold text-sm text-[#F5F0E8] mb-1">{item.titulo}</div>
+                          {item.hora_fin && (
+                            <div className="text-xs text-[#6B7280] mb-1">hasta {formatTime(item.hora_fin)}</div>
+                          )}
+                          {item.ubicacion && (
+                            <div className="text-xs text-[#A09A8F]">📍 {item.ubicacion}</div>
+                          )}
+                          {item.descripcion && (
+                            <div className="text-xs text-[#A09A8F] mt-2 leading-relaxed">{item.descripcion}</div>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
-          )
-        })
+            )
+          })}
+        </>
       )}
     </div>
   )

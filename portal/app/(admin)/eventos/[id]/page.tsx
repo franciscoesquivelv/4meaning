@@ -3,23 +3,55 @@ import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
 
 function StatusBadge({ status }: { status: string }) {
-  const colors: Record<string, { bg: string; color: string; label: string }> = {
-    draft:     { bg: '#f3f4f6', color: '#374151', label: 'Borrador' },
-    active:    { bg: '#dcfce7', color: '#166534', label: 'Activo' },
-    completed: { bg: '#dbeafe', color: '#1e40af', label: 'Completado' },
-    archived:  { bg: '#f3f4f6', color: '#6b7280', label: 'Archivado' },
+  const map: Record<string, string> = {
+    draft:     'bg-slate-100 text-slate-600',
+    active:    'bg-[#DCFCE7] text-[#16A34A]',
+    completed: 'bg-[#DBEAFE] text-[#2563EB]',
+    archived:  'bg-slate-100 text-slate-500',
   }
-  const s = colors[status] ?? { bg: '#f3f4f6', color: '#374151', label: status }
+  const labels: Record<string, string> = {
+    draft: 'Borrador', active: 'Activo', completed: 'Completado', archived: 'Archivado',
+  }
   return (
-    <span style={{
-      padding: '3px 10px',
-      borderRadius: 12,
-      fontSize: 12,
-      fontWeight: 600,
-      background: s.bg,
-      color: s.color,
-    }}>
-      {s.label}
+    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${map[status] ?? 'bg-slate-100 text-slate-600'}`}>
+      {labels[status] ?? status}
+    </span>
+  )
+}
+
+function FamiliaStatusBadge({ status }: { status: string }) {
+  const map: Record<string, string> = {
+    invited:   'bg-violet-100 text-violet-700',
+    confirmed: 'bg-[#DBEAFE] text-[#2563EB]',
+    completed: 'bg-slate-100 text-slate-500',
+    pending:   'bg-[#FEF9C3] text-[#D97706]',
+  }
+  const labels: Record<string, string> = {
+    invited: 'Invitado', confirmed: 'Confirmado', completed: 'Completado', pending: 'Pendiente',
+  }
+  return (
+    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${map[status] ?? 'bg-slate-100 text-slate-600'}`}>
+      {labels[status] ?? status}
+    </span>
+  )
+}
+
+function AgreementStatusBadge({ status }: { status: string }) {
+  const map: Record<string, string> = {
+    draft:    'bg-slate-100 text-slate-600',
+    sent:     'bg-[#FEF9C3] text-[#D97706]',
+    viewed:   'bg-[#DBEAFE] text-[#2563EB]',
+    signed:   'bg-[#FEF9C3] text-[#D97706]',
+    approved: 'bg-[#DCFCE7] text-[#16A34A]',
+    rejected: 'bg-[#FEE2E2] text-[#DC2626]',
+  }
+  const labels: Record<string, string> = {
+    draft: 'Borrador', sent: 'Enviado', viewed: 'Visto',
+    signed: 'Firmado', approved: 'Aprobado', rejected: 'Rechazado',
+  }
+  return (
+    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${map[status] ?? 'bg-slate-100 text-slate-600'}`}>
+      {labels[status] ?? status}
     </span>
   )
 }
@@ -58,164 +90,177 @@ export default async function EventoDetailPage({ params }: { params: { id: strin
 
   const familiesCount = families?.length ?? 0
   const agreementsCount = agreements?.length ?? 0
-  const itineraryCount = (await supabase.from('itinerary_items').select('id', { count: 'exact', head: true }).eq('event_id', params.id)).count ?? 0
+  const itineraryCountRes = await supabase.from('itinerary_items').select('id', { count: 'exact', head: true }).eq('event_id', params.id)
+  const itineraryCount = itineraryCountRes.count ?? 0
   const documentsCount = documents?.length ?? 0
   const formulariosCount = responses?.length ?? 0
-
   const signedCount = agreements?.filter(a => ['signed', 'approved'].includes(a.status)).length ?? 0
 
   const tabs = [
-    { href: `/eventos/${params.id}/familias`, label: 'Familias', count: familiesCount, color: '#6d28d9' },
-    { href: `/eventos/${params.id}/acuerdos`, label: 'Acuerdos', count: agreementsCount, color: '#1e40af' },
-    { href: `/eventos/${params.id}/itinerario`, label: 'Itinerario', count: itineraryCount, color: '#166534' },
-    { href: `/eventos/${params.id}/documentos`, label: 'Documentos', count: documentsCount, color: '#854d0e' },
-    { href: `/eventos/${params.id}/formularios`, label: 'Formularios', count: formulariosCount, color: '#0369a1' },
+    { href: `/eventos/${params.id}/familias`, label: 'Familias', count: familiesCount },
+    { href: `/eventos/${params.id}/acuerdos`, label: 'Acuerdos', count: agreementsCount },
+    { href: `/eventos/${params.id}/itinerario`, label: 'Itinerario', count: itineraryCount },
+    { href: `/eventos/${params.id}/documentos`, label: 'Documentos', count: documentsCount },
+    { href: `/eventos/${params.id}/formularios`, label: 'Formularios', count: formulariosCount },
   ]
 
   return (
-    <div style={{ padding: 32, maxWidth: 960 }}>
+    <div className="p-8 max-w-5xl">
+      {/* Breadcrumb */}
+      <nav className="flex items-center gap-2 text-sm text-slate-500 mb-4">
+        <Link href="/eventos" className="hover:text-slate-700 transition-colors">Eventos</Link>
+        <span>/</span>
+        <span className="text-slate-900 font-medium truncate">{evento.nombre}</span>
+      </nav>
+
       {/* Header */}
-      <div style={{ marginBottom: 28 }}>
-        <Link href="/eventos" style={{ color: '#6b7280', fontSize: 13, textDecoration: 'none' }}>← Todos los eventos</Link>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginTop: 10 }}>
-          <div>
-            <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 6, marginTop: 0 }}>{evento.nombre}</h1>
-            <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', color: '#6b7280', fontSize: 14, alignItems: 'center' }}>
-              {evento.ciudad && <span>{evento.ciudad}{evento.pais ? `, ${evento.pais}` : ''}</span>}
-              <span>{formatDate(evento.fecha_inicio)} – {formatDate(evento.fecha_fin)}</span>
-              {evento.ubicacion && <span>{evento.ubicacion}</span>}
-              <StatusBadge status={evento.status} />
-            </div>
+      <div className="flex items-start justify-between mb-4">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900 mb-2">{evento.nombre}</h1>
+          <div className="flex items-center gap-3 flex-wrap text-sm text-slate-500">
+            {(evento.ciudad || evento.pais) && (
+              <span>{[evento.ciudad, evento.pais].filter(Boolean).join(', ')}</span>
+            )}
+            <span>{formatDate(evento.fecha_inicio)} – {formatDate(evento.fecha_fin)}</span>
+            {evento.ubicacion && <span>{evento.ubicacion}</span>}
+            <StatusBadge status={evento.status} />
           </div>
-          <Link
-            href={`/eventos/${params.id}/editar`}
-            style={{ padding: '8px 16px', background: '#fff', color: '#374151', border: '1px solid #d1d5db', borderRadius: 6, fontSize: 13, fontWeight: 500, textDecoration: 'none', whiteSpace: 'nowrap' }}
-          >
-            Editar evento
-          </Link>
         </div>
+        <Link
+          href={`/eventos/${params.id}/editar`}
+          className="px-3 py-1.5 text-sm font-medium text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors whitespace-nowrap"
+        >
+          Editar
+        </Link>
       </div>
 
-      {/* Quick stats */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 32 }}>
+      {/* Stats bar */}
+      <div className="flex items-center gap-6 py-3 px-4 bg-white border border-slate-200 rounded-xl mb-6 text-sm shadow-sm">
         {[
-          { label: 'Familias inscritas', value: familiesCount },
-          { label: 'Acuerdos totales', value: agreementsCount },
-          { label: 'Acuerdos firmados', value: signedCount },
-        ].map(stat => (
-          <div key={stat.label} style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 8, padding: '16px 20px' }}>
-            <div style={{ fontSize: 28, fontWeight: 700 }}>{stat.value}</div>
-            <div style={{ fontSize: 12, color: '#6b7280', marginTop: 4 }}>{stat.label}</div>
+          { label: 'Familias', value: familiesCount },
+          { label: 'Acuerdos', value: agreementsCount },
+          { label: 'Firmados', value: signedCount },
+        ].map((s, i) => (
+          <div key={s.label} className={`flex items-center gap-2 ${i > 0 ? 'pl-6 border-l border-slate-200' : ''}`}>
+            <span className="text-lg font-bold text-slate-900">{s.value}</span>
+            <span className="text-slate-500 text-xs">{s.label}</span>
           </div>
         ))}
       </div>
 
-      {/* Navigation tabs */}
-      <h2 style={{ fontSize: 15, fontWeight: 600, color: '#374151', marginBottom: 12 }}>Secciones del evento</h2>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 12, marginBottom: 36 }}>
+      {/* Horizontal tab nav */}
+      <div className="flex items-center gap-1 border-b border-slate-200 mb-6">
         {tabs.map(tab => (
           <Link
             key={tab.href}
             href={tab.href}
-            style={{
-              background: '#fff',
-              border: '1px solid #e5e7eb',
-              borderRadius: 10,
-              padding: '16px',
-              textDecoration: 'none',
-              color: '#111',
-              display: 'block',
-              transition: 'border-color 0.15s',
-            }}
+            className="flex items-center gap-2 px-4 py-3 text-sm text-slate-600 hover:text-slate-900 transition-colors border-b-2 border-transparent hover:border-slate-300 -mb-px"
           >
-            <div style={{ fontSize: 22, fontWeight: 700, color: tab.color }}>{tab.count}</div>
-            <div style={{ fontSize: 13, fontWeight: 600, color: '#374151', marginTop: 4 }}>{tab.label}</div>
-            <div style={{ fontSize: 11, color: '#9ca3af', marginTop: 2 }}>Ver todos →</div>
+            {tab.label}
+            <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600">
+              {tab.count}
+            </span>
           </Link>
         ))}
       </div>
 
-      {/* Notas internas */}
-      {evento.notas_internas && (
-        <div style={{ background: '#fef9c3', border: '1px solid #fde68a', borderRadius: 10, padding: 16, marginBottom: 32 }}>
-          <div style={{ fontSize: 12, fontWeight: 600, color: '#78350f', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6 }}>
-            Notas internas
+      {/* Two column content */}
+      <div className="grid grid-cols-3 gap-6">
+        {/* Left: main content */}
+        <div className="col-span-2 space-y-6">
+          {/* Families preview */}
+          <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
+              <h3 className="text-sm font-semibold text-slate-900">Familias</h3>
+              <Link href={`/eventos/${params.id}/familias`} className="text-xs text-slate-400 hover:text-slate-600 transition-colors">
+                Ver todas →
+              </Link>
+            </div>
+            {!families?.length ? (
+              <div className="px-4 py-6 text-center text-slate-400 text-sm">Sin familias registradas.</div>
+            ) : (
+              families.slice(0, 5).map((f, i) => (
+                <div key={f.id} className={`flex items-center justify-between px-4 py-3 text-sm ${i < Math.min(families.length, 5) - 1 ? 'border-b border-slate-100' : ''}`}>
+                  <div>
+                    <div className="font-medium text-slate-900">{f.nombre_familia}</div>
+                    {f.habitacion && <div className="text-xs text-slate-400 mt-0.5">Hab. {f.habitacion}</div>}
+                  </div>
+                  <FamiliaStatusBadge status={f.status} />
+                </div>
+              ))
+            )}
           </div>
-          <p style={{ fontSize: 14, color: '#78350f', margin: 0, lineHeight: 1.5 }}>{evento.notas_internas}</p>
+
+          {/* Agreements preview */}
+          <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
+              <h3 className="text-sm font-semibold text-slate-900">Acuerdos</h3>
+              <Link href={`/eventos/${params.id}/acuerdos`} className="text-xs text-slate-400 hover:text-slate-600 transition-colors">
+                Ver todos →
+              </Link>
+            </div>
+            {!agreements?.length ? (
+              <div className="px-4 py-6 text-center text-slate-400 text-sm">Sin acuerdos registrados.</div>
+            ) : (
+              agreements.slice(0, 5).map((ag, i) => (
+                <div key={ag.id} className={`flex items-center justify-between px-4 py-3 text-sm ${i < Math.min(agreements.length, 5) - 1 ? 'border-b border-slate-100' : ''}`}>
+                  <div>
+                    <div className="font-medium text-slate-900">{ag.nombre}</div>
+                    <div className="text-xs text-slate-400 mt-0.5 uppercase">{ag.type}</div>
+                  </div>
+                  <AgreementStatusBadge status={ag.status} />
+                </div>
+              ))
+            )}
+          </div>
         </div>
-      )}
 
-      {/* Families preview + Agreements preview */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
-        {/* Families */}
-        <section>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-            <h3 style={{ fontSize: 14, fontWeight: 600, margin: 0 }}>Familias recientes</h3>
-            <Link href={`/eventos/${params.id}/familias`} style={{ fontSize: 12, color: '#6b7280', textDecoration: 'none' }}>Ver todas</Link>
-          </div>
-          {!families?.length ? (
-            <p style={{ color: '#9ca3af', fontSize: 13 }}>Sin familias.</p>
-          ) : (
-            <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 8, overflow: 'hidden' }}>
-              {families.slice(0, 5).map((f, i) => (
-                <div key={f.id} style={{ padding: '10px 14px', borderBottom: i < Math.min(families.length, 5) - 1 ? '1px solid #f3f4f6' : 'none', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 13 }}>
-                  <div>
-                    <div style={{ fontWeight: 500 }}>{f.nombre_familia}</div>
-                    {f.habitacion && <div style={{ color: '#9ca3af', fontSize: 12 }}>Hab. {f.habitacion}</div>}
-                  </div>
-                  <span style={{ padding: '2px 7px', borderRadius: 10, fontSize: 11, fontWeight: 600, background: '#f3f4f6', color: '#374151' }}>{f.status}</span>
-                </div>
+        {/* Right: sidebar */}
+        <div className="space-y-4">
+          {/* Quick actions */}
+          <div className="bg-white border border-slate-200 rounded-xl shadow-sm p-4">
+            <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Acciones rápidas</h3>
+            <div className="space-y-2">
+              {[
+                { href: `/eventos/${params.id}/familias/nueva`, label: '+ Nueva familia' },
+                { href: `/eventos/${params.id}/acuerdos/nuevo`, label: '+ Nuevo acuerdo' },
+                { href: `/eventos/${params.id}/itinerario/nuevo`, label: '+ Item itinerario' },
+              ].map(action => (
+                <Link
+                  key={action.href}
+                  href={action.href}
+                  className="block w-full px-3 py-2 text-sm text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-colors text-center"
+                >
+                  {action.label}
+                </Link>
               ))}
             </div>
-          )}
-        </section>
-
-        {/* Agreements */}
-        <section>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-            <h3 style={{ fontSize: 14, fontWeight: 600, margin: 0 }}>Acuerdos recientes</h3>
-            <Link href={`/eventos/${params.id}/acuerdos`} style={{ fontSize: 12, color: '#6b7280', textDecoration: 'none' }}>Ver todos</Link>
           </div>
-          {!agreements?.length ? (
-            <p style={{ color: '#9ca3af', fontSize: 13 }}>Sin acuerdos.</p>
-          ) : (
-            <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 8, overflow: 'hidden' }}>
-              {agreements.slice(0, 5).map((ag, i) => (
-                <div key={ag.id} style={{ padding: '10px 14px', borderBottom: i < Math.min(agreements.length, 5) - 1 ? '1px solid #f3f4f6' : 'none', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: 13 }}>
-                  <div>
-                    <div style={{ fontWeight: 500 }}>{ag.nombre}</div>
-                    <div style={{ color: '#9ca3af', fontSize: 12 }}>{ag.type}</div>
-                  </div>
-                  <span style={{ padding: '2px 7px', borderRadius: 10, fontSize: 11, fontWeight: 600, background: '#f3f4f6', color: '#374151' }}>{ag.status}</span>
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
-      </div>
 
-      {/* Itinerary preview */}
-      {itinerary && itinerary.length > 0 && (
-        <section style={{ marginTop: 28 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-            <h3 style={{ fontSize: 14, fontWeight: 600, margin: 0 }}>Itinerario (preview)</h3>
-            <Link href={`/eventos/${params.id}/itinerario`} style={{ fontSize: 12, color: '#6b7280', textDecoration: 'none' }}>Ver completo</Link>
-          </div>
-          <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 8, overflow: 'hidden' }}>
-            {itinerary.map((item, i) => (
-              <div key={item.id} style={{ padding: '10px 14px', borderBottom: i < itinerary.length - 1 ? '1px solid #f3f4f6' : 'none', display: 'flex', gap: 14, alignItems: 'flex-start', fontSize: 13 }}>
-                <div style={{ color: '#9ca3af', minWidth: 80, fontSize: 12 }}>
-                  Día {item.dia} {item.hora_inicio ? `· ${item.hora_inicio.slice(0, 5)}` : ''}
-                </div>
-                <div>
-                  <div style={{ fontWeight: 500 }}>{item.titulo}</div>
-                  {item.ubicacion && <div style={{ color: '#9ca3af', fontSize: 12 }}>{item.ubicacion}</div>}
-                </div>
+          {/* Event details */}
+          <div className="bg-white border border-slate-200 rounded-xl shadow-sm p-4">
+            <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Detalles</h3>
+            <dl className="space-y-2 text-sm">
+              <div>
+                <dt className="text-xs text-slate-400">Parejas</dt>
+                <dd className="font-medium text-slate-900">{evento.n_parejas ?? '—'}</dd>
               </div>
-            ))}
+              <div>
+                <dt className="text-xs text-slate-400">Estado</dt>
+                <dd className="mt-0.5"><StatusBadge status={evento.status} /></dd>
+              </div>
+            </dl>
           </div>
-        </section>
-      )}
+
+          {/* Notas internas */}
+          {evento.notas_internas && (
+            <div className="bg-[#FEF9C3] border border-yellow-200 rounded-xl p-4">
+              <div className="text-xs font-semibold text-yellow-800 uppercase tracking-wider mb-2">Notas internas</div>
+              <p className="text-sm text-yellow-800 leading-relaxed">{evento.notas_internas}</p>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   )
 }

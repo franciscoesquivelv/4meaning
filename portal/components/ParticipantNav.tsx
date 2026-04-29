@@ -1,85 +1,40 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
-import { createBrowserClient } from '@supabase/ssr'
+import { usePathname } from 'next/navigation'
 
 const navItems = [
-  { href: '/mi-retiro', label: 'Inicio' },
-  { href: '/acuerdos', label: 'Acuerdos' },
-  { href: '/programa', label: 'Programa' },
-  { href: '/documentos', label: 'Docs' },
-  { href: '/info', label: 'Info' },
+  { href: '/mi-retiro', label: 'Inicio', icon: '⌂' },
+  { href: '/acuerdos', label: 'Acuerdos', icon: '✍' },
+  { href: '/programa', label: 'Programa', icon: '◫' },
+  { href: '/documentos', label: 'Docs', icon: '◻' },
+  { href: '/info', label: 'Info', icon: 'ℹ' },
 ]
 
 export default function ParticipantNav() {
   const pathname = usePathname()
-  const router = useRouter()
-
-  const supabase = createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
-
-  async function handleLogout() {
-    await supabase.auth.signOut()
-    router.push('/login')
-  }
 
   return (
-    <nav style={{
-      position: 'fixed',
-      bottom: 0,
-      left: 0,
-      right: 0,
-      background: '#fff',
-      borderTop: '1px solid #e5e7eb',
-      display: 'flex',
-      zIndex: 50,
-      paddingBottom: 'env(safe-area-inset-bottom)',
-    }}>
+    <nav
+      className="fixed bottom-0 left-0 right-0 bg-[#111111] border-t border-[#2A2A2A] flex z-50"
+      style={{ paddingBottom: 'env(safe-area-inset-bottom)', height: 64 }}
+    >
       {navItems.map(item => {
         const active = pathname === item.href || pathname.startsWith(item.href + '/')
         return (
           <Link
             key={item.href}
             href={item.href}
-            style={{
-              flex: 1,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '12px 4px',
-              fontSize: 11,
-              fontWeight: active ? 700 : 400,
-              color: active ? '#111' : '#9ca3af',
-              textDecoration: 'none',
-              borderTop: active ? '2px solid #111' : '2px solid transparent',
-            }}
+            className={[
+              'flex-1 flex flex-col items-center justify-center gap-0.5 text-[10px] transition-colors',
+              active ? 'text-[#C9A96E]' : 'text-[#6B7280] hover:text-[#9CA3AF]',
+            ].join(' ')}
           >
-            {item.label}
+            <span className="text-lg leading-none">{item.icon}</span>
+            <span className="font-medium">{item.label}</span>
           </Link>
         )
       })}
-      <button
-        onClick={handleLogout}
-        style={{
-          flex: 1,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '12px 4px',
-          fontSize: 11,
-          fontWeight: 400,
-          color: '#9ca3af',
-          background: 'transparent',
-          border: 'none',
-          borderTop: '2px solid transparent',
-          cursor: 'pointer',
-        }}
-      >
-        Salir
-      </button>
     </nav>
   )
 }
