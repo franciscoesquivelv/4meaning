@@ -1,48 +1,36 @@
 'use client'
 
-import { Suspense, useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
+import { Suspense, useEffect, useRef } from 'react'
+import { useFormState, useFormStatus } from 'react-dom'
+import { useSearchParams } from 'next/navigation'
+import { loginAction } from './actions'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
+function SubmitButton() {
+  const { pending } = useFormStatus()
+  return (
+    <Button type="submit" loading={pending} size="md" className="w-full mt-1">
+      Entrar
+    </Button>
+  )
+}
+
 function LoginForm() {
-  const router     = useRouter()
   const params     = useSearchParams()
   const redirectTo = params.get('redirectTo') || '/'
 
-  const [email,    setEmail]    = useState('')
-  const [password, setPassword] = useState('')
-  const [error,    setError]    = useState('')
-  const [loading,  setLoading]  = useState(false)
+  const [state, formAction] = useFormState(loginAction, null)
 
-  async function handleLogin(e: React.FormEvent) {
-    e.preventDefault()
-    setError('')
-    setLoading(true)
-
-    const supabase = createClient()
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
-
-    if (error) {
-      setError('Correo o contraseña incorrectos.')
-      setLoading(false)
-      return
-    }
-
-    // Hard redirect so middleware sees fresh session cookies
-    window.location.href = redirectTo
-  }
+  // Auto-focus email field
+  const emailRef = useRef<HTMLInputElement>(null)
+  useEffect(() => { emailRef.current?.focus() }, [])
 
   return (
     <div className="w-full max-w-sm">
       {/* Logo */}
       <div className="flex flex-col items-center gap-3 mb-10">
-        <img
-          src="/logo.png"
-          alt="Trascendencia"
-          className="h-7 w-auto"
-        />
+        <img src="/logo.png" alt="Trascendencia" className="h-7 w-auto" />
         <p className="text-[8px] font-bold tracking-[0.28em] uppercase text-muted">
           Portal
         </p>
@@ -54,37 +42,37 @@ function LoginForm() {
           Iniciar sesión
         </h1>
 
-        <form onSubmit={handleLogin} className="flex flex-col gap-4">
+        <form action={formAction} className="flex flex-col gap-4">
+          {/* Pass redirectTo through the form */}
+          <input type="hidden" name="next" value={redirectTo} />
+
           <Input
+            ref={emailRef}
             id="email"
+            name="email"
             label="Correo electrónico"
             type="email"
             required
             autoComplete="email"
             placeholder="tu@correo.com"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
           />
           <Input
             id="password"
+            name="password"
             label="Contraseña"
             type="password"
             required
             autoComplete="current-password"
             placeholder="••••••••"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
           />
 
-          {error && (
+          {state?.error && (
             <p className="text-[11px] text-error bg-error/8 border border-error/20 rounded px-3 py-2">
-              {error}
+              {state.error}
             </p>
           )}
 
-          <Button type="submit" loading={loading} size="md" className="w-full mt-1">
-            Entrar
-          </Button>
+          <SubmitButton />
         </form>
       </div>
 
