@@ -31,7 +31,7 @@ export default async function MiRetiroPage() {
 
   const { data: family } = await supabase
     .from('families')
-    .select('id, nombre_familia, event_id, events(id, nombre, ubicacion, fecha_inicio, fecha_fin, ciudad, nube_url)')
+    .select('id, nombre_familia, event_id, storybook_status, video_status, events(id, nombre, ubicacion, fecha_inicio, fecha_fin, ciudad, nube_url)')
     .or(`user_id1.eq.${user.id},user_id2.eq.${user.id}`)
     .limit(1)
     .maybeSingle()
@@ -46,18 +46,30 @@ export default async function MiRetiroPage() {
     nube_url: string | null
   } | null) : null
 
+  const storybookStatus = (family as unknown as { storybook_status?: string } | null)?.storybook_status ?? null
+  const videoStatus = (family as unknown as { video_status?: string } | null)?.video_status ?? null
+
   let pendingCount = 0
   let totalCount = 0
   let intakeSubmitted = false
+  let recentAnnouncements: { id: string; titulo: string; tipo: string }[] = []
 
   if (family) {
-    const [{ data: agreements }, { data: intake }] = await Promise.all([
+    const [{ data: agreements }, { data: intake }, { data: annoData }] = await Promise.all([
       supabase.from('agreements').select('id, status').eq('family_id', family.id),
       supabase.from('intake_responses').select('id').eq('family_id', family.id).maybeSingle(),
+      supabase
+        .from('announcements')
+        .select('id, titulo, tipo')
+        .eq('event_id', family.event_id)
+        .eq('published', true)
+        .order('created_at', { ascending: false })
+        .limit(2),
     ])
     totalCount = agreements?.length ?? 0
     pendingCount = agreements?.filter(a => !['signed', 'approved'].includes(a.status)).length ?? 0
     intakeSubmitted = !!intake
+    recentAnnouncements = annoData ?? []
   }
 
   const allSigned = totalCount > 0 && pendingCount === 0
@@ -83,7 +95,91 @@ export default async function MiRetiroPage() {
       {/* Event card */}
       {evento && (
         <div className="mb-6">
-          {isHappening ? (
+          {daysUntilEnd !== null && daysUntilEnd < 0 ? (
+            /* Post-event */
+            <>
+              <div className="bg-[#181818] border border-[#2A2A2A] rounded-2xl p-5 mb-4">
+                <div className="text-xs font-medium text-[#A09A8F] uppercase tracking-widest mb-2">El retiro ha concluido</div>
+                <div className="text-lg font-bold text-[#F5F0E8] mb-1">{evento.nombre}</div>
+                <div className="text-sm text-[#C9A96E] mt-1">¡Gracias por vivir esta experiencia!</div>
+              </div>
+
+              {/* Storybook & Video delivery status */}
+              {(storybookStatus || videoStatus) && (
+                <div className="bg-[#181818] border border-[#2A2A2A] rounded-2xl p-5 mb-4 space-y-3">
+                  <div className="text-xs font-medium text-[#A09A8F] uppercase tracking-widest mb-1">Tus recuerdos</div>
+                  {storybookStatus && (
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="text-base">📖</span>
+                        <span className="text-sm text-[#F5F0E8]">Storybook</span>
+                      </div>
+                      {storybookStatus === 'delivered' ? (
+                        evento.nube_url ? (
+                          <a
+                            href={evento.nube_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1 text-xs text-[#C9A96E] hover:underline"
+                          >
+                            Ver ↗
+                          </a>
+                        ) : (
+                          <span className="text-xs text-[#4ADE80] font-semibold">Entregado ✓</span>
+                        )
+                      ) : storybookStatus === 'in_progress' ? (
+                        <span className="text-xs text-[#FBBF24]">En proceso…</span>
+                      ) : (
+                        <span className="text-xs text-[#6B7280]">Pendiente</span>
+                      )}
+                    </div>
+                  )}
+                  {videoStatus && (
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="text-base">🎬</span>
+                        <span className="text-sm text-[#F5F0E8]">Video</span>
+                      </div>
+                      {videoStatus === 'delivered' ? (
+                        evento.nube_url ? (
+                          <a
+                            href={evento.nube_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1 text-xs text-[#C9A96E] hover:underline"
+                          >
+                            Ver ↗
+                          </a>
+                        ) : (
+                          <span className="text-xs text-[#4ADE80] font-semibold">Entregado ✓</span>
+                        )
+                      ) : videoStatus === 'in_progress' ? (
+                        <span className="text-xs text-[#FBBF24]">En proceso…</span>
+                      ) : (
+                        <span className="text-xs text-[#6B7280]">Pendiente</span>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* La Nube link when delivered */}
+              {evento.nube_url && (
+                <a
+                  href={evento.nube_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-between p-4 mb-4 bg-[#C9A96E]/10 border border-[#C9A96E]/30 rounded-xl hover:border-[#C9A96E]/70 transition-colors"
+                >
+                  <div>
+                    <div className="font-semibold text-[#F5F0E8] text-sm mb-0.5">La Nube — Álbum del retiro</div>
+                    <div className="text-xs text-[#A09A8F]">Revive los momentos del retiro</div>
+                  </div>
+                  <span className="text-[#C9A96E] text-base">↗</span>
+                </a>
+              )}
+            </>
+          ) : isHappening ? (
             /* Happening now */
             <div className="bg-[#C9A96E]/10 border border-[#C9A96E]/30 rounded-2xl p-5 mb-4">
               <div className="text-xs font-semibold text-[#C9A96E] uppercase tracking-widest mb-2">Ahora mismo</div>
@@ -108,7 +204,7 @@ export default async function MiRetiroPage() {
               </div>
             </div>
           ) : (
-            /* Default / past */
+            /* Default */
             <div className="bg-[#181818] border border-[#2A2A2A] rounded-2xl p-5 mb-4">
               <div className="text-xs font-medium text-[#A09A8F] uppercase tracking-widest mb-2">Tu retiro</div>
               <div className="text-lg font-bold text-[#F5F0E8] mb-1">{evento.nombre}</div>
@@ -119,6 +215,34 @@ export default async function MiRetiroPage() {
               </div>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Recent announcements */}
+      {recentAnnouncements.length > 0 && (
+        <div className="mb-4 space-y-2">
+          {recentAnnouncements.map(a => (
+            <Link
+              key={a.id}
+              href="/avisos"
+              className={[
+                'flex items-center gap-3 px-4 py-3 rounded-xl border transition-colors',
+                a.tipo === 'urgente'
+                  ? 'bg-red-950/40 border-red-700/40 hover:border-red-600/60'
+                  : a.tipo === 'logistica'
+                  ? 'bg-[#C9A96E]/10 border-[#C9A96E]/30 hover:border-[#C9A96E]/60'
+                  : 'bg-[#181818] border-[#2A2A2A] hover:border-[#3A3A3A]',
+              ].join(' ')}
+            >
+              <span className="text-base shrink-0">
+                {a.tipo === 'urgente' ? '🚨' : a.tipo === 'logistica' ? '📋' : '📢'}
+              </span>
+              <span className="text-sm font-medium text-[#F5F0E8] leading-snug flex-1 min-w-0 truncate">
+                {a.titulo}
+              </span>
+              <span className="text-[#A09A8F] text-xs shrink-0">→</span>
+            </Link>
+          ))}
         </div>
       )}
 
@@ -177,8 +301,8 @@ export default async function MiRetiroPage() {
         </div>
       )}
 
-      {/* La Nube CTA */}
-      {family && evento?.nube_url && (
+      {/* La Nube CTA — only when not post-event (post-event shows it inline above) */}
+      {family && evento?.nube_url && !(daysUntilEnd !== null && daysUntilEnd < 0) && (
         <a
           href={evento.nube_url}
           target="_blank"
@@ -201,6 +325,7 @@ export default async function MiRetiroPage() {
             { href: '/documentos', label: 'Documentos', sub: 'Materiales del retiro', icon: '◻' },
             { href: '/info', label: 'Información', sub: 'Logística y contactos', icon: 'ℹ' },
             { href: '/acuerdos', label: 'Acuerdos', sub: 'Documentos legales', icon: '✍' },
+            { href: '/equipo', label: 'Equipo', sub: 'Conoce al equipo', icon: '◎' },
           ].map(link => (
             <Link
               key={link.href}

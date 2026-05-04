@@ -84,6 +84,11 @@ export default function AdminNav({ userEmail, activeEventId, activeEventName }: 
               active={pathname === `/eventos/${currentEventId}`}
             />
             <NavLink
+              href={`/eventos/${currentEventId}/checklist`}
+              label="Checklist"
+              active={isActive(`/eventos/${currentEventId}/checklist`)}
+            />
+            <NavLink
               href={`/eventos/${currentEventId}/familias`}
               label="Familias"
               active={isActive(`/eventos/${currentEventId}/familias`)}
@@ -107,6 +112,31 @@ export default function AdminNav({ userEmail, activeEventId, activeEventName }: 
               href={`/eventos/${currentEventId}/formularios`}
               label="Formularios"
               active={isActive(`/eventos/${currentEventId}/formularios`)}
+            />
+            <NavLink
+              href={`/eventos/${currentEventId}/avisos`}
+              label="Avisos"
+              active={isActive(`/eventos/${currentEventId}/avisos`)}
+            />
+            <NavLink
+              href={`/eventos/${currentEventId}/materiales`}
+              label="Materiales"
+              active={isActive(`/eventos/${currentEventId}/materiales`)}
+            />
+            <NavLink
+              href={`/eventos/${currentEventId}/equipo`}
+              label="Equipo"
+              active={isActive(`/eventos/${currentEventId}/equipo`)}
+            />
+            <NavLink
+              href={`/eventos/${currentEventId}/entregas`}
+              label="Entregas"
+              active={isActive(`/eventos/${currentEventId}/entregas`)}
+            />
+            <NavLink
+              href={`/eventos/${currentEventId}/operacion`}
+              label="Operación"
+              active={isActive(`/eventos/${currentEventId}/operacion`)}
             />
           </>
         )}

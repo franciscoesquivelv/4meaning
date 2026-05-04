@@ -24,6 +24,11 @@ interface EventData {
   ubicacion: string
   n_parejas: number | null
   status: string
+  pipeline_status: string
+  contacto_capitulo: string
+  costo_por_pareja: number | null
+  primer_deposito: number | null
+  notas_comerciales: string
   notas_internas: string
   nube_url: string
   info_logistica: string
@@ -74,6 +79,11 @@ export default function EditarEventoPage({ params }: { params: { id: string } })
     ubicacion: '',
     n_parejas: null,
     status: 'draft',
+    pipeline_status: 'prospecto',
+    contacto_capitulo: '',
+    costo_por_pareja: null,
+    primer_deposito: null,
+    notas_comerciales: '',
     notas_internas: '',
     nube_url: '',
     info_logistica: '',
@@ -104,6 +114,11 @@ export default function EditarEventoPage({ params }: { params: { id: string } })
         ubicacion: data.ubicacion ?? '',
         n_parejas: data.n_parejas ?? null,
         status: data.status ?? 'draft',
+        pipeline_status: data.pipeline_status ?? 'prospecto',
+        contacto_capitulo: data.contacto_capitulo ?? '',
+        costo_por_pareja: data.costo_por_pareja ?? null,
+        primer_deposito: data.primer_deposito ?? null,
+        notas_comerciales: data.notas_comerciales ?? '',
         notas_internas: data.notas_internas ?? '',
         nube_url: data.nube_url ?? '',
         info_logistica: data.info_logistica ?? '',
@@ -133,6 +148,11 @@ export default function EditarEventoPage({ params }: { params: { id: string } })
         ubicacion: form.ubicacion || null,
         n_parejas: form.n_parejas,
         status: form.status,
+        pipeline_status: form.pipeline_status,
+        contacto_capitulo: form.contacto_capitulo || null,
+        costo_por_pareja: form.costo_por_pareja,
+        primer_deposito: form.primer_deposito,
+        notas_comerciales: form.notas_comerciales || null,
         notas_internas: form.notas_internas || null,
         nube_url: form.nube_url || null,
         info_logistica: form.info_logistica || null,
@@ -174,16 +194,17 @@ export default function EditarEventoPage({ params }: { params: { id: string } })
           <div className="grid grid-cols-2 gap-4">
             {field('Capítulo', 'capitulo', form, setForm, { placeholder: 'YPO México' })}
             <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1.5 uppercase tracking-wider">Status</label>
+              <label className="block text-xs font-medium text-slate-500 mb-1.5 uppercase tracking-wider">Pipeline</label>
               <select
-                value={form.status}
-                onChange={e => setForm(f => ({ ...f, status: e.target.value }))}
+                value={form.pipeline_status}
+                onChange={e => setForm(f => ({ ...f, pipeline_status: e.target.value }))}
                 className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 bg-white"
               >
-                <option value="draft">Borrador</option>
-                <option value="active">Activo</option>
-                <option value="completed">Completado</option>
-                <option value="archived">Archivado</option>
+                <option value="prospecto">Prospecto</option>
+                <option value="confirmado">Confirmado</option>
+                <option value="en_preparacion">En preparación</option>
+                <option value="ejecutado">Ejecutado</option>
+                <option value="cancelado">Cancelado</option>
               </select>
             </div>
           </div>
@@ -216,6 +237,46 @@ export default function EditarEventoPage({ params }: { params: { id: string } })
             <p className="text-xs text-slate-400 mt-0.5">Link del álbum compartido para que las familias suban sus fotos.</p>
           </div>
           {field('URL de La Nube', 'nube_url', form, setForm, { placeholder: 'https://photos.google.com/share/...' })}
+        </div>
+
+        {/* Comercial */}
+        <div className="bg-white border border-slate-200 rounded-xl p-5 space-y-4 shadow-sm">
+          <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Datos comerciales</h2>
+          {field('Contacto del capítulo', 'contacto_capitulo', form, setForm, { placeholder: 'Nombre y email del Chair o coordinador' })}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-medium text-slate-500 mb-1.5 uppercase tracking-wider">Costo por pareja (MXN)</label>
+              <input
+                type="number"
+                min={0}
+                value={form.costo_por_pareja ?? ''}
+                onChange={e => setForm(f => ({ ...f, costo_por_pareja: e.target.value ? parseFloat(e.target.value) : null }))}
+                placeholder="0"
+                className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 bg-white"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-slate-500 mb-1.5 uppercase tracking-wider">Primer depósito (MXN)</label>
+              <input
+                type="number"
+                min={0}
+                value={form.primer_deposito ?? ''}
+                onChange={e => setForm(f => ({ ...f, primer_deposito: e.target.value ? parseFloat(e.target.value) : null }))}
+                placeholder="0"
+                className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 bg-white"
+              />
+            </div>
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-slate-500 mb-1.5 uppercase tracking-wider">Notas comerciales</label>
+            <textarea
+              value={form.notas_comerciales}
+              onChange={e => setForm(f => ({ ...f, notas_comerciales: e.target.value }))}
+              placeholder="Condiciones especiales, historial de negociación..."
+              rows={3}
+              className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 bg-white resize-none"
+            />
+          </div>
         </div>
 
         {/* Notas internas */}

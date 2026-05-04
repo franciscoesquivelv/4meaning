@@ -35,6 +35,10 @@ export default function NuevoEventoPage() {
     fecha_fin: '',
     ubicacion: '',
     n_parejas: '',
+    pipeline_status: 'prospecto',
+    contacto_capitulo: '',
+    costo_por_pareja: '',
+    primer_deposito: '',
   })
 
   const supabase = createBrowserClient(
@@ -42,7 +46,7 @@ export default function NuevoEventoPage() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   )
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
   }
 
@@ -62,6 +66,10 @@ export default function NuevoEventoPage() {
         fecha_fin: form.fecha_fin || null,
         ubicacion: form.ubicacion || null,
         n_parejas: form.n_parejas ? parseInt(form.n_parejas) : 0,
+        pipeline_status: form.pipeline_status || 'prospecto',
+        contacto_capitulo: form.contacto_capitulo || null,
+        costo_por_pareja: form.costo_por_pareja ? parseFloat(form.costo_por_pareja) : null,
+        primer_deposito: form.primer_deposito ? parseFloat(form.primer_deposito) : null,
       })
       .select('id')
       .single()
@@ -172,6 +180,66 @@ export default function NuevoEventoPage() {
             placeholder="0"
             style={inputStyle}
           />
+        </div>
+
+        {/* Pipeline y comercial */}
+        <hr style={{ border: 'none', borderTop: '1px solid #e5e7eb', margin: '8px 0' }} />
+        <p style={{ fontSize: 11, fontWeight: 600, color: '#9ca3af', letterSpacing: '0.08em', textTransform: 'uppercase', margin: 0 }}>
+          Pipeline comercial
+        </p>
+
+        <div>
+          <label style={labelStyle}>Estado del pipeline</label>
+          <select
+            name="pipeline_status"
+            value={form.pipeline_status}
+            onChange={handleChange}
+            style={{ ...inputStyle, background: '#fff' }}
+          >
+            <option value="prospecto">Prospecto</option>
+            <option value="confirmado">Confirmado</option>
+            <option value="en_preparacion">En preparación</option>
+            <option value="ejecutado">Ejecutado</option>
+            <option value="cancelado">Cancelado</option>
+          </select>
+        </div>
+
+        <div>
+          <label style={labelStyle}>Contacto del capítulo</label>
+          <input
+            name="contacto_capitulo"
+            value={form.contacto_capitulo}
+            onChange={handleChange}
+            placeholder="Nombre y email del Chair o coordinador"
+            style={inputStyle}
+          />
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+          <div>
+            <label style={labelStyle}>Costo por pareja (MXN)</label>
+            <input
+              name="costo_por_pareja"
+              type="number"
+              min="0"
+              value={form.costo_por_pareja}
+              onChange={handleChange}
+              placeholder="0"
+              style={inputStyle}
+            />
+          </div>
+          <div>
+            <label style={labelStyle}>Primer depósito (MXN)</label>
+            <input
+              name="primer_deposito"
+              type="number"
+              min="0"
+              value={form.primer_deposito}
+              onChange={handleChange}
+              placeholder="0"
+              style={inputStyle}
+            />
+          </div>
         </div>
 
         {error && (

@@ -2,15 +2,20 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 
-function StatusBadge({ status }: { status: string }) {
+function PipelineBadge({ status }: { status: string }) {
   const map: Record<string, string> = {
-    draft:     'bg-slate-100 text-slate-600',
-    active:    'bg-[#DCFCE7] text-[#16A34A]',
-    completed: 'bg-[#DBEAFE] text-[#2563EB]',
-    archived:  'bg-slate-100 text-slate-500',
+    prospecto:       'bg-slate-100 text-slate-600',
+    confirmado:      'bg-blue-100 text-blue-700',
+    en_preparacion:  'bg-amber-100 text-amber-700',
+    ejecutado:       'bg-emerald-100 text-emerald-700',
+    cancelado:       'bg-red-100 text-red-500',
   }
   const labels: Record<string, string> = {
-    draft: 'Borrador', active: 'Activo', completed: 'Completado', archived: 'Archivado',
+    prospecto:      'Prospecto',
+    confirmado:     'Confirmado',
+    en_preparacion: 'En preparación',
+    ejecutado:      'Ejecutado',
+    cancelado:      'Cancelado',
   }
   return (
     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${map[status] ?? 'bg-slate-100 text-slate-600'}`}>
@@ -31,7 +36,7 @@ export default async function EventosPage() {
 
   const { data: eventos } = await supabase
     .from('events')
-    .select('id, nombre, ciudad, pais, fecha_inicio, fecha_fin, n_parejas, status')
+    .select('id, nombre, ciudad, pais, fecha_inicio, fecha_fin, n_parejas, status, pipeline_status, capitulo')
     .order('fecha_inicio', { ascending: false })
 
   return (
@@ -63,10 +68,10 @@ export default async function EventosPage() {
             <thead>
               <tr className="bg-slate-50 border-b border-slate-200">
                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Nombre</th>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Ciudad / País</th>
+                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Capítulo / Ciudad</th>
                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Fechas</th>
                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Parejas</th>
-                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Estado</th>
+                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Pipeline</th>
                 <th className="px-4 py-3"></th>
               </tr>
             </thead>
@@ -82,13 +87,14 @@ export default async function EventosPage() {
                     </Link>
                   </td>
                   <td className="px-4 py-3 text-slate-500">
-                    {[ev.ciudad, ev.pais].filter(Boolean).join(', ') || '—'}
+                    <div>{ev.capitulo || '—'}</div>
+                    {ev.ciudad && <div className="text-xs text-slate-400">{ev.ciudad}</div>}
                   </td>
                   <td className="px-4 py-3 text-slate-500">
                     {formatDate(ev.fecha_inicio)} – {formatDate(ev.fecha_fin)}
                   </td>
                   <td className="px-4 py-3 text-slate-500">{ev.n_parejas ?? 0}</td>
-                  <td className="px-4 py-3"><StatusBadge status={ev.status} /></td>
+                  <td className="px-4 py-3"><PipelineBadge status={ev.pipeline_status ?? 'prospecto'} /></td>
                   <td className="px-4 py-3">
                     <Link href={`/eventos/${ev.id}`} className="text-xs text-slate-400 hover:text-slate-600 transition-colors">
                       Ver →

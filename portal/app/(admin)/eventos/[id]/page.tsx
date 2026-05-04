@@ -2,15 +2,20 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
 
-function StatusBadge({ status }: { status: string }) {
+function PipelineBadge({ status }: { status: string }) {
   const map: Record<string, string> = {
-    draft:     'bg-slate-100 text-slate-600',
-    active:    'bg-[#DCFCE7] text-[#16A34A]',
-    completed: 'bg-[#DBEAFE] text-[#2563EB]',
-    archived:  'bg-slate-100 text-slate-500',
+    prospecto:       'bg-slate-100 text-slate-600',
+    confirmado:      'bg-blue-100 text-blue-700',
+    en_preparacion:  'bg-amber-100 text-amber-700',
+    ejecutado:       'bg-emerald-100 text-emerald-700',
+    cancelado:       'bg-red-100 text-red-500',
   }
   const labels: Record<string, string> = {
-    draft: 'Borrador', active: 'Activo', completed: 'Completado', archived: 'Archivado',
+    prospecto:      'Prospecto',
+    confirmado:     'Confirmado',
+    en_preparacion: 'En preparación',
+    ejecutado:      'Ejecutado',
+    cancelado:      'Cancelado',
   }
   return (
     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${map[status] ?? 'bg-slate-100 text-slate-600'}`}>
@@ -96,12 +101,27 @@ export default async function EventoDetailPage({ params }: { params: { id: strin
   const formulariosCount = responses?.length ?? 0
   const signedCount = agreements?.filter(a => ['signed', 'approved'].includes(a.status)).length ?? 0
 
+  const [
+    { count: avisosCount },
+    { count: tasksTotal },
+    { count: tasksDone },
+  ] = await Promise.all([
+    supabase.from('announcements').select('id', { count: 'exact', head: true }).eq('event_id', params.id).eq('published', true),
+    supabase.from('event_tasks').select('id', { count: 'exact', head: true }).eq('event_id', params.id),
+    supabase.from('event_tasks').select('id', { count: 'exact', head: true }).eq('event_id', params.id).eq('done', true),
+  ])
+
   const tabs = [
-    { href: `/eventos/${params.id}/familias`, label: 'Familias', count: familiesCount },
-    { href: `/eventos/${params.id}/acuerdos`, label: 'Acuerdos', count: agreementsCount },
-    { href: `/eventos/${params.id}/itinerario`, label: 'Itinerario', count: itineraryCount },
-    { href: `/eventos/${params.id}/documentos`, label: 'Documentos', count: documentsCount },
-    { href: `/eventos/${params.id}/formularios`, label: 'Formularios', count: formulariosCount },
+    { href: `/eventos/${params.id}/checklist`,  label: '✓ Checklist',  count: tasksTotal ?? 0 },
+    { href: `/eventos/${params.id}/familias`,   label: 'Familias',     count: familiesCount },
+    { href: `/eventos/${params.id}/materiales`, label: '🖨 Materiales', count: null },
+    { href: `/eventos/${params.id}/equipo`,     label: 'Equipo',       count: null },
+    { href: `/eventos/${params.id}/acuerdos`,   label: 'Acuerdos',     count: agreementsCount },
+    { href: `/eventos/${params.id}/itinerario`, label: 'Itinerario',   count: itineraryCount },
+    { href: `/eventos/${params.id}/documentos`, label: 'Documentos',   count: documentsCount },
+    { href: `/eventos/${params.id}/formularios`,label: 'Formularios',  count: formulariosCount },
+    { href: `/eventos/${params.id}/avisos`,     label: 'Avisos',       count: avisosCount ?? 0 },
+    { href: `/eventos/${params.id}/operacion`,  label: '⚡ Operación',  count: null },
   ]
 
   return (
@@ -123,7 +143,7 @@ export default async function EventoDetailPage({ params }: { params: { id: strin
             )}
             <span>{formatDate(evento.fecha_inicio)} – {formatDate(evento.fecha_fin)}</span>
             {evento.ubicacion && <span>{evento.ubicacion}</span>}
-            <StatusBadge status={evento.status} />
+            <PipelineBadge status={evento.pipeline_status ?? 'prospecto'} />
           </div>
         </div>
         <Link
@@ -140,6 +160,7 @@ export default async function EventoDetailPage({ params }: { params: { id: strin
           { label: 'Familias', value: familiesCount },
           { label: 'Acuerdos', value: agreementsCount },
           { label: 'Firmados', value: signedCount },
+          { label: 'Tareas', value: `${tasksDone ?? 0}/${tasksTotal ?? 0}` },
         ].map((s, i) => (
           <div key={s.label} className={`flex items-center gap-2 ${i > 0 ? 'pl-6 border-l border-slate-200' : ''}`}>
             <span className="text-lg font-bold text-slate-900">{s.value}</span>
@@ -149,7 +170,7 @@ export default async function EventoDetailPage({ params }: { params: { id: strin
       </div>
 
       {/* Horizontal tab nav */}
-      <div className="flex items-center gap-1 border-b border-slate-200 mb-6">
+      <div className="flex items-center gap-1 border-b border-slate-200 mb-6 flex-wrap">
         {tabs.map(tab => (
           <Link
             key={tab.href}
@@ -157,9 +178,11 @@ export default async function EventoDetailPage({ params }: { params: { id: strin
             className="flex items-center gap-2 px-4 py-3 text-sm text-slate-600 hover:text-slate-900 transition-colors border-b-2 border-transparent hover:border-slate-300 -mb-px"
           >
             {tab.label}
-            <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600">
-              {tab.count}
-            </span>
+            {tab.count !== null && (
+              <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600">
+                {tab.count}
+              </span>
+            )}
           </Link>
         ))}
       </div>
@@ -222,9 +245,14 @@ export default async function EventoDetailPage({ params }: { params: { id: strin
             <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Acciones rápidas</h3>
             <div className="space-y-2">
               {[
-                { href: `/eventos/${params.id}/familias/nueva`, label: '+ Nueva familia' },
-                { href: `/eventos/${params.id}/acuerdos/nuevo`, label: '+ Nuevo acuerdo' },
-                { href: `/eventos/${params.id}/itinerario/nuevo`, label: '+ Item itinerario' },
+                { href: `/eventos/${params.id}/operacion`,       label: '⚡ Modo operación' },
+                { href: `/eventos/${params.id}/checklist`,       label: '✓ Checklist' },
+                { href: `/eventos/${params.id}/materiales`,      label: '🖨 Materiales' },
+                { href: `/eventos/${params.id}/familias/nueva`,  label: '+ Nueva familia' },
+                { href: `/eventos/${params.id}/acuerdos/nuevo`,  label: '+ Nuevo acuerdo' },
+                { href: `/eventos/${params.id}/itinerario/nuevo`,label: '+ Item itinerario' },
+                { href: `/eventos/${params.id}/avisos`,          label: '+ Publicar aviso' },
+                { href: `/eventos/${params.id}/entregas`,        label: '📦 Entregas' },
               ].map(action => (
                 <Link
                   key={action.href}
@@ -246,8 +274,8 @@ export default async function EventoDetailPage({ params }: { params: { id: strin
                 <dd className="font-medium text-slate-900">{evento.n_parejas ?? '—'}</dd>
               </div>
               <div>
-                <dt className="text-xs text-slate-400">Estado</dt>
-                <dd className="mt-0.5"><StatusBadge status={evento.status} /></dd>
+                <dt className="text-xs text-slate-400">Pipeline</dt>
+                <dd className="mt-0.5"><PipelineBadge status={evento.pipeline_status ?? 'prospecto'} /></dd>
               </div>
             </dl>
           </div>

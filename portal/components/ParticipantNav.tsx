@@ -4,11 +4,11 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 const navItems = [
-  { href: '/mi-retiro', label: 'Inicio', icon: '⌂' },
-  { href: '/acuerdos', label: 'Acuerdos', icon: '✍' },
-  { href: '/programa', label: 'Programa', icon: '◫' },
-  { href: '/documentos', label: 'Docs', icon: '◻' },
-  { href: '/info', label: 'Info', icon: 'ℹ' },
+  { href: '/mi-retiro', label: 'Inicio',   icon: '⌂' },
+  { href: '/avisos',    label: 'Avisos',   icon: '📢' },
+  { href: '/programa',  label: 'Programa', icon: '◫' },
+  { href: '/acuerdos',  label: 'Acuerdos', icon: '✍' },
+  { href: '/info',      label: 'Info',     icon: 'ℹ' },
 ]
 
 export default function ParticipantNav() {

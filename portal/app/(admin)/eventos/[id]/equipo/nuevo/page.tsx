@@ -1,8 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect, notFound } from 'next/navigation'
-import NuevoItemForm from './NuevoItemForm'
+import AgregarMiembroForm from './AgregarMiembroForm'
 
-export default async function NuevoItinerarioItemPage({ params }: { params: { id: string } }) {
+export default async function NuevoMiembroPage({ params }: { params: { id: string } }) {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
@@ -14,11 +14,5 @@ export default async function NuevoItinerarioItemPage({ params }: { params: { id
     .single()
   if (!evento) notFound()
 
-  const { data: teamMembers } = await supabase
-    .from('event_team')
-    .select('id, nombre, rol')
-    .eq('event_id', params.id)
-    .order('orden')
-
-  return <NuevoItemForm eventId={params.id} teamMembers={teamMembers ?? []} />
+  return <AgregarMiembroForm eventId={evento.id} eventNombre={evento.nombre} />
 }
