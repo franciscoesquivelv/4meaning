@@ -46,6 +46,12 @@ interface FamilyRow {
   entrega_estimada: string | null
 }
 
+function isDelayed(estimada: string | null, sbStatus: string, vStatus: string): boolean {
+  if (!estimada) return false
+  if (sbStatus === 'entregado' && vStatus === 'entregado') return false
+  return new Date(estimada + 'T23:59:59') < new Date()
+}
+
 export default function EntregaRow({ family, isLast }: { family: FamilyRow; isLast: boolean }) {
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -67,7 +73,12 @@ export default function EntregaRow({ family, isLast }: { family: FamilyRow; isLa
     <tr className={`hover:bg-slate-50 transition-colors ${!isLast ? 'border-b border-slate-100' : ''} ${saving ? 'opacity-70' : ''}`}>
       {/* Familia */}
       <td className="px-4 py-3">
-        <div className="font-semibold text-slate-900">{family.nombre_familia}</div>
+        <div className="flex items-center gap-2">
+          <span className="font-semibold text-slate-900">{family.nombre_familia}</span>
+          {isDelayed(family.entrega_estimada, sbStatus, vStatus) && (
+            <span className="text-xs font-semibold text-red-500 bg-red-50 border border-red-200 px-1.5 py-0.5 rounded-full">Retrasado</span>
+          )}
+        </div>
         <div className="text-xs text-slate-400 mt-0.5">
           {family.nombre1}{family.nombre2 ? ` · ${family.nombre2}` : ''}
         </div>

@@ -54,8 +54,9 @@ export default async function AvisosParticipantPage() {
           <div className="w-12 h-12 rounded-full bg-[#181818] border border-[#2A2A2A] flex items-center justify-center mb-4 text-2xl text-[#A09A8F]">
             📢
           </div>
-          <p className="text-[#A09A8F] text-sm">No hay avisos por el momento.</p>
-          <p className="text-[#6B7280] text-xs mt-1">Revisa más tarde.</p>
+          <p className="text-[#A09A8F] text-sm leading-relaxed max-w-xs">
+            Aquí recibirás comunicados importantes del equipo Trascendencia antes y durante el retiro. Activa las notificaciones para no perderte nada.
+          </p>
         </div>
       )}
 

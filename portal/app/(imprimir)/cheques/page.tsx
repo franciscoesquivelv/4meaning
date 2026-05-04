@@ -15,13 +15,19 @@ export default async function ChequesPage({
     return <div style={{ padding: 32, color: '#666' }}>Faltan parámetros: event_id y family_id requeridos.</div>
   }
 
-  const [{ data: evento }, { data: familia }] = await Promise.all([
+  const [{ data: evento }, { data: familia }, { data: profile }] = await Promise.all([
     supabase.from('events').select('nombre, ciudad, fecha_inicio').eq('id', event_id).single(),
-    supabase.from('families').select('nombre_familia, nombre1, nombre2').eq('id', family_id).eq('event_id', event_id).single(),
+    supabase.from('families').select('nombre_familia, nombre1, nombre2, user_id1, user_id2').eq('id', family_id).eq('event_id', event_id).single(),
+    supabase.from('profiles').select('role').eq('id', user.id).single(),
   ])
 
   if (!evento || !familia) {
     return <div style={{ padding: 32, color: '#666' }}>Datos no encontrados.</div>
+  }
+
+  const isStaff = ['super_admin', 'admin', 'staff'].includes(profile?.role ?? '')
+  if (!isStaff && familia.user_id1 !== user.id && familia.user_id2 !== user.id) {
+    return <div style={{ padding: 24, fontFamily: 'sans-serif' }}>Acceso no autorizado.</div>
   }
 
   const formatFecha = (iso: string | null) => {

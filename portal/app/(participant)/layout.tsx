@@ -31,7 +31,7 @@ export default async function ParticipantLayout({ children }: { children: React.
     .select('nombre_familia, event_id, events(nombre)')
     .or(`user_id1.eq.${user.id},user_id2.eq.${user.id}`)
     .limit(1)
-    .single()
+    .maybeSingle()
 
   const firstName = profile.full_name?.split(' ')[0] ?? ''
   const eventName = family ? (family.events as unknown as { nombre: string } | null)?.nombre : null

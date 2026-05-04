@@ -89,8 +89,8 @@ export default async function ProgramaPage() {
       <h1 className="text-xl font-bold text-[#F5F0E8] mb-6">Programa</h1>
 
       {!items?.length ? (
-        <div className="bg-[#181818] border border-[#2A2A2A] rounded-xl p-6 text-center text-[#A09A8F] text-sm">
-          El programa estará disponible próximamente.
+        <div className="bg-[#181818] border border-[#2A2A2A] rounded-xl p-6 text-center text-[#A09A8F] text-sm leading-relaxed">
+          El programa del retiro estará disponible aquí aproximadamente 7 días antes de la fecha de inicio. Mientras tanto, revisa la sección de Información para los detalles de llegada.
         </div>
       ) : (
         <>

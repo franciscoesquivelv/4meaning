@@ -34,8 +34,8 @@ export default async function EquipoPage() {
         </div>
       )}
       {family && !teamMembers.length && (
-        <div className="bg-[#181818] border border-[#2A2A2A] rounded-xl p-6 text-center text-[#A09A8F] text-sm">
-          Los perfiles del equipo estarán disponibles próximamente.
+        <div className="bg-[#181818] border border-[#2A2A2A] rounded-xl p-6 text-center text-[#A09A8F] text-sm leading-relaxed">
+          Conocerás a los facilitadores del retiro unos días antes del evento. Sus presentaciones y experiencias estarán disponibles aquí pronto.
         </div>
       )}
       {teamMembers.length > 0 && (

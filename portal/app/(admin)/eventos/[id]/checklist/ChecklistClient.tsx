@@ -97,7 +97,17 @@ export default function ChecklistClient({
   const handleToggle = useCallback(async (id: string, done: boolean) => {
     // Optimistic update
     setTasks(prev => prev.map(t => t.id === id ? { ...t, done, done_at: done ? new Date().toISOString() : null } : t))
-    await supabase.from('event_tasks').update({ done, done_at: done ? new Date().toISOString() : null }).eq('id', id)
+
+    const { error } = await supabase
+      .from('event_tasks')
+      .update({ done, done_at: done ? new Date().toISOString() : null })
+      .eq('id', id)
+
+    if (error) {
+      // Rollback to previous value
+      setTasks(prev => prev.map(t => t.id === id ? { ...t, done: !done, done_at: !done ? new Date().toISOString() : null } : t))
+      console.error('Error al actualizar tarea:', error.message)
+    }
   }, [supabase])
 
   const handleDelete = useCallback(async (id: string) => {

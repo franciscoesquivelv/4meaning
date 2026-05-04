@@ -15,6 +15,14 @@ export default async function AgendaPage({
     return <div style={{ padding: 32, color: '#666' }}>Falta parámetro: event_id requerido.</div>
   }
 
+  const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
+  const isStaff = ['super_admin', 'admin', 'staff'].includes(profile?.role ?? '')
+  if (!isStaff) {
+    const { data: fam } = await supabase.from('families').select('id')
+      .eq('event_id', event_id).or(`user_id1.eq.${user.id},user_id2.eq.${user.id}`).maybeSingle()
+    if (!fam) return <div style={{ padding: 24, fontFamily: 'sans-serif' }}>Acceso no autorizado.</div>
+  }
+
   const [{ data: evento }, { data: items }] = await Promise.all([
     supabase.from('events').select('nombre, ciudad, pais, fecha_inicio, fecha_fin, capitulo').eq('id', event_id).single(),
     supabase.from('itinerary_items')

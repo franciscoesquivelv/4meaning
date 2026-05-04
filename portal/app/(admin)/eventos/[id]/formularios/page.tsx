@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
+import CopiarEnlaceButton from './CopiarEnlaceButton'
 
 function formatDate(d: string | null) {
   if (!d) return '—'
@@ -108,9 +109,12 @@ export default async function FormulariosAdminPage({ params }: { params: { id: s
       {/* Pending */}
       {pending.length > 0 && (
         <section>
-          <h2 style={{ fontSize: 14, fontWeight: 600, color: '#374151', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 10 }}>
+          <h2 style={{ fontSize: 14, fontWeight: 600, color: '#374151', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6 }}>
             Pendientes ({pending.length})
           </h2>
+          <p style={{ fontSize: 12, color: '#9ca3af', marginBottom: 10 }}>
+            Comparte el enlace con las familias para que completen su perfil.
+          </p>
           <div style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 10, overflow: 'hidden' }}>
             {pending.map((f, i) => (
               <div key={f.id} style={{
@@ -121,7 +125,10 @@ export default async function FormulariosAdminPage({ params }: { params: { id: s
                 gap: 16,
               }}>
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontWeight: 500, fontSize: 14 }}>{f.nombre_familia}</div>
+                  <div style={{ fontWeight: 500, fontSize: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
+                    {f.nombre_familia}
+                    <CopiarEnlaceButton />
+                  </div>
                   <div style={{ fontSize: 12, color: '#9ca3af', marginTop: 2 }}>
                     {f.nombre1}{f.nombre2 ? ` & ${f.nombre2}` : ''}
                   </div>

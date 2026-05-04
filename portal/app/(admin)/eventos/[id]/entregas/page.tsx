@@ -12,7 +12,10 @@ import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
 import EntregaRow from './EntregaRow'
 
-export default async function EntregasPage({ params }: { params: { id: string } }) {
+export default async function EntregasPage({ params, searchParams }: {
+  params: { id: string }
+  searchParams: { filtro?: string }
+}) {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
@@ -30,11 +33,23 @@ export default async function EntregasPage({ params }: { params: { id: string } 
     .eq('event_id', params.id)
     .order('nombre_familia')
 
-  const list = families ?? []
+  const allFamilies = families ?? []
 
-  const sbDone = list.filter(f => f.storybook_status === 'entregado').length
-  const vDone  = list.filter(f => f.video_status === 'entregado').length
-  const total  = list.length
+  const filtro = searchParams.filtro ?? ''
+  const list = (() => {
+    if (filtro === 'pendiente') {
+      return allFamilies.filter(f => f.storybook_status === 'pendiente' || f.video_status === 'pendiente')
+    } else if (filtro === 'en_produccion') {
+      return allFamilies.filter(f => f.storybook_status === 'en_produccion' || f.video_status === 'en_produccion')
+    } else if (filtro === 'entregado') {
+      return allFamilies.filter(f => f.storybook_status === 'entregado' && f.video_status === 'entregado')
+    }
+    return allFamilies
+  })()
+
+  const sbDone = allFamilies.filter(f => f.storybook_status === 'entregado').length
+  const vDone  = allFamilies.filter(f => f.video_status === 'entregado').length
+  const total  = allFamilies.length
 
   return (
     <div className="p-8 max-w-5xl">
@@ -62,6 +77,28 @@ export default async function EntregasPage({ params }: { params: { id: string } 
             <div className="text-xs">Videos</div>
           </div>
         </div>
+      </div>
+
+      {/* Filtros */}
+      <div className="flex gap-2 mb-4">
+        {[
+          { label: 'Todos', value: '' },
+          { label: 'Pendientes', value: 'pendiente' },
+          { label: 'En producción', value: 'en_produccion' },
+          { label: 'Entregados', value: 'entregado' },
+        ].map(f => (
+          <Link
+            key={f.value}
+            href={`/eventos/${params.id}/entregas${f.value ? `?filtro=${f.value}` : ''}`}
+            className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition-colors ${
+              filtro === f.value
+                ? 'bg-slate-900 text-white border-slate-900'
+                : 'text-slate-600 border-slate-200 hover:bg-slate-50'
+            }`}
+          >
+            {f.label}
+          </Link>
+        ))}
       </div>
 
       {list.length === 0 ? (

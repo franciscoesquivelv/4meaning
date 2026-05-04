@@ -66,6 +66,22 @@ export default async function FamiliasPage({ params }: { params: { id: string } 
   const agreementList = agreements ?? []
   const intakeList = intakeResponses ?? []
 
+  // Precompute sets/maps for O(1) ready-check per family
+  const intakeSet = new Set(intakeList.map(r => r.family_id))
+  const agreementsByFamily = agreementList.reduce((acc, ag) => {
+    if (!acc[ag.family_id]) acc[ag.family_id] = { total: 0, pending: 0 }
+    acc[ag.family_id]!.total++
+    if (!['signed', 'approved'].includes(ag.status)) acc[ag.family_id]!.pending++
+    return acc
+  }, {} as Record<string, { total: number; pending: number }>)
+
+  function isFamilyReady(familyId: string): boolean {
+    const hasIntake = intakeSet.has(familyId)
+    const ag = agreementsByFamily[familyId]
+    const hasAgreements = ag && ag.total > 0 && ag.pending === 0
+    return hasIntake && !!hasAgreements
+  }
+
   const enriched = familyList.map((f) => {
     const familyAgreements = agreementList.filter((a) => a.family_id === f.id)
     const agreementsTotal = familyAgreements.length
@@ -143,6 +159,7 @@ export default async function FamiliasPage({ params }: { params: { id: string } 
             <thead>
               <tr className="bg-slate-50 border-b border-slate-200">
                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Familia</th>
+                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Estado</th>
                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Intake</th>
                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Acuerdos</th>
                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Habitación</th>
@@ -163,6 +180,15 @@ export default async function FamiliasPage({ params }: { params: { id: string } 
                     <div className="text-xs text-slate-400 mt-0.5">
                       {f.nombre1}{f.nombre2 ? ` · ${f.nombre2}` : ''}
                     </div>
+                  </td>
+
+                  {/* Estado (Lista / Pendiente) */}
+                  <td className="px-4 py-3">
+                    {isFamilyReady(f.id) ? (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700">✓ Lista</span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-500">Pendiente</span>
+                    )}
                   </td>
 
                   {/* Intake */}

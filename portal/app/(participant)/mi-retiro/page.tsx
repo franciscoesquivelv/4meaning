@@ -9,11 +9,12 @@ function formatDate(d: string | null) {
 
 function getDaysUntil(dateStr: string | null): number | null {
   if (!dateStr) return null
-  const target = new Date(dateStr + 'T12:00:00')
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-  const diff = Math.ceil((target.getTime() - today.getTime()) / (1000 * 60 * 60 * 24))
-  return diff
+  // Interpret date as noon UTC to avoid timezone boundary issues
+  const target = new Date(dateStr + 'T12:00:00Z')
+  const now = new Date()
+  const todayUTC = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())
+  const targetUTC = Date.UTC(target.getUTCFullYear(), target.getUTCMonth(), target.getUTCDate())
+  return Math.ceil((targetUTC - todayUTC) / (1000 * 60 * 60 * 24))
 }
 
 export default async function MiRetiroPage() {
@@ -246,57 +247,64 @@ export default async function MiRetiroPage() {
         </div>
       )}
 
-      {/* Action items */}
+      {/* Action items — secuencial */}
       {family && (
         <div className="space-y-3 mb-6">
-          {/* Intake form */}
-          {!intakeSubmitted && (
-            <Link
-              href="/formulario"
-              className="flex items-center justify-between p-4 bg-[#181818] border border-[#C9A96E]/40 rounded-xl hover:border-[#C9A96E] transition-colors"
-            >
-              <div>
-                <div className="font-semibold text-[#F5F0E8] text-sm mb-0.5">Completa tu perfil</div>
-                <div className="text-xs text-[#A09A8F]">Cuéntanos su historia antes del retiro</div>
+          {/* Paso 1 — Formulario */}
+          {!intakeSubmitted ? (
+            <Link href="/formulario" className="flex items-center justify-between p-4 bg-[#181818] border border-[#C9A96E]/40 rounded-xl hover:border-[#C9A96E] transition-colors">
+              <div className="flex items-center gap-3">
+                <span className="w-6 h-6 rounded-full bg-[#C9A96E] text-[#0C0C0C] text-xs font-bold flex items-center justify-center flex-shrink-0">1</span>
+                <div>
+                  <div className="font-semibold text-[#F5F0E8] text-sm">Completa tu perfil</div>
+                  <div className="text-xs text-[#A09A8F]">Cuéntanos la historia de su familia</div>
+                </div>
               </div>
-              <span className="text-[#C9A96E] text-lg">→</span>
+              <span className="text-[#C9A96E]">→</span>
             </Link>
-          )}
-
-          {intakeSubmitted && (
-            <div className="flex items-center gap-3 p-4 bg-[#181818] border border-[#2A2A2A] rounded-xl">
-              <span className="text-[#4ADE80] text-lg">✓</span>
+          ) : (
+            <div className="flex items-center gap-3 p-4 bg-[#181818] border border-[#2A2A2A] rounded-xl opacity-60">
+              <span className="w-6 h-6 rounded-full bg-[#1A3A2A] border border-[#4ADE80]/30 text-[#4ADE80] text-xs font-bold flex items-center justify-center flex-shrink-0">✓</span>
               <div>
                 <div className="font-semibold text-sm text-[#F5F0E8]">Perfil completado</div>
-                <div className="text-xs text-[#A09A8F]">Gracias por completarlo</div>
+                <div className="text-xs text-[#A09A8F]">Gracias por compartir su historia</div>
               </div>
             </div>
           )}
 
-          {/* Agreements */}
+          {/* Paso 2 — Acuerdos */}
           {totalCount > 0 && (
             allSigned ? (
-              <div className="flex items-center gap-3 p-4 bg-[#181818] border border-[#2A2A2A] rounded-xl">
-                <span className="text-[#4ADE80] text-lg">✓</span>
+              <div className="flex items-center gap-3 p-4 bg-[#181818] border border-[#2A2A2A] rounded-xl opacity-60">
+                <span className="w-6 h-6 rounded-full bg-[#1A3A2A] border border-[#4ADE80]/30 text-[#4ADE80] text-xs font-bold flex items-center justify-center flex-shrink-0">✓</span>
                 <div>
-                  <div className="font-semibold text-sm text-[#F5F0E8]">Acuerdos completados</div>
-                  <div className="text-xs text-[#A09A8F]">{totalCount}/{totalCount} firmados</div>
+                  <div className="font-semibold text-sm text-[#F5F0E8]">Acuerdos firmados</div>
+                  <div className="text-xs text-[#A09A8F]">{totalCount}/{totalCount} completados</div>
                 </div>
               </div>
             ) : (
-              <div className="flex items-center justify-between p-4 bg-[#181818] border border-[#2A2A2A] rounded-xl">
-                <div>
-                  <div className="font-semibold text-sm text-[#F5F0E8] mb-0.5">Acuerdos pendientes</div>
-                  <div className="text-xs text-[#A09A8F]">{totalCount - pendingCount} de {totalCount} firmados</div>
+              <Link href="/acuerdos" className={`flex items-center justify-between p-4 bg-[#181818] rounded-xl transition-colors ${intakeSubmitted ? 'border border-[#C9A96E]/40 hover:border-[#C9A96E]' : 'border border-[#2A2A2A] opacity-70'}`}>
+                <div className="flex items-center gap-3">
+                  <span className={`w-6 h-6 rounded-full text-xs font-bold flex items-center justify-center flex-shrink-0 ${intakeSubmitted ? 'bg-[#C9A96E] text-[#0C0C0C]' : 'bg-[#2A2A2A] text-[#6B7280]'}`}>2</span>
+                  <div>
+                    <div className="font-semibold text-[#F5F0E8] text-sm">Firma los acuerdos</div>
+                    <div className="text-xs text-[#A09A8F]">{pendingCount} pendiente{pendingCount !== 1 ? 's' : ''} de {totalCount}</div>
+                  </div>
                 </div>
-                <Link
-                  href="/acuerdos"
-                  className="px-3 py-1.5 bg-[#181818] border border-[#FBBF24] text-[#FBBF24] text-xs font-semibold rounded-lg hover:bg-[#FBBF24]/10 transition-colors"
-                >
-                  Ver ({pendingCount})
-                </Link>
-              </div>
+                {intakeSubmitted && <span className="text-[#C9A96E]">→</span>}
+              </Link>
             )
+          )}
+
+          {/* Todo listo */}
+          {intakeSubmitted && allSigned && totalCount > 0 && (
+            <div className="flex items-center gap-3 p-4 bg-[#0A2A1A] border border-[#4ADE80]/20 rounded-xl">
+              <span className="text-[#4ADE80] text-xl">✓</span>
+              <div>
+                <div className="font-semibold text-sm text-[#F5F0E8]">Todo listo para el retiro</div>
+                <div className="text-xs text-[#A09A8F]">Perfil y acuerdos completados</div>
+              </div>
+            </div>
           )}
         </div>
       )}

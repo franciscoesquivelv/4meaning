@@ -83,6 +83,13 @@ export default function AdminNav({ userEmail, activeEventId, activeEventName }: 
               label="Resumen"
               active={pathname === `/eventos/${currentEventId}`}
             />
+
+            {/* Preparación */}
+            <div className="px-5 pt-3 pb-1">
+              <div className="text-[9px] font-semibold text-[#374151] uppercase tracking-widest">
+                Preparación
+              </div>
+            </div>
             <NavLink
               href={`/eventos/${currentEventId}/checklist`}
               label="Checklist"
@@ -99,24 +106,9 @@ export default function AdminNav({ userEmail, activeEventId, activeEventName }: 
               active={isActive(`/eventos/${currentEventId}/acuerdos`)}
             />
             <NavLink
-              href={`/eventos/${currentEventId}/itinerario`}
-              label="Itinerario"
-              active={isActive(`/eventos/${currentEventId}/itinerario`)}
-            />
-            <NavLink
-              href={`/eventos/${currentEventId}/documentos`}
-              label="Documentos"
-              active={isActive(`/eventos/${currentEventId}/documentos`)}
-            />
-            <NavLink
               href={`/eventos/${currentEventId}/formularios`}
               label="Formularios"
               active={isActive(`/eventos/${currentEventId}/formularios`)}
-            />
-            <NavLink
-              href={`/eventos/${currentEventId}/avisos`}
-              label="Avisos"
-              active={isActive(`/eventos/${currentEventId}/avisos`)}
             />
             <NavLink
               href={`/eventos/${currentEventId}/materiales`}
@@ -128,21 +120,55 @@ export default function AdminNav({ userEmail, activeEventId, activeEventName }: 
               label="Equipo"
               active={isActive(`/eventos/${currentEventId}/equipo`)}
             />
+
+            {/* Contenido */}
+            <div className="px-5 pt-3 pb-1">
+              <div className="text-[9px] font-semibold text-[#374151] uppercase tracking-widest">
+                Contenido
+              </div>
+            </div>
             <NavLink
-              href={`/eventos/${currentEventId}/entregas`}
-              label="Entregas"
-              active={isActive(`/eventos/${currentEventId}/entregas`)}
+              href={`/eventos/${currentEventId}/itinerario`}
+              label="Itinerario"
+              active={isActive(`/eventos/${currentEventId}/itinerario`)}
             />
+            <NavLink
+              href={`/eventos/${currentEventId}/documentos`}
+              label="Documentos"
+              active={isActive(`/eventos/${currentEventId}/documentos`)}
+            />
+            <NavLink
+              href={`/eventos/${currentEventId}/avisos`}
+              label="Avisos"
+              active={isActive(`/eventos/${currentEventId}/avisos`)}
+            />
+
+            {/* Ejecución */}
+            <div className="px-5 pt-3 pb-1">
+              <div className="text-[9px] font-semibold text-[#374151] uppercase tracking-widest">
+                Ejecución
+              </div>
+            </div>
             <NavLink
               href={`/eventos/${currentEventId}/operacion`}
               label="Operación"
               active={isActive(`/eventos/${currentEventId}/operacion`)}
             />
+            <NavLink
+              href={`/eventos/${currentEventId}/entregas`}
+              label="Entregas"
+              active={isActive(`/eventos/${currentEventId}/entregas`)}
+            />
           </>
         )}
 
-        {/* Spacer */}
+        {/* Admin */}
         <div className="mt-4 border-t border-[#1F2937] pt-4">
+          <div className="px-5 pb-1">
+            <div className="text-[9px] font-semibold text-[#374151] uppercase tracking-widest">
+              Admin
+            </div>
+          </div>
           <NavLink href="/usuarios" label="Usuarios" active={pathname === '/usuarios' || pathname.startsWith('/usuarios/')} />
           <NavLink href="/eventos" label="Todos los eventos" active={pathname === '/eventos'} />
           <NavLink href="/eventos/nuevo" label="+ Nuevo evento" active={pathname === '/eventos/nuevo'} />

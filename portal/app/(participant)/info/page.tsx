@@ -83,11 +83,15 @@ export default async function InfoPage() {
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-xl font-bold text-[#F5F0E8]">Información</h1>
-        {family?.habitacion && (
+        {family?.habitacion ? (
           <p className="text-xs text-[#C9A96E] mt-1 font-medium tracking-wide">
             Habitación {family.habitacion}
           </p>
-        )}
+        ) : family ? (
+          <p className="text-xs text-[#6B7280] mt-1 tracking-wide">
+            Habitación por confirmar
+          </p>
+        ) : null}
       </div>
 
       {!family && (
@@ -134,8 +138,8 @@ export default async function InfoPage() {
 
           {/* No info yet */}
           {!hasInfo && (
-            <div className="bg-[#181818] border border-[#2A2A2A] rounded-xl p-5 mb-4 text-[#A09A8F] text-sm text-center">
-              La información del evento estará disponible próximamente.
+            <div className="bg-[#181818] border border-[#2A2A2A] rounded-xl p-5 mb-4 text-[#A09A8F] text-sm leading-relaxed">
+              La información detallada del retiro — logística, qué llevar y código de vestimenta — se publicará en los próximos días. Si tienes preguntas urgentes, contacta al equipo de Trascendencia.
             </div>
           )}
 

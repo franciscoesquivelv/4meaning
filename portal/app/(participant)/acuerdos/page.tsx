@@ -116,8 +116,8 @@ export default async function AcuerdosPage() {
       )}
 
       {total === 0 && (
-        <div className="bg-[#181818] border border-[#2A2A2A] rounded-xl p-6 text-center text-[#A09A8F] text-sm">
-          No tienes acuerdos asignados aún.
+        <div className="bg-[#181818] border border-[#2A2A2A] rounded-xl p-6 text-center text-[#A09A8F] text-sm leading-relaxed">
+          Los acuerdos de confidencialidad y participación te serán enviados próximamente. Recibirás una notificación cuando estén listos para firmar.
         </div>
       )}
     </div>

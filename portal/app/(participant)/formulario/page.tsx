@@ -2,6 +2,17 @@
 
 import { createBrowserClient } from '@supabase/ssr'
 import { useEffect, useState } from 'react'
+import FormProgress from './FormProgress'
+
+const FORM_SECTIONS = [
+  'Su historia',
+  'Momentos que los definen',
+  'Sus valores',
+  'Su familia',
+  'El retiro',
+  'Mensaje para sus hijos',
+  'Logística',
+]
 
 interface Hijo {
   nombre: string
@@ -136,7 +147,9 @@ export default function FormularioPage() {
   }
 
   return (
-    <div className="px-5 pt-6 pb-6">
+    <div className="pb-6">
+      <FormProgress sections={FORM_SECTIONS} />
+      <div className="px-5 pt-6">
       <div className="mb-8">
         <h1 className="text-xl font-bold text-[#F5F0E8] mb-2">Formulario de admisión</h1>
         <p className="text-sm text-[#A09A8F] leading-relaxed">
@@ -153,7 +166,7 @@ export default function FormularioPage() {
       <form onSubmit={handleSubmit} className="space-y-8">
 
         {/* ── Su historia ── */}
-        <section>
+        <section data-section="Su historia">
           <h2 className={SECTION_TITLE}>Su historia</h2>
           <div className="space-y-5">
             <div>
@@ -191,7 +204,7 @@ export default function FormularioPage() {
         </section>
 
         {/* ── Momentos importantes ── */}
-        <section>
+        <section data-section="Momentos que los definen">
           <h2 className={SECTION_TITLE}>Momentos que los definen</h2>
           <div>
             <label className={LABEL}>¿Cuáles son los momentos más importantes que han vivido como familia?</label>
@@ -208,7 +221,7 @@ export default function FormularioPage() {
         </section>
 
         {/* ── Valores ── */}
-        <section>
+        <section data-section="Sus valores">
           <h2 className={SECTION_TITLE}>Sus valores</h2>
           <div>
             <label className={LABEL}>¿Qué valores quieren transmitir a su familia?</label>
@@ -232,7 +245,7 @@ export default function FormularioPage() {
         </section>
 
         {/* ── Familia ── */}
-        <section>
+        <section data-section="Su familia">
           <h2 className={SECTION_TITLE}>Su familia</h2>
           <div className="space-y-5">
             <div>
@@ -304,7 +317,7 @@ export default function FormularioPage() {
         </section>
 
         {/* ── El retiro ── */}
-        <section>
+        <section data-section="El retiro">
           <h2 className={SECTION_TITLE}>El retiro</h2>
           <div className="space-y-5">
             <div>
@@ -330,7 +343,7 @@ export default function FormularioPage() {
         </section>
 
         {/* ── Mensaje especial ── */}
-        <section>
+        <section data-section="Mensaje para sus hijos">
           <h2 className={SECTION_TITLE}>Mensaje para sus hijos</h2>
           <div>
             <label className={LABEL}>¿Qué mensaje quieren dejarle a su familia?</label>
@@ -347,7 +360,7 @@ export default function FormularioPage() {
         </section>
 
         {/* ── Logística ── */}
-        <section>
+        <section data-section="Logística">
           <h2 className={SECTION_TITLE}>Logística</h2>
           <div className="space-y-5">
             <div>
@@ -383,6 +396,7 @@ export default function FormularioPage() {
           {saving ? 'Enviando...' : 'Enviar formulario'}
         </button>
       </form>
+      </div>
     </div>
   )
 }

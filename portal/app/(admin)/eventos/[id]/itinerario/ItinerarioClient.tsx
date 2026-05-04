@@ -167,9 +167,12 @@ function assignColumns(items: Item[]): (Item & { col: number })[] {
   )
   const colEnds: string[] = []
   return sorted.map(item => {
-    const end = item.hora_fin ?? (item.hora_inicio! < '23:00'
-      ? `${String(toMin(item.hora_inicio!) / 60 | 0).padStart(2, '0')}:${String(toMin(item.hora_inicio!) % 60 + 60).padStart(2, '0')}`
-      : item.hora_inicio!)
+    const end = item.hora_fin ?? (() => {
+      const totalMin = toMin(item.hora_inicio!) + 60
+      const endH = Math.floor(totalMin / 60) % 24
+      const endM = totalMin % 60
+      return `${String(endH).padStart(2, '0')}:${String(endM).padStart(2, '0')}`
+    })()
     let col = colEnds.findIndex(e => e <= item.hora_inicio!)
     if (col === -1) { col = colEnds.length; colEnds.push(end) } else { colEnds[col] = end }
     return { ...item, col }
