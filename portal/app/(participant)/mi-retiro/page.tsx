@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import PushSubscribeButton from '@/components/PushSubscribeButton'
 
 function formatDate(d: string | null) {
   if (!d) return '—'
@@ -79,57 +80,96 @@ export default async function MiRetiroPage() {
   const isHappening = daysUntil !== null && daysUntilEnd !== null && daysUntil <= 0 && daysUntilEnd >= 0
 
   return (
-    <div className="px-5 pt-6 pb-4">
+    <div>
+      {/* PushSubscribeButton flotante */}
+      {family?.event_id && (
+        <div className="fixed top-4 right-4 z-40">
+          <PushSubscribeButton eventId={family.event_id} />
+        </div>
+      )}
+
       {/* No family */}
       {!family && (
-        <div className="flex flex-col items-center justify-center text-center py-16 px-4">
-          <div className="w-12 h-12 rounded-full bg-[#181818] border border-[#2A2A2A] flex items-center justify-center mb-4 text-[#A09A8F] text-xl">
-            ◎
-          </div>
-          <p className="text-[#F5F0E8] font-medium mb-2">Tu acceso está siendo configurado</p>
-          <p className="text-[#A09A8F] text-sm leading-relaxed">
+        <div className="flex flex-col items-center justify-center text-center py-24 px-8">
+          <div className="w-2 h-2 rounded-full bg-[#C9A96E] mx-auto mb-8" />
+          <p className="font-[family-name:var(--font-cormorant)] text-2xl font-light text-[#F5F0E8] mb-3">
+            Tu acceso está siendo configurado
+          </p>
+          <p className="text-sm text-[#6B7280] leading-relaxed max-w-xs">
             Contacta al equipo de Trascendencia para que asignen tu familia al evento.
           </p>
         </div>
       )}
 
-      {/* Event card */}
+      {/* Hero header — only when family exists */}
+      {family && evento && (
+        <div className="px-6 pt-12 pb-8">
+          {/* Event indicator */}
+          <div className="flex items-center gap-2 mb-6">
+            <div className="w-1.5 h-1.5 rounded-full bg-[#C9A96E]" />
+            <span className="text-[10px] uppercase tracking-[0.2em] text-[#C9A96E]">
+              {evento.nombre}
+            </span>
+          </div>
+
+          {/* Family name — serif, grande */}
+          <h1 className="font-[family-name:var(--font-cormorant)] text-5xl font-light text-[#F5F0E8] leading-tight mb-1">
+            Familia {family.nombre_familia}
+          </h1>
+
+          {/* Location */}
+          <p className="text-sm text-[#6B7280] mt-2">
+            {[evento.ciudad, null].filter(Boolean).join(' · ') || evento.ubicacion || ''}
+          </p>
+        </div>
+      )}
+
+      {/* Family without event */}
+      {family && !evento && (
+        <div className="px-6 pt-12 pb-8">
+          <h1 className="font-[family-name:var(--font-cormorant)] text-5xl font-light text-[#F5F0E8] leading-tight">
+            Familia {family.nombre_familia}
+          </h1>
+        </div>
+      )}
+
+      {/* Event state blocks */}
       {evento && (
-        <div className="mb-6">
+        <>
           {daysUntilEnd !== null && daysUntilEnd < 0 ? (
             /* Post-event */
-            <>
-              <div className="bg-[#181818] border border-[#2A2A2A] rounded-2xl p-5 mb-4">
-                <div className="text-xs font-medium text-[#A09A8F] uppercase tracking-widest mb-2">El retiro ha concluido</div>
-                <div className="text-lg font-bold text-[#F5F0E8] mb-1">{evento.nombre}</div>
-                <div className="text-sm text-[#C9A96E] mt-1">¡Gracias por vivir esta experiencia!</div>
+            <div className="px-6 mb-8">
+              <div className="border-y border-white/5 py-8 text-center mb-6">
+                <p className="font-[family-name:var(--font-cormorant)] text-2xl font-light text-[#F5F0E8] mb-1">
+                  El retiro ha concluido
+                </p>
+                <p className="font-[family-name:var(--font-cormorant)] text-lg italic text-[#C9A96E]">
+                  ¡Gracias por vivir esta experiencia!
+                </p>
               </div>
 
               {/* Storybook & Video delivery status */}
               {(storybookStatus || videoStatus) && (
-                <div className="bg-[#181818] border border-[#2A2A2A] rounded-2xl p-5 mb-4 space-y-3">
-                  <div className="text-xs font-medium text-[#A09A8F] uppercase tracking-widest mb-1">Tus recuerdos</div>
+                <div className="bg-[#1A1A1A] border border-white/10 rounded-2xl p-5 mb-4 space-y-3">
+                  <p className="text-[10px] uppercase tracking-[0.15em] text-[#C9A96E] mb-3">Tus recuerdos</p>
                   {storybookStatus && (
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className="text-base">📖</span>
-                        <span className="text-sm text-[#F5F0E8]">Storybook</span>
-                      </div>
+                      <span className="text-sm text-[#F5F0E8]">Storybook</span>
                       {storybookStatus === 'delivered' ? (
                         evento.nube_url ? (
                           <a
                             href={evento.nube_url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center gap-1 text-xs text-[#C9A96E] hover:underline"
+                            className="text-xs text-[#C9A96E] hover:underline"
                           >
                             Ver ↗
                           </a>
                         ) : (
-                          <span className="text-xs text-[#4ADE80] font-semibold">Entregado ✓</span>
+                          <span className="text-xs text-emerald-400">Entregado ✓</span>
                         )
                       ) : storybookStatus === 'in_progress' ? (
-                        <span className="text-xs text-[#FBBF24]">En proceso…</span>
+                        <span className="text-xs text-amber-400">En proceso…</span>
                       ) : (
                         <span className="text-xs text-[#6B7280]">Pendiente</span>
                       )}
@@ -137,25 +177,22 @@ export default async function MiRetiroPage() {
                   )}
                   {videoStatus && (
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className="text-base">🎬</span>
-                        <span className="text-sm text-[#F5F0E8]">Video</span>
-                      </div>
+                      <span className="text-sm text-[#F5F0E8]">Video</span>
                       {videoStatus === 'delivered' ? (
                         evento.nube_url ? (
                           <a
                             href={evento.nube_url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center gap-1 text-xs text-[#C9A96E] hover:underline"
+                            className="text-xs text-[#C9A96E] hover:underline"
                           >
                             Ver ↗
                           </a>
                         ) : (
-                          <span className="text-xs text-[#4ADE80] font-semibold">Entregado ✓</span>
+                          <span className="text-xs text-emerald-400">Entregado ✓</span>
                         )
                       ) : videoStatus === 'in_progress' ? (
-                        <span className="text-xs text-[#FBBF24]">En proceso…</span>
+                        <span className="text-xs text-amber-400">En proceso…</span>
                       ) : (
                         <span className="text-xs text-[#6B7280]">Pendiente</span>
                       )}
@@ -170,104 +207,118 @@ export default async function MiRetiroPage() {
                   href={evento.nube_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-between p-4 mb-4 bg-[#C9A96E]/10 border border-[#C9A96E]/30 rounded-xl hover:border-[#C9A96E]/70 transition-colors"
+                  className="flex items-center justify-between p-5 bg-[#1A1A1A] border border-[#C9A96E]/30 rounded-2xl hover:border-[#C9A96E]/60 transition-colors"
                 >
                   <div>
-                    <div className="font-semibold text-[#F5F0E8] text-sm mb-0.5">La Nube — Álbum del retiro</div>
-                    <div className="text-xs text-[#A09A8F]">Revive los momentos del retiro</div>
+                    <p className="text-[10px] uppercase tracking-[0.15em] text-[#C9A96E] mb-1">La Nube</p>
+                    <p className="font-[family-name:var(--font-cormorant)] text-xl font-light text-[#F5F0E8]">
+                      Álbum del retiro
+                    </p>
+                    <p className="text-sm text-[#6B7280] mt-0.5">Revive los momentos del retiro</p>
                   </div>
-                  <span className="text-[#C9A96E] text-base">↗</span>
+                  <span className="text-[#C9A96E] text-lg">↗</span>
                 </a>
               )}
-            </>
+            </div>
           ) : isHappening ? (
             /* Happening now */
-            <div className="bg-[#C9A96E]/10 border border-[#C9A96E]/30 rounded-2xl p-5 mb-4">
-              <div className="text-xs font-semibold text-[#C9A96E] uppercase tracking-widest mb-2">Ahora mismo</div>
-              <div className="text-xl font-bold text-[#F5F0E8] mb-1">Estás en el retiro</div>
-              <div className="text-sm text-[#A09A8F]">{evento.nombre}</div>
+            <div className="px-6 py-8 text-center mb-8">
+              <div className="w-3 h-3 rounded-full bg-emerald-400 mx-auto mb-4 animate-pulse" />
+              <p className="font-[family-name:var(--font-cormorant)] text-2xl font-light text-[#F5F0E8]">
+                Estás en el retiro
+              </p>
+              <p className="text-sm text-[#6B7280] mt-1">Vive cada momento presente</p>
             </div>
           ) : daysUntil !== null && daysUntil > 0 ? (
             /* Countdown */
-            <div className="bg-[#181818] border border-[#2A2A2A] rounded-2xl p-5 mb-4">
-              <div className="text-xs font-medium text-[#A09A8F] uppercase tracking-widest mb-3">Cuenta regresiva</div>
-              <div className="flex items-baseline gap-2 mb-3">
-                <span className="text-5xl font-bold text-[#C9A96E] leading-none">{daysUntil}</span>
-                <span className="text-lg text-[#A09A8F] font-medium">días</span>
+            <div className="mx-6 py-8 text-center border-y border-white/5 rounded-2xl bg-white/[0.02] mb-8">
+              <div className="font-[family-name:var(--font-cormorant)] text-[96px] sm:text-[120px] font-light text-[#F5F0E8] leading-none">
+                {daysUntil}
               </div>
-              <div className="text-base font-semibold text-[#F5F0E8]">{evento.nombre}</div>
-              <div className="mt-3 pt-3 border-t border-[#2A2A2A] flex items-center gap-2 text-xs text-[#A09A8F]">
-                {evento.ubicacion && <span>{evento.ubicacion}</span>}
-                {evento.ciudad && <span>· {evento.ciudad}</span>}
-              </div>
-              <div className="mt-1 text-xs text-[#6B7280]">
-                {formatDate(evento.fecha_inicio)} – {formatDate(evento.fecha_fin)}
-              </div>
+              <p className="font-[family-name:var(--font-cormorant)] text-lg italic text-[#A09A8F] mt-2">
+                días para tu retiro
+              </p>
+              <p className="text-xs text-[#6B7280] mt-3 uppercase tracking-widest">
+                {formatDate(evento.fecha_inicio)} — {formatDate(evento.fecha_fin)}
+              </p>
             </div>
           ) : (
-            /* Default */
-            <div className="bg-[#181818] border border-[#2A2A2A] rounded-2xl p-5 mb-4">
-              <div className="text-xs font-medium text-[#A09A8F] uppercase tracking-widest mb-2">Tu retiro</div>
-              <div className="text-lg font-bold text-[#F5F0E8] mb-1">{evento.nombre}</div>
-              {evento.ubicacion && <div className="text-sm text-[#A09A8F]">{evento.ubicacion}</div>}
-              <div className="mt-3 pt-3 border-t border-[#2A2A2A] text-xs text-[#6B7280]">
-                {formatDate(evento.fecha_inicio)} – {formatDate(evento.fecha_fin)}
-                {evento.ciudad && ` · ${evento.ciudad}`}
-              </div>
+            /* Default — event exists but no countdown logic applies */
+            <div className="mx-6 py-8 text-center border-y border-white/5 rounded-2xl bg-white/[0.02] mb-8">
+              <p className="font-[family-name:var(--font-cormorant)] text-2xl font-light text-[#F5F0E8]">
+                {evento.nombre}
+              </p>
+              {(evento.ubicacion || evento.ciudad) && (
+                <p className="text-sm text-[#6B7280] mt-2">
+                  {[evento.ubicacion, evento.ciudad].filter(Boolean).join(' · ')}
+                </p>
+              )}
+              <p className="text-xs text-[#6B7280] mt-3 uppercase tracking-widest">
+                {formatDate(evento.fecha_inicio)} — {formatDate(evento.fecha_fin)}
+              </p>
             </div>
           )}
-        </div>
+        </>
       )}
 
       {/* Recent announcements */}
       {recentAnnouncements.length > 0 && (
-        <div className="mb-4 space-y-2">
+        <div className="px-6 mb-6 space-y-2">
           {recentAnnouncements.map(a => (
             <Link
               key={a.id}
               href="/avisos"
               className={[
-                'flex items-center gap-3 px-4 py-3 rounded-xl border transition-colors',
+                'flex items-center gap-3 px-5 py-4 rounded-2xl border transition-colors',
                 a.tipo === 'urgente'
-                  ? 'bg-red-950/40 border-red-700/40 hover:border-red-600/60'
+                  ? 'bg-red-950/30 border-red-700/30 hover:border-red-600/50'
                   : a.tipo === 'logistica'
-                  ? 'bg-[#C9A96E]/10 border-[#C9A96E]/30 hover:border-[#C9A96E]/60'
-                  : 'bg-[#181818] border-[#2A2A2A] hover:border-[#3A3A3A]',
+                  ? 'bg-[#C9A96E]/5 border-[#C9A96E]/20 hover:border-[#C9A96E]/40'
+                  : 'bg-[#1A1A1A] border-white/10 hover:border-white/20',
               ].join(' ')}
             >
-              <span className="text-base shrink-0">
-                {a.tipo === 'urgente' ? '🚨' : a.tipo === 'logistica' ? '📋' : '📢'}
-              </span>
-              <span className="text-sm font-medium text-[#F5F0E8] leading-snug flex-1 min-w-0 truncate">
-                {a.titulo}
-              </span>
-              <span className="text-[#A09A8F] text-xs shrink-0">→</span>
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] uppercase tracking-[0.12em] text-[#6B7280] mb-0.5">
+                  {a.tipo === 'urgente' ? 'Urgente' : a.tipo === 'logistica' ? 'Logística' : 'Aviso'}
+                </p>
+                <p className="text-sm text-[#F5F0E8] leading-snug truncate">
+                  {a.titulo}
+                </p>
+              </div>
+              <span className="text-[#4B5563] text-xs shrink-0">→</span>
             </Link>
           ))}
         </div>
       )}
 
-      {/* Action items — secuencial */}
+      {/* Action items — sequential */}
       {family && (
-        <div className="space-y-3 mb-6">
+        <div className="px-6 mb-6 space-y-3">
           {/* Paso 1 — Formulario */}
           {!intakeSubmitted ? (
-            <Link href="/formulario" className="flex items-center justify-between p-4 bg-[#181818] border border-[#C9A96E]/40 rounded-xl hover:border-[#C9A96E] transition-colors">
-              <div className="flex items-center gap-3">
-                <span className="w-6 h-6 rounded-full bg-[#C9A96E] text-[#0C0C0C] text-xs font-bold flex items-center justify-center flex-shrink-0">1</span>
-                <div>
-                  <div className="font-semibold text-[#F5F0E8] text-sm">Completa tu perfil</div>
-                  <div className="text-xs text-[#A09A8F]">Cuéntanos la historia de su familia</div>
-                </div>
+            <Link
+              href="/formulario"
+              className="flex items-start justify-between p-5 bg-[#1A1A1A] border border-[#C9A96E]/30 rounded-2xl hover:border-[#C9A96E]/60 transition-colors"
+            >
+              <div>
+                <p className="text-[10px] uppercase tracking-[0.15em] text-[#C9A96E] mb-1">Paso 1</p>
+                <p className="font-[family-name:var(--font-cormorant)] text-xl font-light text-[#F5F0E8]">
+                  Completa tu perfil
+                </p>
+                <p className="text-sm text-[#6B7280] mt-1">Cuéntanos la historia de su familia</p>
               </div>
-              <span className="text-[#C9A96E]">→</span>
+              <svg className="text-[#C9A96E] mt-1 shrink-0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
             </Link>
           ) : (
-            <div className="flex items-center gap-3 p-4 bg-[#181818] border border-[#2A2A2A] rounded-xl opacity-60">
-              <span className="w-6 h-6 rounded-full bg-[#1A3A2A] border border-[#4ADE80]/30 text-[#4ADE80] text-xs font-bold flex items-center justify-center flex-shrink-0">✓</span>
+            <div className="flex items-center gap-3 p-5 bg-[#1A1A1A] border border-white/10 rounded-2xl opacity-50">
+              <svg className="text-emerald-400 shrink-0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
               <div>
-                <div className="font-semibold text-sm text-[#F5F0E8]">Perfil completado</div>
-                <div className="text-xs text-[#A09A8F]">Gracias por compartir su historia</div>
+                <p className="font-[family-name:var(--font-cormorant)] text-lg font-light text-[#F5F0E8]">Perfil completado</p>
+                <p className="text-sm text-[#6B7280]">Gracias por compartir su historia</p>
               </div>
             </div>
           )}
@@ -275,76 +326,93 @@ export default async function MiRetiroPage() {
           {/* Paso 2 — Acuerdos */}
           {totalCount > 0 && (
             allSigned ? (
-              <div className="flex items-center gap-3 p-4 bg-[#181818] border border-[#2A2A2A] rounded-xl opacity-60">
-                <span className="w-6 h-6 rounded-full bg-[#1A3A2A] border border-[#4ADE80]/30 text-[#4ADE80] text-xs font-bold flex items-center justify-center flex-shrink-0">✓</span>
+              <div className="flex items-center gap-3 p-5 bg-[#1A1A1A] border border-white/10 rounded-2xl opacity-50">
+                <svg className="text-emerald-400 shrink-0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
                 <div>
-                  <div className="font-semibold text-sm text-[#F5F0E8]">Acuerdos firmados</div>
-                  <div className="text-xs text-[#A09A8F]">{totalCount}/{totalCount} completados</div>
+                  <p className="font-[family-name:var(--font-cormorant)] text-lg font-light text-[#F5F0E8]">Acuerdos firmados</p>
+                  <p className="text-sm text-[#6B7280]">{totalCount}/{totalCount} completados</p>
                 </div>
               </div>
             ) : (
-              <Link href="/acuerdos" className={`flex items-center justify-between p-4 bg-[#181818] rounded-xl transition-colors ${intakeSubmitted ? 'border border-[#C9A96E]/40 hover:border-[#C9A96E]' : 'border border-[#2A2A2A] opacity-70'}`}>
-                <div className="flex items-center gap-3">
-                  <span className={`w-6 h-6 rounded-full text-xs font-bold flex items-center justify-center flex-shrink-0 ${intakeSubmitted ? 'bg-[#C9A96E] text-[#0C0C0C]' : 'bg-[#2A2A2A] text-[#6B7280]'}`}>2</span>
-                  <div>
-                    <div className="font-semibold text-[#F5F0E8] text-sm">Firma los acuerdos</div>
-                    <div className="text-xs text-[#A09A8F]">{pendingCount} pendiente{pendingCount !== 1 ? 's' : ''} de {totalCount}</div>
-                  </div>
+              <Link
+                href="/acuerdos"
+                className={`flex items-start justify-between p-5 bg-[#1A1A1A] rounded-2xl transition-colors ${intakeSubmitted ? 'border border-[#C9A96E]/30 hover:border-[#C9A96E]/60' : 'border border-white/10 opacity-60 pointer-events-none'}`}
+              >
+                <div>
+                  <p className={`text-[10px] uppercase tracking-[0.15em] mb-1 ${intakeSubmitted ? 'text-[#C9A96E]' : 'text-[#6B7280]'}`}>Paso 2</p>
+                  <p className="font-[family-name:var(--font-cormorant)] text-xl font-light text-[#F5F0E8]">
+                    Firma los acuerdos
+                  </p>
+                  <p className="text-sm text-[#6B7280] mt-1">
+                    {pendingCount} pendiente{pendingCount !== 1 ? 's' : ''} de {totalCount}
+                  </p>
                 </div>
-                {intakeSubmitted && <span className="text-[#C9A96E]">→</span>}
+                {intakeSubmitted && (
+                  <svg className="text-[#C9A96E] mt-1 shrink-0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                  </svg>
+                )}
               </Link>
             )
           )}
 
           {/* Todo listo */}
           {intakeSubmitted && allSigned && totalCount > 0 && (
-            <div className="flex items-center gap-3 p-4 bg-[#0A2A1A] border border-[#4ADE80]/20 rounded-xl">
-              <span className="text-[#4ADE80] text-xl">✓</span>
+            <div className="flex items-center gap-3 p-5 bg-[#0A2A1A]/60 border border-emerald-400/20 rounded-2xl">
+              <div className="w-2 h-2 rounded-full bg-emerald-400 shrink-0" />
               <div>
-                <div className="font-semibold text-sm text-[#F5F0E8]">Todo listo para el retiro</div>
-                <div className="text-xs text-[#A09A8F]">Perfil y acuerdos completados</div>
+                <p className="font-[family-name:var(--font-cormorant)] text-lg font-light text-[#F5F0E8]">
+                  Todo listo para el retiro
+                </p>
+                <p className="text-sm text-[#6B7280]">Perfil y acuerdos completados</p>
               </div>
             </div>
           )}
         </div>
       )}
 
-      {/* La Nube CTA — only when not post-event (post-event shows it inline above) */}
+      {/* La Nube CTA — only when not post-event */}
       {family && evento?.nube_url && !(daysUntilEnd !== null && daysUntilEnd < 0) && (
-        <a
-          href={evento.nube_url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center justify-between p-4 mb-4 bg-[#181818] border border-[#C9A96E]/30 rounded-xl hover:border-[#C9A96E]/70 transition-colors"
-        >
-          <div>
-            <div className="font-semibold text-[#F5F0E8] text-sm mb-0.5">La Nube — Álbum compartido</div>
-            <div className="text-xs text-[#A09A8F]">Sube tus fotos del retiro al álbum del grupo</div>
-          </div>
-          <span className="text-[#C9A96E] text-base">↗</span>
-        </a>
+        <div className="px-6 mb-6">
+          <a
+            href={evento.nube_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-between p-5 bg-[#1A1A1A] border border-[#C9A96E]/20 rounded-2xl hover:border-[#C9A96E]/50 transition-colors"
+          >
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.15em] text-[#C9A96E] mb-1">La Nube</p>
+              <p className="font-[family-name:var(--font-cormorant)] text-xl font-light text-[#F5F0E8]">
+                Álbum compartido
+              </p>
+              <p className="text-sm text-[#6B7280] mt-0.5">Sube tus fotos del retiro al álbum del grupo</p>
+            </div>
+            <span className="text-[#C9A96E] text-lg">↗</span>
+          </a>
+        </div>
       )}
 
-      {/* Quick links */}
+      {/* Secondary links — editorial list style */}
       {family && (
-        <div className="grid grid-cols-2 gap-3">
-          {[
-            { href: '/programa', label: 'Programa', sub: 'Ver el itinerario', icon: '◫' },
-            { href: '/documentos', label: 'Documentos', sub: 'Materiales del retiro', icon: '◻' },
-            { href: '/info', label: 'Información', sub: 'Logística y contactos', icon: 'ℹ' },
-            { href: '/acuerdos', label: 'Acuerdos', sub: 'Documentos legales', icon: '✍' },
-            { href: '/equipo', label: 'Equipo', sub: 'Conoce al equipo', icon: '◎' },
-          ].map(link => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="p-4 bg-[#181818] border border-[#2A2A2A] rounded-xl hover:border-[#3A3A3A] transition-colors"
-            >
-              <div className="text-xl text-[#A09A8F] mb-2">{link.icon}</div>
-              <div className="font-semibold text-sm text-[#F5F0E8]">{link.label}</div>
-              <div className="text-xs text-[#6B7280] mt-0.5">{link.sub}</div>
-            </Link>
-          ))}
+        <div className="px-6 pb-8">
+          <div className="border-t border-white/10 pt-6 space-y-1">
+            {[
+              { href: '/info',       label: 'Información del retiro' },
+              { href: '/documentos', label: 'Documentos' },
+              { href: '/equipo',     label: 'Conoce al equipo' },
+            ].map(link => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="flex items-center justify-between py-3 text-sm text-[#A09A8F] hover:text-[#F5F0E8] transition-colors"
+              >
+                <span>{link.label}</span>
+                <span className="text-[#4B5563]">→</span>
+              </Link>
+            ))}
+          </div>
         </div>
       )}
     </div>
