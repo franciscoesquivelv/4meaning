@@ -189,7 +189,7 @@ export default function ChecklistClient({
       )}
 
       {/* Tasks grouped by phase */}
-      {tasks.length === 0 ? (
+      {tasks.length === 0 && !showForm ? (
         <div className="bg-white border border-slate-200 rounded-xl p-10 text-center shadow-sm">
           <p className="text-slate-400 text-sm mb-3">Sin tareas todavía.</p>
           {isAdmin && (
@@ -201,7 +201,7 @@ export default function ChecklistClient({
             </button>
           )}
         </div>
-      ) : (
+      ) : tasks.length > 0 ? (
         <div className="space-y-4">
           {allPhases.map(phase => {
             const phaseTasks = grouped[phase]
@@ -223,7 +223,7 @@ export default function ChecklistClient({
             )
           })}
         </div>
-      )}
+      ) : null}
 
       {/* Add task button / form */}
       {isAdmin && (

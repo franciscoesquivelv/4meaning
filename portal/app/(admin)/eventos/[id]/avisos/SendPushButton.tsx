@@ -51,7 +51,7 @@ export default function SendPushButton({ eventId }: Props) {
             value={title}
             onChange={e => setTitle(e.target.value)}
             placeholder="Ej: Recordatorio logística"
-            className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500/40 focus:border-amber-400"
+            className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400/40 focus:border-slate-400"
           />
         </div>
         <div>
@@ -61,13 +61,13 @@ export default function SendPushButton({ eventId }: Props) {
             onChange={e => setBody(e.target.value)}
             rows={2}
             placeholder="Texto adicional de la notificación…"
-            className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500/40 focus:border-amber-400 resize-none"
+            className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400/40 focus:border-slate-400 resize-none"
           />
         </div>
         <button
           onClick={handleSend}
           disabled={loading || !title.trim()}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-amber-500 hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold rounded-lg transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-slate-900 hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold rounded-lg transition-colors"
         >
           {loading ? 'Enviando…' : 'Enviar push'}
         </button>

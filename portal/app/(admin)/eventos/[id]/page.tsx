@@ -170,12 +170,12 @@ export default async function EventoDetailPage({ params }: { params: { id: strin
       </div>
 
       {/* Horizontal tab nav */}
-      <div className="flex items-center gap-1 border-b border-slate-200 mb-6 flex-wrap">
+      <div className="flex items-center gap-1 border-b border-slate-200 mb-6 overflow-x-auto scrollbar-none">
         {tabs.map(tab => (
           <Link
             key={tab.href}
             href={tab.href}
-            className="flex items-center gap-2 px-4 py-3 text-sm text-slate-600 hover:text-slate-900 transition-colors border-b-2 border-transparent hover:border-slate-300 -mb-px"
+            className="flex items-center gap-2 px-4 py-3 text-sm text-slate-600 hover:text-slate-900 transition-colors border-b-2 border-transparent hover:border-slate-300 -mb-px whitespace-nowrap flex-shrink-0"
           >
             {tab.label}
             {tab.count !== null && (
@@ -244,8 +244,13 @@ export default async function EventoDetailPage({ params }: { params: { id: strin
           <div className="bg-white border border-slate-200 rounded-xl shadow-sm p-4">
             <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Acciones rápidas</h3>
             <div className="space-y-2">
+              <Link
+                href={`/eventos/${params.id}/operacion`}
+                className="block w-full px-3 py-2 text-sm font-semibold text-white bg-slate-900 hover:bg-slate-700 rounded-lg transition-colors text-center"
+              >
+                ⚡ Modo operación
+              </Link>
               {[
-                { href: `/eventos/${params.id}/operacion`,       label: '⚡ Modo operación' },
                 { href: `/eventos/${params.id}/checklist`,       label: '✓ Checklist' },
                 { href: `/eventos/${params.id}/materiales`,      label: '🖨 Materiales' },
                 { href: `/eventos/${params.id}/familias/nueva`,  label: '+ Nueva familia' },

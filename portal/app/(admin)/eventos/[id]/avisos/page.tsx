@@ -84,9 +84,6 @@ export default async function AvisosAdminPage({ params }: { params: { id: string
       {/* Create form */}
       <NewAnnouncementForm eventId={params.id} />
 
-      {/* Push notifications */}
-      <SendPushButton eventId={params.id} />
-
       {/* List */}
       {list.length === 0 ? (
         <div className="mt-6 bg-white border border-slate-200 rounded-xl p-10 text-center shadow-sm">
@@ -126,6 +123,9 @@ export default async function AvisosAdminPage({ params }: { params: { id: string
           })}
         </div>
       )}
+
+      {/* Push notifications — después de la lista */}
+      <SendPushButton eventId={params.id} />
     </div>
   )
 }
