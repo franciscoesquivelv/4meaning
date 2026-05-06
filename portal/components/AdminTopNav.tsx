@@ -36,7 +36,7 @@ export default function AdminTopNav({ userEmail }: AdminTopNavProps) {
     <header className="fixed top-0 left-0 right-0 w-full h-14 bg-white border-b border-[#E5E7EB] z-50 flex items-center justify-between px-6">
       {/* Left: Logo */}
       <Link href="/dashboard" className="flex items-center">
-        <img src="/logo-blk.png" className="h-7 w-auto" alt="4Meaning" />
+        <span className="text-sm font-semibold tracking-tight text-slate-900">4Meaning</span>
       </Link>
 
       {/* Center: Nav links */}

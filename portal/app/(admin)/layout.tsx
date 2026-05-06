@@ -21,7 +21,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   return (
     <>
       <AdminTopNav userEmail={user.email ?? ''} />
-      <main className="pt-14 bg-slate-50 min-h-screen overflow-y-auto">
+      <main className="pt-14 bg-slate-50 min-h-screen">
         {children}
       </main>
     </>

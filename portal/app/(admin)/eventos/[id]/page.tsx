@@ -111,79 +111,38 @@ export default async function EventoDetailPage({ params }: { params: { id: strin
     supabase.from('event_tasks').select('id', { count: 'exact', head: true }).eq('event_id', params.id).eq('done', true),
   ])
 
-  const tabs = [
-    { href: `/eventos/${params.id}/checklist`,  label: '✓ Checklist',  count: tasksTotal ?? 0 },
-    { href: `/eventos/${params.id}/familias`,   label: 'Familias',     count: familiesCount },
-    { href: `/eventos/${params.id}/materiales`, label: '🖨 Materiales', count: null },
-    { href: `/eventos/${params.id}/equipo`,     label: 'Equipo',       count: null },
-    { href: `/eventos/${params.id}/acuerdos`,   label: 'Acuerdos',     count: agreementsCount },
-    { href: `/eventos/${params.id}/itinerario`, label: 'Itinerario',   count: itineraryCount },
-    { href: `/eventos/${params.id}/documentos`, label: 'Documentos',   count: documentsCount },
-    { href: `/eventos/${params.id}/formularios`,label: 'Formularios',  count: formulariosCount },
-    { href: `/eventos/${params.id}/avisos`,     label: 'Avisos',       count: avisosCount ?? 0 },
-    { href: `/eventos/${params.id}/operacion`,  label: '⚡ Operación',  count: null },
-  ]
-
   return (
-    <div className="p-8 max-w-5xl">
-      {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-sm text-slate-500 mb-4">
-        <Link href="/eventos" className="hover:text-slate-700 transition-colors">Eventos</Link>
-        <span>/</span>
-        <span className="text-slate-900 font-medium truncate">{evento.nombre}</span>
-      </nav>
-
-      {/* Header */}
-      <div className="flex items-start justify-between mb-4">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900 mb-2">{evento.nombre}</h1>
-          <div className="flex items-center gap-3 flex-wrap text-sm text-slate-500">
-            {(evento.ciudad || evento.pais) && (
-              <span>{[evento.ciudad, evento.pais].filter(Boolean).join(', ')}</span>
-            )}
-            <span>{formatDate(evento.fecha_inicio)} – {formatDate(evento.fecha_fin)}</span>
-            {evento.ubicacion && <span>{evento.ubicacion}</span>}
-            <PipelineBadge status={evento.pipeline_status ?? 'prospecto'} />
-          </div>
+    <div className="px-8 pt-6 pb-12 max-w-5xl">
+      {/* Subheader — location, dates, edit */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-2 flex-wrap text-sm text-slate-400">
+          {(evento.ciudad || evento.pais) && (
+            <span>{[evento.ciudad, evento.pais].filter(Boolean).join(', ')}</span>
+          )}
+          {(evento.ciudad || evento.pais) && <span>·</span>}
+          <span>{formatDate(evento.fecha_inicio)} – {formatDate(evento.fecha_fin)}</span>
+          {evento.ubicacion && <><span>·</span><span>{evento.ubicacion}</span></>}
         </div>
         <Link
           href={`/eventos/${params.id}/editar`}
-          className="px-3 py-1.5 text-sm font-medium text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors whitespace-nowrap"
+          className="px-3 py-1.5 text-sm text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors whitespace-nowrap"
         >
           Editar
         </Link>
       </div>
 
       {/* Stats bar */}
-      <div className="flex items-center gap-6 py-3 px-4 bg-white border border-slate-200 rounded-xl mb-6 text-sm shadow-sm">
+      <div className="grid grid-cols-4 gap-px bg-slate-200 border border-slate-200 rounded-xl overflow-hidden mb-8">
         {[
-          { label: 'Familias', value: familiesCount },
+          { label: 'Familias',  value: familiesCount },
           { label: 'Acuerdos', value: agreementsCount },
           { label: 'Firmados', value: signedCount },
-          { label: 'Tareas', value: `${tasksDone ?? 0}/${tasksTotal ?? 0}` },
-        ].map((s, i) => (
-          <div key={s.label} className={`flex items-center gap-2 ${i > 0 ? 'pl-6 border-l border-slate-200' : ''}`}>
-            <span className="text-lg font-bold text-slate-900">{s.value}</span>
-            <span className="text-slate-500 text-xs">{s.label}</span>
+          { label: 'Tareas',   value: `${tasksDone ?? 0} / ${tasksTotal ?? 0}` },
+        ].map(s => (
+          <div key={s.label} className="bg-white px-6 py-4">
+            <div className="text-2xl font-semibold text-slate-900 tabular-nums">{s.value}</div>
+            <div className="text-xs text-slate-400 mt-0.5">{s.label}</div>
           </div>
-        ))}
-      </div>
-
-      {/* Horizontal tab nav */}
-      <div className="flex items-center gap-1 border-b border-slate-200 mb-6 overflow-x-auto scrollbar-none">
-        {tabs.map(tab => (
-          <Link
-            key={tab.href}
-            href={tab.href}
-            className="flex items-center gap-2 px-4 py-3 text-sm text-slate-600 hover:text-slate-900 transition-colors border-b-2 border-transparent hover:border-slate-300 -mb-px whitespace-nowrap flex-shrink-0"
-          >
-            {tab.label}
-            {tab.count !== null && (
-              <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600">
-                {tab.count}
-              </span>
-            )}
-          </Link>
         ))}
       </div>
 
@@ -241,28 +200,27 @@ export default async function EventoDetailPage({ params }: { params: { id: strin
         {/* Right: sidebar */}
         <div className="space-y-4">
           {/* Quick actions */}
-          <div className="bg-white border border-slate-200 rounded-xl shadow-sm p-4">
-            <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Acciones rápidas</h3>
-            <div className="space-y-2">
+          <div className="bg-white border border-slate-200 rounded-xl p-4">
+            <p className="text-[11px] font-medium text-slate-400 uppercase tracking-wider mb-3">Acciones</p>
+            <div className="space-y-1.5">
               <Link
                 href={`/eventos/${params.id}/operacion`}
-                className="block w-full px-3 py-2 text-sm font-semibold text-white bg-slate-900 hover:bg-slate-700 rounded-lg transition-colors text-center"
+                className="block w-full px-3 py-2 text-sm font-medium text-white bg-slate-900 hover:bg-slate-700 rounded-lg transition-colors text-center"
               >
-                ⚡ Modo operación
+                Modo operación
               </Link>
               {[
-                { href: `/eventos/${params.id}/checklist`,       label: '✓ Checklist' },
-                { href: `/eventos/${params.id}/materiales`,      label: '🖨 Materiales' },
-                { href: `/eventos/${params.id}/familias/nueva`,  label: '+ Nueva familia' },
-                { href: `/eventos/${params.id}/acuerdos/nuevo`,  label: '+ Nuevo acuerdo' },
-                { href: `/eventos/${params.id}/itinerario/nuevo`,label: '+ Item itinerario' },
-                { href: `/eventos/${params.id}/avisos`,          label: '+ Publicar aviso' },
-                { href: `/eventos/${params.id}/entregas`,        label: '📦 Entregas' },
+                { href: `/eventos/${params.id}/familias/nueva`,  label: 'Nueva familia' },
+                { href: `/eventos/${params.id}/acuerdos/nuevo`,  label: 'Nuevo acuerdo' },
+                { href: `/eventos/${params.id}/itinerario/nuevo`,label: 'Agregar actividad' },
+                { href: `/eventos/${params.id}/avisos`,          label: 'Publicar aviso' },
+                { href: `/eventos/${params.id}/materiales`,      label: 'Imprimir materiales' },
+                { href: `/eventos/${params.id}/entregas`,        label: 'Ver entregas' },
               ].map(action => (
                 <Link
                   key={action.href}
                   href={action.href}
-                  className="block w-full px-3 py-2 text-sm text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-colors text-center"
+                  className="block w-full px-3 py-2 text-sm text-slate-600 border border-slate-100 rounded-lg hover:bg-slate-50 hover:text-slate-900 transition-colors"
                 >
                   {action.label}
                 </Link>

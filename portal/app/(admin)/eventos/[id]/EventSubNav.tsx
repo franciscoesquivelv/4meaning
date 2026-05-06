@@ -30,7 +30,7 @@ export default function EventSubNav({ eventId, eventName, pipelineStatus }: Prop
     { href: `/eventos/${eventId}/itinerario`,  label: 'Itinerario' },
     { href: `/eventos/${eventId}/avisos`,      label: 'Avisos' },
     { href: `/eventos/${eventId}/entregas`,    label: 'Entregas' },
-    { href: `/eventos/${eventId}/operacion`,   label: '⚡ Operación' },
+    { href: `/eventos/${eventId}/operacion`,   label: 'Operación' },
   ]
 
   const pipeline = PIPELINE_LABELS[pipelineStatus] ?? PIPELINE_LABELS.prospecto
@@ -63,7 +63,7 @@ export default function EventSubNav({ eventId, eventName, pipelineStatus }: Prop
 
       {/* Nav links */}
       {NAV_LINKS.map(({ href, label }) => {
-        const isOperacion = label.includes('Operación')
+        const isOperacion = label === 'Operación'
         const isActive =
           href === `/eventos/${eventId}`
             ? pathname === href
