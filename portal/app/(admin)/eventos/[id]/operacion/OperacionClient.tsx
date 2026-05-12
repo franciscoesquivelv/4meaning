@@ -45,6 +45,7 @@ interface Props {
   items: ItineraryItem[]
   announcements: Announcement[]
   today: string
+  suggestedRole: Rol | null
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -506,20 +507,27 @@ function VistaDirector({
 
 // ─── Main client component ─────────────────────────────────────────────────────
 
-export default function OperacionClient({ evento, families, items, announcements, today }: Props) {
-  const [rol, setRol] = useState<Rol>('facilitador')
+export default function OperacionClient({ evento, families, items, announcements, today, suggestedRole }: Props) {
+  const eventId = evento.id
+  const [rol, setRol] = useState<Rol>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem(`op_role_${eventId}`) as Rol | null
+      if (saved && ['facilitador', 'coordinador', 'director'].includes(saved)) return saved
+    }
+    return suggestedRole ?? 'facilitador'
+  })
 
-  // Persist role in localStorage
+  // Sync from localStorage on mount (handles SSR mismatch)
   useEffect(() => {
-    const saved = localStorage.getItem('trascendencia_rol') as Rol | null
+    const saved = localStorage.getItem(`op_role_${eventId}`) as Rol | null
     if (saved && ['facilitador', 'coordinador', 'director'].includes(saved)) {
       setRol(saved)
     }
-  }, [])
+  }, [eventId])
 
   function changeRol(newRol: Rol) {
     setRol(newRol)
-    localStorage.setItem('trascendencia_rol', newRol)
+    localStorage.setItem(`op_role_${eventId}`, newRol)
   }
 
   const roles: { key: Rol; label: string }[] = [

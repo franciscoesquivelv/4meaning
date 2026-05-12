@@ -1,20 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-
-const ROLE_LABELS: Record<string, string> = {
-  super_admin: 'Super admin',
-  admin: 'Admin',
-  staff: 'Staff',
-  participant: 'Participante',
-}
-
-const ROLE_STYLES: Record<string, string> = {
-  super_admin: 'bg-purple-100 text-purple-700',
-  admin:       'bg-[#DBEAFE] text-[#2563EB]',
-  staff:       'bg-[#DCFCE7] text-[#16A34A]',
-  participant: 'bg-slate-100 text-slate-600',
-}
+import EditRoleSelect from './EditRoleSelect'
 
 interface Profile {
   id: string
@@ -26,18 +13,61 @@ interface Profile {
   event_name: string | null
 }
 
+function UserTable({ users }: { users: Profile[] }) {
+  return (
+    <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+      <table className="w-full text-sm border-collapse">
+        <thead>
+          <tr className="bg-slate-50 border-b border-slate-200">
+            <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Nombre</th>
+            <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Email</th>
+            <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Rol</th>
+            <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Familia / Evento</th>
+          </tr>
+        </thead>
+        <tbody>
+          {users.map((u, i) => (
+            <tr
+              key={u.id}
+              className={`hover:bg-slate-50 transition-colors ${i < users.length - 1 ? 'border-b border-slate-100' : ''}`}
+            >
+              <td className="px-4 py-3 font-medium text-slate-900">
+                {u.full_name ?? <span className="text-slate-400 font-normal">Sin nombre</span>}
+              </td>
+              <td className="px-4 py-3 text-slate-500">{u.email}</td>
+              <td className="px-4 py-3">
+                <EditRoleSelect userId={u.id} currentRole={u.role} />
+              </td>
+              <td className="px-4 py-3">
+                {u.family_name ? (
+                  <div>
+                    <div className="text-slate-900 font-medium">{u.family_name}</div>
+                    {u.event_name && <div className="text-xs text-slate-400 mt-0.5">{u.event_name}</div>}
+                  </div>
+                ) : (
+                  <span className="text-slate-300 text-xs">Sin familia asignada</span>
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )
+}
+
 export default async function UsuariosPage() {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  // Fetch all profiles with their linked family (if any)
+  // Fetch all profiles
   const { data: profiles } = await supabase
     .from('profiles')
     .select('id, email, full_name, role, created_at')
     .order('created_at', { ascending: false })
 
-  // For each profile, check if linked to a family
+  // Fetch all families with their linked event
   const { data: families } = await supabase
     .from('families')
     .select('id, nombre_familia, user_id1, user_id2, events(nombre)')
@@ -53,7 +83,7 @@ export default async function UsuariosPage() {
   })
 
   const byRole = {
-    admin: profilesWithFamily.filter(p => ['super_admin', 'admin', 'staff'].includes(p.role)),
+    team: profilesWithFamily.filter(p => ['super_admin', 'admin', 'staff'].includes(p.role)),
     participant: profilesWithFamily.filter(p => p.role === 'participant'),
   }
 
@@ -73,12 +103,12 @@ export default async function UsuariosPage() {
       </div>
 
       {/* Team */}
-      {byRole.admin.length > 0 && (
+      {byRole.team.length > 0 && (
         <section className="mb-8">
           <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">
-            Equipo ({byRole.admin.length})
+            Equipo ({byRole.team.length})
           </h2>
-          <UserTable users={byRole.admin} />
+          <UserTable users={byRole.team} />
         </section>
       )}
 
@@ -92,68 +122,9 @@ export default async function UsuariosPage() {
             Sin participantes invitados aún.
           </div>
         ) : (
-          <UserTable users={byRole.participant} showFamily />
+          <UserTable users={byRole.participant} />
         )}
       </section>
-    </div>
-  )
-}
-
-function UserTable({ users, showFamily = false }: { users: Profile[]; showFamily?: boolean }) {
-  const ROLE_LABELS: Record<string, string> = {
-    super_admin: 'Super admin', admin: 'Admin', staff: 'Staff', participant: 'Participante',
-  }
-  const ROLE_STYLES: Record<string, string> = {
-    super_admin: 'bg-purple-100 text-purple-700',
-    admin: 'bg-[#DBEAFE] text-[#2563EB]',
-    staff: 'bg-[#DCFCE7] text-[#16A34A]',
-    participant: 'bg-slate-100 text-slate-600',
-  }
-
-  return (
-    <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-      <table className="w-full text-sm border-collapse">
-        <thead>
-          <tr className="bg-slate-50 border-b border-slate-200">
-            <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Nombre</th>
-            <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Email</th>
-            <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Rol</th>
-            {showFamily && (
-              <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Familia / Evento</th>
-            )}
-          </tr>
-        </thead>
-        <tbody>
-          {users.map((u, i) => (
-            <tr
-              key={u.id}
-              className={`hover:bg-slate-50 transition-colors ${i < users.length - 1 ? 'border-b border-slate-100' : ''}`}
-            >
-              <td className="px-4 py-3 font-medium text-slate-900">
-                {u.full_name ?? <span className="text-slate-400 font-normal">Sin nombre</span>}
-              </td>
-              <td className="px-4 py-3 text-slate-500">{u.email}</td>
-              <td className="px-4 py-3">
-                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${ROLE_STYLES[u.role] ?? 'bg-slate-100 text-slate-600'}`}>
-                  {ROLE_LABELS[u.role] ?? u.role}
-                </span>
-              </td>
-              {showFamily && (
-                <td className="px-4 py-3">
-                  {u.family_name ? (
-                    <div>
-                      <div className="text-slate-900 font-medium">{u.family_name}</div>
-                      {u.event_name && <div className="text-xs text-slate-400 mt-0.5">{u.event_name}</div>}
-                    </div>
-                  ) : (
-                    <span className="text-slate-300 text-xs">Sin familia asignada</span>
-                  )}
-                </td>
-              )}
-            </tr>
-          ))}
-        </tbody>
-      </table>
     </div>
   )
 }

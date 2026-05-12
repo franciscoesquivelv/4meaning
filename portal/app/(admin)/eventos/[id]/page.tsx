@@ -209,6 +209,12 @@ export default async function EventoDetailPage({ params }: { params: { id: strin
               >
                 Modo operación
               </Link>
+              <Link
+                href={`/eventos/${params.id}/preview`}
+                className="block w-full px-3 py-2 text-sm text-slate-600 border border-slate-100 rounded-lg hover:bg-slate-50 hover:text-slate-900 transition-colors"
+              >
+                Ver como participante
+              </Link>
               {[
                 { href: `/eventos/${params.id}/familias/nueva`,  label: 'Nueva familia' },
                 { href: `/eventos/${params.id}/acuerdos/nuevo`,  label: 'Nuevo acuerdo' },

@@ -5,6 +5,16 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect, notFound } from 'next/navigation'
 import OperacionClient from './OperacionClient'
 
+type SuggestedRol = 'facilitador' | 'coordinador' | 'director' | null
+
+function mapTeamRolToOperacion(teamRol: string): SuggestedRol {
+  const r = teamRol.toLowerCase()
+  if (r.includes('facilitador')) return 'facilitador'
+  if (r.includes('coordinador') || r.includes('coord')) return 'coordinador'
+  if (r.includes('foto') || r.includes('fotografo') || r.includes('director de foto')) return 'director'
+  return null
+}
+
 export default async function OperacionPage({ params }: { params: { id: string } }) {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -23,6 +33,8 @@ export default async function OperacionPage({ params }: { params: { id: string }
     { data: families },
     { data: allItems },
     { data: announcements },
+    { data: profile },
+    { data: teamMembers },
   ] = await Promise.all([
     supabase
       .from('families')
@@ -43,7 +55,30 @@ export default async function OperacionPage({ params }: { params: { id: string }
       .eq('published', true)
       .order('created_at', { ascending: false })
       .limit(5),
+    supabase
+      .from('profiles')
+      .select('full_name')
+      .eq('id', user.id)
+      .maybeSingle(),
+    supabase
+      .from('event_team')
+      .select('nombre, rol')
+      .eq('event_id', params.id),
   ])
+
+  // Detect suggested role from team roster
+  let suggestedRole: SuggestedRol = null
+  const fullName = profile?.full_name ?? ''
+  if (fullName && teamMembers) {
+    const match = teamMembers.find(
+      m => m.nombre && m.nombre.toLowerCase().includes(fullName.toLowerCase())
+    ) ?? teamMembers.find(
+      m => m.nombre && fullName.toLowerCase().includes(m.nombre.toLowerCase())
+    )
+    if (match?.rol) {
+      suggestedRole = mapTeamRolToOperacion(match.rol)
+    }
+  }
 
   return (
     <OperacionClient
@@ -52,6 +87,7 @@ export default async function OperacionPage({ params }: { params: { id: string }
       items={allItems ?? []}
       announcements={announcements ?? []}
       today={today}
+      suggestedRole={suggestedRole}
     />
   )
 }
