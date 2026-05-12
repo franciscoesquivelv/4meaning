@@ -73,7 +73,7 @@ export default async function EventoDetailPage({ params }: { params: { id: strin
 
   const { data: evento } = await supabase
     .from('events')
-    .select('*')
+    .select('*, contacto_capitulo, costo_por_pareja, primer_deposito, notas_comerciales')
     .eq('id', params.id)
     .single()
 
@@ -240,6 +240,28 @@ export default async function EventoDetailPage({ params }: { params: { id: strin
                 <dt className="text-xs text-slate-400">Pipeline</dt>
                 <dd className="mt-0.5"><PipelineBadge status={evento.pipeline_status ?? 'prospecto'} /></dd>
               </div>
+              {evento.contacto_capitulo && (
+                <div>
+                  <dt className="text-xs text-slate-400">Contacto capítulo</dt>
+                  <dd className="font-medium text-slate-900 text-sm">{evento.contacto_capitulo}</dd>
+                </div>
+              )}
+              {(evento.costo_por_pareja != null && evento.costo_por_pareja > 0) && (
+                <div>
+                  <dt className="text-xs text-slate-400">Costo por pareja</dt>
+                  <dd className="font-medium text-slate-900">
+                    ${evento.costo_por_pareja.toLocaleString('es-MX')} MXN
+                  </dd>
+                </div>
+              )}
+              {(evento.primer_deposito != null && evento.primer_deposito > 0) && (
+                <div>
+                  <dt className="text-xs text-slate-400">Primer depósito</dt>
+                  <dd className="font-medium text-slate-900">
+                    ${evento.primer_deposito.toLocaleString('es-MX')} MXN
+                  </dd>
+                </div>
+              )}
             </dl>
           </div>
 
@@ -265,6 +287,14 @@ export default async function EventoDetailPage({ params }: { params: { id: strin
               {evento.nube_url ? 'Cambiar enlace' : '+ Agregar enlace'}
             </Link>
           </div>
+
+          {/* Notas comerciales */}
+          {evento.notas_comerciales && (
+            <div className="bg-blue-50 border border-blue-100 rounded-xl p-4">
+              <div className="text-xs font-semibold text-blue-700 uppercase tracking-wider mb-2">Notas comerciales</div>
+              <p className="text-sm text-blue-800 leading-relaxed">{evento.notas_comerciales}</p>
+            </div>
+          )}
 
           {/* Notas internas */}
           {evento.notas_internas && (

@@ -59,35 +59,40 @@ export default function EventSubNav({ eventId, eventName, pipelineStatus }: Prop
         {pipeline.label}
       </span>
 
-      {/* Spacer */}
-      <div className="flex-1 min-w-4" />
+      {/* Nav links wrapper con fade right */}
+      <div className="relative flex-1 overflow-hidden">
+        {/* Fade overlay derecho */}
+        <div className="pointer-events-none absolute right-0 top-0 h-full w-12 bg-gradient-to-l from-white to-transparent z-10" />
 
-      {/* Nav links */}
-      {NAV_LINKS.map(({ href, label }) => {
-        const isOperacion = label === 'Operación'
-        const isActive =
-          href === `/eventos/${eventId}`
-            ? pathname === href
-            : pathname === href || pathname.startsWith(href + '/')
+        {/* Los links scrollables */}
+        <div className="flex items-center gap-1 overflow-x-auto scrollbar-none pr-8">
+          {NAV_LINKS.map(({ href, label }) => {
+            const isOperacion = label === 'Operación'
+            const isActive =
+              href === `/eventos/${eventId}`
+                ? pathname === href
+                : pathname === href || pathname.startsWith(href + '/')
 
-        let cls = 'text-xs px-3 py-1.5 rounded-md whitespace-nowrap flex-shrink-0 transition-colors '
+            let cls = 'text-xs px-3 py-1.5 rounded-md whitespace-nowrap flex-shrink-0 transition-colors '
 
-        if (isOperacion) {
-          cls += isActive
-            ? 'bg-slate-900 text-white hover:bg-slate-700'
-            : 'border border-slate-200 text-slate-700 hover:bg-slate-900 hover:text-white'
-        } else {
-          cls += isActive
-            ? 'text-slate-900 font-semibold bg-slate-100'
-            : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100'
-        }
+            if (isOperacion) {
+              cls += isActive
+                ? 'bg-slate-900 text-white hover:bg-slate-700'
+                : 'border border-slate-200 text-slate-700 hover:bg-slate-900 hover:text-white'
+            } else {
+              cls += isActive
+                ? 'text-slate-900 font-semibold bg-slate-100'
+                : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100'
+            }
 
-        return (
-          <Link key={href} href={href} className={cls}>
-            {label}
-          </Link>
-        )
-      })}
+            return (
+              <Link key={href} href={href} className={cls}>
+                {label}
+              </Link>
+            )
+          })}
+        </div>
+      </div>
     </div>
   )
 }

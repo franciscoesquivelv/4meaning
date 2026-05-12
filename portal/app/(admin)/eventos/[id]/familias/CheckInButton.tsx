@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
+import { useToast } from '@/hooks/useToast'
 
 interface CheckInButtonProps {
   familyId: string
@@ -17,6 +18,7 @@ function formatTime(iso: string): string {
 
 export default function CheckInButton({ familyId, checkedInAt, eventId }: CheckInButtonProps) {
   const router = useRouter()
+  const { addToast } = useToast()
   const [optimisticCheckedIn, setOptimisticCheckedIn] = useState<string | null>(checkedInAt)
   const [loading, setLoading] = useState(false)
 
@@ -30,11 +32,17 @@ export default function CheckInButton({ familyId, checkedInAt, eventId }: CheckI
     setLoading(true)
     const now = new Date().toISOString()
     setOptimisticCheckedIn(now)
-    await supabase
+    const { error } = await supabase
       .from('families')
       .update({ checked_in_at: now })
       .eq('id', familyId)
     setLoading(false)
+    if (error) {
+      setOptimisticCheckedIn(checkedInAt)
+      addToast('Error al registrar check-in', 'error')
+    } else {
+      addToast('Check-in registrado', 'success')
+    }
     router.refresh()
   }
 
@@ -42,11 +50,15 @@ export default function CheckInButton({ familyId, checkedInAt, eventId }: CheckI
     if (loading) return
     setLoading(true)
     setOptimisticCheckedIn(null)
-    await supabase
+    const { error } = await supabase
       .from('families')
       .update({ checked_in_at: null })
       .eq('id', familyId)
     setLoading(false)
+    if (error) {
+      setOptimisticCheckedIn(checkedInAt)
+      addToast('Error al registrar check-in', 'error')
+    }
     router.refresh()
   }
 

@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react'
 import { createBrowserClient } from '@supabase/ssr'
+import { useToast } from '@/hooks/useToast'
 
 type Task = {
   id: string
@@ -88,6 +89,7 @@ export default function ChecklistClient({
   const [newTask, setNewTask] = useState({ titulo: '', descripcion: '', fase: '' })
   const [customFase, setCustomFase] = useState('')
   const [saving, setSaving] = useState(false)
+  const { addToast } = useToast()
 
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -107,8 +109,10 @@ export default function ChecklistClient({
       // Rollback to previous value
       setTasks(prev => prev.map(t => t.id === id ? { ...t, done: !done, done_at: !done ? new Date().toISOString() : null } : t))
       console.error('Error al actualizar tarea:', error.message)
+    } else if (done) {
+      addToast('Tarea completada ✓', 'success')
     }
-  }, [supabase])
+  }, [supabase, addToast])
 
   const handleDelete = useCallback(async (id: string) => {
     if (!confirm('¿Eliminar esta tarea?')) return
@@ -142,6 +146,7 @@ export default function ChecklistClient({
       setNewTask({ titulo: '', descripcion: '', fase: '' })
       setCustomFase('')
       setShowForm(false)
+      addToast('Tarea agregada', 'success')
     }
     setSaving(false)
   }

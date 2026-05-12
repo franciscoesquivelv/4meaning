@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import { toggleContentBlock } from './actions'
+import { useToast } from '@/hooks/useToast'
 
 interface Props {
   blockId: string
@@ -12,12 +13,18 @@ interface Props {
 export default function ToggleBlockButton({ blockId, activo, eventId }: Props) {
   const [optimisticActivo, setOptimisticActivo] = useState<boolean>(activo)
   const [isPending, startTransition] = useTransition()
+  const { addToast } = useToast()
 
   function handleClick() {
     const next = !optimisticActivo
     setOptimisticActivo(next)
     startTransition(async () => {
       await toggleContentBlock(blockId, next, eventId)
+      if (next) {
+        addToast('Bloque activado — visible para participantes', 'success')
+      } else {
+        addToast('Bloque desactivado', 'success')
+      }
     })
   }
 

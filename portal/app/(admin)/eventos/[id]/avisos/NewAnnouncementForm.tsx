@@ -3,9 +3,11 @@
 import { useState } from 'react'
 import { createBrowserClient } from '@supabase/ssr'
 import { useRouter } from 'next/navigation'
+import { useToast } from '@/hooks/useToast'
 
 export default function NewAnnouncementForm({ eventId }: { eventId: string }) {
   const router = useRouter()
+  const { addToast } = useToast()
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -36,6 +38,7 @@ export default function NewAnnouncementForm({ eventId }: { eventId: string }) {
     setCuerpo('')
     setTipo('info')
     setOpen(false)
+    addToast('Aviso publicado', 'success')
     router.refresh()
   }
 

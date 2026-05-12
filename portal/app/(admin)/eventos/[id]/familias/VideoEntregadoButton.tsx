@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useTransition } from 'react'
 import { marcarVideoEntregado } from './actions'
+import { useToast } from '@/hooks/useToast'
 
 interface VideoEntregadoButtonProps {
   familyId: string
@@ -10,10 +11,16 @@ interface VideoEntregadoButtonProps {
 
 export default function VideoEntregadoButton({ familyId, eventId }: VideoEntregadoButtonProps) {
   const [isPending, startTransition] = useTransition()
+  const { addToast } = useToast()
 
   function handleClick() {
-    startTransition(() => {
-      marcarVideoEntregado(familyId, eventId)
+    startTransition(async () => {
+      try {
+        await marcarVideoEntregado(familyId, eventId)
+        addToast('Video marcado como entregado', 'success')
+      } catch {
+        addToast('Error al marcar video como entregado', 'error')
+      }
     })
   }
 

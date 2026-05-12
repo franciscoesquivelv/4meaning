@@ -24,6 +24,7 @@ const PIPELINE_COLUMNS: { key: string; label: string; headerCls: string }[] = [
   { key: 'confirmado',     label: 'Confirmado',      headerCls: 'text-blue-700' },
   { key: 'en_preparacion', label: 'En preparación', headerCls: 'text-amber-700' },
   { key: 'ejecutado',      label: 'Ejecutado',       headerCls: 'text-emerald-700' },
+  { key: 'cancelado',      label: 'Cancelado',       headerCls: 'text-red-500' },
 ]
 
 export default async function EventosPage() {
@@ -67,7 +68,7 @@ export default async function EventosPage() {
           </Link>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
           {PIPELINE_COLUMNS.map(col => {
             const items = grouped[col.key] ?? []
             return (
@@ -94,7 +95,7 @@ export default async function EventosPage() {
                     <Link
                       key={ev.id}
                       href={`/eventos/${ev.id}`}
-                      className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm hover:shadow-md hover:border-slate-300 transition-all cursor-pointer block"
+                      className={`bg-white border border-slate-200 rounded-xl p-4 shadow-sm hover:shadow-md hover:border-slate-300 transition-all cursor-pointer block${col.key === 'cancelado' ? ' opacity-60' : ''}`}
                     >
                       <div className="font-semibold text-slate-900 text-sm leading-tight mb-1.5">
                         {ev.nombre}

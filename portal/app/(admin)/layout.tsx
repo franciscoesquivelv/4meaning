@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import AdminTopNav from '@/components/AdminTopNav'
+import ToastProvider from '@/components/ToastProvider'
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const supabase = createClient()
@@ -21,9 +22,11 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   return (
     <>
       <AdminTopNav userEmail={user.email ?? ''} />
-      <main className="pt-14 bg-slate-50 min-h-screen">
-        {children}
-      </main>
+      <ToastProvider>
+        <main className="pt-14 bg-slate-50 min-h-screen">
+          {children}
+        </main>
+      </ToastProvider>
     </>
   )
 }
