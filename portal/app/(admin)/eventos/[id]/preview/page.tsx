@@ -114,7 +114,7 @@ function ItinerarioSection({ items }: { items: ItineraryItem[] }) {
               <div key={dia}>
                 {/* Day header */}
                 <div className="bg-[#181818] border border-[#2A2A2A] rounded-lg px-3 py-2 mb-4">
-                  <span className="font-bold text-sm text-[#F5F0E8]">{dia}</span>
+                  <span className="font-bold text-sm text-[#F5F0E8]">Día {dia}</span>
                 </div>
 
                 {/* Timeline */}

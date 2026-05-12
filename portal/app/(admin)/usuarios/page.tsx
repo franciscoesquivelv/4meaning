@@ -92,7 +92,7 @@ export default async function UsuariosPage() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Usuarios</h1>
-          <p className="text-sm text-slate-500 mt-1">{profilesWithFamily.length} usuarios registrados</p>
+          <p className="text-sm text-slate-500 mt-1">{profilesWithFamily.length} {profilesWithFamily.length === 1 ? 'usuario registrado' : 'usuarios registrados'}</p>
         </div>
         <Link
           href="/usuarios/nuevo"

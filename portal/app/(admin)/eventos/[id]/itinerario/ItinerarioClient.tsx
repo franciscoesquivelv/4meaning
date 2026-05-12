@@ -63,7 +63,8 @@ function GrupoBadge({ grupo }: { grupo: string }) {
 function formatDate(d: string | null) {
   if (!d) return ''
   const raw = new Date(d + 'T12:00:00').toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long' })
-  return raw.replace(/\b(De|Del)\b/g, (m) => m.toLowerCase())
+  const lower = raw.toLowerCase()
+  return lower.charAt(0).toUpperCase() + lower.slice(1)
 }
 
 // ── Cascade View ────────────────────────────────────────────────────────────
@@ -98,7 +99,7 @@ function CascadeView({ items, eventId, onSelect }: { items: Item[]; eventId: str
               <div className="mb-3">
                 <h2 className="text-sm font-bold text-slate-900">Día {dia}</h2>
                 {dayItems[0]?.fecha && (
-                  <p className="text-xs text-slate-500 mt-0.5 capitalize">{formatDate(dayItems[0].fecha)}</p>
+                  <p className="text-xs text-slate-500 mt-0.5">{formatDate(dayItems[0].fecha)}</p>
                 )}
               </div>
 
@@ -242,7 +243,7 @@ function CalendarView({ items, eventId, onSelect }: { items: Item[]; eventId: st
       </div>
 
       {dayItem0?.fecha && (
-        <p className="text-xs text-slate-500 mb-4 capitalize">{formatDate(dayItem0.fecha)}</p>
+        <p className="text-xs text-slate-500 mb-4">{formatDate(dayItem0.fecha)}</p>
       )}
 
       {timedItems.length === 0 && untimedItems.length === 0 ? (
