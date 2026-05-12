@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { createServiceClient } from '@/lib/supabase/server'
 import PublicSignButton from './PublicSignButton'
 
 function formatDate(d: string | null) {
@@ -31,7 +31,7 @@ export default async function FirmarPage({
 }: {
   params: { token: string }
 }) {
-  const supabase = createClient()
+  const supabase = createServiceClient()
 
   const { data } = await supabase
     .from('agreements')

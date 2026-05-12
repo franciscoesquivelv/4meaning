@@ -1,12 +1,12 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server'
+import { createServiceClient } from '@/lib/supabase/server'
 
 export async function signAgreementByToken(
   token: string,
   agreementId: string
 ): Promise<{ success?: true; error?: string }> {
-  const supabase = createClient()
+  const supabase = createServiceClient()
 
   // Verify that the token matches the agreement and it hasn't been signed yet
   const { data: agreement } = await supabase
