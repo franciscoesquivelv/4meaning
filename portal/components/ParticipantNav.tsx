@@ -33,11 +33,18 @@ const PenIcon = () => (
   </svg>
 )
 
+const CheckStarIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+  </svg>
+)
+
 const navItems = [
-  { href: '/mi-retiro', label: 'Inicio',   icon: HomeIcon },
-  { href: '/programa',  label: 'Programa', icon: CalendarIcon },
-  { href: '/avisos',    label: 'Avisos',   icon: BellIcon },
-  { href: '/acuerdos',  label: 'Firmar',   icon: PenIcon },
+  { href: '/mi-retiro',    label: 'Inicio',       icon: HomeIcon },
+  { href: '/programa',     label: 'Programa',     icon: CalendarIcon },
+  { href: '/avisos',       label: 'Avisos',       icon: BellIcon },
+  { href: '/acuerdos',     label: 'Firmar',       icon: PenIcon },
+  { href: '/compromisos',  label: 'Compromisos',  icon: CheckStarIcon },
 ]
 
 export default function ParticipantNav() {
