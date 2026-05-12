@@ -114,7 +114,7 @@ export default async function MiRetiroPage() {
 
           {/* Family name — serif, grande */}
           <h1 className="font-[family-name:var(--font-cormorant)] text-5xl font-light text-[#F5F0E8] leading-tight mb-1">
-            Familia {family.nombre_familia}
+            {family.nombre_familia}
           </h1>
 
           {/* Location */}
@@ -128,7 +128,7 @@ export default async function MiRetiroPage() {
       {family && !evento && (
         <div className="px-6 pt-12 pb-8">
           <h1 className="font-[family-name:var(--font-cormorant)] text-5xl font-light text-[#F5F0E8] leading-tight">
-            Familia {family.nombre_familia}
+            {family.nombre_familia}
           </h1>
         </div>
       )}

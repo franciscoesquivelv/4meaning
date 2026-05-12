@@ -103,7 +103,7 @@ export default async function FirmarPage({
           <div className="bg-[#1A1A1A] border border-white/10 rounded-xl px-5 py-4 text-left mt-4">
             <p className="text-[#F5F0E8] font-medium text-sm">{agreement.nombre}</p>
             {family?.nombre_familia && (
-              <p className="text-[#B0A898] text-xs mt-1">Familia {family.nombre_familia}</p>
+              <p className="text-[#B0A898] text-xs mt-1">{family.nombre_familia}</p>
             )}
           </div>
         </div>
@@ -125,7 +125,7 @@ export default async function FirmarPage({
           {agreement.nombre}
         </h1>
         {family?.nombre_familia && (
-          <p className="text-sm text-[#B0A898]">Familia {family.nombre_familia}</p>
+          <p className="text-sm text-[#B0A898]">{family.nombre_familia}</p>
         )}
       </div>
 

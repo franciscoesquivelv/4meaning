@@ -45,7 +45,9 @@ function formatTime(t: string | null) {
 
 function formatDate(d: string | null) {
   if (!d) return ''
-  return new Date(d + 'T12:00:00').toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long' })
+  const raw = new Date(d + 'T12:00:00').toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long' })
+  const lower = raw.toLowerCase()
+  return lower.charAt(0).toUpperCase() + lower.slice(1)
 }
 
 function isToday(dateStr: string | null): boolean {
@@ -164,7 +166,7 @@ export default async function ProgramaPage() {
                   <div>
                     <span className={`font-bold text-sm ${today ? 'text-[#C9A96E]' : 'text-[#F5F0E8]'}`}>Día {dia}</span>
                     {dayDate && (
-                      <span className={`text-xs ml-2 capitalize ${today ? 'text-[#C9A96E]/70' : 'text-[#A09A8F]'}`}>
+                      <span className={`text-xs ml-2 ${today ? 'text-[#C9A96E]/70' : 'text-[#A09A8F]'}`}>
                         {formatDate(dayDate)}
                       </span>
                     )}

@@ -178,7 +178,7 @@ export default async function CaratulaPage({
 
       <div className="print-bar no-print">
         <div style={{ fontFamily: '-apple-system, sans-serif', fontSize: 13, color: '#6b7280' }}>
-          Carátula del álbum — Familia {familia.nombre_familia}
+          Carátula del álbum — {familia.nombre_familia}
         </div>
         <button className="print-btn" onClick={() => window.print()}>
           Imprimir / Guardar PDF

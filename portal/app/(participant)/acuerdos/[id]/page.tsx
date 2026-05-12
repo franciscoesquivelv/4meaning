@@ -51,7 +51,7 @@ export default async function AcuerdoDetailPage({ params }: { params: { id: stri
             </div>
             <h1 className="text-xl font-bold text-slate-900 mb-2">{agreement.nombre}</h1>
             {family && (
-              <div className="text-sm text-slate-500">Familia {family.nombre_familia}</div>
+              <div className="text-sm text-slate-500">{family.nombre_familia}</div>
             )}
           </div>
 

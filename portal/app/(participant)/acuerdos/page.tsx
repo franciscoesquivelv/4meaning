@@ -45,7 +45,7 @@ export default async function AcuerdosPage() {
   return (
     <div className="px-5 pt-6">
       <h1 className="text-xl font-bold text-[#F5F0E8] mb-1">Acuerdos</h1>
-      <p className="text-sm text-[#A09A8F] mb-6">Familia {family.nombre_familia}</p>
+      <p className="text-sm text-[#A09A8F] mb-6">{family.nombre_familia}</p>
 
       {/* Progress bar */}
       {total > 0 && (
