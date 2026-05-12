@@ -81,6 +81,15 @@ export default async function MiRetiroPage() {
 
   return (
     <div>
+      {/* Cerrar sesión */}
+      <div className="flex justify-end px-6 pt-4">
+        <form action="/auth/signout" method="POST">
+          <button type="submit" className="text-xs text-[#4B5563] hover:text-[#A09A8F] transition-colors">
+            Cerrar sesión
+          </button>
+        </form>
+      </div>
+
       {/* PushSubscribeButton flotante */}
       {family?.event_id && (
         <div className="fixed top-4 right-4 z-40">

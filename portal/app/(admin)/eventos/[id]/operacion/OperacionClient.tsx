@@ -76,7 +76,7 @@ function getCurrentItem(items: ItineraryItem[], today: string): ItineraryItem | 
   const nowHHMM = new Date().toLocaleTimeString('en-US', {
     hour: '2-digit', minute: '2-digit', hour12: false,
   })
-  const todayItems = items.filter(i => i.dia === today)
+  const todayItems = items.filter(i => String(i.dia) === today)
   return (
     todayItems.find(i => {
       const start = i.hora_inicio?.slice(0, 5) ?? '00:00'
@@ -91,7 +91,7 @@ function getNextItems(items: ItineraryItem[], today: string, count: number): Iti
     hour: '2-digit', minute: '2-digit', hour12: false,
   })
   return items
-    .filter(i => i.dia === today && (i.hora_inicio?.slice(0, 5) ?? '00:00') > nowHHMM)
+    .filter(i => String(i.dia) === today && (i.hora_inicio?.slice(0, 5) ?? '00:00') > nowHHMM)
     .slice(0, count)
 }
 
@@ -101,7 +101,7 @@ function getNextImportantSession(items: ItineraryItem[], today: string): Itinera
   })
   return (
     items.find(i =>
-      i.dia === today &&
+      String(i.dia) === today &&
       (i.tipo === 'sesion' || i.tipo === 'taller') &&
       (i.hora_inicio?.slice(0, 5) ?? '00:00') > nowHHMM
     ) ?? null
@@ -397,7 +397,7 @@ function VistaDirector({
   today: string
   eventId: string
 }) {
-  const todayItems      = items.filter(i => i.dia === today)
+  const todayItems      = items.filter(i => String(i.dia) === today)
   const nextImportant   = getNextImportantSession(items, today)
   const nowHHMM = new Date().toLocaleTimeString('en-US', {
     hour: '2-digit', minute: '2-digit', hour12: false,

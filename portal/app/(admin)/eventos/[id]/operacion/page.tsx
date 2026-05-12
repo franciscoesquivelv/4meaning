@@ -27,7 +27,21 @@ export default async function OperacionPage({ params }: { params: { id: string }
     .single()
   if (!evento) notFound()
 
-  const today = new Date().toISOString().slice(0, 10)
+  // Compute which "day" of the event today is (1, 2, 3...)
+  // Returns '0' if event hasn't started yet or no fecha_inicio
+  function getEventDay(fechaInicio: string | null): string {
+    if (!fechaInicio) return '0'
+    const start = new Date(fechaInicio + 'T00:00:00')
+    const now = new Date()
+    // Normalize both to local date midnight
+    const startMidnight = new Date(start.getFullYear(), start.getMonth(), start.getDate())
+    const nowMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+    const diffDays = Math.floor((nowMidnight.getTime() - startMidnight.getTime()) / (1000 * 60 * 60 * 24))
+    if (diffDays < 0) return '0' // before event
+    return String(diffDays + 1) // day 1, 2, 3...
+  }
+
+  const today = getEventDay(evento.fecha_inicio)
 
   const [
     { data: families },

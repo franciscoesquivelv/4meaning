@@ -7,25 +7,35 @@ export async function toggleContentBlock(
   blockId: string,
   activo: boolean,
   eventId: string,
-): Promise<void> {
-  const supabase = createClient()
-  await supabase
-    .from('event_content_blocks')
-    .update({
-      activo,
-      activado_at: activo ? new Date().toISOString() : null,
-    })
-    .eq('id', blockId)
-  revalidatePath(`/eventos/${eventId}/contenido`)
+): Promise<{ error: string } | void> {
+  try {
+    const supabase = createClient()
+    const { error } = await supabase
+      .from('event_content_blocks')
+      .update({
+        activo,
+        activado_at: activo ? new Date().toISOString() : null,
+      })
+      .eq('id', blockId)
+    if (error) return { error: error.message }
+    revalidatePath(`/eventos/${eventId}/contenido`)
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : 'Error desconocido' }
+  }
 }
 
 export async function deleteContentBlock(
   blockId: string,
   eventId: string,
-): Promise<void> {
-  const supabase = createClient()
-  await supabase.from('event_content_blocks').delete().eq('id', blockId)
-  revalidatePath(`/eventos/${eventId}/contenido`)
+): Promise<{ error: string } | void> {
+  try {
+    const supabase = createClient()
+    const { error } = await supabase.from('event_content_blocks').delete().eq('id', blockId)
+    if (error) return { error: error.message }
+    revalidatePath(`/eventos/${eventId}/contenido`)
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : 'Error desconocido' }
+  }
 }
 
 export async function createContentBlock(data: {
@@ -34,8 +44,13 @@ export async function createContentBlock(data: {
   contenido?: string
   tipo: string
   orden: number
-}): Promise<void> {
-  const supabase = createClient()
-  await supabase.from('event_content_blocks').insert(data)
-  revalidatePath(`/eventos/${data.event_id}/contenido`)
+}): Promise<{ error: string } | void> {
+  try {
+    const supabase = createClient()
+    const { error } = await supabase.from('event_content_blocks').insert(data)
+    if (error) return { error: error.message }
+    revalidatePath(`/eventos/${data.event_id}/contenido`)
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : 'Error desconocido' }
+  }
 }

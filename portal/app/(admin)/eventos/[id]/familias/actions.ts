@@ -7,11 +7,16 @@
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 
-export async function marcarVideoEntregado(familyId: string, eventId: string) {
-  const supabase = createClient()
-  await supabase
-    .from('families')
-    .update({ video_entregado: true, video_entregado_at: new Date().toISOString() })
-    .eq('id', familyId)
-  revalidatePath(`/eventos/${eventId}/familias`)
+export async function marcarVideoEntregado(familyId: string, eventId: string): Promise<{ error: string } | void> {
+  try {
+    const supabase = createClient()
+    const { error } = await supabase
+      .from('families')
+      .update({ video_entregado: true, video_entregado_at: new Date().toISOString() })
+      .eq('id', familyId)
+    if (error) return { error: error.message }
+    revalidatePath(`/eventos/${eventId}/familias`)
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : 'Error desconocido' }
+  }
 }

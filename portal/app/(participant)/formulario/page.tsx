@@ -2,7 +2,6 @@
 
 import { createBrowserClient } from '@supabase/ssr'
 import { useEffect, useState } from 'react'
-import FormProgress from './FormProgress'
 
 const FORM_SECTIONS = [
   'Su historia',
@@ -14,13 +13,14 @@ const FORM_SECTIONS = [
   'Logística',
 ]
 
+const TOTAL_STEPS = FORM_SECTIONS.length
+
 interface Hijo {
   nombre: string
   edad: string
 }
 
 const INPUT = "w-full px-4 py-3 bg-[#1E1E1E] border border-[#2A2A2A] rounded-xl text-[#F5F0E8] text-sm placeholder-[#6B7280] focus:outline-none focus:border-[#C9A96E] transition-colors resize-y"
-const SECTION_TITLE = "text-xs font-semibold text-[#C9A96E] uppercase tracking-widest mb-4"
 const LABEL = "block text-sm font-medium text-[#F5F0E8] mb-2"
 
 export default function FormularioPage() {
@@ -36,6 +36,8 @@ export default function FormularioPage() {
   const [familyId, setFamilyId] = useState<string | null>(null)
   const [eventId, setEventId] = useState<string | null>(null)
   const [noFamily, setNoFamily] = useState(false)
+  const [currentStep, setCurrentStep] = useState(1)
+  const [stepErrors, setStepErrors] = useState<Record<string, string>>({})
 
   const [form, setForm] = useState({
     como_se_conocieron: '',
@@ -50,7 +52,6 @@ export default function FormularioPage() {
     notas_adicionales: '',
   })
   const [hijos, setHijos] = useState<Hijo[]>([])
-  // Valores que transmiten — hasta 5
   const [valores, setValores] = useState<string[]>(['', '', '', '', ''])
 
   useEffect(() => {
@@ -87,8 +88,42 @@ export default function FormularioPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
+  function validateStep(step: number): Record<string, string> {
+    const errs: Record<string, string> = {}
+    if (step === 1) {
+      if (!form.como_se_conocieron.trim()) errs.como_se_conocieron = 'Este campo es requerido'
+      if (!form.historia_pareja.trim()) errs.historia_pareja = 'Este campo es requerido'
+    }
+    if (step === 5) {
+      if (!form.legado.trim()) errs.legado = 'Este campo es requerido'
+      if (!form.expectativas.trim()) errs.expectativas = 'Este campo es requerido'
+    }
+    return errs
+  }
+
+  function handleNext() {
+    const errs = validateStep(currentStep)
+    if (Object.keys(errs).length > 0) {
+      setStepErrors(errs)
+      return
+    }
+    setStepErrors({})
+    setCurrentStep(s => Math.min(s + 1, TOTAL_STEPS))
+  }
+
+  function handlePrev() {
+    setStepErrors({})
+    setCurrentStep(s => Math.max(s - 1, 1))
+  }
+
+  async function handleSubmit() {
+    const errs = validateStep(currentStep)
+    if (Object.keys(errs).length > 0) {
+      setStepErrors(errs)
+      return
+    }
+    setStepErrors({})
+
     if (!familyId || !eventId) return
     setSaving(true)
     setError(null)
@@ -97,7 +132,7 @@ export default function FormularioPage() {
 
     const valoresFiltrados = valores.filter(v => v.trim() !== '')
 
-    const { error } = await supabase.from('intake_responses').upsert({
+    const { error: saveError } = await supabase.from('intake_responses').upsert({
       family_id: familyId,
       event_id: eventId,
       como_se_conocieron: form.como_se_conocieron,
@@ -117,7 +152,7 @@ export default function FormularioPage() {
     }, { onConflict: 'family_id,event_id' })
 
     setSaving(false)
-    if (error) { setError(error.message); return }
+    if (saveError) { setError(saveError.message); return }
     setSubmitted(true)
   }
 
@@ -138,7 +173,7 @@ export default function FormularioPage() {
     return (
       <div className="px-5 pt-6 text-center py-16">
         <div className="text-5xl text-[#4ADE80] mb-4">✓</div>
-        <h1 className="text-xl font-bold text-[#F5F0E8] mb-3">Formulario enviado</h1>
+        <h1 className="text-xl font-bold text-[#F5F0E8] mb-3">Perfil completado ✓</h1>
         <p className="text-sm text-[#A09A8F] leading-relaxed max-w-xs mx-auto">
           Gracias por completarlo. El equipo de Trascendencia lo revisará antes del retiro.
         </p>
@@ -146,47 +181,82 @@ export default function FormularioPage() {
     )
   }
 
+  const progressPct = ((currentStep - 1) / (TOTAL_STEPS - 1)) * 100
+
   return (
-    <div className="pb-6">
-      <FormProgress sections={FORM_SECTIONS} />
-      <div className="px-5 pt-6">
-      <div className="mb-8">
-        <h1 className="text-xl font-bold text-[#F5F0E8] mb-2">Formulario de admisión</h1>
-        <p className="text-sm text-[#A09A8F] leading-relaxed">
-          Este formulario nos ayuda a personalizar su experiencia. Tómense el tiempo para responder con profundidad — sus respuestas se usan para preparar materiales únicos para su familia.
-        </p>
+    <div className="pb-10 bg-[#0C0C0C] min-h-screen">
+      {/* Progress bar */}
+      <div className="h-1 bg-[#2A2A2A] w-full sticky top-0 z-10">
+        <div
+          className="h-full bg-[#C9A96E] transition-all duration-500"
+          style={{ width: `${progressPct}%` }}
+        />
       </div>
 
-      {error && (
-        <div className="bg-[#FEE2E2]/10 border border-[#DC2626]/30 rounded-xl p-4 mb-6 text-[#DC2626] text-sm">
-          {error}
+      <div className="px-5 pt-6 max-w-lg mx-auto">
+        {/* Step indicator */}
+        <div className="flex items-center gap-3 mb-6">
+          <span className="text-xs font-semibold px-3 py-1 rounded-full bg-[#C9A96E]/15 text-[#C9A96E] border border-[#C9A96E]/30">
+            Paso {currentStep} de {TOTAL_STEPS}
+          </span>
+          <span className="text-xs text-[#6B7280]">{FORM_SECTIONS[currentStep - 1]}</span>
         </div>
-      )}
 
-      <form onSubmit={handleSubmit} className="space-y-8">
+        {/* Step dots */}
+        <div className="flex gap-1.5 mb-6">
+          {FORM_SECTIONS.map((_, i) => (
+            <div
+              key={i}
+              className="h-1 flex-1 rounded-full transition-all duration-300"
+              style={{
+                backgroundColor: i + 1 <= currentStep ? '#C9A96E' : '#2A2A2A',
+              }}
+            />
+          ))}
+        </div>
 
-        {/* ── Su historia ── */}
-        <section data-section="Su historia">
-          <h2 className={SECTION_TITLE}>Su historia</h2>
+        {/* Section title */}
+        <h2
+          className="text-2xl font-bold text-[#F5F0E8] mb-6"
+          style={{ fontFamily: 'Cormorant, Georgia, serif' }}
+        >
+          {FORM_SECTIONS[currentStep - 1]}
+        </h2>
+
+        {/* Global error */}
+        {error && (
+          <div className="bg-[#FEE2E2]/10 border border-[#DC2626]/30 rounded-xl p-4 mb-6 text-[#DC2626] text-sm">
+            {error}
+          </div>
+        )}
+
+        {/* ── Step 1: Su historia ── */}
+        {currentStep === 1 && (
           <div className="space-y-5">
             <div>
-              <label className={LABEL}>¿Cómo se conocieron?</label>
+              <label className={LABEL}>¿Cómo se conocieron? <span className="text-[#DC2626]">*</span></label>
               <textarea
                 value={form.como_se_conocieron}
-                onChange={e => setForm(f => ({ ...f, como_se_conocieron: e.target.value }))}
+                onChange={e => { setForm(f => ({ ...f, como_se_conocieron: e.target.value })); setStepErrors(s => ({ ...s, como_se_conocieron: '' })) }}
                 className={`${INPUT} min-h-[80px]`}
                 placeholder="Cuéntenme la historia de cómo se conocieron..."
               />
+              {stepErrors.como_se_conocieron && (
+                <p className="text-xs text-[#DC2626] mt-1">{stepErrors.como_se_conocieron}</p>
+              )}
             </div>
 
             <div>
-              <label className={LABEL}>Historia de su relación</label>
+              <label className={LABEL}>Historia de su relación <span className="text-[#DC2626]">*</span></label>
               <textarea
                 value={form.historia_pareja}
-                onChange={e => setForm(f => ({ ...f, historia_pareja: e.target.value }))}
+                onChange={e => { setForm(f => ({ ...f, historia_pareja: e.target.value })); setStepErrors(s => ({ ...s, historia_pareja: '' })) }}
                 className={`${INPUT} min-h-[120px]`}
                 placeholder="Los momentos más importantes de su historia juntos..."
               />
+              {stepErrors.historia_pareja && (
+                <p className="text-xs text-[#DC2626] mt-1">{stepErrors.historia_pareja}</p>
+              )}
             </div>
 
             <div>
@@ -201,11 +271,10 @@ export default function FormularioPage() {
               />
             </div>
           </div>
-        </section>
+        )}
 
-        {/* ── Momentos importantes ── */}
-        <section data-section="Momentos que los definen">
-          <h2 className={SECTION_TITLE}>Momentos que los definen</h2>
+        {/* ── Step 2: Momentos que los definen ── */}
+        {currentStep === 2 && (
           <div>
             <label className={LABEL}>¿Cuáles son los momentos más importantes que han vivido como familia?</label>
             <p className="text-xs text-[#6B7280] mb-2">
@@ -218,11 +287,10 @@ export default function FormularioPage() {
               placeholder="Compártenos los momentos más significativos de su historia juntos..."
             />
           </div>
-        </section>
+        )}
 
-        {/* ── Valores ── */}
-        <section data-section="Sus valores">
-          <h2 className={SECTION_TITLE}>Sus valores</h2>
+        {/* ── Step 3: Sus valores ── */}
+        {currentStep === 3 && (
           <div>
             <label className={LABEL}>¿Qué valores quieren transmitir a su familia?</label>
             <p className="text-xs text-[#6B7280] mb-3">
@@ -242,11 +310,10 @@ export default function FormularioPage() {
               ))}
             </div>
           </div>
-        </section>
+        )}
 
-        {/* ── Familia ── */}
-        <section data-section="Su familia">
-          <h2 className={SECTION_TITLE}>Su familia</h2>
+        {/* ── Step 4: Su familia ── */}
+        {currentStep === 4 && (
           <div className="space-y-5">
             <div>
               <label className={LABEL}>¿Tienen hijos?</label>
@@ -314,37 +381,41 @@ export default function FormularioPage() {
               </div>
             )}
           </div>
-        </section>
+        )}
 
-        {/* ── El retiro ── */}
-        <section data-section="El retiro">
-          <h2 className={SECTION_TITLE}>El retiro</h2>
+        {/* ── Step 5: El retiro ── */}
+        {currentStep === 5 && (
           <div className="space-y-5">
             <div>
-              <label className={LABEL}>¿Qué legado quieren dejar?</label>
+              <label className={LABEL}>¿Qué legado quieren dejar? <span className="text-[#DC2626]">*</span></label>
               <textarea
                 value={form.legado}
-                onChange={e => setForm(f => ({ ...f, legado: e.target.value }))}
+                onChange={e => { setForm(f => ({ ...f, legado: e.target.value })); setStepErrors(s => ({ ...s, legado: '' })) }}
                 className={`${INPUT} min-h-[96px]`}
                 placeholder="¿Qué quieren que recuerden de ustedes como pareja y familia?..."
               />
+              {stepErrors.legado && (
+                <p className="text-xs text-[#DC2626] mt-1">{stepErrors.legado}</p>
+              )}
             </div>
 
             <div>
-              <label className={LABEL}>Expectativas para el retiro</label>
+              <label className={LABEL}>Expectativas para el retiro <span className="text-[#DC2626]">*</span></label>
               <textarea
                 value={form.expectativas}
-                onChange={e => setForm(f => ({ ...f, expectativas: e.target.value }))}
+                onChange={e => { setForm(f => ({ ...f, expectativas: e.target.value })); setStepErrors(s => ({ ...s, expectativas: '' })) }}
                 className={`${INPUT} min-h-[96px]`}
                 placeholder="¿Qué esperan vivir, aprender o transformar en Trascendencia?..."
               />
+              {stepErrors.expectativas && (
+                <p className="text-xs text-[#DC2626] mt-1">{stepErrors.expectativas}</p>
+              )}
             </div>
           </div>
-        </section>
+        )}
 
-        {/* ── Mensaje especial ── */}
-        <section data-section="Mensaje para sus hijos">
-          <h2 className={SECTION_TITLE}>Mensaje para sus hijos</h2>
+        {/* ── Step 6: Mensaje para sus hijos ── */}
+        {currentStep === 6 && (
           <div>
             <label className={LABEL}>¿Qué mensaje quieren dejarle a su familia?</label>
             <p className="text-xs text-[#6B7280] mb-2">
@@ -357,11 +428,10 @@ export default function FormularioPage() {
               placeholder="Escríbanlo desde el corazón..."
             />
           </div>
-        </section>
+        )}
 
-        {/* ── Logística ── */}
-        <section data-section="Logística">
-          <h2 className={SECTION_TITLE}>Logística</h2>
+        {/* ── Step 7: Logística ── */}
+        {currentStep === 7 && (
           <div className="space-y-5">
             <div>
               <label className={LABEL}>Restricciones alimentarias</label>
@@ -383,19 +453,39 @@ export default function FormularioPage() {
               />
             </div>
           </div>
-        </section>
+        )}
 
-        <button
-          type="submit"
-          disabled={saving}
-          className={[
-            'w-full py-4 bg-[#C9A96E] text-[#0C0C0C] font-semibold text-base rounded-xl transition-opacity',
-            saving ? 'opacity-60 cursor-not-allowed' : 'hover:opacity-90 cursor-pointer',
-          ].join(' ')}
-        >
-          {saving ? 'Enviando...' : 'Enviar formulario'}
-        </button>
-      </form>
+        {/* Navigation */}
+        <div className="flex gap-3 mt-8">
+          {currentStep > 1 && (
+            <button
+              type="button"
+              onClick={handlePrev}
+              className="px-6 py-3 text-[#A09A8F] text-sm border border-[#2A2A2A] rounded-xl hover:border-[#3A3A3A] transition-colors"
+            >
+              ← Anterior
+            </button>
+          )}
+
+          {currentStep < TOTAL_STEPS ? (
+            <button
+              type="button"
+              onClick={handleNext}
+              className="flex-1 py-3 bg-[#C9A96E] text-[#0C0C0C] font-semibold text-sm rounded-xl hover:bg-[#D4B07A] transition-colors disabled:opacity-50"
+            >
+              Siguiente →
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={handleSubmit}
+              disabled={saving}
+              className="flex-1 py-3 bg-[#C9A96E] text-[#0C0C0C] font-semibold text-sm rounded-xl hover:bg-[#D4B07A] transition-colors disabled:opacity-50"
+            >
+              {saving ? 'Guardando...' : 'Guardar'}
+            </button>
+          )}
+        </div>
       </div>
     </div>
   )
