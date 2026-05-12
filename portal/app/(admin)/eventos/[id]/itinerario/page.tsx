@@ -42,15 +42,6 @@ export default async function ItinerarioAdminPage({ params }: { params: { id: st
 
   return (
     <div className="p-8 max-w-5xl">
-      {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-sm text-slate-500 mb-4">
-        <Link href="/eventos" className="hover:text-slate-700 transition-colors">Eventos</Link>
-        <span>/</span>
-        <Link href={`/eventos/${params.id}`} className="hover:text-slate-700 transition-colors">{evento.nombre}</Link>
-        <span>/</span>
-        <span className="text-slate-900 font-medium">Itinerario</span>
-      </nav>
-
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-bold text-slate-900">Itinerario</h1>

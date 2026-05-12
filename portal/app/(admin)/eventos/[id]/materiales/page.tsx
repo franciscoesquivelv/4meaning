@@ -50,7 +50,7 @@ export default async function MaterialesPage({ params }: { params: { id: string 
             rel="noopener noreferrer"
             className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
           >
-            📋 Agenda participantes
+            Agenda participantes
           </a>
           <a
             href={`/imprimir/agenda?event_id=${params.id}&modo=equipo`}
@@ -58,7 +58,7 @@ export default async function MaterialesPage({ params }: { params: { id: string 
             rel="noopener noreferrer"
             className="flex items-center gap-1.5 px-3 py-2 text-sm font-medium text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
           >
-            📋 Agenda equipo
+            Agenda equipo
           </a>
         </div>
       </div>
@@ -68,25 +68,21 @@ export default async function MaterialesPage({ params }: { params: { id: string 
         {[
           {
             tipo: 'gafetes',
-            icon: '🏷',
             label: 'Gafetes de nombre',
             desc: '2 gafetes · 1 por persona',
           },
           {
             tipo: 'cheques',
-            icon: '💳',
             label: 'Cheques personalizados',
             desc: '3 cheques · 1 hoja carta',
           },
           {
             tipo: 'caratula',
-            icon: '📔',
             label: 'Carátula del álbum',
             desc: '1 página · tamaño carta',
           },
         ].map(doc => (
           <div key={doc.tipo} className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
-            <div className="text-2xl mb-2">{doc.icon}</div>
             <div className="text-sm font-semibold text-slate-800">{doc.label}</div>
             <div className="text-xs text-slate-400 mt-0.5">{doc.desc}</div>
           </div>
@@ -137,7 +133,7 @@ export default async function MaterialesPage({ params }: { params: { id: string 
                       className="inline-flex items-center justify-center w-8 h-8 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-100 hover:border-slate-300 transition-colors text-xs font-medium"
                       title="Generar gafetes"
                     >
-                      🏷
+                      <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 4v2a4 4 0 0 0 8 0V4"/></svg>
                     </a>
                   </td>
                   <td className="px-4 py-3 text-center">
@@ -148,7 +144,7 @@ export default async function MaterialesPage({ params }: { params: { id: string 
                       className="inline-flex items-center justify-center w-8 h-8 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-100 hover:border-slate-300 transition-colors text-xs font-medium"
                       title="Generar cheques"
                     >
-                      💳
+                      <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
                     </a>
                   </td>
                   <td className="px-4 py-3 text-center">
@@ -159,7 +155,7 @@ export default async function MaterialesPage({ params }: { params: { id: string 
                       className="inline-flex items-center justify-center w-8 h-8 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-100 hover:border-slate-300 transition-colors text-xs font-medium"
                       title="Generar carátula"
                     >
-                      📔
+                      <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path d="M4 4h16v16H4z"/><path d="M8 9h8M8 13h5"/></svg>
                     </a>
                   </td>
                   <td className="px-4 py-3 text-center">

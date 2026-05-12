@@ -21,7 +21,6 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { redirect, notFound } from 'next/navigation'
-import Link from 'next/link'
 import NewAnnouncementForm from './NewAnnouncementForm'
 import DeleteAnnouncementButton from './DeleteAnnouncementButton'
 import SendPushButton from './SendPushButton'
@@ -49,7 +48,7 @@ export default async function AvisosAdminPage({ params }: { params: { id: string
 
   const { data: evento } = await supabase
     .from('events')
-    .select('id, nombre')
+    .select('id')
     .eq('id', params.id)
     .single()
   if (!evento) notFound()
@@ -64,15 +63,6 @@ export default async function AvisosAdminPage({ params }: { params: { id: string
 
   return (
     <div className="p-8 max-w-3xl">
-      {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-sm text-slate-500 mb-6">
-        <Link href="/eventos" className="hover:text-slate-700 transition-colors">Eventos</Link>
-        <span>/</span>
-        <Link href={`/eventos/${params.id}`} className="hover:text-slate-700 transition-colors">{evento.nombre}</Link>
-        <span>/</span>
-        <span className="text-slate-900 font-medium">Avisos</span>
-      </nav>
-
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-bold text-slate-900">Avisos para participantes</h1>

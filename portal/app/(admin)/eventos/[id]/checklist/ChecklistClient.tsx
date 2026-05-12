@@ -228,14 +228,14 @@ export default function ChecklistClient({
       {/* Add task button / form */}
       {isAdmin && (
         <div className="mt-4">
-          {!showForm ? (
+          {!showForm && tasks.length > 0 ? (
             <button
               onClick={() => setShowForm(true)}
               className="flex items-center gap-2 text-sm text-slate-500 hover:text-slate-700 border border-dashed border-slate-300 hover:border-slate-400 px-4 py-2.5 rounded-xl w-full transition-colors justify-center"
             >
               + Agregar tarea
             </button>
-          ) : (
+          ) : showForm ? (
             <form
               onSubmit={handleAdd}
               className="bg-white border border-slate-200 rounded-xl shadow-sm p-4 space-y-3"
@@ -300,7 +300,7 @@ export default function ChecklistClient({
                 </button>
               </div>
             </form>
-          )}
+          ) : null}
         </div>
       )}
     </div>

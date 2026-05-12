@@ -22,7 +22,7 @@ export default async function EntregasPage({ params, searchParams }: {
 
   const { data: evento } = await supabase
     .from('events')
-    .select('id, nombre, status')
+    .select('id')
     .eq('id', params.id)
     .single()
   if (!evento) notFound()
@@ -53,15 +53,6 @@ export default async function EntregasPage({ params, searchParams }: {
 
   return (
     <div className="p-8 max-w-5xl">
-      {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-sm text-slate-500 mb-6">
-        <Link href="/eventos" className="hover:text-slate-700 transition-colors">Eventos</Link>
-        <span>/</span>
-        <Link href={`/eventos/${params.id}`} className="hover:text-slate-700 transition-colors">{evento.nombre}</Link>
-        <span>/</span>
-        <span className="text-slate-900 font-medium">Entregas</span>
-      </nav>
-
       <div className="flex items-start justify-between mb-6">
         <div>
           <h1 className="text-xl font-bold text-slate-900">Seguimiento de entregas</h1>

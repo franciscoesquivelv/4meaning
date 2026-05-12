@@ -49,7 +49,7 @@ export default async function AcuerdosAdminPage({ params }: { params: { id: stri
 
   const { data: evento } = await supabase
     .from('events')
-    .select('id, nombre')
+    .select('id')
     .eq('id', params.id)
     .single()
   if (!evento) notFound()
@@ -120,15 +120,6 @@ export default async function AcuerdosAdminPage({ params }: { params: { id: stri
 
   return (
     <div className="p-8 max-w-4xl">
-      {/* Breadcrumb */}
-      <nav className="flex items-center gap-2 text-sm text-slate-500 mb-4">
-        <Link href="/eventos" className="hover:text-slate-700 transition-colors">Eventos</Link>
-        <span>/</span>
-        <Link href={`/eventos/${params.id}`} className="hover:text-slate-700 transition-colors">{evento.nombre}</Link>
-        <span>/</span>
-        <span className="text-slate-900 font-medium">Acuerdos</span>
-      </nav>
-
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-bold text-slate-900">Acuerdos</h1>

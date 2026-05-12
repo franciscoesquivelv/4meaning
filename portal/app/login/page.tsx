@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { createBrowserClient } from '@supabase/ssr'
+import Link from 'next/link'
 
 export default function LoginPage() {
   const [error, setError] = useState('')
@@ -29,31 +30,69 @@ export default function LoginPage() {
       return
     }
 
-    // Hard navigation so the server reads the fresh session cookie
     window.location.href = '/'
   }
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <div style={{ width: 320 }}>
-        <h1 style={{ marginBottom: 24, fontSize: 20, fontWeight: 600 }}>Iniciar sesión</h1>
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+    <div className="min-h-screen bg-[#0C0C0C] flex flex-col items-center justify-center px-6">
+      {/* Branding */}
+      <div className="text-center mb-10">
+        <h1 className="font-[family-name:var(--font-cormorant)] text-4xl font-light text-[#F5F0E8] tracking-wide">
+          4Meaning
+        </h1>
+        <p className="text-[10px] uppercase tracking-[0.25em] text-[#C9A96E] mt-2">
+          Portal Trascendencia
+        </p>
+      </div>
+
+      {/* Card */}
+      <div className="w-full max-w-sm bg-[#1A1A1A] border border-white/10 rounded-2xl p-8">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-0">
+          {/* Email */}
+          <label className="text-xs text-[#B0A898] mb-1.5">Correo electrónico</label>
           <input
-            name="email" type="email" required placeholder="Correo electrónico"
-            style={{ padding: '10px 12px', border: '1px solid #ccc', borderRadius: 6, fontSize: 14 }}
+            name="email"
+            type="email"
+            required
+            placeholder="tu@correo.com"
+            className="bg-[#0C0C0C] border border-white/10 rounded-xl px-4 py-3 text-sm text-[#F5F0E8] placeholder:text-white/20 focus:outline-none focus:border-[#C9A96E]/50 w-full transition-colors"
           />
+
+          {/* Password */}
+          <label className="text-xs text-[#B0A898] mb-1.5 mt-4">Contraseña</label>
           <input
-            name="password" type="password" required placeholder="Contraseña"
-            style={{ padding: '10px 12px', border: '1px solid #ccc', borderRadius: 6, fontSize: 14 }}
+            name="password"
+            type="password"
+            required
+            placeholder="••••••••"
+            className="bg-[#0C0C0C] border border-white/10 rounded-xl px-4 py-3 text-sm text-[#F5F0E8] placeholder:text-white/20 focus:outline-none focus:border-[#C9A96E]/50 w-full transition-colors"
           />
-          {error && <p style={{ color: 'red', fontSize: 13 }}>{error}</p>}
+
+          {/* Error */}
+          {error && (
+            <p className="text-sm text-red-400 mt-3">{error}</p>
+          )}
+
+          {/* Submit */}
           <button
-            type="submit" disabled={loading}
-            style={{ padding: '10px 12px', background: '#111', color: '#fff', border: 'none', borderRadius: 6, fontSize: 14, cursor: 'pointer' }}
+            type="submit"
+            disabled={loading}
+            className="mt-6 w-full py-3 bg-[#C9A96E] text-[#0C0C0C] font-semibold text-sm rounded-xl hover:bg-[#B8935D] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? 'Entrando...' : 'Entrar'}
           </button>
         </form>
+
+        {/* Divider */}
+        <div className="mt-6 border-t border-white/10" />
+
+        {/* Forgot password */}
+        <Link
+          href="/recuperar-contrasena"
+          className="mt-4 block text-center text-xs text-[#B0A898] hover:text-[#C9A96E] transition-colors"
+        >
+          ¿Olvidaste tu contraseña?
+        </Link>
       </div>
     </div>
   )

@@ -16,6 +16,7 @@ type Evento = {
   fecha_fin: string | null
   pipeline_status: string | null
   n_parejas: number | null
+  families?: [{ count: number }]
 }
 
 const PIPELINE_COLUMNS: { key: string; label: string; headerCls: string }[] = [
@@ -32,7 +33,7 @@ export default async function EventosPage() {
 
   const { data: eventos } = await supabase
     .from('events')
-    .select('id, nombre, ciudad, pais, fecha_inicio, fecha_fin, pipeline_status, n_parejas')
+    .select('id, nombre, ciudad, pais, fecha_inicio, fecha_fin, pipeline_status, n_parejas, families(count)')
     .order('fecha_inicio', { ascending: false })
 
   const grouped = PIPELINE_COLUMNS.reduce<Record<string, Evento[]>>((acc, col) => {
@@ -87,7 +88,9 @@ export default async function EventosPage() {
                     <p className="text-slate-400 text-xs text-center py-6">Sin eventos</p>
                   </div>
                 ) : (
-                  items.map(ev => (
+                  items.map(ev => {
+                    const familyCount = (ev as Evento).families?.[0]?.count ?? 0
+                    return (
                     <Link
                       key={ev.id}
                       href={`/eventos/${ev.id}`}
@@ -104,13 +107,18 @@ export default async function EventosPage() {
                       <div className="text-xs text-slate-400 mb-2">
                         {formatDate(ev.fecha_inicio)} – {formatDate(ev.fecha_fin)}
                       </div>
-                      {ev.n_parejas != null && ev.n_parejas > 0 && (
+                      {familyCount > 0 ? (
                         <div className="text-[10px] font-medium text-slate-500 bg-slate-50 rounded-md px-2 py-1 inline-block">
-                          {ev.n_parejas} familias
+                          {familyCount} {familyCount !== 1 ? 'familias' : 'familia'}
                         </div>
-                      )}
+                      ) : ev.n_parejas != null && ev.n_parejas > 0 ? (
+                        <div className="text-[10px] font-medium text-slate-500 bg-slate-50 rounded-md px-2 py-1 inline-block">
+                          {ev.n_parejas} parejas
+                        </div>
+                      ) : null}
                     </Link>
-                  ))
+                    )
+                  })
                 )}
               </div>
             )

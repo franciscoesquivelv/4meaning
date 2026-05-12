@@ -62,7 +62,8 @@ function GrupoBadge({ grupo }: { grupo: string }) {
 
 function formatDate(d: string | null) {
   if (!d) return ''
-  return new Date(d + 'T12:00:00').toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long' })
+  const raw = new Date(d + 'T12:00:00').toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long' })
+  return raw.replace(/\b(De|Del)\b/g, (m) => m.toLowerCase())
 }
 
 // ── Cascade View ────────────────────────────────────────────────────────────

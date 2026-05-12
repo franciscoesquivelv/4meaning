@@ -529,7 +529,7 @@ export default function OperacionClient({ evento, families, items, announcements
   ]
 
   return (
-    <div className="p-6 max-w-5xl">
+    <div className="pt-6 px-8 max-w-5xl">
       {/* Role selector */}
       <div className="flex items-center gap-2 mb-8">
         {roles.map(r => (
