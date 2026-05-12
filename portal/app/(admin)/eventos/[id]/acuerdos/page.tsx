@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
 import ApproveButton from './ApproveButton'
+import CopySigningLinkButton from './CopySigningLinkButton'
 
 function StatusBadge({ status }: { status: string }) {
   const map: Record<string, string> = {
@@ -30,6 +31,7 @@ interface Agreement {
   status: string
   signed_at: string | null
   approved_at: string | null
+  signing_token: string | null
   families: { nombre_familia: string } | null
 }
 
@@ -54,7 +56,7 @@ export default async function AcuerdosAdminPage({ params }: { params: { id: stri
 
   const { data: agreements } = await supabase
     .from('agreements')
-    .select('id, nombre, type, status, signed_at, approved_at, families(nombre_familia)')
+    .select('id, nombre, type, status, signed_at, approved_at, signing_token, families(nombre_familia)')
     .eq('event_id', params.id)
     .order('created_at', { ascending: false })
 
@@ -105,6 +107,7 @@ export default async function AcuerdosAdminPage({ params }: { params: { id: stri
                 </div>
               </div>
               <StatusBadge status={ag.status} />
+              <CopySigningLinkButton signingToken={ag.signing_token ?? ''} />
               {showApprove && (
                 <ApproveButton agreementId={ag.id} adminId={userId} />
               )}

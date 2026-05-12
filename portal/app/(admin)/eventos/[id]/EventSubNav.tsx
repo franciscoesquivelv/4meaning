@@ -23,6 +23,7 @@ export default function EventSubNav({ eventId, eventName, pipelineStatus }: Prop
   const NAV_LINKS = [
     { href: `/eventos/${eventId}`,             label: 'Resumen' },
     { href: `/eventos/${eventId}/checklist`,   label: 'Checklist' },
+    { href: `/eventos/${eventId}/contenido`,   label: 'Contenido' },
     { href: `/eventos/${eventId}/familias`,    label: 'Familias' },
     { href: `/eventos/${eventId}/acuerdos`,    label: 'Acuerdos' },
     { href: `/eventos/${eventId}/materiales`,  label: 'Materiales' },

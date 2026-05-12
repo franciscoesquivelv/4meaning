@@ -1,10 +1,13 @@
 // Run this SQL migration before deploying:
 // alter table public.families add column if not exists checked_in_at timestamptz;
+// alter table public.families add column if not exists video_entregado boolean not null default false;
+// alter table public.families add column if not exists video_entregado_at timestamptz;
 
 import { createClient } from '@/lib/supabase/server'
 import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
 import CheckInButton from './CheckInButton'
+import VideoEntregadoButton from './VideoEntregadoButton'
 
 function StatusBadge({ status }: { status: string }) {
   const map: Record<string, string> = {
@@ -48,7 +51,7 @@ export default async function FamiliasPage({ params }: { params: { id: string } 
 
   const { data: families } = await supabase
     .from('families')
-    .select('id, nombre_familia, nombre1, nombre2, habitacion, status, fotos_nube_recibidas, checked_in_at')
+    .select('id, nombre_familia, nombre1, nombre2, habitacion, status, fotos_nube_recibidas, checked_in_at, video_entregado, video_entregado_at')
     .eq('event_id', params.id)
     .order('nombre_familia')
 
@@ -100,6 +103,7 @@ export default async function FamiliasPage({ params }: { params: { id: string } 
   const totalAgreements = enriched.reduce((sum, f) => sum + f.agreementsTotal, 0)
   const signedAgreements = enriched.reduce((sum, f) => sum + f.agreementsSigned, 0)
   const checkInCount = enriched.filter((f) => f.isCheckedIn).length
+  const videoEntregadoCount = familyList.filter((f) => f.video_entregado).length
 
   return (
     <div className="p-8 max-w-6xl">
@@ -141,6 +145,10 @@ export default async function FamiliasPage({ params }: { params: { id: string } 
           <span className="text-xs text-slate-500 font-medium mb-1">Check-ins</span>
           <span className="text-lg font-bold text-slate-900">{checkInCount}/{totalFamilias}</span>
         </div>
+        <div className="flex flex-col items-start px-5 py-3 bg-white border border-slate-200 rounded-xl shadow-sm min-w-[160px]">
+          <span className="text-xs text-slate-500 font-medium mb-1">Videos entregados</span>
+          <span className="text-lg font-bold text-slate-900">{videoEntregadoCount}/{totalFamilias}</span>
+        </div>
       </div>
 
       {!enriched.length ? (
@@ -165,6 +173,7 @@ export default async function FamiliasPage({ params }: { params: { id: string } 
                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Habitación</th>
                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Dieta</th>
                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Check-in</th>
+                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Video</th>
                 <th className="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Acciones</th>
               </tr>
             </thead>
@@ -241,6 +250,30 @@ export default async function FamiliasPage({ params }: { params: { id: string } 
                       checkedInAt={f.checked_in_at ?? null}
                       eventId={params.id}
                     />
+                  </td>
+
+                  {/* Video */}
+                  <td className="px-4 py-3">
+                    {f.video_entregado ? (
+                      <div>
+                        <span className="bg-emerald-100 text-emerald-700 text-xs font-semibold px-2 py-0.5 rounded-full">
+                          Entregado
+                        </span>
+                        {f.video_entregado_at && (
+                          <time
+                            dateTime={f.video_entregado_at}
+                            className="block text-[10px] text-slate-400 mt-0.5"
+                          >
+                            {new Date(f.video_entregado_at).toLocaleDateString('es-MX', {
+                              day: '2-digit',
+                              month: 'short',
+                            })}
+                          </time>
+                        )}
+                      </div>
+                    ) : (
+                      <VideoEntregadoButton familyId={f.id} eventId={params.id} />
+                    )}
                   </td>
 
                   {/* Acciones */}

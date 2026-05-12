@@ -1,6 +1,33 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 
+type ContentBlock = {
+  id: string
+  titulo: string
+  contenido: string | null
+  tipo: string
+  activo: boolean
+  activado_at: string | null
+}
+
+const TIPO_LABELS: Record<string, string> = {
+  info:       'Información',
+  actividad:  'Actividad',
+  reflexion:  'Reflexión',
+  formato:    'Formato',
+}
+
+function formatActivadoAt(iso: string | null): string {
+  if (!iso) return ''
+  return new Date(iso).toLocaleDateString('es-MX', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
+
 const tipoDot: Record<string, string> = {
   sesion:     'bg-violet-400',
   comida:     'bg-[#C9A96E]',
@@ -71,6 +98,15 @@ export default async function ProgramaPage() {
     .order('dia')
     .order('orden')
     .order('hora_inicio')
+
+  const { data: contentBlocks } = await supabase
+    .from('event_content_blocks')
+    .select('id, titulo, contenido, tipo, activo, activado_at')
+    .eq('event_id', family.event_id)
+    .eq('activo', true)
+    .order('orden', { ascending: true })
+
+  const activeBlocks: ContentBlock[] = contentBlocks ?? []
 
   const byDay: Record<number, ItineraryItem[]> = {}
   for (const item of (items ?? []) as ItineraryItem[]) {
@@ -178,6 +214,41 @@ export default async function ProgramaPage() {
           })}
         </>
       )}
+
+      {/* Content blocks section */}
+      <div className="mt-10 mb-6">
+        <h2 className="text-base font-semibold text-[#F5F0E8] mb-4">Contenido del retiro</h2>
+
+        {activeBlocks.length === 0 ? (
+          <div className="bg-[#181818] border border-white/5 rounded-2xl p-5 text-center">
+            <p className="text-sm text-[#4A4540]">
+              El equipo irá activando contenido durante el retiro
+            </p>
+          </div>
+        ) : (
+          <div>
+            {activeBlocks.map(block => (
+              <div
+                key={block.id}
+                className="bg-[#1A1A1A] border border-white/10 rounded-2xl p-5 mb-4"
+              >
+                <div className="text-[10px] uppercase tracking-[0.15em] text-[#C9A96E] mb-2">
+                  {TIPO_LABELS[block.tipo] ?? block.tipo}
+                </div>
+                <h3 className="text-lg font-semibold text-[#F5F0E8] mb-2">{block.titulo}</h3>
+                {block.contenido && (
+                  <p className="text-sm text-[#B0A898] leading-relaxed whitespace-pre-wrap">
+                    {block.contenido}
+                  </p>
+                )}
+                <div className="text-[10px] text-white/20 mt-3">
+                  Disponible desde {formatActivadoAt(block.activado_at)}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   )
 }
