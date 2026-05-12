@@ -222,4 +222,4 @@ END $compromisos$;
 --
 -- Para dar role super_admin al admin principal (si no se hizo):
 -- UPDATE public.profiles SET role = 'super_admin'
--- WHERE email = 'onepacksolutionssv@gmail.com';
+-- WHERE email = 'f.esquivelviteri@gmail.com';
