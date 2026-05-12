@@ -214,6 +214,15 @@ export default async function ProgramaPage() {
               </div>
             )
           })}
+          <script dangerouslySetInnerHTML={{ __html: `
+  document.addEventListener('DOMContentLoaded', function() {
+    var day = ${todayDia ?? days[0] ?? 1};
+    var el = document.getElementById('dia-' + day);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    var tab = document.querySelector('a[href="#dia-' + day + '"]');
+    if (tab) tab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+  });
+`}} />
         </>
       )}
 
