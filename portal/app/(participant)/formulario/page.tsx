@@ -2,6 +2,7 @@
 
 import { createBrowserClient } from '@supabase/ssr'
 import { useEffect, useState } from 'react'
+import HelpButton from '@/components/HelpButton'
 
 const FORM_SECTIONS = [
   'Su historia',
@@ -487,6 +488,8 @@ export default function FormularioPage() {
           )}
         </div>
       </div>
+
+      <HelpButton pageId="formulario" />
     </div>
   )
 }

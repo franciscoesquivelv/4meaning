@@ -125,6 +125,7 @@ export default async function EventoDetailPage({ params }: { params: { id: strin
         </div>
         <Link
           href={`/eventos/${params.id}/editar`}
+          title="Editar nombre, fechas, ubicación y detalles del evento"
           className="px-3 py-1.5 text-sm text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors whitespace-nowrap"
         >
           Editar
@@ -205,27 +206,30 @@ export default async function EventoDetailPage({ params }: { params: { id: strin
             <div className="space-y-1.5">
               <Link
                 href={`/eventos/${params.id}/operacion`}
+                title="Panel de operación en tiempo real durante el retiro"
                 className="block w-full px-3 py-2 text-sm font-medium text-white bg-slate-900 hover:bg-slate-700 rounded-lg transition-colors text-center"
               >
                 Modo operación
               </Link>
               <Link
                 href={`/eventos/${params.id}/preview`}
+                title="Previsualizar el portal tal como lo ve un participante"
                 className="block w-full px-3 py-2 text-sm text-slate-600 border border-slate-100 rounded-lg hover:bg-slate-50 hover:text-slate-900 transition-colors"
               >
                 Ver como participante
               </Link>
               {[
-                { href: `/eventos/${params.id}/familias/nueva`,  label: 'Nueva familia' },
-                { href: `/eventos/${params.id}/acuerdos/nuevo`,  label: 'Nuevo acuerdo' },
-                { href: `/eventos/${params.id}/itinerario/nuevo`,label: 'Agregar actividad' },
-                { href: `/eventos/${params.id}/avisos`,          label: 'Publicar aviso' },
-                { href: `/eventos/${params.id}/materiales`,      label: 'Imprimir materiales' },
-                { href: `/eventos/${params.id}/entregas`,        label: 'Ver entregas' },
+                { href: `/eventos/${params.id}/familias/nueva`,  label: 'Nueva familia',       title: 'Registrar una nueva familia participante en este evento' },
+                { href: `/eventos/${params.id}/acuerdos/nuevo`,  label: 'Nuevo acuerdo',       title: 'Crear un acuerdo de confidencialidad o participación' },
+                { href: `/eventos/${params.id}/itinerario/nuevo`,label: 'Agregar actividad',   title: 'Agregar una sesión o actividad al itinerario del retiro' },
+                { href: `/eventos/${params.id}/avisos`,          label: 'Publicar aviso',      title: 'Enviar un aviso o mensaje a todos los participantes' },
+                { href: `/eventos/${params.id}/materiales`,      label: 'Imprimir materiales', title: 'Generar e imprimir materiales para el retiro' },
+                { href: `/eventos/${params.id}/entregas`,        label: 'Ver entregas',        title: 'Gestionar el estado de storybook y video para cada familia' },
               ].map(action => (
                 <Link
                   key={action.href}
                   href={action.href}
+                  title={action.title}
                   className="block w-full px-3 py-2 text-sm text-slate-600 border border-slate-100 rounded-lg hover:bg-slate-50 hover:text-slate-900 transition-colors"
                 >
                   {action.label}

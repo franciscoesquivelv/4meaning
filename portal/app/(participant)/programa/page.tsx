@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import HelpButton from '@/components/HelpButton'
 
 type ContentBlock = {
   id: string
@@ -260,6 +261,8 @@ export default async function ProgramaPage() {
           </div>
         )}
       </div>
+
+      <HelpButton pageId="programa" />
     </div>
   )
 }

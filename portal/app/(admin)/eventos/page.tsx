@@ -59,12 +59,21 @@ export default async function EventosPage() {
 
       {!eventos?.length ? (
         <div className="bg-white border border-slate-200 rounded-xl p-12 text-center shadow-sm">
-          <p className="text-slate-400 text-sm mb-4">No hay eventos registrados.</p>
+          <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-4">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+              <line x1="16" y1="2" x2="16" y2="6" />
+              <line x1="8" y1="2" x2="8" y2="6" />
+              <line x1="3" y1="10" x2="21" y2="10" />
+            </svg>
+          </div>
+          <h3 className="text-slate-700 font-semibold text-base mb-2">Aún no hay eventos</h3>
+          <p className="text-slate-400 text-sm mb-6">Crea tu primer retiro Trascendencia para comenzar.</p>
           <Link
             href="/eventos/nuevo"
-            className="px-4 py-2 bg-[#111827] text-white text-sm font-medium rounded-lg hover:bg-slate-800 transition-colors inline-block"
+            className="px-5 py-2.5 bg-[#111827] text-white text-sm font-medium rounded-lg hover:bg-slate-800 transition-colors inline-block"
           >
-            Crear primer evento
+            Crear primer evento →
           </Link>
         </div>
       ) : (

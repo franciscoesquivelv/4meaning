@@ -1,7 +1,11 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import dynamic from 'next/dynamic'
 import PushSubscribeButton from '@/components/PushSubscribeButton'
+import HelpButton from '@/components/HelpButton'
+
+const FirstTimeWelcome = dynamic(() => import('@/components/FirstTimeWelcome'), { ssr: false })
 
 function formatDate(d: string | null) {
   if (!d) return '—'
@@ -81,6 +85,7 @@ export default async function MiRetiroPage() {
 
   return (
     <div>
+      <FirstTimeWelcome />
       {/* Cerrar sesión */}
       <div className="flex justify-end px-6 pt-4">
         <form action="/auth/signout" method="POST">
@@ -102,11 +107,19 @@ export default async function MiRetiroPage() {
         <div className="flex flex-col items-center justify-center text-center py-24 px-8">
           <div className="w-2 h-2 rounded-full bg-[#C9A96E] mx-auto mb-8" />
           <p className="font-[family-name:var(--font-cormorant)] text-2xl font-light text-[#F5F0E8] mb-3">
-            Tu acceso está siendo configurado
+            Tu cuenta está lista
           </p>
-          <p className="text-sm text-[#6B7280] leading-relaxed max-w-xs">
-            Contacta al equipo de Trascendencia para que asignen tu familia al evento.
+          <p className="text-sm text-[#6B7280] leading-relaxed max-w-xs mb-6">
+            Tu coordinadora aún no ha vinculado tu cuenta al retiro. Esto se hace normalmente 2-4 semanas antes del evento. Si crees que es un error, escríbele directamente.
           </p>
+          <form action="/auth/signout" method="POST">
+            <button
+              type="submit"
+              className="px-5 py-2.5 text-sm text-[#A09A8F] border border-[#2A2A2A] rounded-xl hover:border-[#3A3A3A] transition-colors"
+            >
+              Cerrar sesión
+            </button>
+          </form>
         </div>
       )}
 
@@ -424,6 +437,8 @@ export default async function MiRetiroPage() {
           </div>
         </div>
       )}
+
+      <HelpButton pageId="mi-retiro" />
     </div>
   )
 }

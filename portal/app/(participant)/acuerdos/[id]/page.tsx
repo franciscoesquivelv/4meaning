@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect, notFound } from 'next/navigation'
 import SignAgreementButton from './SignAgreementButton'
+import HelpButton from '@/components/HelpButton'
 
 interface AgreementContent {
   intro?: string
@@ -129,6 +130,8 @@ export default async function AcuerdoDetailPage({ params }: { params: { id: stri
           <SignAgreementButton agreementId={agreement.id} />
         )}
       </div>
+
+      <HelpButton pageId="acuerdos" />
     </div>
   )
 }

@@ -1,10 +1,39 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import HelpButton from '@/components/HelpButton'
 
 const statusLabels: Record<string, string> = {
   draft: 'Borrador', sent: 'Enviado', viewed: 'Visto',
   signed: 'Firmado', approved: 'Aprobado', rejected: 'Rechazado',
+}
+
+function AgreementBadge({ status }: { status: string }) {
+  if (['signed', 'approved'].includes(status)) {
+    return (
+      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-900/40 text-emerald-400 border border-emerald-400/20">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="20 6 9 17 4 12" />
+        </svg>
+        Firmado
+      </span>
+    )
+  }
+  if (['pending', 'sent', 'viewed'].includes(status)) {
+    return (
+      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-900/30 text-amber-400 border border-amber-400/20">
+        Pendiente firma
+      </span>
+    )
+  }
+  if (status === 'draft') {
+    return (
+      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-[#2A2A2A] text-[#6B7280] border border-white/10">
+        Proximamente
+      </span>
+    )
+  }
+  return <span className="text-xs text-[#6B7280]">{statusLabels[status] ?? status}</span>
 }
 
 export default async function AcuerdosPage() {
@@ -47,6 +76,12 @@ export default async function AcuerdosPage() {
       <h1 className="text-xl font-bold text-[#F5F0E8] mb-1">Acuerdos</h1>
       <p className="text-sm text-[#A09A8F] mb-6">{family.nombre_familia}</p>
 
+      {/* Informational note */}
+      <div className="mb-6 bg-[#C9A96E]/5 border border-[#C9A96E]/20 rounded-xl px-4 py-3 flex items-start gap-2.5 text-sm text-[#B0A898]">
+        <span className="text-base leading-none mt-0.5">ℹ️</span>
+        <span>Todos los acuerdos deben estar firmados antes de tu llegada al retiro.</span>
+      </div>
+
       {/* Progress bar */}
       {total > 0 && (
         <div className="mb-8 bg-[#181818] border border-[#2A2A2A] rounded-xl p-4">
@@ -80,11 +115,12 @@ export default async function AcuerdosPage() {
                 href={`/acuerdos/${ag.id}`}
                 className="flex items-center justify-between p-4 bg-[#181818] border border-[#2A2A2A] rounded-xl hover:border-[#C9A96E]/40 transition-colors"
               >
-                <div>
+                <div className="flex-1 min-w-0 mr-3">
                   <div className="font-medium text-[#F5F0E8] text-sm">{ag.nombre}</div>
                   <div className="text-xs text-[#6B7280] mt-0.5 uppercase">{ag.type}</div>
+                  <div className="mt-2"><AgreementBadge status={ag.status} /></div>
                 </div>
-                <span className="text-[#C9A96E] text-lg ml-4 flex-shrink-0">→</span>
+                <span className="text-[#C9A96E] text-lg flex-shrink-0">→</span>
               </Link>
             ))}
           </div>
@@ -104,9 +140,10 @@ export default async function AcuerdosPage() {
                 href={`/acuerdos/${ag.id}`}
                 className="flex items-center justify-between p-4 bg-[#181818] border border-[#2A2A2A] rounded-xl opacity-70 hover:opacity-100 transition-opacity"
               >
-                <div>
+                <div className="flex-1 min-w-0 mr-3">
                   <div className="font-medium text-[#F5F0E8] text-sm">{ag.nombre}</div>
                   <div className="text-xs text-[#6B7280] mt-0.5 uppercase">{ag.type}</div>
+                  <div className="mt-2"><AgreementBadge status={ag.status} /></div>
                 </div>
                 <span className="text-[#4ADE80] text-lg flex-shrink-0">✓</span>
               </Link>
@@ -120,6 +157,8 @@ export default async function AcuerdosPage() {
           Los acuerdos de confidencialidad y participación te serán enviados próximamente. Recibirás una notificación cuando estén listos para firmar.
         </div>
       )}
+
+      <HelpButton pageId="acuerdos" />
     </div>
   )
 }

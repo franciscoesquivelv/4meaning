@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import CompromisosClient from './CompromisosClient'
+import HelpButton from '@/components/HelpButton'
 
 function LockIcon() {
   return (
@@ -106,6 +107,8 @@ export default async function CompromisosPage() {
             </div>
           )}
         </div>
+
+        <HelpButton pageId="compromisos" />
       </div>
     )
   }
@@ -150,6 +153,8 @@ export default async function CompromisosPage() {
         familyId={family.id}
         eventId={family.event_id}
       />
+
+      <HelpButton pageId="compromisos" />
     </div>
   )
 }

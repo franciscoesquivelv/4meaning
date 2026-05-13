@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import HelpButton from '@/components/HelpButton'
 
 const AVATAR_COLORS = [
   'bg-violet-900/60 text-violet-300',
@@ -79,6 +80,8 @@ export default async function EquipoPage() {
           ))}
         </div>
       )}
+
+      <HelpButton pageId="equipo" />
     </div>
   )
 }
