@@ -106,6 +106,26 @@ export default async function ContenidoAdminPage({
         </div>
       </div>
 
+      {/* Explanation banner */}
+      <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 mb-6">
+        <div className="flex gap-3">
+          <div className="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+            <svg className="w-4 h-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-blue-900">¿Qué es el Contenido Progresivo?</p>
+            <p className="text-sm text-blue-700 mt-1">
+              Son mensajes, reflexiones o materiales que tú <strong>activas manualmente durante el retiro</strong>.{' '}
+              Cuando activas un bloque, aparece inmediatamente en el portal de todos los participantes.{' '}
+              Úsalo para compartir una reflexión de la sesión de la mañana, un formato de actividad,{' '}
+              o cualquier material que quieras que las familias tengan acceso en ese momento específico.
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* Empty state */}
       {list.length === 0 ? (
         <div className="bg-white border border-slate-200 rounded-xl p-12 text-center shadow-sm">

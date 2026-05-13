@@ -238,23 +238,84 @@ export default async function PreviewPage({ params }: { params: { id: string } }
   const members: TeamMember[]   = (teamMembers ?? []) as TeamMember[]
 
   return (
-    <div className="bg-[#0C0C0C] min-h-screen">
-      {/* Preview banner */}
-      <div className="bg-amber-400 text-amber-900 px-4 py-2 flex items-center justify-between text-sm font-medium sticky top-0 z-50">
-        <span>Vista del participante — {evento.nombre}</span>
-        <Link
-          href={`/eventos/${params.id}`}
-          className="text-amber-800 hover:text-amber-900 font-semibold underline whitespace-nowrap"
-        >
-          Volver al admin
-        </Link>
+    <div className="bg-slate-900 min-h-screen">
+      {/* Admin banner */}
+      <div className="bg-slate-800 border-b border-slate-700 px-6 py-4">
+        <div className="max-w-2xl mx-auto flex items-center justify-between gap-4">
+          <div>
+            <h1 className="text-sm font-semibold text-white">
+              Vista previa del portal — {evento.nombre}
+            </h1>
+            <p className="text-xs text-slate-400 mt-0.5">
+              Así ve el participante su portal en el celular
+            </p>
+          </div>
+          <Link
+            href={`/eventos/${params.id}`}
+            className="text-xs text-slate-300 border border-slate-600 rounded-lg px-3 py-1.5 hover:bg-slate-700 transition-colors whitespace-nowrap"
+          >
+            Volver al admin
+          </Link>
+        </div>
       </div>
 
-      {/* Participant-style content */}
-      <div className="max-w-sm mx-auto px-5 pt-6 pb-12 space-y-10 text-[#F5F0E8]">
-        <ProgramaSection blocks={blocks} />
-        <ItinerarioSection items={items} />
-        <EquipoSection members={members} />
+      {/* Phone mockup frame */}
+      <div className="flex justify-center py-8">
+        <div className="relative mx-auto" style={{ width: '375px' }}>
+          {/* Phone shell */}
+          <div
+            className="relative bg-[#0C0C0C] rounded-[40px] shadow-2xl border-4 border-[#2A2A2A] overflow-hidden"
+            style={{ minHeight: '780px' }}
+          >
+            {/* Status bar */}
+            <div className="flex justify-between items-center px-6 pt-3 pb-1 relative z-10">
+              <span className="text-white text-xs font-medium">9:41</span>
+              <div className="flex items-center gap-1.5">
+                {/* Signal bars */}
+                <svg width="17" height="12" viewBox="0 0 17 12" fill="none">
+                  <rect x="0" y="8" width="3" height="4" rx="0.5" fill="white"/>
+                  <rect x="4.5" y="5" width="3" height="7" rx="0.5" fill="white"/>
+                  <rect x="9" y="2" width="3" height="10" rx="0.5" fill="white"/>
+                  <rect x="13.5" y="0" width="3" height="12" rx="0.5" fill="white" fillOpacity="0.4"/>
+                </svg>
+                {/* WiFi */}
+                <svg width="16" height="12" viewBox="0 0 16 12" fill="none">
+                  <path d="M8 9.5C8.83 9.5 9.5 10.17 9.5 11S8.83 12.5 8 12.5 6.5 11.83 6.5 11 7.17 9.5 8 9.5z" fill="white"/>
+                  <path d="M8 6C9.9 6 11.6 6.8 12.8 8.1L11.7 9.2C10.8 8.2 9.5 7.5 8 7.5S5.2 8.2 4.3 9.2L3.2 8.1C4.4 6.8 6.1 6 8 6z" fill="white"/>
+                  <path d="M8 2.5C10.9 2.5 13.5 3.7 15.4 5.6L14.3 6.7C12.7 5.1 10.5 4 8 4S3.3 5.1 1.7 6.7L0.6 5.6C2.5 3.7 5.1 2.5 8 2.5z" fill="white" fillOpacity="0.6"/>
+                </svg>
+                {/* Battery */}
+                <svg width="25" height="12" viewBox="0 0 25 12" fill="none">
+                  <rect x="0.5" y="0.5" width="21" height="11" rx="2.5" stroke="white" strokeOpacity="0.35"/>
+                  <rect x="1.5" y="1.5" width="17" height="9" rx="1.5" fill="white"/>
+                  <path d="M23 4v4a2 2 0 000-4z" fill="white" fillOpacity="0.4"/>
+                </svg>
+              </div>
+            </div>
+
+            {/* Notch */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-7 bg-black rounded-b-2xl z-20" />
+
+            {/* Scrollable content */}
+            <div className="overflow-y-auto" style={{ height: '720px', paddingBottom: '80px' }}>
+              <div className="px-5 pt-4 space-y-8">
+                <ProgramaSection blocks={blocks} />
+                <ItinerarioSection items={items} />
+                <EquipoSection members={members} />
+              </div>
+            </div>
+
+            {/* Bottom nav mockup */}
+            <div className="absolute bottom-0 left-0 right-0 bg-[#111] border-t border-[#2A2A2A] flex justify-around py-3 px-4">
+              {['Mi Retiro', 'Programa', 'Acuerdos', 'Equipo'].map(label => (
+                <div key={label} className="flex flex-col items-center gap-1">
+                  <div className="w-4 h-4 bg-[#3A3A3A] rounded-sm" />
+                  <span className="text-[9px] text-[#6B7280]">{label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   )

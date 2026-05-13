@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
+import EventStatusButton from './EventStatusButton'
 
 function PipelineBadge({ status }: { status: string }) {
   const map: Record<string, string> = {
@@ -111,6 +112,17 @@ export default async function EventoDetailPage({ params }: { params: { id: strin
     supabase.from('event_tasks').select('id', { count: 'exact', head: true }).eq('event_id', params.id).eq('done', true),
   ])
 
+  const statusBadge: Record<string, string> = {
+    draft:     'bg-slate-100 text-slate-500',
+    active:    'bg-emerald-100 text-emerald-700',
+    completed: 'bg-blue-100 text-blue-700',
+    archived:  'bg-slate-100 text-slate-400',
+  }
+  const statusLabel: Record<string, string> = {
+    draft: 'Borrador', active: 'Activo', completed: 'Completado', archived: 'Archivado',
+  }
+  const currentStatus: string = evento.status ?? 'draft'
+
   return (
     <div className="px-8 pt-6 pb-12 max-w-7xl">
       {/* Subheader — location, dates, edit */}
@@ -122,14 +134,22 @@ export default async function EventoDetailPage({ params }: { params: { id: strin
           {(evento.ciudad || evento.pais) && <span>·</span>}
           <span>{formatDate(evento.fecha_inicio)} – {formatDate(evento.fecha_fin)}</span>
           {evento.ubicacion && <><span>·</span><span>{evento.ubicacion}</span></>}
+          <span
+            className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${statusBadge[currentStatus] ?? 'bg-slate-100 text-slate-500'}`}
+          >
+            {statusLabel[currentStatus] ?? currentStatus}
+          </span>
         </div>
-        <Link
-          href={`/eventos/${params.id}/editar`}
-          title="Editar nombre, fechas, ubicación y detalles del evento"
-          className="px-3 py-1.5 text-sm text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors whitespace-nowrap"
-        >
-          Editar
-        </Link>
+        <div className="flex items-center gap-2">
+          <EventStatusButton eventId={params.id} currentStatus={currentStatus} />
+          <Link
+            href={`/eventos/${params.id}/editar`}
+            title="Editar nombre, fechas, ubicación y detalles del evento"
+            className="px-3 py-1.5 text-sm text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors whitespace-nowrap"
+          >
+            Editar
+          </Link>
+        </div>
       </div>
 
       {/* Stats bar */}

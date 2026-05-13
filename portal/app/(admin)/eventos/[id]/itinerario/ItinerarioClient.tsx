@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import ItinerarioList from './ItinerarioList'
 
 type Item = {
   id: string
@@ -477,7 +478,7 @@ export default function ItinerarioClient({ eventId, eventName, items, teamMember
           </Link>
         </div>
       ) : view === 'cascade' ? (
-        <CascadeView items={items} eventId={eventId} onSelect={setSelectedItem} />
+        <ItinerarioList items={items} eventId={eventId} isAdmin={isAdmin} />
       ) : (
         <CalendarView items={items} eventId={eventId} onSelect={setSelectedItem} />
       )}
