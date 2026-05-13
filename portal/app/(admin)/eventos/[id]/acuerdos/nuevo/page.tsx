@@ -120,7 +120,7 @@ const TEMPLATE_OPTIONS: { key: TemplateKey; label: string; desc: string }[] = [
 
 function formatDate(d: string | null) {
   if (!d) return null
-  return new Date(d).toLocaleDateString('es-MX', { day: '2-digit', month: 'long', year: 'numeric' })
+  return new Date(d + 'T12:00:00').toLocaleDateString('es-MX', { day: '2-digit', month: 'long', year: 'numeric' })
 }
 
 export default function NuevoAcuerdoPage({ params }: { params: { id: string } }) {

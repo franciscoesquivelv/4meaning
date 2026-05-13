@@ -52,7 +52,7 @@ export default async function EntregasPage({ params, searchParams }: {
   const total  = allFamilies.length
 
   return (
-    <div className="p-8 max-w-5xl">
+    <div className="p-8 max-w-7xl">
       <div className="flex items-start justify-between mb-6">
         <div>
           <h1 className="text-xl font-bold text-slate-900">Seguimiento de entregas</h1>

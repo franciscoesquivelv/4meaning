@@ -37,7 +37,7 @@ interface Agreement {
 
 function formatDate(d: string | null) {
   if (!d) return '—'
-  return new Date(d).toLocaleDateString('es-MX', { day: '2-digit', month: 'short' })
+  return new Date(d + 'T12:00:00').toLocaleDateString('es-MX', { day: '2-digit', month: 'short' })
 }
 
 export default async function AcuerdosAdminPage({ params }: { params: { id: string } }) {

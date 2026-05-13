@@ -64,7 +64,7 @@ function AgreementStatusBadge({ status }: { status: string }) {
 
 function formatDate(d: string | null) {
   if (!d) return '—'
-  return new Date(d).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' })
+  return new Date(d + 'T12:00:00').toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' })
 }
 
 export default async function EventoDetailPage({ params }: { params: { id: string } }) {

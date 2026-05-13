@@ -32,7 +32,7 @@ export default async function ChecklistPage({ params }: { params: { id: string }
   const isAdmin = profile?.role === 'super_admin' || profile?.role === 'admin'
 
   return (
-    <div className="p-8 max-w-3xl">
+    <div className="p-8 max-w-7xl">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-bold text-slate-900">Checklist de preparación</h1>

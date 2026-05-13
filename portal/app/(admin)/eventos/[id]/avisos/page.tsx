@@ -62,7 +62,7 @@ export default async function AvisosAdminPage({ params }: { params: { id: string
   const list = announcements ?? []
 
   return (
-    <div className="p-8 max-w-3xl">
+    <div className="p-8 max-w-7xl">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-bold text-slate-900">Avisos para participantes</h1>
