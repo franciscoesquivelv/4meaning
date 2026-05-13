@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Cormorant_Garamond } from 'next/font/google'
 import './globals.css'
+import NavigationProgress from '@/components/NavigationProgress'
 
 const cormorant = Cormorant_Garamond({
   subsets: ['latin'],
@@ -34,7 +35,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="manifest" href="/manifest.json" />
         <link rel="apple-touch-icon" href="/icon-192.png" />
       </head>
-      <body className={cormorant.variable}>{children}</body>
+      <body className={cormorant.variable}>
+        <NavigationProgress />
+        {children}
+      </body>
     </html>
   )
 }
