@@ -109,14 +109,7 @@ export default async function FichaFamiliaPage({
               Familias
             </Link>
             <span>/</span>
-            <Link
-              href={`/eventos/${params.id}/familias/${params.familyId}`}
-              className="hover:text-slate-700 transition-colors"
-            >
-              {familia.nombre_familia}
-            </Link>
-            <span>/</span>
-            <span className="text-slate-900 font-medium">Ficha</span>
+            <span className="text-slate-900 font-medium">{familia.nombre_familia}</span>
           </nav>
           <PrintButton />
         </div>
