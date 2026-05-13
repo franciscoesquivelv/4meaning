@@ -108,6 +108,14 @@ export default async function AcuerdosAdminPage({ params }: { params: { id: stri
               </div>
               <StatusBadge status={ag.status} />
               <CopySigningLinkButton signingToken={ag.signing_token ?? ''} />
+              <Link
+                href={`/imprimir/acuerdo?agreement_id=${ag.id}`}
+                target="_blank"
+                className="px-2.5 py-1 text-xs text-slate-500 border border-slate-200 rounded-lg hover:bg-slate-50 hover:text-slate-700 transition-colors whitespace-nowrap"
+                title="Ver e imprimir acuerdo"
+              >
+                Ver / PDF
+              </Link>
               {showApprove && (
                 <ApproveButton agreementId={ag.id} adminId={userId} />
               )}
@@ -123,12 +131,23 @@ export default async function AcuerdosAdminPage({ params }: { params: { id: stri
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-bold text-slate-900">Acuerdos</h1>
-        <Link
-          href={`/eventos/${params.id}/acuerdos/nuevo`}
-          className="px-4 py-2 bg-[#111827] text-white text-sm font-medium rounded-lg hover:bg-slate-800 transition-colors"
-        >
-          + Nuevo acuerdo
-        </Link>
+        <div className="flex items-center gap-2">
+          {agreements && agreements.length > 0 && (
+            <Link
+              href={`/imprimir/acuerdos?event_id=${params.id}&solo_firmados=1`}
+              target="_blank"
+              className="px-4 py-2 text-sm font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+            >
+              ↓ Exportar firmados
+            </Link>
+          )}
+          <Link
+            href={`/eventos/${params.id}/acuerdos/nuevo`}
+            className="px-4 py-2 bg-[#111827] text-white text-sm font-medium rounded-lg hover:bg-slate-800 transition-colors"
+          >
+            + Nuevo acuerdo
+          </Link>
+        </div>
       </div>
 
       {!agreements?.length ? (
