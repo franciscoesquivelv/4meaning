@@ -139,7 +139,7 @@ export default async function ContenidoAdminPage({
       ) : (
         <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
           {/* Table header */}
-          <div className="grid grid-cols-[3rem_1fr_7rem_10rem_6rem] gap-4 px-5 py-3 bg-slate-50 border-b border-slate-100 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+          <div className="grid grid-cols-[3rem_1fr_8rem_10rem_11rem] gap-4 px-5 py-3 bg-slate-50 border-b border-slate-100 text-xs font-semibold text-slate-500 uppercase tracking-wider">
             <span className="text-center">#</span>
             <span>Título</span>
             <span>Tipo</span>
@@ -153,7 +153,7 @@ export default async function ContenidoAdminPage({
             return (
               <div
                 key={block.id}
-                className={`grid grid-cols-[3rem_1fr_7rem_10rem_6rem] gap-4 px-5 py-4 items-center ${
+                className={`grid grid-cols-[3rem_1fr_8rem_10rem_11rem] gap-4 px-5 py-4 items-center ${
                   i < list.length - 1 ? 'border-b border-slate-100' : ''
                 } ${block.activo ? 'bg-emerald-50/40' : ''}`}
               >
