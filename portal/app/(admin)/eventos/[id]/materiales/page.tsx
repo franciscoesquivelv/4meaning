@@ -24,7 +24,7 @@ export default async function MaterialesPage({ params }: { params: { id: string 
     `/imprimir/${tipo}?event_id=${params.id}&family_id=${familyId}`
 
   return (
-    <div className="p-8 max-w-5xl">
+    <div className="p-8 max-w-7xl">
       <div className="flex items-start justify-between mb-6">
         <div>
           <h1 className="text-xl font-bold text-slate-900">Generador de materiales</h1>

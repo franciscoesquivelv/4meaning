@@ -41,7 +41,7 @@ export default async function ItinerarioAdminPage({ params }: { params: { id: st
   const isAdmin = profile?.role ? ['super_admin', 'admin'].includes(profile.role) : false
 
   return (
-    <div className="p-8 max-w-5xl">
+    <div className="p-8 max-w-7xl">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-bold text-slate-900">Itinerario</h1>

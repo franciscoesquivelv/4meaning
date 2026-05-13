@@ -86,7 +86,7 @@ export default function FamiliasClient({
   const hasActiveFilters = query !== '' || filterStatus !== 'todos'
 
   return (
-    <div className="p-8 max-w-6xl">
+    <div className="p-8 max-w-7xl">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-slate-900">Familias</h1>
@@ -179,7 +179,7 @@ export default function FamiliasClient({
         </div>
       ) : (
         <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-          <table className="w-full text-sm border-collapse">
+          <table className="w-full min-w-[600px] text-sm border-collapse">
             <thead>
               <tr className="bg-slate-50 border-b border-slate-200">
                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Familia</th>

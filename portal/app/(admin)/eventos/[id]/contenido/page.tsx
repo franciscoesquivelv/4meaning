@@ -85,7 +85,7 @@ export default async function ContenidoAdminPage({
   const activeCount = list.filter(b => b.activo).length
 
   return (
-    <div className="p-8 max-w-4xl">
+    <div className="p-8 max-w-7xl">
       {/* Header */}
       <div className="flex items-start justify-between mb-6 gap-4">
         <div>

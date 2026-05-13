@@ -25,7 +25,7 @@ export default async function EquipoPage({ params }: { params: { id: string } })
     s ? (s.length > n ? s.slice(0, n) + '…' : s) : '—'
 
   return (
-    <div className="p-8 max-w-4xl">
+    <div className="p-8 max-w-7xl">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-bold text-slate-900">Equipo</h1>

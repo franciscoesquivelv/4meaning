@@ -112,7 +112,7 @@ export default async function EventoDetailPage({ params }: { params: { id: strin
   ])
 
   return (
-    <div className="px-8 pt-6 pb-12 max-w-5xl">
+    <div className="px-8 pt-6 pb-12 max-w-7xl">
       {/* Subheader — location, dates, edit */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2 flex-wrap text-sm text-slate-400">
@@ -133,7 +133,7 @@ export default async function EventoDetailPage({ params }: { params: { id: strin
       </div>
 
       {/* Stats bar */}
-      <div className="grid grid-cols-4 gap-px bg-slate-200 border border-slate-200 rounded-xl overflow-hidden mb-8">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-slate-200 border border-slate-200 rounded-xl overflow-hidden mb-8">
         {[
           { label: 'Familias',  value: familiesCount },
           { label: 'Acuerdos', value: agreementsCount },
@@ -148,7 +148,7 @@ export default async function EventoDetailPage({ params }: { params: { id: strin
       </div>
 
       {/* Two column content */}
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         {/* Left: main content */}
         <div className="col-span-2 space-y-6">
           {/* Families preview */}
@@ -199,7 +199,7 @@ export default async function EventoDetailPage({ params }: { params: { id: strin
         </div>
 
         {/* Right: sidebar */}
-        <div className="space-y-4">
+        <div className="col-span-1 space-y-4">
           {/* Quick actions */}
           <div className="bg-white border border-slate-200 rounded-xl p-4">
             <p className="text-[11px] font-medium text-slate-400 uppercase tracking-wider mb-3">Acciones</p>
