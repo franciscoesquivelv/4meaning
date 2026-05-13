@@ -134,7 +134,7 @@ export default async function AcuerdosAdminPage({ params }: { params: { id: stri
         <div className="flex items-center gap-2">
           {agreements && agreements.length > 0 && (
             <Link
-              href={`/imprimir/acuerdos?event_id=${params.id}&solo_firmados=1`}
+              href={`/imprimir/acuerdos-evento?event_id=${params.id}&solo_firmados=1`}
               target="_blank"
               className="px-4 py-2 text-sm font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
             >
