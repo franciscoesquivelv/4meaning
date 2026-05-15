@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Cormorant_Garamond } from 'next/font/google'
+import { Cormorant_Garamond, DM_Sans } from 'next/font/google'
 import './globals.css'
 import NavigationProgress from '@/components/NavigationProgress'
 
@@ -8,6 +8,14 @@ const cormorant = Cormorant_Garamond({
   weight: ['300', '400', '600', '700'],
   style: ['normal', 'italic'],
   variable: '--font-cormorant',
+  display: 'swap',
+})
+
+const dmSans = DM_Sans({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600'],
+  style: ['normal', 'italic'],
+  variable: '--font-sans',
   display: 'swap',
 })
 
@@ -35,7 +43,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="manifest" href="/manifest.json" />
         <link rel="apple-touch-icon" href="/icon-192.png" />
       </head>
-      <body className={cormorant.variable}>
+      <body className={`${cormorant.variable} ${dmSans.variable}`}>
         <NavigationProgress />
         {children}
       </body>

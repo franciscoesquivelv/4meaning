@@ -32,7 +32,7 @@ export default async function ParticipantLayout({ children }: { children: React.
     .maybeSingle()
 
   return (
-    <div className="bg-[#0C0C0C] min-h-screen text-[#F5F0E8]">
+    <div className="bg-[#0C0C0C] min-h-screen text-[#F5F0E8] font-[family-name:var(--font-sans)]">
       <main className="max-w-lg mx-auto pb-24">
         {children}
       </main>
