@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Patricia Arriaza: Programa de Entrenamiento 3 Meses</title>
+<style>
+  :root {
+    --gold: #FFCA10;
+    --dark: #1a1a1a;
+    --dark2: #2a2a2a;
+    --dark3: #333;
+    --light: #f8f8f8;
+    --text: #222;
+    --muted: #666;
+    --accent: #D4920E;
+    --green: #27ae60;
+    --red: #e74c3c;
+    --blue: #2980b9;
+    --border: #ddd;
+    --section-bg: #fff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; font-size: 14px; line-height: 1.6; color: var(--text); background: var(--light); }
+
+  .cover { background: var(--dark); color: white; padding: 80px 60px 60px; min-height: 200px; position: relative; overflow: hidden; }
+  .cover::before { content: ''; position: absolute; top: 0; right: 0; width: 300px; height: 300px; background: var(--gold); opacity: 0.08; border-radius: 50%; transform: translate(100px, -100px); }
+  .cover-badge { display: inline-block; background: var(--gold); color: var(--dark); font-weight: 800; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; padding: 4px 12px; border-radius: 2px; margin-bottom: 20px; }
+  .cover h1 { font-size: 36px; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.5px; }
+  .cover h2 { font-size: 18px; font-weight: 300; color: #aaa; margin-bottom: 30px; }
+  .cover-meta { display: flex; gap: 40px; flex-wrap: wrap; font-size: 13px; color: #888; border-top: 1px solid #333; padding-top: 20px; margin-top: 20px; }
+  .cover-meta span strong { color: #ccc; }
+
+  .container { max-width: 960px; margin: 0 auto; padding: 0 30px; }
+  .section { background: var(--section-bg); margin: 30px 0; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); overflow: hidden; }
+  .section-header { background: var(--dark); color: white; padding: 18px 28px; display: flex; align-items: center; gap: 12px; }
+  .section-header .num { background: var(--gold); color: var(--dark); font-weight: 900; font-size: 12px; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .section-header h2 { font-size: 17px; font-weight: 700; }
+  .section-header p { font-size: 12px; color: #aaa; margin-top: 2px; }
+  .section-body { padding: 28px; }
+  .subsection { margin-bottom: 32px; }
+  .subsection:last-child { margin-bottom: 0; }
+  .subsection h3 { font-size: 15px; font-weight: 700; color: var(--dark); margin-bottom: 12px; padding-bottom: 6px; border-bottom: 2px solid var(--gold); display: inline-block; }
+  .subsection h4 { font-size: 13px; font-weight: 700; color: var(--dark3); margin: 16px 0 6px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 12px 0; }
+  th { background: var(--dark); color: var(--gold); padding: 8px 12px; text-align: left; font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+  td { padding: 8px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) td { background: #fafafa; }
+  tr:hover td { background: #f0f0f0; }
+
+  .callout { border-left: 4px solid var(--gold); background: #fffdf0; padding: 12px 16px; margin: 14px 0; border-radius: 0 4px 4px 0; font-size: 13px; }
+  .callout.red { border-color: var(--red); background: #fdf0f0; }
+  .callout.green { border-color: var(--green); background: #f0fdf4; }
+  .callout.blue { border-color: var(--blue); background: #f0f6fd; }
+  .callout strong { display: block; margin-bottom: 4px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .callout.red strong { color: var(--red); }
+  .callout.green strong { color: var(--green); }
+  .callout.blue strong { color: var(--blue); }
+
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+  .badge-gold { background: var(--gold); color: var(--dark); }
+  .badge-green { background: #d4edda; color: #155724; }
+  .badge-red { background: #f8d7da; color: #721c24; }
+  .badge-blue { background: #d1ecf1; color: #0c5460; }
+  .badge-gray { background: #e2e3e5; color: #383d41; }
+  .badge-orange { background: #fde8cc; color: #7d4800; }
+
+  .month-header { background: linear-gradient(135deg, var(--dark) 0%, #2c3e50 100%); color: white; padding: 32px 60px; margin: 40px 0 0; text-align: center; }
+  .month-header .tag { display: inline-block; background: var(--gold); color: var(--dark); font-size: 11px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; padding: 4px 14px; border-radius: 2px; margin-bottom: 16px; }
+  .month-header h2 { font-size: 26px; font-weight: 800; margin-bottom: 6px; }
+  .month-header p { font-size: 14px; color: #aaa; font-weight: 300; }
+
+  .workout-card { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin: 16px 0; }
+  .workout-card-header { background: var(--dark2); color: white; padding: 12px 18px; display: flex; justify-content: space-between; align-items: center; }
+  .workout-card-header h4 { font-size: 15px; color: var(--gold); }
+  .workout-card-header .meta { font-size: 12px; color: #aaa; }
+  .workout-card-body { padding: 16px 18px; }
+  .exercise-block { background: #f8f8f8; border-radius: 6px; padding: 12px; margin: 8px 0; border-left: 3px solid var(--gold); }
+  .exercise-block.modified { border-left-color: var(--accent); background: #fffaf5; }
+  .exercise-block.contraindicated { border-left-color: var(--red); background: #fff5f5; }
+  .exercise-block.safe { border-left-color: var(--green); background: #f5fff8; }
+  .exercise-name { font-weight: 700; font-size: 13px; margin-bottom: 4px; }
+  .exercise-detail { font-size: 12px; color: var(--muted); }
+  .exercise-mod { font-size: 12px; color: var(--accent); margin-top: 4px; font-style: italic; }
+
+  .steps { counter-reset: step-counter; }
+  .step { display: flex; gap: 16px; margin-bottom: 20px; padding: 16px; background: #f8f8f8; border-radius: 8px; border: 1px solid #eee; }
+  .step-num { background: var(--gold); color: var(--dark); font-weight: 900; font-size: 16px; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .step-content h4 { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+  .step-content p, .step-content li { font-size: 13px; color: #444; }
+  .step-content ul { padding-left: 16px; margin-top: 6px; }
+
+  .profile-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 30px; text-align: left; }
+  .profile-item { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; padding: 14px; }
+  .profile-item .label { font-size: 10px; color: var(--gold); letter-spacing: 1px; text-transform: uppercase; font-weight: 700; margin-bottom: 4px; }
+  .profile-item .value { font-size: 14px; color: white; font-weight: 600; }
+
+  .week-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 16px 0; }
+  .day-card { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .day-card-header { background: var(--dark); color: white; padding: 10px 14px; text-align: center; }
+  .day-card-header .day { color: var(--gold); font-weight: 900; font-size: 13px; text-transform: uppercase; }
+  .day-card-header .workout { font-size: 12px; color: #aaa; margin-top: 2px; }
+  .day-card-body { padding: 14px; font-size: 12px; }
+  .day-card-body ul { list-style: none; padding: 0; }
+  .day-card-body li { padding: 4px 0; border-bottom: 1px solid #f0f0f0; display: flex; align-items: flex-start; gap: 6px; }
+  .day-card-body li:last-child { border-bottom: none; }
+  .day-card-body li::before { content: '▸'; color: var(--gold); flex-shrink: 0; margin-top: 1px; }
+
+  @media print {
+    body { background: white; font-size: 12px; }
+    .section { box-shadow: none; border: 1px solid #ddd; }
+    .no-print { display: none; }
+    a { color: inherit; text-decoration: none; }
+    .cover { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .section-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .month-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .workout-card-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .day-card-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    th { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <div class="container">
+    <div class="cover-badge">Programa Individual · Uso del Entrenador</div>
+    <h1>Patricia Arriaza</h1>
+    <h2>Programa de Entrenamiento 3 Meses · Track STB · Alloy Personal Training Lakeline TX</h2>
+    <div class="cover-meta">
+      <span><strong>Track:</strong> STB (Stability)</span>
+      <span><strong>Frecuencia:</strong> 3 días / semana</span>
+      <span><strong>Duración total:</strong> 12 semanas</span>
+      <span><strong>Entrenador:</strong> Oscar Esquivel</span>
+      <span><strong>Fecha inicio:</strong> [completar]</span>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- SECCIÓN 1: PERFIL CLÍNICO -->
+<div class="section">
+  <div class="section-header">
+    <div class="num">1</div>
+    <div>
+      <h2>Perfil Clínico y Contraindicaciones</h2>
+      <p>Por qué cada ejercicio es como es para Patricia</p>
+    </div>
+  </div>
+  <div class="section-body">
+
+    <div class="subsection">
+      <h3>1.1 Prótesis de Cadera: Precauciones Estándar</h3>
+      <div class="callout red"><strong>Contraindicaciones absolutas: consultar con el médico de Patricia antes de agregar ejercicios nuevos</strong>
+      Estas precauciones son estándar en cualquier reemplazo de cadera. Si Patricia reporta molestia en cualquier movimiento, parar y verificar con su médico.</div>
+      <table>
+        <tr><th>Movimiento prohibido</th><th>Por qué</th><th>Alternativa en el programa</th></tr>
+        <tr><td>Flexión de cadera mayor de 90°</td><td>Riesgo de luxación del implante</td><td>Chair Squat a 60-70° · Step-Up bajo (4-6")</td></tr>
+        <tr><td>Aducción cruzando la línea media</td><td>Riesgo de luxación</td><td>Todos los ejercicios bilaterales o con separación neutral</td></tr>
+        <tr><td>Rotación interna del lado operado</td><td>Riesgo de luxación</td><td>Posición neutral en todo momento</td></tr>
+        <tr><td>Pivote sobre la pierna operada</td><td>Estrés en el implante</td><td>Step Touch sin pivote · Marcha en lugar</td></tr>
+        <tr><td>Impacto (saltar, correr, trotar)</td><td>Desgaste acelerado del implante</td><td>Caminata · Bike reclinada · Arm Ergometer</td></tr>
+        <tr><td>Lunge o zancada profunda</td><td>Supera el rango seguro de cadera</td><td>Anterior Reach · Low Box Step-Up</td></tr>
+      </table>
+    </div>
+
+    <div class="subsection">
+      <h3>1.2 Rodilla Derecha Inestable (Laxidad)</h3>
+      <table>
+        <tr><th>Evitar</th><th>Promover activamente</th></tr>
+        <tr><td>Flexión profunda de rodilla bajo carga</td><td>Fortalecimiento de VMO (cuádriceps interno)</td></tr>
+        <tr><td>Impacto sobre rodilla derecha</td><td>Trabajo isométrico de cuádriceps</td></tr>
+        <tr><td>Pivotes y rotaciones sobre rodilla derecha</td><td>Fortalecimiento de isquiotibiales y glúteos</td></tr>
+        <tr><td>Leg extensions (aislamiento)</td><td>Glúteos fuertes descargan la rodilla</td></tr>
+        <tr><td>Split Squat profundo</td><td>Box Bridge · SB Bridge · Step-Up bajo</td></tr>
+      </table>
+      <div class="callout"><strong>Lo bueno es que el programa STB ya está pensado para esto</strong>
+      El trabajo de glúteos y core del track STB ayuda a estabilizar la rodilla desde la cadera. No hay que inventar nada especial.</div>
+    </div>
+
+    <div class="subsection">
+      <h3>1.3 Problemas de Lumbares</h3>
+      <table>
+        <tr><th>Evitar</th><th>Promover (ya en el programa)</th></tr>
+        <tr><td>Crunches y Sit-Ups (ya prohibidos por Alloy)</td><td>Deadbug (anti-extensión lumbar)</td></tr>
+        <tr><td>Flexión lumbar bajo carga</td><td>Plank elevado (on box o mesa)</td></tr>
+        <tr><td>Hiperextensión lumbar</td><td>Controlled Rotation · Pallof Press</td></tr>
+        <tr><td>Carga axial pesada (Back Squat, Deadlift convencional)</td><td>Half-Kneeling Pallof Press · Bird Dog</td></tr>
+        <tr><td>Velocidad sin control en ejercicios de hip hinge</td><td>Hip Hinge lento y controlado</td></tr>
+      </table>
+    </div>
+
+    <div class="subsection">
+      <h3>1.4 Metas de Patricia y cómo las aborda el programa</h3>
+      <table>
+        <tr><th>Meta</th><th>Cómo lo trabaja el programa</th><th>Tipo de ejercicio</th></tr>
+        <tr><td>Mantener masa muscular (60+)</td><td>Progresión de carga en los 4 patrones de movimiento. La sarcopenia requiere estímulo mecánico continuo.</td><td>Fuerza compuesta, reps moderadas</td></tr>
+        <tr><td>Desarrollar resistencia</td><td>Metabolic finisher de baja intensidad que sube en volumen cada mes.</td><td>Circuitos 3x15 + cardio seated en M3</td></tr>
+        <tr><td>Protección articular a largo plazo</td><td>Fortalecimiento periarticular y estabilizadores. Rango de movimiento controlado en todo momento.</td><td>Core STB · Bridges · Anti-rotation</td></tr>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+<!-- SECCIÓN 2: FMS Y TRACK -->
+<div class="section">
+  <div class="section-header">
+    <div class="num">2</div>
+    <div>
+      <h2>Evaluación FMS y Asignación de Track STB</h2>
+      <p>Cómo evaluar a Patricia y qué track le corresponde</p>
+    </div>
+  </div>
+  <div class="section-body">
+
+    <div class="subsection">
+      <h3>2.1 Protocolo FMS Modificado para Patricia</h3>
+      <div class="callout red"><strong>Antes de hacer el FMS con Patricia</strong>
+      Revisar su historial médico. La prótesis de cadera puede contraindicar el Deep Squat y el Inline Lunge. Omitir cualquier pantalla que cause dolor o que supere el rango seguro.</div>
+      <table>
+        <tr><th>Pantalla FMS</th><th>Instrucción especial</th><th>Resultado esperado</th></tr>
+        <tr><td>Deep Squat</td><td>Solo si no hay dolor. Probablemente score 1 por limitación de cadera.</td><td>Score 1 (probable)</td></tr>
+        <tr><td>Hurdle Step</td><td>Cadera sana como referencia. Observar asimetría izquierda vs derecha.</td><td>Score 1-2</td></tr>
+        <tr><td>Inline Lunge</td><td>Solo si no hay dolor. Limitado por cadera y rodilla.</td><td>Score 1 (probable)</td></tr>
+        <tr><td>Shoulder Mobility</td><td>Estándar. Sin contraindicación.</td><td>Score 2-3</td></tr>
+        <tr><td>Active Straight-Leg Raise</td><td>Acostada. Observar lumbar durante el test.</td><td>Score 1-2</td></tr>
+        <tr><td>Trunk Stability Push-Up</td><td>Puede hacerse desde rodillas si es necesario.</td><td>Score 1-2</td></tr>
+        <tr><td>Rotary Stability</td><td>Despacio. Atención a la lumbar.</td><td>Score 1</td></tr>
+      </table>
+      <div class="callout green"><strong>Resultado probable: Score total entre 9 y 13, track STB confirmado</strong>
+      Alloy lo indica: clientes con scores de 1 en los patrones principales de movimiento pertenecen al track Stability. Patricia casi con seguridad cae ahí.</div>
+    </div>
+
+    <div class="subsection">
+      <h3>2.2 Por qué STB y no STR o PWR</h3>
+      <p style="margin-bottom:10px">Patricia tiene limitaciones importantes en dos articulaciones clave (cadera y rodilla) que afectan directamente los patrones de movimiento dominantes del track STR (Strength) e intermedio. STB es el correcto porque:</p>
+      <ul style="padding-left:20px;margin-bottom:12px;font-size:13px">
+        <li style="margin-bottom:6px">Permite trabajo de fuerza real con cargas progresivas</li>
+        <li style="margin-bottom:6px">Los tres workouts del Mes 1 son completamente modificables para sus condiciones</li>
+        <li style="margin-bottom:6px">La progresión natural (3x10 lineal → periodización) respeta su ritmo de adaptación</li>
+        <li style="margin-bottom:6px">En Mes 4+ se evalúa con nuevo FMS si puede avanzar a STR</li>
+      </ul>
+      <div class="callout"><strong>Esquema de trabajo según Alloy para clientes como Patricia</strong>
+      El guide de Alloy es explícito: cuando la periodización no es apropiada (clientes con lesiones o adultos mayores en etapa inicial), se usa 3x10 lineal hasta que el cliente esté listo. Patricia arranca con 3 series de 10 reps lineales y avanza a periodización en Mes 2-3.</div>
+    </div>
+
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<!-- MES 1 HEADER -->
+<div class="month-header">
+  <div class="container">
+    <div class="tag">Mes 1 de 3</div>
+    <h2>Stability Foundation</h2>
+    <p>Foco: dominar los patrones de movimiento, activar los estabilizadores, construir la base. Esquema: 3 series x 10 reps lineal.</p>
+  </div>
+</div>
+
+<div class="container">
+<div class="callout blue" style="margin-top:24px"><strong>Fuente: workouts leídos directamente de Trainerize (IDs 16582666, 16582667, 16582668)</strong>
+Estos workouts fueron creados por el equipo de Alloy Roswell en agosto de 2018 y son la base oficial del track STB Mes 1 en la cuenta de Oscar.</div>
+
+<!-- MES 1 WORKOUT A -->
+<div class="section">
+  <div class="section-header">
+    <div class="num">M1</div>
+    <div><h2>Workout A · Lunes</h2><p>M1 STAB A · ID 16582666 · 3x10 lineal</p></div>
+  </div>
+  <div class="section-body">
+    <div class="subsection">
+      <h3>Warm-Up (10 min)</h3>
+      <div class="exercise-block safe"><div class="exercise-name">Cat-Cow × 10</div><div class="exercise-detail">Movilidad de columna. Exhalar al redondear, inhalar al extender.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Glute Bridge × 10</div><div class="exercise-detail">Activación de glúteos. Talones pegados al suelo, apretear glúteos arriba.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Band Pull-Apart × 15</div><div class="exercise-detail">Activación escapular. Brazos al frente, separar hasta el pecho.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">March in Place × 60s</div><div class="exercise-detail">Calentamiento cardiovascular suave. Rodillas a 90°, sin impacto.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset A · 3 series</h3>
+      <div class="exercise-block safe"><div class="exercise-name">✅ Single Arm Dumbbell Floor Press × 10e</div><div class="exercise-detail">Horizontal pressing. Pies planos en el suelo, agarre neutral, ROM completo. Alternar brazos entre series.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">✅ Box Bridge × 10e</div><div class="exercise-detail">Hip dominant. Talones sobre caja 12", apretar glúteos en la cima. Progresión natural del Glute Bridge.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset B · 3 series</h3>
+      <div class="exercise-block modified"><div class="exercise-name">⚠ Chair Squat × 10 (modificado del Goblet Squat original)</div><div class="exercise-detail">Sentadilla a silla o caja alta. Máximo 70° de flexión de cadera.</div><div class="exercise-mod">Modificación: no bajar más allá del asiento de la silla. Sostener un KB o DB liviano frente al pecho. Foco en controlar el descenso, no en la profundidad.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">✅ Cable Row × 10e</div><div class="exercise-detail">Horizontal pulling. Retracción y depresión escapular. Se puede hacer sentada en banco si hay inestabilidad de pie.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset C · 3 series</h3>
+      <div class="exercise-block safe"><div class="exercise-name">✅ Plank × 30s (sobre caja elevada)</div><div class="exercise-detail">Core anti-extensión. Plank sobre caja o mesa (elevado reduce carga lumbar). Columna neutra de cabeza a talones, glúteos tensos.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">✅ Controlled Limited Rotation × 10e</div><div class="exercise-detail">Core anti-rotacional. Controlar la velocidad, rango de hombro a hombro. Rodilla operada en posición neutral.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Conditioning</h3>
+      <div class="exercise-block contraindicated"><div class="exercise-name">❌ Speed Squat with Jump Squat: reemplazado</div><div class="exercise-detail">Contraindicado: impacto + flexión profunda + riesgo de luxación.</div><div class="exercise-mod">Reemplazo: Step Touch Lateral × 45s (movimiento suave de lado a lado sin impacto). Agregar balanceo de brazos si Patricia lo tolera.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MES 1 WORKOUT B -->
+<div class="section">
+  <div class="section-header">
+    <div class="num">M1</div>
+    <div><h2>Workout B · Miércoles</h2><p>M1 STAB B · ID 16582667 · 3x10 lineal</p></div>
+  </div>
+  <div class="section-body">
+    <div class="subsection">
+      <h3>Warm-Up (10 min)</h3>
+      <div class="exercise-block safe"><div class="exercise-name">90/90 Hip Stretch × 5e</div><div class="exercise-detail">Movilidad de cadera sin superar rango seguro. Sentada en el suelo o en silla si es difícil bajar.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Cat-Cow × 10</div><div class="exercise-detail">Movilidad de columna.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Shoulder Circles × 10e</div><div class="exercise-detail">Movilidad de hombros, preparación para Upper Push.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">March in Place × 60s</div><div class="exercise-detail">Calentamiento suave.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset A · 3 series</h3>
+      <div class="exercise-block contraindicated"><div class="exercise-name">❌ Suspension Assisted Split Squat: reemplazado</div><div class="exercise-detail">Contraindicado: lunge profundo con riesgo de luxación de cadera y carga excesiva en rodilla derecha.</div><div class="exercise-mod">Reemplazo: Low Box Step-Up × 10e (caja de 4-6 pulgadas). Subir despacio apoyando el pie completo, énfasis en glúteo no en rodilla. Con baranda si necesita apoyo.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">✅ Three Point Row × 10e</div><div class="exercise-detail">Horizontal pulling. Inclinación sobre mesa o banco. Codo a 90°, tirar pegado al cuerpo. DB liviano al inicio.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset B · 3 series</h3>
+      <div class="exercise-block safe"><div class="exercise-name">✅ Elevated Push Up × 10</div><div class="exercise-detail">Horizontal pressing. Manos sobre barra o mesa. Espalda plana, columna neutra, ROM completo. Bajar la superficie progresivamente para aumentar dificultad.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">✅ Stability Ball Bridge × 10</div><div class="exercise-detail">Hip dominant. Piernas a 90°, empujar a través de talones contra la pared o suelo, Swiss Ball bajo la espalda. Excelente para Patricia: activa glúteos sin carga en cadera ni lumbar.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset C · 3 series</h3>
+      <div class="exercise-block safe"><div class="exercise-name">✅ Knee Stability Ball Rollout × 10</div><div class="exercise-detail">Core anti-extensión. Rodillas sobre colchoneta, manos sobre SB. Mantener caderas niveladas. Iniciar desde banco si el piso es difícil para Patricia.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">✅ Deadbug × 10e</div><div class="exercise-detail">Core anti-rotacional. Rodillas sobre caderas, extender brazo y pierna opuestos. Excelente para lumbares. Usar medicine ball entre manos y rodillas para activación adicional.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Conditioning</h3>
+      <div class="exercise-block modified"><div class="exercise-name">⚠ Airdyne: modificado</div><div class="exercise-detail">Intensidad alta del Airdyne original no es apropiada para Patricia en Mes 1.</div><div class="exercise-mod">Modificación: Seated Bike (bicicleta reclinada) 5-8 min a resistencia baja-media (RPE 5-6 de 10). Si no hay Airdyne, Arm Ergometer es ideal.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MES 1 WORKOUT C -->
+<div class="section">
+  <div class="section-header">
+    <div class="num">M1</div>
+    <div><h2>Workout C · Viernes</h2><p>M1 STAB C · ID 16582668 · 3x10 lineal</p></div>
+  </div>
+  <div class="section-body">
+    <div class="subsection">
+      <h3>Warm-Up (10 min)</h3>
+      <div class="exercise-block safe"><div class="exercise-name">Hip Circles × 10e</div><div class="exercise-detail">Movilidad de cadera dentro del rango seguro. Sin llevar la rodilla más arriba que la cadera.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Wall Angels × 10</div><div class="exercise-detail">Movilidad torácica y escapular. Espalda pegada a la pared.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Glute Bridge × 10</div><div class="exercise-detail">Activación de glúteos.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">March in Place × 60s</div><div class="exercise-detail">Calentamiento suave.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset A · 3 series</h3>
+      <div class="exercise-block safe"><div class="exercise-name">✅ Standing Single Arm Cable Press × 15e</div><div class="exercise-detail">Horizontal pushing de pie (funcional para 60+). Hombro bajo durante el press. Core activo para estabilización.</div></div>
+      <div class="exercise-block modified"><div class="exercise-name">⚠ Plank (elevado) sobre mesa × 30s (modificado del Knee Hip Slap Plank)</div><div class="exercise-detail">Original en suelo puede ser difícil con prótesis de cadera.</div><div class="exercise-mod">Modificación: Plank sobre mesa o banco alto. Columna neutra. Si Patricia puede bajar al suelo con seguridad, puede intentar la versión original.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">✅ Sixty Degree Bodyweight Row × 15</div><div class="exercise-detail">Horizontal pulling. Rodillas suaves, retracción y depresión escapular, manos a las costillas.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset B · 3 series</h3>
+      <div class="exercise-block contraindicated"><div class="exercise-name">❌ Suspension Assisted Reverse Lunge: reemplazado</div><div class="exercise-detail">Contraindicado: lunge = flexión profunda de cadera + carga en rodilla en ángulo peligroso.</div><div class="exercise-mod">Reemplazo: Anterior Reach (Toe Touch Forward) × 10e. De pie, apoyarse en pared, extender una pierna hacia adelante despacio sin cargar peso. Activa glúteo y estabilizadores de cadera sin riesgo.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">✅ Forward Facing Rotations × 10e</div><div class="exercise-detail">Core rotation. Manos frente al pecho. Rotar desde las caderas, no desde las rodillas. Rodilla operada no rota.</div></div>
+      <div class="exercise-block contraindicated"><div class="exercise-name">❌ Forward Box Run: reemplazado</div><div class="exercise-detail">Contraindicado: movimiento rápido con apoyo unilateral en rodilla derecha inestable.</div><div class="exercise-mod">Reemplazo: March in Place × 45s (rodillas suaves, sin impacto).</div></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<div class="container">
+<!-- MES 1 WORKOUT D -->
+<div class="section">
+  <div class="section-header">
+    <div class="num">M1</div>
+    <div><h2>Workout D · Lunes</h2><p>Mes 1 · Semana 2 · 3x10 lineal · Patrones nuevos: vertical push + vertical pull</p></div>
+  </div>
+  <div class="section-body">
+    <div class="subsection">
+      <h3>Warm-Up (10 min)</h3>
+      <div class="exercise-block safe"><div class="exercise-name">Cat-Cow × 10</div><div class="exercise-detail">Movilidad segmentaria de columna.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Hip Circles × 10e</div><div class="exercise-detail">Movilidad de cadera dentro del rango seguro.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Wall Angels × 10</div><div class="exercise-detail">Movilidad torácica y escapular. Preparación para el press vertical.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">March in Place × 60s</div><div class="exercise-detail">Calentamiento cardiovascular suave.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset A · 3 series</h3>
+      <div class="exercise-block safe"><div class="exercise-name">✅ DB Shoulder Press × 10</div><div class="exercise-detail">Empuje vertical (nuevo patrón en Semana 2). Sentada o de pie. Core activo, no arquear la lumbar al empujar. Agarre neutral.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">✅ Single Leg Glute Bridge × 10e</div><div class="exercise-detail">Hip dominant unilateral. Una pierna extendida, empujar con el talón del pie apoyado. Caderas niveladas al subir. Progresión del Glute Bridge bilateral.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset B · 3 series</h3>
+      <div class="exercise-block safe"><div class="exercise-name">✅ Lat Pulldown × 10</div><div class="exercise-detail">Jalón vertical (nuevo patrón en Semana 2). Sentada, agarre ancho. Jalar hasta el mentón, escápulas hacia atrás y abajo. Importante para postura en 60+.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">✅ Wall Sit × 20s</div><div class="exercise-detail">Knee dominant isométrico. Espalda contra la pared, rodillas a 90° máximo (o menos si hay molestia). Seguro para rodilla derecha porque no hay movimiento que cree cizalla.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset C · 3 series</h3>
+      <div class="exercise-block safe"><div class="exercise-name">✅ Bird Dog × 10e</div><div class="exercise-detail">Core anti-extensión y anti-rotación. Desde cuatro puntos, extender brazo y pierna opuestos. Cadera no sube más que la columna. Mantener 2 segundos en la extensión.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">✅ Side Plank on Knees × 20s c/lado</div><div class="exercise-detail">Core lateral. Desde rodillas, cuerpo en línea recta. Cadera no cae. Si Patricia lo tolera, puede probar Side Plank completo.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Conditioning</h3>
+      <div class="exercise-block safe"><div class="exercise-name">✅ Arm Ergometer × 5 min</div><div class="exercise-detail">Cardio de tren superior sin carga en caderas ni rodillas. RPE 5-6 de 10. Ideal para Patricia en días con mayor trabajo de piernas.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MES 1 WORKOUT E -->
+<div class="section">
+  <div class="section-header">
+    <div class="num">M1</div>
+    <div><h2>Workout E · Miércoles</h2><p>Mes 1 · Semana 2 · 3x10 lineal · Horizontal pull variación + abducción de cadera</p></div>
+  </div>
+  <div class="section-body">
+    <div class="subsection">
+      <h3>Warm-Up (10 min)</h3>
+      <div class="exercise-block safe"><div class="exercise-name">Shoulder Circles × 10e</div><div class="exercise-detail">Movilidad de hombros.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Cat-Cow × 10</div><div class="exercise-detail">Movilidad de columna.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Glute Bridge × 10</div><div class="exercise-detail">Activación de glúteos.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">March in Place × 60s</div><div class="exercise-detail">Calentamiento suave.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset A · 3 series</h3>
+      <div class="exercise-block safe"><div class="exercise-name">✅ Chest Supported DB Row × 10e</div><div class="exercise-detail">Horizontal pulling sin carga en la columna lumbar. Pecho apoyado en banco inclinado 45°. Codos hacia atrás, retracción escapular completa. Variación más fácil de estabilizar que el Three Point Row.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">✅ DB Floor Press × 10</div><div class="exercise-detail">Horizontal pushing bilateral. Acostada en el suelo, manos con DBs. ROM limitado por el suelo (codos a 90°), lo que lo hace más seguro para hombros. Alternar con Single Arm Floor Press de Workout A.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset B · 3 series</h3>
+      <div class="exercise-block safe"><div class="exercise-name">✅ Stability Ball Bridge × 12</div><div class="exercise-detail">Hip dominant. Igual que en Workout B. Piernas a 90°, empujar con los talones. En Semana 2 Patricia ya conoce el movimiento y puede enfocarse en apretar más los glúteos.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">✅ Seated Hip Abduction with Band × 12e</div><div class="exercise-detail">Abducción de cadera (nuevo patrón). Sentada, banda sobre las rodillas. Separar las rodillas contra la resistencia sin inclinar el tronco. Fortalece abductores críticos para la estabilidad del implante.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset C · 3 series</h3>
+      <div class="exercise-block safe"><div class="exercise-name">✅ Dead Bug × 10e</div><div class="exercise-detail">Core anti-rotacional. Igual que en Workout B pero ahora en día diferente para mayor frecuencia de trabajo de core.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">✅ Plank (elevado) × 30s</div><div class="exercise-detail">Core anti-extensión. Sobre mesa o banco. Columna neutra, glúteos tensos.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Conditioning</h3>
+      <div class="exercise-block safe"><div class="exercise-name">✅ Seated Bike × 5 min RPE 5</div><div class="exercise-detail">Bicicleta reclinada. Ritmo conversacional. En Semana 2 Patricia ya está adaptada al Seated Bike de Workout B.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MES 1 WORKOUT F -->
+<div class="section">
+  <div class="section-header">
+    <div class="num">M1</div>
+    <div><h2>Workout F · Viernes</h2><p>Mes 1 · Semana 2 · 3x10 lineal · Full body rotación</p></div>
+  </div>
+  <div class="section-body">
+    <div class="subsection">
+      <h3>Warm-Up (10 min)</h3>
+      <div class="exercise-block safe"><div class="exercise-name">90/90 Hip Stretch × 5e</div><div class="exercise-detail">Movilidad de cadera sin superar el rango seguro.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Wall Angels × 10</div><div class="exercise-detail">Movilidad torácica.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Band Pull-Apart × 15</div><div class="exercise-detail">Activación escapular.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">March in Place × 60s</div><div class="exercise-detail">Calentamiento cardiovascular suave.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset A · 3 series</h3>
+      <div class="exercise-block safe"><div class="exercise-name">✅ Standing Single Arm Cable Press × 10e</div><div class="exercise-detail">Horizontal pushing de pie. Mismo ejercicio que Workout C pero en Semana 2 con ligero aumento de carga. Hombro bajo durante el press.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">✅ Three Point Row × 10e</div><div class="exercise-detail">Horizontal pulling. Inclinación sobre mesa o banco. En Workout F se combina con el Cable Press para un superset de push/pull equilibrado.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset B · 3 series</h3>
+      <div class="exercise-block modified"><div class="exercise-name">⚠ Chair Squat × 10</div><div class="exercise-detail">Knee dominant. Igual que Workout A pero en día diferente para mayor frecuencia.</div><div class="exercise-mod">Mismo protocolo: no superar 70° de flexión de cadera. Si Patricia se siente más fuerte en Semana 2, puede sostener un KB liviano frente al pecho.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">✅ Single Leg Glute Bridge × 10e</div><div class="exercise-detail">Hip dominant unilateral. Alterna con el Box Bridge de Workout A para trabajar la cadera de manera diferente.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset C · 3 series</h3>
+      <div class="exercise-block safe"><div class="exercise-name">✅ Forward Facing Rotations × 10e</div><div class="exercise-detail">Core rotation. Manos frente al pecho. Rotar desde las caderas.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">✅ Controlled Limited Rotation × 10e</div><div class="exercise-detail">Core anti-rotacional. Controlar la velocidad. Combina los ejercicios de core de Workout A y C en un superset de rotación.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Conditioning</h3>
+      <div class="exercise-block safe"><div class="exercise-name">✅ March in Place × 3 × 45s</div><div class="exercise-detail">Trabajo cardiovascular sin impacto. Descanso 30s entre series. Sumar balanceo de brazos si Patricia lo tolera bien.</div></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<!-- MES 2 HEADER -->
+<div class="month-header">
+  <div class="container">
+    <div class="tag">Mes 2 de 3</div>
+    <h2>Strength Building</h2>
+    <p>Foco: aumentar la carga en los patrones dominados en Mes 1. Patricia ya conoce los movimientos, ahora los hace con más intensidad. Esquema: 4 series x 8 reps.</p>
+  </div>
+</div>
+
+<div class="container">
+<div class="callout" style="margin-top:24px"><strong>Regla de progresión: solo se avanza al Mes 2 si Patricia completó al menos 2 de 3 sesiones semanales durante 4 semanas, con buena forma en todos los ejercicios.</strong></div>
+
+<!-- MES 2 WORKOUT D -->
+<div class="section">
+  <div class="section-header">
+    <div class="num">M2</div>
+    <div><h2>Workout G · Lunes</h2><p>Mes 2 STB · Strength · 4x8</p></div>
+  </div>
+  <div class="section-body">
+    <div class="subsection">
+      <h3>Warm-Up (10 min)</h3>
+      <div class="exercise-block safe"><div class="exercise-name">Cat-Cow × 10</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Hip 90/90 Stretch × 5e</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Band Pull-Apart × 15</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">March in Place × 60s</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset A · 4 series x 8 reps</h3>
+      <div class="exercise-block safe"><div class="exercise-name">Single Arm Dumbbell Floor Press × 8e (mayor peso que M1)</div><div class="exercise-detail">Misma mecánica que en Mes 1, subir 2-5 lbs. La clave es controlar bien la bajada (2 segundos).</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Box Bridge Feet Elevated × 8e</div><div class="exercise-detail">Progresión del Box Bridge: elevar los talones sobre una caja más alta (18") para mayor trabajo de glúteo. Mantener caderas niveladas.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset B · 4 series x 8 reps</h3>
+      <div class="exercise-block modified"><div class="exercise-name">Chair Squat con DB × 8 (progresión de M1)</div><div class="exercise-detail">Mismo rango de movimiento seguro (máximo 70° de cadera). Agregar dos DBs livianos en las manos (5 lbs cada uno) para incrementar carga sin comprometer la cadera.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Single Arm Seated Row × 8e (mayor peso)</div><div class="exercise-detail">Seated Cable Row alternando brazos. Subir peso respecto a Mes 1. Retracción escapular completa en cada rep.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset C · 3 series</h3>
+      <div class="exercise-block safe"><div class="exercise-name">Half-Kneeling Pallof Press × 10e</div><div class="exercise-detail">Progresión del Controlled Rotation. Posición de rodilla (una rodilla en suelo, otra a 90°). Cable a la altura del pecho. Extender brazos al frente y mantener 2 segundos. Anti-rotación activa.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Bird Dog × 10e (lento, 3s de hold)</div><div class="exercise-detail">Progresión del Plank (elevado). Desde posición de cuatro puntos, extender brazo y pierna opuestos. Hold 3 segundos en la extensión. La pierna no sube más que la cadera.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Conditioning (progresión)</h3>
+      <div class="exercise-block safe"><div class="exercise-name">Step Touch Lateral con balanceo de brazos × 2 x 45s</div><div class="exercise-detail">Misma mecánica del Mes 1 pero ahora con movimiento de brazos coordinado (como en caminata activa). Aumenta demanda cardiovascular sin impacto.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MES 2 WORKOUT E -->
+<div class="section">
+  <div class="section-header">
+    <div class="num">M2</div>
+    <div><h2>Workout H · Miércoles</h2><p>Mes 2 STB · Strength · 4x8</p></div>
+  </div>
+  <div class="section-body">
+    <div class="subsection">
+      <h3>Warm-Up (10 min)</h3>
+      <div class="exercise-block safe"><div class="exercise-name">Ankle Circles × 10e</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Cat-Cow × 10</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Shoulder CARs × 5e (movimiento circular de hombro)</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Glute Bridge × 10</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset A · 4 series x 8 reps</h3>
+      <div class="exercise-block safe"><div class="exercise-name">Low Box Step-Up 6" × 8e (progresión de M1)</div><div class="exercise-detail">En Mes 1 era de 4". Subir a 6". Apoyo con baranda si es necesario. Énfasis en glúteo, bajar el pie controlado.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Lat Pulldown (nuevo) × 8</div><div class="exercise-detail">Jalón vertical: patrón nuevo que se introduce en Mes 2. Sentada, agarre ancho, jalar hasta el mentón. Escápulas hacia atrás y abajo. Importante para postura y salud de hombros en 60+.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset B · 4 series x 8 reps</h3>
+      <div class="exercise-block safe"><div class="exercise-name">Elevated Push Up con menor elevación × 8</div><div class="exercise-detail">Bajar la superficie a una altura más baja que en M1 (mayor dificultad). Si en M1 usó mesa, en M2 usa banco. Mantener columna perfecta.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Stability Ball Bridge con March × 8e</div><div class="exercise-detail">Progresión del Stability Ball Bridge: en la posición de puente, levantar alternadamente cada pie 2-3" del suelo. Mantener caderas perfectamente niveladas.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset C · 4 series x 8 reps</h3>
+      <div class="exercise-block safe"><div class="exercise-name">Knee Stability Ball Rollout con pausa × 8</div><div class="exercise-detail">Misma mecánica de M1 pero agregar una pausa de 2 segundos en la extensión máxima. Aumenta el tiempo bajo tensión en el core.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Deadbug con 3s de descenso × 8e</div><div class="exercise-detail">Misma mecánica pero bajar el brazo y pierna en 3 segundos (lento y controlado). Más difícil que M1.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Conditioning</h3>
+      <div class="exercise-block safe"><div class="exercise-name">Seated Bike × 8 min RPE 6-7</div><div class="exercise-detail">Un minuto más que en Mes 1, y a una intensidad ligeramente mayor. Patricia debe poder hablar pero sentir que está trabajando.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MES 2 WORKOUT F -->
+<div class="section">
+  <div class="section-header">
+    <div class="num">M2</div>
+    <div><h2>Workout I · Viernes</h2><p>Mes 2 STB · Strength · 4x8</p></div>
+  </div>
+  <div class="section-body">
+    <div class="subsection">
+      <h3>Warm-Up (10 min)</h3>
+      <div class="exercise-block safe"><div class="exercise-name">Hip Circles × 10e</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Wall Angels × 10</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Glute Bridge × 10</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">March in Place × 60s</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset A · 4 series x 8 reps</h3>
+      <div class="exercise-block safe"><div class="exercise-name">Standing Single Arm Cable Press × 8e (mayor peso)</div><div class="exercise-detail">Misma mecánica de M1 pero subir el peso. El reto en Mes 2 es mantener el core activo con mayor resistencia.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Plank (elevado) con Arm Reach × 8e</div><div class="exercise-detail">Progresión del Plank (elevado): desde la posición de plank elevado, levantar alternadamente un brazo al frente. Mantener cadera nivelada, no rotar.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset B · 4 series x 8 reps</h3>
+      <div class="exercise-block safe"><div class="exercise-name">Anterior Reach con Miniband × 8e</div><div class="exercise-detail">Progresión del Anterior Reach: agregar una miniband justo encima de las rodillas. El glúteo de la pierna de apoyo trabaja activamente para mantener la cadera estable. No cruzar la línea media.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Forward Facing Rotations con DB liviano × 8e</div><div class="exercise-detail">Agregar un DB de 3 lbs en las manos para incrementar la carga en el core rotacional. Misma mecánica lenta y controlada.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset C · 3 series</h3>
+      <div class="exercise-block safe"><div class="exercise-name">Standing Hip Abduction con Band × 12e (nuevo)</div><div class="exercise-detail">De pie con banda en tobillos. Levantar lateralmente la pierna sin inclinar el tronco. Fortalece los abductores de cadera, que son críticos para la estabilidad del implante.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Seated Calf Raise × 15 (nuevo)</div><div class="exercise-detail">Sentada, subir y bajar los talones. Mejora circulación venosa, fortalece pantorrillas y ayuda a la densidad ósea. Ideal para 60+.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Conditioning</h3>
+      <div class="exercise-block safe"><div class="exercise-name">March in Place con brazos × 2 x 60s</div><div class="exercise-detail">Marcha activa con movimiento coordinado de brazos. Más exigente que el March de M1.</div></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<div class="container">
+<!-- MES 2 WORKOUT J -->
+<div class="section">
+  <div class="section-header">
+    <div class="num">M2</div>
+    <div><h2>Workout J · Lunes</h2><p>Mes 2 · Semana 2 · 4x8 · Vertical push/pull con carga progresiva</p></div>
+  </div>
+  <div class="section-body">
+    <div class="subsection">
+      <h3>Warm-Up (10 min)</h3>
+      <div class="exercise-block safe"><div class="exercise-name">Cat-Cow × 10</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Hip Circles × 10e</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Wall Angels × 10</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">March in Place × 60s</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset A · 4 series</h3>
+      <div class="exercise-block safe"><div class="exercise-name">DB Shoulder Press × 8e (mayor carga que M1)</div><div class="exercise-detail">Progresión directa del Workout D. Subir 2-5 lbs respecto a Mes 1. Mismo control de core, no arquear la lumbar.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Single Leg Glute Bridge con carga × 8e</div><div class="exercise-detail">Progresión del M1. Colocar un DB liviano sobre el cuádriceps de la pierna trabajada. Hip drive fuerte, cadera sube con fuerza.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset B · 4 series</h3>
+      <div class="exercise-block safe"><div class="exercise-name">Lat Pulldown × 8 (mayor carga)</div><div class="exercise-detail">Progresión del M1. Subir el peso. El jalón vertical es fundamental para la postura de Patricia. 4 series x 8 permite mayor carga que las 3x10 del M1.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Low Box Step-Up 6" × 8e</div><div class="exercise-detail">Progresión del Wall Sit isométrico de M1. Caja de 6" (en M1 era 4"). Bajar el pie controlado, énfasis en el glúteo. Con baranda si necesita apoyo.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset C · 4 series</h3>
+      <div class="exercise-block safe"><div class="exercise-name">Half-Kneeling Pallof Press × 10e</div><div class="exercise-detail">Anti-rotación progresiva. Posición de rodilla (una rodilla en suelo). Cable a la altura del pecho. Extender brazos y mantener 2 segundos.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Bird Dog × 10e (3s hold)</div><div class="exercise-detail">Progresión del Bird Dog de M1. Mismo movimiento pero con pausa de 3 segundos en la extensión. Mayor tiempo bajo tensión en core.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Conditioning</h3>
+      <div class="exercise-block safe"><div class="exercise-name">Step Touch Lateral con balanceo de brazos × 2 × 45s</div><div class="exercise-detail">Mismo finisher que Workout G. Consistencia en la progresión cardiovascular.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MES 2 WORKOUT K -->
+<div class="section">
+  <div class="section-header">
+    <div class="num">M2</div>
+    <div><h2>Workout K · Miércoles</h2><p>Mes 2 · Semana 2 · 4x8 · Horizontal push/pull cargado + abducción progresiva</p></div>
+  </div>
+  <div class="section-body">
+    <div class="subsection">
+      <h3>Warm-Up (10 min)</h3>
+      <div class="exercise-block safe"><div class="exercise-name">Shoulder Circles × 10e</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Cat-Cow × 10</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Glute Bridge × 10</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">March in Place × 60s</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset A · 4 series</h3>
+      <div class="exercise-block safe"><div class="exercise-name">Chest Supported DB Row × 8e (mayor carga)</div><div class="exercise-detail">Progresión del M1E. Subir 2-5 lbs. Sin compensación lumbar. Pausa de 1 segundo al final del recorrido.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Elevated Push Up (superficie más baja) × 8</div><div class="exercise-detail">Progresión del M1. Bajar la superficie (de mesa a banco) para mayor dificultad. Columna perfectamente neutra.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset B · 4 series</h3>
+      <div class="exercise-block safe"><div class="exercise-name">Stability Ball Bridge con March × 8e</div><div class="exercise-detail">Progresión del Stability Ball Bridge de M1. Levantar alternadamente cada pie 2-3" del suelo mientras mantiene el puente. Caderas niveladas.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Seated Hip Abduction con banda más fuerte × 12e</div><div class="exercise-detail">Progresión del M1E. Usar una banda de mayor resistencia. Mismo ROM controlado, sin inclinar el tronco.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset C · 4 series</h3>
+      <div class="exercise-block safe"><div class="exercise-name">Knee Stability Ball Rollout con pausa × 8</div><div class="exercise-detail">Progresión del M1. Pausa de 2 segundos en la extensión máxima. Mayor tiempo bajo tensión.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Dead Bug × 8e (descenso 3s)</div><div class="exercise-detail">Progresión del M1. Bajar el brazo y pierna en 3 segundos (tempo lento). Más demandante que M1.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Conditioning</h3>
+      <div class="exercise-block safe"><div class="exercise-name">Seated Bike × 10 min RPE 6-7</div><div class="exercise-detail">Intensidad ligeramente mayor que Workout H. Patricia puede hablar pero siente el esfuerzo.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MES 2 WORKOUT L -->
+<div class="section">
+  <div class="section-header">
+    <div class="num">M2</div>
+    <div><h2>Workout L · Viernes</h2><p>Mes 2 · Semana 2 · 4x8 · Full body rotación semana 2</p></div>
+  </div>
+  <div class="section-body">
+    <div class="subsection">
+      <h3>Warm-Up (10 min)</h3>
+      <div class="exercise-block safe"><div class="exercise-name">90/90 Hip Stretch × 5e</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Wall Angels × 10</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Band Pull-Apart × 15</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">March in Place × 60s</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset A · 4 series</h3>
+      <div class="exercise-block safe"><div class="exercise-name">DB Floor Press × 8 (mayor carga)</div><div class="exercise-detail">Progresión del M1F. Bilateral, mayor carga que las 10 reps de M1. Control total del movimiento.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Seated Cable Row × 8 (mayor carga)</div><div class="exercise-detail">Progresión del Cable Row de M1A. En Mes 2 se aumenta el peso y se reduce a 8 reps. Retracción escapular completa en cada rep.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset B · 4 series</h3>
+      <div class="exercise-block modified"><div class="exercise-name">Chair Squat con DBs × 8</div><div class="exercise-detail">Progresión del M1. Con dos DBs livianos en las manos (5 lbs). Mismo rango seguro de cadera (máximo 70°).</div><div class="exercise-mod">Si Patricia ya tiene buena confianza en el movimiento, puede intentar un DB ligeramente más pesado que en Workout G.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Single Leg Glute Bridge × 8e</div><div class="exercise-detail">Hip dominant unilateral. Progresión del M1F. En M2 puede agregar un DB sobre el cuádriceps si le es cómodo.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset C · 4 series</h3>
+      <div class="exercise-block safe"><div class="exercise-name">Forward Facing Rotations con DB liviano × 8e</div><div class="exercise-detail">Progresión del M1F. Con DB de 3 lbs en las manos. Misma mecánica lenta y controlada.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Side Plank on Knees × 25s c/lado</div><div class="exercise-detail">Progresión del M1D (20s). Mismo 5 segundos más. Si Patricia tolera bien, puede intentar Side Plank completo (pies en suelo).</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Conditioning</h3>
+      <div class="exercise-block safe"><div class="exercise-name">March in Place con brazos × 2 × 60s</div><div class="exercise-detail">Marcha activa con movimiento coordinado de brazos. Descanso 30s entre series.</div></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<!-- MES 3 HEADER -->
+<div class="month-header">
+  <div class="container">
+    <div class="tag">Mes 3 de 3</div>
+    <h2>Power y Resistencia</h2>
+    <p>Foco: periodización undulante adaptada. Lunes = fuerza (5x5), Miércoles = hipertrofia (4x8), Viernes = resistencia muscular (3x15). Mayor demanda metabólica con impacto cero.</p>
+  </div>
+</div>
+
+<div class="container">
+<div class="callout green" style="margin-top:24px"><strong>Patricia en Mes 3 ya domina todos los patrones de movimiento con buena forma. Ahora el cuerpo recibe estímulos distintos en cada sesión, lo que acelera la adaptación muscular.</strong></div>
+
+<!-- MES 3 WORKOUT G -->
+<div class="section">
+  <div class="section-header">
+    <div class="num">M3</div>
+    <div><h2>Workout M · Lunes</h2><p>Mes 3 STB · Fuerza · 5 series x 5 reps (cargas mayores)</p></div>
+  </div>
+  <div class="section-body">
+    <div class="subsection">
+      <h3>Warm-Up (12 min, más completo)</h3>
+      <div class="exercise-block safe"><div class="exercise-name">Hip Circles × 10e + Cat-Cow × 10 + Glute Bridge × 10</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Band Activation Circuit: Pull-Apart × 15 + Hip Abduction × 12e</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">March in Place × 90s</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset A · 5 series x 5 reps (carga máxima segura)</h3>
+      <div class="exercise-block safe"><div class="exercise-name">Chair Squat pesado × 5 (mayor carga que M2)</div><div class="exercise-detail">Con KB o DBs más pesados. El foco en 5 reps es la carga, no el volumen. Patricia descansa 90s entre series. Mismo rango seguro de cadera.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Single Arm Dumbbell Floor Press pesado × 5e</div><div class="exercise-detail">Mayor peso que en M2. 5 reps permiten mayor carga que las 8 de M2. Control total del movimiento.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset B · 5 series x 5 reps</h3>
+      <div class="exercise-block safe"><div class="exercise-name">Lat Pulldown pesado × 5</div><div class="exercise-detail">Carga mayor que en M2. El jalón vertical es uno de los movimientos más importantes para la postura de Patricia. 5 reps permite más peso.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Half-Kneeling Hip Hinge × 5e</div><div class="exercise-detail">Nuevo: desde posición de semi-arrodillado, inclinar el tronco hacia adelante con columna neutra (bisagra de cadera). Sin carga inicialmente. Activa isquiotibiales y glúteos sin comprometer la cadera operada.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Core Circuit · 3 rondas</h3>
+      <div class="exercise-block safe"><div class="exercise-name">Pallof Press × 30s hold cada lado</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Bird Dog × 5e (3s hold en extensión)</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Plank (elevado) × 30s</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Conditioning</h3>
+      <div class="exercise-block safe"><div class="exercise-name">Arm Ergometer × 5 min (warm-down activo)</div><div class="exercise-detail">Baja intensidad después del trabajo de fuerza. Ayuda a la recuperación y mejora la condición cardiovascular sin carga en caderas ni rodillas.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MES 3 WORKOUT H -->
+<div class="section">
+  <div class="section-header">
+    <div class="num">M3</div>
+    <div><h2>Workout N · Miércoles</h2><p>Mes 3 STB · Hipertrofia · 4 series x 8 reps</p></div>
+  </div>
+  <div class="section-body">
+    <div class="subsection">
+      <h3>Warm-Up (10 min)</h3>
+      <div class="exercise-block safe"><div class="exercise-name">90/90 Hip Stretch × 5e + Wall Angels × 10 + Glute Bridge × 10 + March × 60s</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset A · 4 series x 8 reps</h3>
+      <div class="exercise-block safe"><div class="exercise-name">Low Box Step-Up con DBs × 8e</div><div class="exercise-detail">Con dos DBs livianos en las manos (5-8 lbs). Caja de 6". El objetivo es activar el glúteo y el cuádriceps con más carga total.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Seated Row Machine (o TRX Row) × 8</div><div class="exercise-detail">Progresión: pasar a la máquina de remo sentada si está disponible. Más estable que cable, permite mayor carga. Retracción escapular completa.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset B · 4 series x 8 reps</h3>
+      <div class="exercise-block safe"><div class="exercise-name">Chest Press Machine × 8</div><div class="exercise-detail">Progresión de los push-ups. La máquina de press de pecho permite mayor carga con total control. Asiento ajustado para que los codos queden a la altura del pecho.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Stability Ball Bridge March × 8e</div><div class="exercise-detail">Misma mecánica de M2 pero ya con más fluidez. Mantener las caderas completamente estables durante el march.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset C · 4 series x 8 reps</h3>
+      <div class="exercise-block safe"><div class="exercise-name">Knee Stability Ball Rollout desde suelo (si Patricia puede) × 8</div><div class="exercise-detail">Progresión: si Patricia puede bajar al suelo con seguridad, hacer el rollout desde el suelo. Si no, continuar desde banco. Posición de cadera baja relativa al hombro.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Deadbug con DBs livianos × 8e</div><div class="exercise-detail">Con DBs de 2-3 lbs en las manos para mayor demanda. Mismo descenso de 3 segundos.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Conditioning</h3>
+      <div class="exercise-block safe"><div class="exercise-name">Seated Bike × 10 min RPE 6</div><div class="exercise-detail">Continuación del trabajo aeróbico. 2 minutos más que en M2.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MES 3 WORKOUT I -->
+<div class="section">
+  <div class="section-header">
+    <div class="num">M3</div>
+    <div><h2>Workout O · Viernes</h2><p>Mes 3 STB · Resistencia Muscular · 3 series x 15 reps</p></div>
+  </div>
+  <div class="section-body">
+    <div class="subsection">
+      <h3>Warm-Up (10 min)</h3>
+      <div class="exercise-block safe"><div class="exercise-name">Full mobility circuit: Hip Circles + Cat-Cow + Wall Angels + Shoulder Circles + March × 60s</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Circuito A · 3 rondas x 15 reps · 30s descanso entre ejercicios</h3>
+      <div class="callout blue" style="margin-bottom:12px"><strong>Formato circuito: los 4 ejercicios se hacen uno tras otro, luego descanso de 60s antes de la siguiente ronda.</strong></div>
+      <div class="exercise-block safe"><div class="exercise-name">Standing Single Arm Cable Press × 15e</div><div class="exercise-detail">Peso moderado, mayor volumen. Foco en control total y conexión mente-músculo.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Seated Cable Row × 15</div><div class="exercise-detail">Retracción completa, movimiento controlado.</div></div>
+      <div class="exercise-block modified"><div class="exercise-name">Chair Squat × 15 (moderado)</div><div class="exercise-detail">Peso moderado, mayor número de reps. Misma clave: no superar 70° de flexión de cadera.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Stability Ball Bridge × 15</div><div class="exercise-detail">Sin pausa en la cima, flujo continuo a este ritmo de reps.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Core Finisher · 3 series</h3>
+      <div class="exercise-block safe"><div class="exercise-name">Bird Dog × 12e</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Deadbug × 12e</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Pallof Press × 12e</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Cool-Down Activo</h3>
+      <div class="exercise-block safe"><div class="exercise-name">March in Place tranquilo × 5 min</div><div class="exercise-detail">Reducir la frecuencia cardíaca gradualmente. Respiración profunda.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Stretching: Hip Flexor 30s c/lado + Chest Opener 30s + Hamstring Stretch sentada 30s c/lado</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MES 3 WORKOUT P -->
+<div class="section">
+  <div class="section-header">
+    <div class="num">M3</div>
+    <div><h2>Workout P · Lunes</h2><p>Mes 3 · Semana 2 · Fuerza · 5 series x 5 reps (ejercicios alternativos)</p></div>
+  </div>
+  <div class="section-body">
+    <div class="subsection">
+      <h3>Warm-Up (10 min)</h3>
+      <div class="exercise-block safe"><div class="exercise-name">Hip Circles × 10e + Cat-Cow × 10 + Wall Angels × 10 + March × 60s</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Bloque de Fuerza · 5 series</h3>
+      <div class="exercise-block safe"><div class="exercise-name">DB Shoulder Press pesado × 5</div><div class="exercise-detail">5 reps permite mayor carga que las 8 del Mes 2. Control total: no arquear la lumbar. Descanso 90s entre series.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Lat Pulldown pesado × 5</div><div class="exercise-detail">Mayor peso que en Mes 2. Escápulas hacia atrás y abajo al jalar. 5 reps = carga máxima de la sesión.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Bloque de Fuerza-Hipertrofia · 4 series x 8 reps</h3>
+      <div class="exercise-block safe"><div class="exercise-name">Three Point Row × 8e (mayor peso)</div><div class="exercise-detail">Progresión directa del M1. Con más peso que en cualquier mes anterior. Codo 90°, pegado al cuerpo.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Low Box Step-Up 6" con DBs × 8e</div><div class="exercise-detail">Con dos DBs en las manos. Mayor demanda total que en Mes 2. Énfasis en el glúteo, no en el cuádriceps.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Core</h3>
+      <div class="exercise-block safe"><div class="exercise-name">Half-Kneeling Pallof Press × 30s hold cada lado</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Bird Dog × 6e (3s hold)</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Side Plank on Knees × 25s c/lado</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Conditioning</h3>
+      <div class="exercise-block safe"><div class="exercise-name">Arm Ergometer × 5 min</div><div class="exercise-detail">Warm-down activo de tren superior. Baja intensidad para recuperación.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MES 3 WORKOUT Q -->
+<div class="section">
+  <div class="section-header">
+    <div class="num">M3</div>
+    <div><h2>Workout Q · Miércoles</h2><p>Mes 3 · Semana 2 · Hipertrofia · 4 series x 8 reps (ejercicios alternativos)</p></div>
+  </div>
+  <div class="section-body">
+    <div class="subsection">
+      <h3>Warm-Up (10 min)</h3>
+      <div class="exercise-block safe"><div class="exercise-name">90/90 Hip Stretch × 5e + Wall Angels × 10 + Glute Bridge × 10 + March × 60s</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset A · 4 series</h3>
+      <div class="exercise-block safe"><div class="exercise-name">Chest Supported DB Row pesado × 8e</div><div class="exercise-detail">Mayor carga que en Mes 2K. Pausa de 2 segundos al final del recorrido. Escápulas retraídas y deprimidas.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">DB Floor Press × 8 (mayor carga)</div><div class="exercise-detail">Progresión del M2L. Mayor peso. Control excéntrico (bajar en 2 segundos).</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset B · 4 series</h3>
+      <div class="exercise-block safe"><div class="exercise-name">Single Leg Glute Bridge con DB × 8e</div><div class="exercise-detail">Mayor carga que M2J. DB sobre el cuádriceps de la pierna trabajada. Hip drive explosivo.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Seated Hip Abduction con banda pesada × 12e</div><div class="exercise-detail">Progresión del M2K. Banda de mayor resistencia. Crítico para la estabilidad del implante de cadera.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Core · 4 series</h3>
+      <div class="exercise-block safe"><div class="exercise-name">Dead Bug con DBs livianos × 8e</div><div class="exercise-detail">Con DBs de 2-3 lbs en las manos. Mismo descenso de 3 segundos. Mayor demanda que M2.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Plank (elevado) con Arm Reach × 8e</div><div class="exercise-detail">Desde plank elevado, levantar alternadamente un brazo. Cadera estable, no rotar el tronco.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Conditioning</h3>
+      <div class="exercise-block safe"><div class="exercise-name">Seated Bike × 10 min RPE 6</div><div class="exercise-detail">Continuación del trabajo aeróbico de Mes 2. Mismo ritmo que Workout N.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MES 3 WORKOUT R -->
+<div class="section">
+  <div class="section-header">
+    <div class="num">M3</div>
+    <div><h2>Workout R · Viernes</h2><p>Mes 3 · Semana 2 · Resistencia Muscular · 3 series x 15 reps (circuito alternativo)</p></div>
+  </div>
+  <div class="section-body">
+    <div class="subsection">
+      <h3>Warm-Up (10 min)</h3>
+      <div class="exercise-block safe"><div class="exercise-name">Full mobility circuit: Hip Circles + Cat-Cow + Wall Angels + March × 60s</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Circuito de Resistencia · 3 rondas (descanso 60s entre rondas)</h3>
+      <div class="callout blue" style="margin-bottom:12px"><strong>Formato circuito: los 4 ejercicios se hacen seguidos, luego 60s de descanso antes de la siguiente ronda.</strong></div>
+      <div class="exercise-block safe"><div class="exercise-name">DB Shoulder Press × 15</div><div class="exercise-detail">Peso moderado, mayor volumen. Foco en control y respiración constante.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Three Point Row × 15e</div><div class="exercise-detail">Movimiento continuo, sin pausa. Mantener el codo pegado al cuerpo en cada rep.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Single Leg Glute Bridge × 15e</div><div class="exercise-detail">Sin peso adicional. Mayor número de reps activa las fibras de resistencia del glúteo.</div></div>
+      <div class="exercise-block modified"><div class="exercise-name">Chair Squat × 15</div><div class="exercise-detail">Peso moderado. Mayor número de reps que en cualquier mes anterior.</div><div class="exercise-mod">Mismo protocolo: no superar 70° de flexión de cadera.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Core</h3>
+      <div class="exercise-block safe"><div class="exercise-name">Bird Dog × 12e</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Dead Bug × 12e</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Forward Facing Rotations × 12e</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Conditioning</h3>
+      <div class="exercise-block safe"><div class="exercise-name">March in Place tranquilo × 5 min</div><div class="exercise-detail">Warm-down. Reducir la frecuencia cardíaca gradualmente.</div></div>
+      <div class="exercise-block safe"><div class="exercise-name">Stretching: Hip Flexor 30s c/lado + Chest Opener 30s + Hamstring Stretch sentada 30s c/lado</div></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- TABLA DE PROGRESIÓN -->
+<div class="section">
+  <div class="section-header">
+    <div class="num">P</div>
+    <div><h2>Tabla de Progresión y Referencia Rápida</h2><p>Los cambios clave de un mes al siguiente</p></div>
+  </div>
+  <div class="section-body">
+    <div class="subsection">
+      <h3>Resumen de Progresión por Mes</h3>
+      <table>
+        <tr><th>Mes</th><th>Workouts</th><th>Foco</th><th>Esquema</th><th>Cambio clave</th><th>Señal para avanzar</th></tr>
+        <tr><td><span class="badge badge-gold">Mes 1</span></td><td><strong>A/B/C</strong> Sem 1–2<br><strong>D/E/F</strong> Sem 3–4</td><td>Stability Foundation</td><td>3×10 lineal</td><td>Punto de partida — patrones básicos con carga mínima</td><td>2 de 3 sesiones por semana, 4 semanas, buena forma</td></tr>
+        <tr><td><span class="badge badge-orange">Mes 2</span></td><td><strong>G/H/I</strong> Sem 5–6<br><strong>J/K/L</strong> Sem 7–8</td><td>Strength Building</td><td>4×8 (más carga)</td><td>Mayor peso en todos los ejercicios + Lat Pulldown + Hip Abduction con banda</td><td>Misma regla: consistencia + forma correcta 4 semanas</td></tr>
+        <tr><td><span class="badge badge-green">Mes 3</span></td><td><strong>M/N/O</strong> Sem 9–10<br><strong>P/Q/R</strong> Sem 11–12</td><td>Power y Resistencia</td><td>5×5 / 4×8 / 3×15</td><td>Periodización undulante: Lunes fuerza, Miércoles hipertrofia, Viernes resistencia muscular</td><td>Nuevo FMS para evaluar progreso y posible avance a STR</td></tr>
+      </table>
+    </div>
+    <div class="subsection">
+      <h3>Modificaciones Permanentes (todos los meses)</h3>
+      <table>
+        <tr><th>Ejercicio original STB</th><th>Condición</th><th>Reemplazo siempre</th></tr>
+        <tr><td>Goblet Squat / Squat profundo</td><td>Cadera mayor de 90°</td><td>Chair Squat 60-70° con carga liviana</td></tr>
+        <tr><td>Jump Squat / Speed Squat</td><td>Impacto + cadera + rodilla</td><td>Step Touch Lateral × 45s</td></tr>
+        <tr><td>Suspension Assisted Split Squat</td><td>Lunge profundo</td><td>Low Box Step-Up 4-6"</td></tr>
+        <tr><td>Airdyne máximo esfuerzo</td><td>Intensidad excesiva para 60+</td><td>Seated Bike RPE 5-7</td></tr>
+        <tr><td>Knee Hip Slap Plank en suelo</td><td>Dificultad para bajar</td><td>Plank (elevado) sobre banco</td></tr>
+        <tr><td>Suspension Assisted Reverse Lunge</td><td>Lunge + cadera</td><td>Anterior Reach o Hip Hinge media caña</td></tr>
+        <tr><td>Forward Box Run</td><td>Impacto + rodilla inestable</td><td>March in Place × 45s</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- GUÍA TRAINERIZE -->
+<div class="section">
+  <div class="section-header">
+    <div class="num">T</div>
+    <div><h2>Cómo Subir Este Programa a Trainerize</h2><p>Manual paso a paso: desde cero hasta programa activo y automatizado</p></div>
+  </div>
+  <div class="section-body">
+    <div class="subsection">
+      <h3>Paso 1: Crear el perfil de Patricia</h3>
+      <div class="steps">
+        <div class="step"><div class="step-num">1</div><div class="step-content"><h4>Agregar a Patricia como cliente</h4><p>Clients → + Add Client. Nombre completo, email, fecha de nacimiento. Categoría: Coaching.</p></div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-content"><h4>Configurar el perfil de salud</h4><p>Profile → Health. En Notes: "Hip prosthesis (confirmar lado). Right knee laxity. Lumbar issues." Llenar E-Consultation Form cuando Patricia active la cuenta.</p></div></div>
+        <div class="step"><div class="step-num">3</div><div class="step-content"><h4>Registrar scores FMS</h4><p>Measurements → Add. Crear 7 campos "FMS Score - [pantalla]" con valor 0-3. Un campo "FMS Total Score" y otro "Track Asignado" (STB).</p></div></div>
+      </div>
+    </div>
+    <div class="subsection">
+      <h3>Paso 2: Crear los workouts modificados</h3>
+      <div class="steps">
+        <div class="step"><div class="step-num">4</div><div class="step-content"><h4>Copiar los workouts M1 STAB A, B, C</h4><p>Master Libraries → Shared → Alloy Month 1 STB. Seleccionar cada uno → Copy To → Personal. Renombrar: "Patricia M1-A", "Patricia M1-B", "Patricia M1-C".</p></div></div>
+        <div class="step"><div class="step-num">5</div><div class="step-content"><h4>Aplicar modificaciones en cada workout</h4><p>Abrir Patricia M1-A → Edit Workout. Cambiar Goblet Squat a "Chair Squat Modified". Eliminar Jump Squat, agregar Step Touch Lateral 45s. Guardar. Repetir para B y C.</p></div></div>
+        <div class="step"><div class="step-num">6</div><div class="step-content"><h4>Crear workouts de Mes 2 y Mes 3</h4><p>Personal Library → New Workout. Crear Patricia M1-D/E/F, M2-J/K/L, M3-P/Q/R con los ejercicios de este documento con los ejercicios de este documento.</p></div></div>
+        <div class="step"><div class="step-num">7</div><div class="step-content"><h4>Crear programa de 12 semanas</h4><p>Master Libraries → Programs → New Program. Nombre: "Patricia Arriaza STB 3 Meses". 12 semanas. Semanas 1-2: A/B/C → Semanas 3-4: D/E/F → Semanas 5-6: G/H/I → Semanas 7-8: J/K/L → Semanas 9-10: M/N/O → Semanas 11-12: P/Q/R.</p></div></div>
+        <div class="step"><div class="step-num">8</div><div class="step-content"><h4>Asignar el programa a Patricia</h4><p>Perfil de Patricia → Training → Assign Program. Seleccionar "Patricia Arriaza STB 3 Meses". Fecha de inicio: primer lunes de entrenamiento.</p></div></div>
+      </div>
+    </div>
+    <div class="subsection">
+      <h3>Paso 3: Configurar auto-mensajes</h3>
+      <div class="callout green"><strong>Estos mensajes se envían solos, una vez configurados</strong></div>
+      <table style="margin-top:12px">
+        <tr><th>Trigger</th><th>Timing</th><th>Texto sugerido para Oscar</th></tr>
+        <tr><td>Primer sign-in</td><td>Inmediato</td><td>"Patricia, soy Oscar. Me da mucho gusto tenerte aquí. Esta semana comenzamos juntos. Si tienes alguna pregunta, escríbeme cuando quieras."</td></tr>
+        <tr><td>3 días post sign-in</td><td>Día 3, 9am</td><td>"Patricia, ¿encontraste todo bien en la app? ¿El primer workout estuvo bien?"</td></tr>
+        <tr><td>7 días post sign-in</td><td>Día 7, 9am</td><td>"Primera semana completa. Mantener el ritmo 3 veces por semana es exactamente lo que tu cuerpo necesita."</td></tr>
+        <tr><td>14 días post sign-in</td><td>Día 14, 9am</td><td>"Patricia, ya llevamos 2 semanas. Es momento de nuestro primer check-in de 15 minutos. ¿Qué días te quedan bien?"</td></tr>
+        <tr><td>Primer workout completado</td><td>Inmediato</td><td>"Así se hace, Patricia. Primer workout registrado. Cada sesión cuenta."</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<div style="background:var(--dark);color:#666;text-align:center;padding:24px;font-size:11px;margin-top:40px">
+  Patricia Arriaza · Programa STB 3 Meses · Alloy Personal Training Lakeline TX · Oscar Esquivel · Mayo 2026<br>
+  Metodología: Alloy Program Design Guide · Workouts M1 base de Trainerize (IDs 16582666, 16582667, 16582668)
+</div>
+
+</body>
+</html>

@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Francisco Esquivel: Programa de Entrenamiento 3 Meses</title>
+<style>
+  :root {
+    --gold: #FFCA10;
+    --blue: #1E6F8E;
+    --dark: #0f1f2d;
+    --dark2: #1a2f3f;
+    --dark3: #2a3f50;
+    --light: #f4f7f9;
+    --text: #1a1a1a;
+    --muted: #666;
+    --accent: #D4920E;
+    --green: #1a7a4a;
+    --red: #c0392b;
+    --border: #dde3e8;
+    --section-bg: #fff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; font-size: 14px; line-height: 1.6; color: var(--text); background: var(--light); }
+
+  .cover { background: linear-gradient(135deg, #0f1f2d 0%, #1a3a52 50%, #0f1f2d 100%); color: white; padding: 80px 60px 60px; position: relative; overflow: hidden; }
+  .cover::before { content: ''; position: absolute; top: 0; right: 0; width: 400px; height: 400px; background: var(--gold); opacity: 0.06; border-radius: 50%; transform: translate(150px, -150px); }
+  .cover::after { content: ''; position: absolute; bottom: 0; left: 0; width: 300px; height: 300px; background: var(--blue); opacity: 0.12; border-radius: 50%; transform: translate(-100px, 100px); }
+  .cover-badge { display: inline-block; background: var(--gold); color: var(--dark); font-weight: 800; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; padding: 4px 12px; border-radius: 2px; margin-bottom: 20px; position: relative; z-index: 1; }
+  .cover h1 { font-size: 40px; font-weight: 900; margin-bottom: 6px; letter-spacing: -1px; position: relative; z-index: 1; }
+  .cover h2 { font-size: 17px; font-weight: 300; color: #8cb4cc; margin-bottom: 30px; position: relative; z-index: 1; }
+  .cover-meta { display: flex; gap: 40px; flex-wrap: wrap; font-size: 13px; color: #6a90a8; border-top: 1px solid rgba(255,255,255,0.12); padding-top: 20px; margin-top: 20px; position: relative; z-index: 1; }
+  .cover-meta span strong { color: #aac8d8; }
+  .cover-goals { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 24px; position: relative; z-index: 1; }
+  .cover-goal { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); border-radius: 8px; padding: 14px; }
+  .cover-goal .icon { font-size: 22px; margin-bottom: 6px; }
+  .cover-goal .title { font-size: 12px; font-weight: 700; color: var(--gold); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 4px; }
+  .cover-goal .desc { font-size: 12px; color: #8cb4cc; }
+
+  .container { max-width: 960px; margin: 0 auto; padding: 0 30px; }
+  .section { background: var(--section-bg); margin: 30px 0; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); overflow: hidden; }
+  .section-header { background: var(--dark); color: white; padding: 18px 28px; display: flex; align-items: center; gap: 12px; }
+  .section-header .num { background: var(--gold); color: var(--dark); font-weight: 900; font-size: 12px; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .section-header .num.blue { background: var(--blue); color: white; }
+  .section-header h2 { font-size: 17px; font-weight: 700; }
+  .section-header p { font-size: 12px; color: #aaa; margin-top: 2px; }
+  .section-body { padding: 28px; }
+  .subsection { margin-bottom: 32px; }
+  .subsection:last-child { margin-bottom: 0; }
+  .subsection h3 { font-size: 15px; font-weight: 700; color: var(--dark); margin-bottom: 12px; padding-bottom: 6px; border-bottom: 2px solid var(--gold); display: inline-block; }
+  .subsection h4 { font-size: 13px; font-weight: 700; color: var(--dark3); margin: 16px 0 6px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 12px 0; }
+  th { background: var(--dark); color: var(--gold); padding: 8px 12px; text-align: left; font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+  td { padding: 8px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) td { background: #f7fafc; }
+  tr:hover td { background: #eef3f7; }
+
+  .callout { border-left: 4px solid var(--gold); background: #fffdf0; padding: 12px 16px; margin: 14px 0; border-radius: 0 4px 4px 0; font-size: 13px; }
+  .callout.red { border-color: var(--red); background: #fdf5f5; }
+  .callout.green { border-color: var(--green); background: #f0fbf5; }
+  .callout.blue { border-color: var(--blue); background: #eef6fb; }
+  .callout strong { display: block; margin-bottom: 4px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .callout.red strong { color: var(--red); }
+  .callout.green strong { color: var(--green); }
+  .callout.blue strong { color: var(--blue); }
+
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+  .badge-gold { background: var(--gold); color: var(--dark); }
+  .badge-blue { background: #d1ecf1; color: #0c4f6f; }
+  .badge-green { background: #d4edda; color: #1a5f30; }
+  .badge-red { background: #f8d7da; color: #721c24; }
+  .badge-gray { background: #e2e3e5; color: #383d41; }
+
+  .month-header { background: linear-gradient(135deg, var(--dark) 0%, #1a3a52 100%); color: white; padding: 32px 60px; margin: 40px 0 0; text-align: center; }
+  .month-header .tag { display: inline-block; background: var(--gold); color: var(--dark); font-size: 11px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; padding: 4px 14px; border-radius: 2px; margin-bottom: 16px; }
+  .month-header h2 { font-size: 26px; font-weight: 800; margin-bottom: 6px; }
+  .month-header p { font-size: 14px; color: #8cb4cc; font-weight: 300; }
+  .month-header .scheme { display: inline-block; background: rgba(255,202,16,0.15); border: 1px solid rgba(255,202,16,0.3); color: var(--gold); font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 20px; margin-top: 12px; }
+
+  .workout-card { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin: 16px 0; }
+  .workout-card-header { background: var(--dark2); color: white; padding: 12px 18px; display: flex; justify-content: space-between; align-items: center; }
+  .workout-card-header h4 { font-size: 15px; color: var(--gold); }
+  .workout-card-header .meta { font-size: 12px; color: #8cb4cc; }
+  .workout-card-body { padding: 16px 18px; }
+  .exercise-block { background: #f8fbfd; border-radius: 6px; padding: 12px; margin: 8px 0; border-left: 3px solid var(--blue); }
+  .exercise-block.core { border-left-color: var(--gold); background: #fffdf0; }
+  .exercise-block.warmup { border-left-color: var(--green); background: #f5fbf8; }
+  .exercise-block.conditioning { border-left-color: var(--red); background: #fdf8f8; }
+  .exercise-name { font-weight: 700; font-size: 13px; margin-bottom: 4px; }
+  .exercise-detail { font-size: 12px; color: var(--muted); }
+  .exercise-tip { font-size: 12px; color: var(--blue); margin-top: 4px; font-style: italic; }
+
+  .core-focus-box { background: linear-gradient(135deg, #0f1f2d 0%, #1a3a52 100%); color: white; border-radius: 8px; padding: 24px; margin: 20px 0; }
+  .core-focus-box h4 { color: var(--gold); font-size: 14px; font-weight: 700; margin-bottom: 12px; }
+  .core-focus-box p { font-size: 13px; color: #8cb4cc; }
+  .core-focus-box ul { font-size: 13px; color: #8cb4cc; padding-left: 16px; margin-top: 8px; }
+  .core-focus-box li { margin-bottom: 4px; }
+
+  @media print {
+    body { background: white; font-size: 12px; }
+    .section { box-shadow: none; border: 1px solid #ddd; }
+    .cover { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .section-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .month-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    th { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .workout-card-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .core-focus-box { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <div class="container">
+    <div class="cover-badge">Programa Personal · Francisco Esquivel</div>
+    <h1>Francisco Esquivel</h1>
+    <h2>Programa de Entrenamiento 3 Meses · Nivel Intermedio · Core + Fuerza + Masa Muscular</h2>
+    <div class="cover-meta">
+      <span><strong>Nivel:</strong> Intermedio Activo</span>
+      <span><strong>Frecuencia:</strong> 3 días / semana</span>
+      <span><strong>Duración:</strong> 12 semanas</span>
+      <span><strong>Metodología:</strong> Alloy STR con énfasis en core</span>
+    </div>
+    <div class="cover-goals">
+      <div class="cover-goal">
+        <div class="icon">🔩</div>
+        <div class="title">Core y Espalda</div>
+        <div class="desc">Fortalecer el núcleo para eliminar el dolor de espalda y construir una base sólida para todo lo demás</div>
+      </div>
+      <div class="cover-goal">
+        <div class="icon">💪</div>
+        <div class="title">Masa y Definición</div>
+        <div class="desc">Aumentar la masa muscular con progresión inteligente en los patrones de movimiento compuestos</div>
+      </div>
+      <div class="cover-goal">
+        <div class="icon">⚡</div>
+        <div class="title">Fuerza y Resistencia</div>
+        <div class="desc">Construir fuerza real con cargas progresivas y mantener capacidad metabólica alta</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- SECCIÓN 1: CONTEXTO Y PRINCIPIOS -->
+<div class="section">
+  <div class="section-header">
+    <div class="num">1</div>
+    <div><h2>Tu Punto de Partida y los Principios del Programa</h2><p>Por qué el programa está diseñado así</p></div>
+  </div>
+  <div class="section-body">
+
+    <div class="subsection">
+      <h3>1.1 Perfil y Objetivos</h3>
+      <table>
+        <tr><th>Variable</th><th>Detalle</th></tr>
+        <tr><td>Nivel</td><td>Intermedio activo (buena base, entrena con consistencia)</td></tr>
+        <tr><td>Objetivo principal</td><td>Fortalecer el core para reducir el dolor de espalda</td></tr>
+        <tr><td>Objetivo 2</td><td>Aumentar y definir masa muscular</td></tr>
+        <tr><td>Objetivo 3</td><td>Aumentar fuerza y resistencia cardiovascular</td></tr>
+        <tr><td>Limitación conocida</td><td>Dolor de espalda (probablemente lumbar)</td></tr>
+        <tr><td>Días de entrenamiento</td><td>3 días / semana (Lunes, Miércoles, Viernes recomendado)</td></tr>
+      </table>
+    </div>
+
+    <div class="subsection">
+      <h3>1.2 Por Qué el Core Es la Prioridad en Mes 1</h3>
+      <div class="core-focus-box">
+        <h4>El dolor de espalda lumbar en personas activas tiene casi siempre el mismo origen</h4>
+        <p>Glúteos que no se activan correctamente, flexores de cadera acortados por el trabajo en escritorio, y un core que no estabiliza la columna bajo carga. El resultado: la zona lumbar absorbe el impacto que deberían absorber las caderas y el core.</p>
+        <p style="margin-top:10px">La solución no es "hacer más core" en sentido tradicional (crunches, sit-ups). Esos ejercicios hacen más daño que bien. La solución es:</p>
+        <ul>
+          <li>Core anti-extensión (Deadbug, Plank)</li>
+          <li>Core anti-rotación (Pallof Press, Half-Kneeling Chop)</li>
+          <li>Core lateral (Side Plank, Suitcase Carry)</li>
+          <li>Hip hinge correcto (RDL, KB Swing) para activar glúteos</li>
+          <li>Movilidad de caderas y t-spine para no compensar con la lumbar</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="subsection">
+      <h3>1.3 Estructura del Programa</h3>
+      <table>
+        <tr><th>Mes</th><th>Foco</th><th>Esquema</th><th>Lo que cambia</th></tr>
+        <tr><td><span class="badge badge-gold">Mes 1</span></td><td>Foundation + Core</td><td>3x10-12</td><td>Establecer los patrones, atacar el dolor de espalda, construir la base</td></tr>
+        <tr><td><span class="badge badge-blue">Mes 2</span></td><td>Strength</td><td>5x5 + 4x8</td><td>Añadir carga pesada, trabajo de fuerza real, core cargado</td></tr>
+        <tr><td><span class="badge badge-green">Mes 3</span></td><td>Hypertrophy + Power</td><td>4x10-12 + circuitos</td><td>Mayor volumen, metabolic finishers, definición muscular</td></tr>
+      </table>
+    </div>
+
+    <div class="subsection">
+      <h3>1.4 Ejercicios que No Entran en Este Programa</h3>
+      <div class="callout red"><strong>Protección lumbar: estos ejercicios agravan el dolor de espalda</strong>
+      Crunches · Sit-Ups · Good Mornings cargados · Back Squats pesados en Mes 1 · Leg Lifts · Cualquier ejercicio de flexión lumbar bajo carga. Esto está alineado con la política de Alloy (ninguno de estos ejercicios aparece en la biblioteca de Alloy por las mismas razones).</div>
+    </div>
+
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<!-- MES 1 -->
+<div class="month-header">
+  <div class="container">
+    <div class="tag">Mes 1 de 3</div>
+    <h2>Foundation + Core</h2>
+    <p>Establecer todos los patrones de movimiento, atacar el dolor de espalda desde la raíz, construir la base de fuerza.</p>
+    <div class="scheme">3 series × 10-12 reps</div>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- MES 1 WORKOUT A -->
+<div class="section">
+  <div class="section-header">
+    <div class="num">M1</div>
+    <div><h2>Workout A · Lunes</h2><p>Upper Push + Knee Dominant + Core Anti-Extensión</p></div>
+  </div>
+  <div class="section-body">
+    <div class="subsection">
+      <h3>Warm-Up (10 min)</h3>
+      <div class="exercise-block warmup"><div class="exercise-name">Cat-Cow × 10</div><div class="exercise-detail">Movilidad de columna. La base de cualquier día de entrenamiento con historial de espalda.</div></div>
+      <div class="exercise-block warmup"><div class="exercise-name">Bird Dog × 8e (slow)</div><div class="exercise-detail">Activación de core y glúteos. Extiende brazo y pierna opuestos, hold 2s. Columna completamente neutra.</div></div>
+      <div class="exercise-block warmup"><div class="exercise-name">Hip Hinge Bodyweight × 10</div><div class="exercise-detail">Practicar la bisagra de cadera antes de cargar. Manos en las caderas, inclinar el torso manteniendo espalda plana.</div></div>
+      <div class="exercise-block warmup"><div class="exercise-name">Band Pull-Apart × 15</div><div class="exercise-detail">Activación escapular. Brazos al frente, separar hasta el pecho.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset A · 3 series x 10 reps</h3>
+      <div class="exercise-block"><div class="exercise-name">DB Bench Press × 10</div><div class="exercise-detail">Empuje horizontal base. Acostado en banco, DBs a la altura del pecho, ROM completo. Escápulas retraídas durante todo el movimiento.</div><div class="exercise-tip">Alternativa: Floor Press si no hay banco. Igual de efectivo para masa de pecho.</div></div>
+      <div class="exercise-block"><div class="exercise-name">Goblet Squat × 10</div><div class="exercise-detail">Patrón de rodilla. KB o DB al pecho, pies separados a la anchura de hombros, bajar controlado. Mejor que el Back Squat al inicio porque mantiene el torso vertical y reduce la carga en la lumbar.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset B · 3 series x 10 reps</h3>
+      <div class="exercise-block"><div class="exercise-name">Three-Point Row × 10e</div><div class="exercise-detail">Jalón horizontal unilateral. Una mano sobre banco, tirrar el DB hasta la costilla. Activa el lat y rhomboid. Codo a 90°.</div></div>
+      <div class="exercise-block"><div class="exercise-name">Romanian Deadlift (DB) × 10</div><div class="exercise-detail">Hip hinge fundamental para el dolor de espalda. DBs frente a los muslos, bajar hasta sentir tensión en isquiotibiales manteniendo espalda plana. Los glúteos son los que trabajan, no la lumbar.</div><div class="exercise-tip">Este ejercicio es el más importante para tu dolor de espalda. Practicar la mecánica perfectamente.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Core · 3 series</h3>
+      <div class="exercise-block core"><div class="exercise-name">Deadbug × 10e</div><div class="exercise-detail">Anti-extensión. Rodillas sobre caderas, extender brazo y pierna opuestos en 3s. La zona lumbar no se separa del suelo en ningún momento. Si se levanta, reducir el rango de movimiento.</div></div>
+      <div class="exercise-block core"><div class="exercise-name">Plank × 40s</div><div class="exercise-detail">Anti-extensión. Columna completamente neutra, glúteos apretados, no dejar caer las caderas. El torso es una tabla.</div></div>
+      <div class="exercise-block core"><div class="exercise-name">McGill Curl-Up × 8e (lento)</div><div class="exercise-detail">Alternativa al crunch que no comprime la lumbar. Acostado, una rodilla flexionada, manos debajo de la lumbar para mantener la curva natural. Levantar solo cabeza y hombros 2-3 cm. No es un crunch: es estabilización.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Conditioning</h3>
+      <div class="exercise-block conditioning"><div class="exercise-name">KB Swing × 3 series x 15 reps</div><div class="exercise-detail">El mejor ejercicio metabólico para alguien con dolor de espalda porque enseña a cargar los glúteos en lugar de la lumbar. Peso moderado, bisagra de cadera perfecta, el glúteo dispara hacia adelante.</div><div class="exercise-tip">Si el dolor de espalda aumenta con el KB Swing, reemplazar con Step-Up en circuito × 3x15e hasta que la mecánica sea correcta.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MES 1 WORKOUT B -->
+<div class="section">
+  <div class="section-header">
+    <div class="num">M1</div>
+    <div><h2>Workout B · Miércoles</h2><p>Upper Pull Vertical + Hip Dominant + Core Anti-Rotación</p></div>
+  </div>
+  <div class="section-body">
+    <div class="subsection">
+      <h3>Warm-Up (10 min)</h3>
+      <div class="exercise-block warmup"><div class="exercise-name">T-Spine Rotation × 10e (en suelo o cuatro puntos)</div><div class="exercise-detail">Movilidad torácica. Abre la caja torácica para reducir la compensación lumbar. Una rodilla sobre el codo, rotar.</div></div>
+      <div class="exercise-block warmup"><div class="exercise-name">Hip 90/90 Stretch × 5e por lado</div><div class="exercise-detail">Movilidad de cadera en rotación interna y externa. Los flexores de cadera acortados son causa directa del dolor lumbar.</div></div>
+      <div class="exercise-block warmup"><div class="exercise-name">Ankle Circles × 10e + Shoulder CARs × 5e</div><div class="exercise-detail">Movilidad articular completa antes de un día de pull.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset A · 3 series x 10 reps</h3>
+      <div class="exercise-block"><div class="exercise-name">Lat Pulldown × 10</div><div class="exercise-detail">Jalón vertical. Agarre a la anchura de los hombros. Jalar hasta el mentón, escápulas hacia atrás y abajo. No tirar con los bíceps, pensar en el codo apuntando al suelo.</div><div class="exercise-tip">Si puedes hacer Pull-Ups con buena forma, reemplazar este ejercicio por Pull-Up × 5-8.</div></div>
+      <div class="exercise-block"><div class="exercise-name">Single Leg RDL × 10e</div><div class="exercise-detail">Hip dominant unilateral. Un DB en la mano opuesta a la pierna de apoyo. Inclinar el torso y extender la pierna trasera hasta que estén paralelos al suelo. Activa glúteo y mejora la estabilidad de la cadera, que es clave para la espalda.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset B · 3 series x 10 reps</h3>
+      <div class="exercise-block"><div class="exercise-name">DB Overhead Press × 10</div><div class="exercise-detail">Empuje vertical. De pie o sentado. Arrancar desde los hombros, subir hasta la extensión completa. No arquear la espalda al subir (señal de que la carga es demasiado).</div></div>
+      <div class="exercise-block"><div class="exercise-name">Step-Up con DB × 10e</div><div class="exercise-detail">Knee dominant unilateral. Un paso de 6-8". Apoyar el pie completo, empujar a través del talón, glúteo activo. Bajar controlado.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Core · 3 series</h3>
+      <div class="exercise-block core"><div class="exercise-name">Pallof Press × 10e</div><div class="exercise-detail">Anti-rotación: el más importante para la estabilidad lumbar bajo carga de rotación. Cable o banda a la altura del pecho. Extender los brazos al frente y mantener 2s. El cuerpo no rota. Más difícil de lo que parece.</div></div>
+      <div class="exercise-block core"><div class="exercise-name">Side Plank × 30s cada lado</div><div class="exercise-detail">Lateral core. Fortalece el cuadrado lumbar y el oblicuo, que estabilizan la columna en movimientos unilaterales. Caderas elevadas, cuerpo en línea recta.</div></div>
+      <div class="exercise-block core"><div class="exercise-name">Bird Dog × 10e (progressión: hold 3s)</div><div class="exercise-detail">Mismo que en warm-up pero con 3s de hold y más control. La extensión de cadera activa el glúteo que descomprime la lumbar.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Conditioning</h3>
+      <div class="exercise-block conditioning"><div class="exercise-name">Remo (máquina) × 5 min intensidad moderada</div><div class="exercise-detail">El remo es ideal para Francisco: trabaja la espalda en posición de bisagra controlada, mejora la resistencia cardiovascular y no comprime la columna. RPE 6-7.</div><div class="exercise-tip">Alternativa: Bike estacionaria 8 min si no hay máquina de remo.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MES 1 WORKOUT C -->
+<div class="section">
+  <div class="section-header">
+    <div class="num">M1</div>
+    <div><h2>Workout C · Viernes</h2><p>Horizontal Push/Pull + Hip Hinge + Core Carry</p></div>
+  </div>
+  <div class="section-body">
+    <div class="subsection">
+      <h3>Warm-Up (10 min)</h3>
+      <div class="exercise-block warmup"><div class="exercise-name">World's Greatest Stretch × 5e por lado</div><div class="exercise-detail">El mejor ejercicio de movilidad en una sola posición: abre la cadera, rota la t-spine, estira el flexor de cadera. Crucial para el dolor de espalda.</div></div>
+      <div class="exercise-block warmup"><div class="exercise-name">Hip Circle × 10e + Band Walk Lateral × 10e</div><div class="exercise-detail">Activación de abductores de cadera y rotadores externos. Glúteos fuertes = espalda que no duele.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset A · 3 series x 10 reps</h3>
+      <div class="exercise-block"><div class="exercise-name">Cable Row × 10</div><div class="exercise-detail">Jalón horizontal. Retracción y depresión escapular completa. Sentado con el torso ligeramente inclinado. Jalar hasta el abdomen.</div></div>
+      <div class="exercise-block"><div class="exercise-name">Incline DB Press × 10</div><div class="exercise-detail">Empuje horizontal inclinado. Activa la parte alta del pectoral y el deltoides anterior. Banco a 30-45°.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset B · 3 series x 10 reps</h3>
+      <div class="exercise-block"><div class="exercise-name">DB Deadlift × 10</div><div class="exercise-detail">Hip hinge bilateral con mancuernas. Los DBs al costado del cuerpo o frente a los muslos. Espalda plana, bisagra de cadera, el glúteo sube primero. Progresión hacia el Barbell Deadlift en Mes 2.</div></div>
+      <div class="exercise-block"><div class="exercise-name">Lateral Lunge × 10e</div><div class="exercise-detail">Patrón de rodilla lateral que mejora la movilidad de cadera en el plano frontal. Un paso amplio al lado, doblar la rodilla de ese lado, la otra pierna recta. Volver al centro.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Core · 3 series</h3>
+      <div class="exercise-block core"><div class="exercise-name">Half-Kneeling Cable Chop × 10e</div><div class="exercise-detail">Anti-rotación diagonal. Una rodilla en el suelo, el cable en diagonal desde arriba. Jalar desde el hombro hasta la cadera opuesta. Fortalece el patrón de rotación de columna sin comprimirla.</div></div>
+      <div class="exercise-block core"><div class="exercise-name">Deadbug con banda de tensión × 10e</div><div class="exercise-detail">Banda alrededor de las rodillas. La tensión de la banda agrega trabajo de abductores y hace el Deadbug más demandante para el core.</div></div>
+      <div class="exercise-block core"><div class="exercise-name">Plank con Hip Tap × 10e</div><div class="exercise-detail">Desde posición de plank, bajar alternadamente cada cadera hasta casi tocar el suelo. El torso se mantiene inmóvil. Anti-rotación activa.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Conditioning</h3>
+      <div class="exercise-block conditioning"><div class="exercise-name">Bike estacionaria × 10 min</div><div class="exercise-detail">Intensidad moderada (RPE 6). El viernes es el día de mayor trabajo acumulado, el conditioning se mantiene más conservador para completar bien la semana.</div></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<!-- MES 2 -->
+<div class="month-header">
+  <div class="container">
+    <div class="tag">Mes 2 de 3</div>
+    <h2>Strength Phase</h2>
+    <p>El cuerpo ya conoce los patrones. Ahora se añade carga pesada para construir fuerza real. El core se trabaja con más carga también.</p>
+    <div class="scheme">5x5 · 4x8</div>
+  </div>
+</div>
+
+<div class="container">
+<div class="callout blue" style="margin-top:24px"><strong>Señal para pasar al Mes 2: el dolor de espalda está reducido o desaparecido durante el entrenamiento, y todos los patrones de movimiento se ven sólidos con buena forma.</strong></div>
+
+<!-- MES 2 WORKOUT D -->
+<div class="section">
+  <div class="section-header">
+    <div class="num">M2</div>
+    <div><h2>Workout D · Lunes</h2><p>Fuerza máxima · 5x5 en ejercicios compuestos principales</p></div>
+  </div>
+  <div class="section-body">
+    <div class="subsection">
+      <h3>Warm-Up (12 min)</h3>
+      <div class="exercise-block warmup"><div class="exercise-name">Cat-Cow × 10 + Bird Dog × 8e + Hip Hinge BW × 10</div></div>
+      <div class="exercise-block warmup"><div class="exercise-name">Sets de activación (vacíos): Bench Press × 10 (sin peso o barra vacía) + Squat × 10 (barra vacía)</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset A · 5 series x 5 reps (máximo esfuerzo)</h3>
+      <div class="exercise-block"><div class="exercise-name">Barbell Bench Press × 5</div><div class="exercise-detail">El clásico de fuerza de pecho. 5 reps permiten cargar pesado. Escápulas retraídas en el banco, pies planos en el suelo. Descansa 2-3 min entre series para recuperar bien.</div></div>
+      <div class="exercise-block"><div class="exercise-name">Trap Bar Deadlift (o Barbell Squat) × 5</div><div class="exercise-detail">El Trap Bar Deadlift es mejor que el convencional para Francisco porque mantiene la espalda más vertical y carga menos la lumbar. Si no hay Trap Bar, hacer Barbell Back Squat con peso moderado.</div><div class="exercise-tip">No ego lifting aquí: la técnica perfecta es más importante que el peso. Si la lumbar se redondea, el peso está demasiado alto.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset B · 3 series x 8 reps</h3>
+      <div class="exercise-block"><div class="exercise-name">Barbell Row o Cable Row pesado × 8</div><div class="exercise-detail">Jalón horizontal con más carga que M1. Torso inclinado 45°, jalar hasta el abdomen. Los remos pesados fortalecen la cadena posterior que protege la espalda.</div></div>
+      <div class="exercise-block"><div class="exercise-name">DB Romanian Deadlift × 8</div><div class="exercise-detail">Progresión del RDL de M1 con más peso. Los isquiotibiales bajo tensión son la mejor protección de la lumbar.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Core Cargado · 3 series</h3>
+      <div class="exercise-block core"><div class="exercise-name">Suitcase Carry × 20 metros por lado</div><div class="exercise-detail">Cargar un KB pesado en una sola mano y caminar 20m. El core trabaja lateralmente para evitar que el torso se incline. Es uno de los mejores ejercicios para la estabilidad lumbar bajo carga real.</div></div>
+      <div class="exercise-block core"><div class="exercise-name">Plank × 3 x 45s</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Conditioning</h3>
+      <div class="exercise-block conditioning"><div class="exercise-name">KB Swing pesado × 5 series x 10 reps</div><div class="exercise-detail">El peso del KB sube respecto a M1. El swing explosivo desarrolla la fuerza del glúteo y la potencia de cadera que Francis necesita para proteger la espalda bajo carga.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MES 2 WORKOUT E -->
+<div class="section">
+  <div class="section-header">
+    <div class="num">M2</div>
+    <div><h2>Workout E · Miércoles</h2><p>Fuerza de jalón y posterior chain · 5x5</p></div>
+  </div>
+  <div class="section-body">
+    <div class="subsection">
+      <h3>Warm-Up (12 min)</h3>
+      <div class="exercise-block warmup"><div class="exercise-name">T-Spine Rotation × 10e + Hip 90/90 × 5e + World's Greatest Stretch × 5e</div></div>
+      <div class="exercise-block warmup"><div class="exercise-name">Lat Pulldown activación × 10 (peso muy liviano)</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset A · 5 series x 5 reps</h3>
+      <div class="exercise-block"><div class="exercise-name">Barbell RDL × 5</div><div class="exercise-detail">Progresión natural del DB RDL de M1. Con barra se puede cargar significativamente más. 5 reps pesados para fuerza máxima de posterior chain.</div></div>
+      <div class="exercise-block"><div class="exercise-name">Weighted Pull-Up o Lat Pulldown muy pesado × 5</div><div class="exercise-detail">Si puedes hacer 8+ Pull-Ups, agregar peso con un cinturón de dipping. Si no, hacer Lat Pulldown con el máximo peso que permita 5 reps limpias.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset B · 4 series x 8 reps</h3>
+      <div class="exercise-block"><div class="exercise-name">DB Overhead Press de pie × 8</div><div class="exercise-detail">Empuje vertical. De pie activa el core estabilizador. Mayor carga que M1.</div></div>
+      <div class="exercise-block"><div class="exercise-name">Bulgarian Split Squat × 8e</div><div class="exercise-detail">Pie trasero sobre banco. El más efectivo para cuádriceps y glúteos unilaterales. Torso ligeramente inclinado adelante, bajar controlado. Activa el glúteo del lado de apoyo fuertemente.</div><div class="exercise-tip">Este ejercicio puede ser incómodo para la espalda al inicio. Si hay dolor, reemplazar por Step-Up con carga hasta que los glúteos estén más fuertes.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Core Cargado · 4 series</h3>
+      <div class="exercise-block core"><div class="exercise-name">Pallof Press pesado × 10e</div><div class="exercise-detail">Mayor resistencia que M1. La anti-rotación bajo mayor carga fortalece exactamente los músculos que estabilizan la columna bajo cargas pesadas de fuerza.</div></div>
+      <div class="exercise-block core"><div class="exercise-name">Ab Wheel Rollout × 8</div><div class="exercise-detail">Uno de los mejores ejercicios de anti-extensión. Desde rodillas, extender la rueda al frente manteniendo el core completamente braced. La lumbar no se arquea en ningún momento. Si hay dolor lumbar, empezar con un rango de movimiento pequeño.</div></div>
+      <div class="exercise-block core"><div class="exercise-name">Bird Dog × 8e con DB liviano en mano</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Conditioning</h3>
+      <div class="exercise-block conditioning"><div class="exercise-name">Battle Rope × 4 series x 20s trabajo / 40s descanso</div><div class="exercise-detail">Alta intensidad de tren superior sin carga en la columna. Las ondas de Battle Rope activan el core isométricamente. Si no hay Battle Rope, Bike Sprint 20s/40s.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MES 2 WORKOUT F -->
+<div class="section">
+  <div class="section-header">
+    <div class="num">M2</div>
+    <div><h2>Workout F · Viernes</h2><p>Fuerza + Power · 4x8</p></div>
+  </div>
+  <div class="section-body">
+    <div class="subsection">
+      <h3>Warm-Up</h3>
+      <div class="exercise-block warmup"><div class="exercise-name">Cat-Cow × 10 + World's Greatest Stretch × 5e + Band Walk × 10e + Shoulder Circles × 10e</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset A · 4 series x 8 reps</h3>
+      <div class="exercise-block"><div class="exercise-name">Incline Bench Press × 8 (mayor peso)</div><div class="exercise-detail">Progresión del incline de M1 con más carga. 4x8 es el esquema clásico de hipertrofia de pecho superior.</div></div>
+      <div class="exercise-block"><div class="exercise-name">Trap Bar Deadlift o DB Deadlift × 8</div><div class="exercise-detail">El segundo día de hip hinge de la semana. Peso moderado (no máximo), volumen más alto que el lunes.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Superset B · 4 series x 8 reps</h3>
+      <div class="exercise-block"><div class="exercise-name">Pull-Up asistido o Lat Pulldown × 8</div><div class="exercise-detail">El segundo día de jalón vertical de la semana.</div></div>
+      <div class="exercise-block"><div class="exercise-name">DB Reverse Lunge × 8e</div><div class="exercise-detail">Lunge hacia atrás: menos tensión en la rodilla que el lunge frontal, más carga en glúteo. Con DBs en las manos. Progresión del Step-Up de M1.</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Core · 4 series</h3>
+      <div class="exercise-block core"><div class="exercise-name">Ab Wheel × 8</div></div>
+      <div class="exercise-block core"><div class="exercise-name">Side Plank Row × 8e (banda lateral)</div><div class="exercise-detail">En posición de Side Plank, jalar una banda elástica hacia el cuerpo. Trabaja lateral core + jalón en una sola posición.</div></div>
+      <div class="exercise-block core"><div class="exercise-name">Deadbug con DB livianos × 10e</div></div>
+    </div>
+    <div class="subsection">
+      <h3>Conditioning</h3>
+      <div class="exercise-block conditioning"><div class="exercise-name">Remo (máquina) × 8 min al 70% del esfuerzo</div><div class="exercise-detail">Mejor conditioning para alguien con espalda. El remo fortalece la cadena posterior mientras mejora la resistencia cardiovascular.</div></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<!-- ==================== MES 3 ==================== -->
+<div class="month-header">
+  <div class="month-number">Mes 3</div>
+  <div class="month-title">Hipertrofia + Potencia</div>
+  <div class="month-subtitle">Volumen aumentado · Circuitos metabólicos · 4x10-12 + finishers</div>
+</div>
+
+<div class="container">
+  <div class="section-intro">
+    <p>El tercer mes combina bloques de hipertrofia clásica con circuitos de potencia al final de cada sesión. La progresión de carga continúa, pero ahora con mayor volumen por grupo muscular y densidad de trabajo. El core sigue integrado en cada sesión, con variaciones más desafiantes que consolidan lo ganado en los meses anteriores.</p>
+  </div>
+
+  <!-- WORKOUT G -->
+  <div class="workout-card">
+    <div class="workout-header">
+      <div>
+        <div class="workout-title">Workout G</div>
+        <div class="workout-day">Lunes · Push + Rodilla dominante</div>
+      </div>
+      <span class="track-badge stb">MES 3</span>
+    </div>
+
+    <div class="block-label">Bloque A · Hipertrofia (4x10-12)</div>
+    <table class="exercise-table">
+      <thead>
+        <tr>
+          <th>Ejercicio</th>
+          <th>Series x Reps</th>
+          <th>Descanso</th>
+          <th>Notas técnicas</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Bench Press con barra</strong><br><span class="exercise-note">Empuje horizontal</span></td>
+          <td>4 x 10-12</td>
+          <td>75s</td>
+          <td>Omóplatos retraídos, pies en el suelo. Bajar con control en 3s.</td>
+        </tr>
+        <tr>
+          <td><strong>Goblet Squat con KB pesado</strong><br><span class="exercise-note">Rodilla dominante</span></td>
+          <td>4 x 10-12</td>
+          <td>75s</td>
+          <td>Profundidad completa si la espalda lo permite. Torso erguido.</td>
+        </tr>
+        <tr>
+          <td><strong>DB Incline Press</strong><br><span class="exercise-note">Empuje horizontal inclinado</span></td>
+          <td>3 x 12</td>
+          <td>60s</td>
+          <td>Ángulo 30-45°. Codos a 45° del tronco, no abiertos.</td>
+        </tr>
+        <tr>
+          <td><strong>Bulgarian Split Squat con mancuernas</strong><br><span class="exercise-note">Rodilla unilateral</span></td>
+          <td>3 x 10 c/lado</td>
+          <td>60s</td>
+          <td>Pie trasero elevado. Rodilla delantera no pasa la punta del pie. Core activo.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="block-label">Bloque B · Core integrado (3 rondas)</div>
+    <table class="exercise-table">
+      <thead>
+        <tr><th>Ejercicio</th><th>Series x Reps/Tiempo</th><th>Descanso</th><th>Notas técnicas</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Ab Wheel Rollout</strong><br><span class="exercise-note">Anti-extensión avanzado</span></td>
+          <td>3 x 8-10</td>
+          <td>45s</td>
+          <td>Desde rodillas. Cadera neutral, lumbar no se arquea. Regresa con core, no con tirón.</td>
+        </tr>
+        <tr>
+          <td><strong>Pallof Press parado</strong><br><span class="exercise-note">Anti-rotación</span></td>
+          <td>3 x 12 c/lado</td>
+          <td>30s</td>
+          <td>Cable a altura de ombligo. Presionar al frente lento, resistir la rotación.</td>
+        </tr>
+        <tr>
+          <td><strong>Plank con alcance de brazo</strong><br><span class="exercise-note">Estabilidad dinámica</span></td>
+          <td>3 x 10 c/lado</td>
+          <td>30s</td>
+          <td>Mantener cadera estable al levantar cada brazo. No rotar el torso.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="block-label">Finisher · Circuito metabólico (3 rondas, 30s trabajo / 15s descanso)</div>
+    <table class="exercise-table">
+      <thead>
+        <tr><th>Ejercicio</th><th>Trabajo</th><th>Notas</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>KB Swing pesado</strong></td><td>30s</td><td>Explosivo desde cadera. Espalda plana en cada repetición.</td></tr>
+        <tr><td><strong>Push-Up explosivo</strong></td><td>30s</td><td>Manos despegan del suelo. Si no puedes, haz push-up normal rápido.</td></tr>
+        <tr><td><strong>Box Jump o Squat Jump</strong></td><td>30s</td><td>Aterrizaje suave con rodillas en ligera flexión. Calidad sobre cantidad.</td></tr>
+      </tbody>
+    </table>
+  </div><!-- /workout G -->
+
+  <!-- WORKOUT H -->
+  <div class="workout-card">
+    <div class="workout-header">
+      <div>
+        <div class="workout-title">Workout H</div>
+        <div class="workout-day">Miércoles · Pull + Cadera dominante</div>
+      </div>
+      <span class="track-badge stb">MES 3</span>
+    </div>
+
+    <div class="block-label">Bloque A · Hipertrofia (4x10-12)</div>
+    <table class="exercise-table">
+      <thead>
+        <tr><th>Ejercicio</th><th>Series x Reps</th><th>Descanso</th><th>Notas técnicas</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Barbell RDL</strong><br><span class="exercise-note">Cadera dominante bilateral</span></td>
+          <td>4 x 10-12</td>
+          <td>75s</td>
+          <td>Barra cerca del cuerpo todo el tiempo. Empujar cadera hacia atrás, no doblar rodillas en exceso.</td>
+        </tr>
+        <tr>
+          <td><strong>Pull-Up asistida o con banda</strong><br><span class="exercise-note">Jalón vertical</span></td>
+          <td>4 x 8-10</td>
+          <td>75s</td>
+          <td>Rango completo. Bajar despacio en 3s. Si tienes suficiente fuerza, sin banda.</td>
+        </tr>
+        <tr>
+          <td><strong>DB Romanian DL unilateral</strong><br><span class="exercise-note">Cadera dominante unilateral</span></td>
+          <td>3 x 10 c/lado</td>
+          <td>60s</td>
+          <td>Trabaja equilibrio y simetría. La cadera del lado de trabajo empuja atrás.</td>
+        </tr>
+        <tr>
+          <td><strong>Cable Row con pausa</strong><br><span class="exercise-note">Jalón horizontal</span></td>
+          <td>3 x 12</td>
+          <td>60s</td>
+          <td>Pausa 2s al final del recorrido. Omóplatos juntos al terminar cada rep.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="block-label">Bloque B · Core integrado (3 rondas)</div>
+    <table class="exercise-table">
+      <thead>
+        <tr><th>Ejercicio</th><th>Series x Reps/Tiempo</th><th>Descanso</th><th>Notas técnicas</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Half-Kneeling Cable Chop alto a bajo</strong><br><span class="exercise-note">Anti-rotación diagonal</span></td>
+          <td>3 x 12 c/lado</td>
+          <td>45s</td>
+          <td>Desde posición de caballero. Diagonal cruzando el cuerpo hacia la cadera opuesta.</td>
+        </tr>
+        <tr>
+          <td><strong>Side Plank con elevación de cadera</strong><br><span class="exercise-note">Core lateral dinámico</span></td>
+          <td>3 x 10 c/lado</td>
+          <td>30s</td>
+          <td>Bajar la cadera casi al suelo y volver arriba. Caderas alienadas todo el tiempo.</td>
+        </tr>
+        <tr>
+          <td><strong>Deadbug con banda de resistencia</strong><br><span class="exercise-note">Anti-extensión</span></td>
+          <td>3 x 10 c/lado</td>
+          <td>30s</td>
+          <td>Banda conectada a las manos. La lumbar no pierde contacto con el suelo nunca.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="block-label">Finisher · Circuito metabólico (3 rondas, 30s trabajo / 15s descanso)</div>
+    <table class="exercise-table">
+      <thead>
+        <tr><th>Ejercicio</th><th>Trabajo</th><th>Notas</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Battle Rope alternado</strong></td><td>30s</td><td>Desde posición atlética. Caderas bajas, ondas continuas.</td></tr>
+        <tr><td><strong>KB Sumo DL High Pull</strong></td><td>30s</td><td>Extensión explosiva de cadera, codos arriba al final. No uses la espalda.</td></tr>
+        <tr><td><strong>TRX / Ring Row explosivo</strong></td><td>30s</td><td>Jalón rápido. Si es muy fácil, inclínate más horizontal.</td></tr>
+      </tbody>
+    </table>
+  </div><!-- /workout H -->
+
+  <!-- WORKOUT I -->
+  <div class="workout-card">
+    <div class="workout-header">
+      <div>
+        <div class="workout-title">Workout I</div>
+        <div class="workout-day">Viernes · Full body + Potencia</div>
+      </div>
+      <span class="track-badge stb">MES 3</span>
+    </div>
+
+    <div class="block-label">Bloque A · Hipertrofia (4x10-12)</div>
+    <table class="exercise-table">
+      <thead>
+        <tr><th>Ejercicio</th><th>Series x Reps</th><th>Descanso</th><th>Notas técnicas</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Trap Bar Deadlift</strong><br><span class="exercise-note">Bisagra de cadera / full body</span></td>
+          <td>4 x 10</td>
+          <td>90s</td>
+          <td>El movimiento rey del programa. Extensión completa arriba, no hiperextiendas la lumbar.</td>
+        </tr>
+        <tr>
+          <td><strong>DB Overhead Press</strong><br><span class="exercise-note">Empuje vertical</span></td>
+          <td>4 x 10-12</td>
+          <td>75s</td>
+          <td>Core braced. No arquear la espalda baja al empujar arriba.</td>
+        </tr>
+        <tr>
+          <td><strong>Chest-Supported DB Row</strong><br><span class="exercise-note">Jalón horizontal sin carga lumbar</span></td>
+          <td>3 x 12</td>
+          <td>60s</td>
+          <td>Pecho apoyado en banco inclinado. Codos hacia atrás, no hacia los lados.</td>
+        </tr>
+        <tr>
+          <td><strong>Reverse Lunge con mancuernas</strong><br><span class="exercise-note">Rodilla unilateral</span></td>
+          <td>3 x 10 c/lado</td>
+          <td>60s</td>
+          <td>Paso atrás, rodilla trasera baja al suelo sin golpear. Torso erguido.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="block-label">Bloque B · Core integrado (3 rondas)</div>
+    <table class="exercise-table">
+      <thead>
+        <tr><th>Ejercicio</th><th>Series x Reps/Tiempo</th><th>Descanso</th><th>Notas técnicas</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Suitcase Carry</strong><br><span class="exercise-note">Carga lateral / core anti-lateral</span></td>
+          <td>3 x 30m c/lado</td>
+          <td>45s</td>
+          <td>KB o DB pesada en una mano. Torso completamente recto, no inclinarse.</td>
+        </tr>
+        <tr>
+          <td><strong>Ab Wheel Rollout completo</strong><br><span class="exercise-note">Anti-extensión máximo</span></td>
+          <td>3 x 6-8</td>
+          <td>45s</td>
+          <td>Si puedes desde los pies, hazlo. Si no, desde rodillas con recorrido completo.</td>
+        </tr>
+        <tr>
+          <td><strong>McGill Big 3 express</strong><br><span class="exercise-note">Mantenimiento lumbar</span></td>
+          <td>1 ronda</td>
+          <td></td>
+          <td>McGill Curl-Up x10, Bird Dog x6 c/lado, Side Plank x20s c/lado. Siempre al final.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="block-label">Finisher · Circuito de potencia (4 rondas, 20s trabajo / 10s descanso — Tabata)</div>
+    <table class="exercise-table">
+      <thead>
+        <tr><th>Ejercicio</th><th>Trabajo</th><th>Notas</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>KB Swing pesado</strong></td><td>20s</td><td>Máxima explosión de cadera. La espalda no redondea nunca.</td></tr>
+        <tr><td><strong>Push-Up</strong></td><td>20s</td><td>A tu ritmo, manteniendo posición de plank perfecta.</td></tr>
+        <tr><td><strong>Squat Jump o Jump Squat</strong></td><td>20s</td><td>Si las rodillas lo permiten. Alternativa: Step-Up rápido.</td></tr>
+        <tr><td><strong>Inverted Row o TRX Row</strong></td><td>20s</td><td>Explosivo hacia arriba, lento hacia abajo.</td></tr>
+      </tbody>
+    </table>
+  </div><!-- /workout I -->
+
+</div><!-- /container mes 3 -->
+
+<!-- ==================== TABLA DE PROGRESIÓN ==================== -->
+<div class="container">
+  <div class="section-header">
+    <div class="section-number">04</div>
+    <div>
+      <div class="section-title">Resumen de Progresión</div>
+      <div class="section-subtitle">Los tres meses de un vistazo</div>
+    </div>
+  </div>
+
+  <table class="exercise-table" style="margin-bottom: 2rem;">
+    <thead>
+      <tr>
+        <th>Variable</th>
+        <th>Mes 1 · Fundamento</th>
+        <th>Mes 2 · Fuerza</th>
+        <th>Mes 3 · Hipertrofia + Potencia</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Esquema principal</strong></td>
+        <td>3 x 10-12</td>
+        <td>5x5 + 4x8</td>
+        <td>4 x 10-12</td>
+      </tr>
+      <tr>
+        <td><strong>Enfoque</strong></td>
+        <td>Mecánica, activación core, patrones básicos</td>
+        <td>Fuerza máxima, cargas progresivas pesadas</td>
+        <td>Volumen e hipertrofia + circuitos metabólicos</td>
+      </tr>
+      <tr>
+        <td><strong>Cargas</strong></td>
+        <td>Moderadas (RPE 6-7)</td>
+        <td>Pesadas (RPE 8-9 en sets de 5)</td>
+        <td>Moderado-altas (RPE 7-8)</td>
+      </tr>
+      <tr>
+        <td><strong>Descanso entre series</strong></td>
+        <td>60-90s</td>
+        <td>2-3 min (5x5) / 90s (4x8)</td>
+        <td>60-90s</td>
+      </tr>
+      <tr>
+        <td><strong>Core</strong></td>
+        <td>Deadbug, Plank, McGill Curl-Up, Pallof Press</td>
+        <td>Suitcase Carry, Ab Wheel, Pallof Press, Bird Dog</td>
+        <td>Ab Wheel completo, Half-Kneeling Chop, Side Plank dinámico</td>
+      </tr>
+      <tr>
+        <td><strong>Finisher</strong></td>
+        <td>KB Swing 3x15 / Remo 5 min / Bike 10 min</td>
+        <td>KB Swing pesado 5x10 / Battle Rope / Rowing 8 min</td>
+        <td>Circuito HIIT 3 rondas / Tabata 4 rondas</td>
+      </tr>
+      <tr>
+        <td><strong>Progresión recomendada</strong></td>
+        <td>Añadir 2.5-5 lb si completas todas las reps con buena forma</td>
+        <td>Añadir 5-10 lb en los sets de 5; mantener técnica perfecta</td>
+        <td>Añadir 2.5-5 lb o aumentar densidad del circuito</td>
+      </tr>
+      <tr>
+        <td><strong>Duración sesión</strong></td>
+        <td>50-60 min</td>
+        <td>55-65 min</td>
+        <td>60-70 min</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout-box">
+    <strong>Regla de oro de la progresión:</strong> Antes de añadir carga, la técnica tiene que estar limpia en todas las repeticiones. Si en alguna sesión la espalda baja se arquea en el deadlift o los hombros se levantan en el press, mantén el mismo peso una semana más. La progresión no se mide solo en libras, también en calidad de movimiento.
+  </div>
+
+  <div class="section-header" style="margin-top: 3rem;">
+    <div class="section-number">05</div>
+    <div>
+      <div class="section-title">Protocolo de Calentamiento</div>
+      <div class="section-subtitle">10 minutos antes de cada sesión</div>
+    </div>
+  </div>
+
+  <p style="margin-bottom: 1.5rem; color: var(--text-muted);">El calentamiento no es opcional. Con dolor de espalda preexistente, entrar al trabajo pesado con tejidos fríos aumenta el riesgo de lesión. Este protocolo prepara la cadena posterior, activa el core y moviliza columna y caderas antes de cualquier carga.</p>
+
+  <table class="exercise-table">
+    <thead>
+      <tr>
+        <th>Ejercicio</th>
+        <th>Series x Reps/Tiempo</th>
+        <th>Propósito</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>World's Greatest Stretch</strong></td>
+        <td>5 reps c/lado</td>
+        <td>Movilidad de cadera, columna torácica y flexores</td>
+      </tr>
+      <tr>
+        <td><strong>T-Spine Rotation en cuadrupedia</strong></td>
+        <td>8 reps c/lado</td>
+        <td>Rotación torácica, reduce compensación lumbar</td>
+      </tr>
+      <tr>
+        <td><strong>Glute Bridge bilateral</strong></td>
+        <td>2 x 15</td>
+        <td>Activación de glúteos antes de trabajo de cadera</td>
+      </tr>
+      <tr>
+        <td><strong>Cat-Cow lento</strong></td>
+        <td>10 ciclos</td>
+        <td>Movilidad segmentaria lumbar</td>
+      </tr>
+      <tr>
+        <td><strong>Dead Bug sin carga (calentamiento)</strong></td>
+        <td>2 x 8 c/lado</td>
+        <td>Activación de core antes del trabajo principal</td>
+      </tr>
+      <tr>
+        <td><strong>Remo suave o Bike 3-4 min</strong></td>
+        <td>3-4 min</td>
+        <td>Elevación de temperatura corporal y frecuencia cardíaca</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="section-header" style="margin-top: 3rem;">
+    <div class="section-number">06</div>
+    <div>
+      <div class="section-title">Señales de Alerta</div>
+      <div class="section-subtitle">Cuándo parar y cuándo ajustar</div>
+    </div>
+  </div>
+
+  <p style="margin-bottom: 1.5rem; color: var(--text-muted);">El dolor de espalda tiene matices. No todo incomodidad es señal de parar, pero hay señales específicas que sí requieren detener el ejercicio y consultar.</p>
+
+  <table class="exercise-table">
+    <thead>
+      <tr>
+        <th>Señal</th>
+        <th>Acción</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Dolor agudo o punzante en la lumbar durante el ejercicio</strong></td>
+        <td>Detener inmediatamente. No continuar esa sesión. Si persiste 24h, consultar.</td>
+      </tr>
+      <tr>
+        <td><strong>Dolor que irradia hacia la pierna (ciática)</strong></td>
+        <td>Suspender carga axial (sentadillas, peso muerto). Continuar solo con ejercicios de core suaves hasta evaluación médica.</td>
+      </tr>
+      <tr>
+        <td><strong>Molestia muscular general post-sesión</strong></td>
+        <td>Normal. Descansa, hidrata, moviliza suavemente al día siguiente.</td>
+      </tr>
+      <tr>
+        <td><strong>Tensión lumbar sin dolor después del deadlift</strong></td>
+        <td>Revisar técnica de bisagra. Probable compensación. Bajar carga 10-15% y trabajar con espejo o coach.</td>
+      </tr>
+      <tr>
+        <td><strong>Fatiga excesiva o falta de progresión por 2 semanas seguidas</strong></td>
+        <td>Semana de descarga: reducir volumen 40%, mantener intensidad. Luego retomar.</td>
+      </tr>
+    </tbody>
+  </table>
+
+</div><!-- /container secciones finales -->
+
+<!-- ==================== FOOTER ==================== -->
+<footer style="background: var(--dark); padding: 3rem 2rem; text-align: center; margin-top: 4rem; border-top: 3px solid var(--blue);">
+  <div style="max-width: 700px; margin: 0 auto;">
+    <div style="font-size: 1.4rem; font-weight: 700; color: var(--blue); letter-spacing: 2px; margin-bottom: 0.5rem;">FRANCISCO ESQUIVEL</div>
+    <div style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">Programa Personal · 12 Semanas · Alloy Personal Training Lakeline TX</div>
+    <div style="display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; color: var(--text-muted); font-size: 0.8rem;">
+      <span>Core &amp; Espalda</span>
+      <span style="color: var(--blue);">|</span>
+      <span>Masa Muscular</span>
+      <span style="color: var(--blue);">|</span>
+      <span>Fuerza &amp; Resistencia</span>
+    </div>
+    <div style="margin-top: 2rem; font-size: 0.75rem; color: #4a5568;">Documento interno · No distribuir · Actualizar según evaluaciones mensuales</div>
+  </div>
+</footer>
+
+</body>
+</html>

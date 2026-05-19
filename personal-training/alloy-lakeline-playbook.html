@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alloy Personal Training Lakeline TX — Playbook Oscar Esquivel</title>
+<style>
+  :root {
+    --gold: #FFCA10;
+    --dark: #1a1a1a;
+    --dark2: #2a2a2a;
+    --dark3: #333;
+    --light: #f8f8f8;
+    --text: #222;
+    --muted: #666;
+    --accent: #D4920E;
+    --green: #27ae60;
+    --red: #e74c3c;
+    --blue: #2980b9;
+    --border: #ddd;
+    --section-bg: #fff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text);
+    background: var(--light);
+  }
+
+  /* COVER */
+  .cover {
+    background: var(--dark);
+    color: white;
+    padding: 80px 60px 60px;
+    min-height: 200px;
+    position: relative;
+    overflow: hidden;
+  }
+  .cover::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 300px; height: 300px;
+    background: var(--gold);
+    opacity: 0.08;
+    border-radius: 50%;
+    transform: translate(100px, -100px);
+  }
+  .cover-badge {
+    display: inline-block;
+    background: var(--gold);
+    color: var(--dark);
+    font-weight: 800;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 2px;
+    margin-bottom: 20px;
+  }
+  .cover h1 { font-size: 36px; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.5px; }
+  .cover h2 { font-size: 18px; font-weight: 300; color: #aaa; margin-bottom: 30px; }
+  .cover-meta {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+    font-size: 13px;
+    color: #888;
+    border-top: 1px solid #333;
+    padding-top: 20px;
+    margin-top: 20px;
+  }
+  .cover-meta span strong { color: #ccc; }
+
+  /* LAYOUT */
+  .container { max-width: 960px; margin: 0 auto; padding: 0 30px; }
+
+  /* SECTION */
+  .section {
+    background: var(--section-bg);
+    margin: 30px 0;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    overflow: hidden;
+  }
+  .section-header {
+    background: var(--dark);
+    color: white;
+    padding: 18px 28px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-header .num {
+    background: var(--gold);
+    color: var(--dark);
+    font-weight: 900;
+    font-size: 12px;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .section-header h2 { font-size: 17px; font-weight: 700; }
+  .section-header p { font-size: 12px; color: #aaa; margin-top: 2px; }
+  .section-body { padding: 28px; }
+
+  /* SUBSECTIONS */
+  .subsection { margin-bottom: 32px; }
+  .subsection:last-child { margin-bottom: 0; }
+  .subsection h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid var(--gold);
+    display: inline-block;
+  }
+  .subsection h4 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--dark3);
+    margin: 16px 0 6px;
+  }
+  .subsection p { margin-bottom: 10px; color: #444; font-size: 13px; }
+
+  /* TABLES */
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 12px 0; }
+  th {
+    background: var(--dark);
+    color: var(--gold);
+    padding: 8px 12px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  td { padding: 8px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) td { background: #fafafa; }
+  tr:hover td { background: #f0f0f0; }
+
+  /* CALLOUTS */
+  .callout {
+    border-left: 4px solid var(--gold);
+    background: #fffdf0;
+    padding: 12px 16px;
+    margin: 14px 0;
+    border-radius: 0 4px 4px 0;
+    font-size: 13px;
+  }
+  .callout.red { border-color: var(--red); background: #fdf0f0; }
+  .callout.green { border-color: var(--green); background: #f0fdf4; }
+  .callout.blue { border-color: var(--blue); background: #f0f6fd; }
+  .callout strong { display: block; margin-bottom: 4px; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .callout.red strong { color: var(--red); }
+  .callout.green strong { color: var(--green); }
+  .callout.blue strong { color: var(--blue); }
+
+  /* BADGES */
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .badge-gold { background: var(--gold); color: var(--dark); }
+  .badge-green { background: #d4edda; color: #155724; }
+  .badge-red { background: #f8d7da; color: #721c24; }
+  .badge-blue { background: #d1ecf1; color: #0c5460; }
+  .badge-gray { background: #e2e3e5; color: #383d41; }
+
+  /* STEPS */
+  .steps { }
+  .step {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+    padding: 16px;
+    background: #f8f8f8;
+    border-radius: 8px;
+    border: 1px solid #eee;
+  }
+  .step-num {
+    background: var(--gold);
+    color: var(--dark);
+    font-weight: 900;
+    font-size: 16px;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .step-content h4 { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+  .step-content p { font-size: 13px; color: #444; margin: 0; }
+  .step-content ul { padding-left: 16px; margin-top: 6px; }
+  .step-content li { font-size: 13px; color: #444; margin-bottom: 3px; }
+
+  /* KPI GRID */
+  .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 16px 0; }
+  .kpi-box {
+    background: var(--dark);
+    color: white;
+    padding: 18px 16px;
+    border-radius: 8px;
+    text-align: center;
+  }
+  .kpi-box .num { font-size: 28px; font-weight: 900; color: var(--gold); line-height: 1; }
+  .kpi-box .label { font-size: 11px; color: #aaa; margin-top: 6px; line-height: 1.3; }
+  .kpi-box .sublabel { font-size: 10px; color: #666; margin-top: 4px; }
+
+  /* HYBRID DIAGRAM */
+  .hybrid-diagram {
+    display: flex;
+    gap: 0;
+    align-items: stretch;
+    margin: 20px 0;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .hybrid-col {
+    flex: 1;
+    padding: 20px;
+  }
+  .hybrid-col.inperson {
+    background: var(--dark);
+    color: white;
+  }
+  .hybrid-col.virtual {
+    background: #f0f6fd;
+    border-left: 4px solid var(--blue);
+  }
+  .hybrid-col.connector {
+    flex: 0 0 60px;
+    background: var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 900;
+    color: var(--dark);
+  }
+  .hybrid-col h4 { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
+  .hybrid-col.inperson h4 { color: var(--gold); }
+  .hybrid-col.virtual h4 { color: var(--blue); }
+  .hybrid-col ul { list-style: none; padding: 0; }
+  .hybrid-col li { font-size: 12px; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .hybrid-col.virtual li { border-bottom-color: #dde; color: #333; }
+  .hybrid-col li::before { content: '▸'; margin-right: 6px; }
+  .hybrid-col.inperson li::before { color: var(--gold); }
+  .hybrid-col.virtual li::before { color: var(--blue); }
+
+  /* AUTO-MESSAGE CARD */
+  .automsg-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 16px 0; }
+  .automsg-card {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .automsg-header {
+    background: var(--dark2);
+    color: white;
+    padding: 8px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .automsg-header .trigger { font-size: 11px; color: var(--gold); font-weight: 700; text-transform: uppercase; }
+  .automsg-header .tag { font-size: 10px; color: #888; }
+  .automsg-body { padding: 12px 14px; font-size: 13px; background: #fafafa; }
+  .automsg-body .msg { font-style: italic; color: #333; margin-bottom: 6px; }
+  .automsg-body .note { font-size: 11px; color: var(--muted); }
+
+  /* REVENUE TABLE */
+  .rev-highlight { background: #fffdf0; font-weight: 700; }
+  .rev-total { background: var(--dark); color: var(--gold); font-weight: 900; }
+
+  /* TIMELINE */
+  .timeline { position: relative; padding-left: 24px; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 8px; top: 0; bottom: 0;
+    width: 2px;
+    background: var(--border);
+  }
+  .timeline-item {
+    position: relative;
+    margin-bottom: 24px;
+  }
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -20px; top: 4px;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--gold);
+    border: 2px solid white;
+    box-shadow: 0 0 0 2px var(--gold);
+  }
+  .timeline-item h4 { font-size: 13px; font-weight: 700; color: var(--dark); margin-bottom: 4px; }
+  .timeline-item p { font-size: 12px; color: var(--muted); }
+  .timeline-item .week { font-size: 10px; color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+
+  /* PAGE BREAK */
+  .page-break { page-break-before: always; break-before: always; }
+
+  /* PRINT */
+  @media print {
+    body { background: white; font-size: 12px; }
+    .section { box-shadow: none; border: 1px solid #ddd; }
+    .page-break { page-break-before: always; }
+    .no-print { display: none; }
+    a { color: inherit; text-decoration: none; }
+    .cover, .section-header, .kpi-box, .hybrid-col.inperson, .automsg-header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="cover">
+  <div class="container">
+    <div class="cover-badge">Playbook Operacional · Oscar Esquivel</div>
+    <h1>Alloy Personal Training Lakeline TX</h1>
+    <h2>Trainerize como extensión del negocio físico: setup, automatización y sesiones híbridas</h2>
+    <div class="cover-meta">
+      <span><strong>Operador:</strong> Oscar Esquivel</span>
+      <span><strong>Digital Manager:</strong> Francisco Esquivel</span>
+      <span><strong>Plataforma:</strong> ABC Trainerize</span>
+      <span><strong>Fecha:</strong> Mayo 2026</span>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ═══════════════════════════════════════════════
+     SECCIÓN 1: TRAINERIZE COMO NEGOCIO PARALELO
+════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-header">
+    <div class="num">1</div>
+    <div>
+      <h2>Trainerize como extensión del negocio físico</h2>
+      <p>El gym funciona cuando Oscar está ahí. Trainerize funciona aunque no esté.</p>
+    </div>
+  </div>
+  <div class="section-body">
+
+    <div class="subsection">
+      <h3>1.1 El problema que resuelve</h3>
+      <p>Un cliente entrena contigo 3 veces por semana. Los otros 4 días no sabe qué hacer, no registra ningún dato, y si su rutina se vuelve repetitiva eventualmente cancela. Trainerize cierra ese hueco. No como una plataforma de tecnología sino como la extensión de lo que ya haces en el gym: el mismo programa, el mismo seguimiento, el mismo lenguaje, pero disponible los 7 días.</p>
+      <div class="callout"><strong>Cómo lo ven los clientes de Alloy que sí usan la app</strong>
+      Los clientes que tienen su programa activo en Trainerize hacen ejercicio los días en que no están contigo, registran su progreso solos, y llegan a sus sesiones presenciales con más motivación porque ven resultados en tiempo real. La retención sube de manera natural.</div>
+    </div>
+
+    <div class="subsection">
+      <h3>1.2 Las tres capas de negocio que habilita</h3>
+      <p>Trainerize no reemplaza el gym. Le agrega capas de ingreso que hoy no existen en Lakeline.</p>
+      <table>
+        <tr><th>Capa</th><th>Qué es</th><th>Quién aplica</th><th>Precio estimado</th></tr>
+        <tr>
+          <td><strong>Presencial</strong></td>
+          <td>Sesión en el gym. Trainerize registra el programa, el progreso y el seguimiento.</td>
+          <td>Todos los miembros actuales</td>
+          <td>$399–$479/mes (ya existe)</td>
+        </tr>
+        <tr>
+          <td><strong>Híbrido</strong></td>
+          <td>El cliente se conecta virtualmente a sesiones presenciales cuando no puede ir físicamente. Ve a Oscar en video, sigue su Trainerize.</td>
+          <td>Miembros con horario irregular o fuera de Austin</td>
+          <td>$250–$320/mes</td>
+        </tr>
+        <tr>
+          <td><strong>Virtual async</strong></td>
+          <td>El cliente entrena solo con su programa en Trainerize. Oscar revisa progreso 1 vez por semana.</td>
+          <td>Ex-miembros, referidos remotos, viajeros frecuentes</td>
+          <td>$120–$180/mes</td>
+        </tr>
+      </table>
+      <div class="callout green"><strong>Lo que esto significa en números</strong>
+      Si Oscar tiene 50 miembros presenciales y logra que 10 de ellos se mantengan activos durante viajes o lesiones vía la capa híbrida o async, son $1,500–$2,000 de ingreso mensual que hoy se pierden como cancelaciones o pausas.</div>
+    </div>
+
+    <div class="subsection">
+      <h3>1.3 Cuánto tiempo requiere mantener esto funcionando</h3>
+      <p>Esta es la pregunta real. La respuesta honesta: después del setup inicial, el tiempo diario es mínimo porque todo está automatizado. El costo está al principio.</p>
+      <table>
+        <tr><th>Actividad</th><th>Frecuencia</th><th>Tiempo estimado</th><th>¿Se puede automatizar?</th></tr>
+        <tr><td>Configurar auto-mensajes</td><td>Una vez</td><td>2 horas</td><td><span class="badge badge-green">No repite</span></td></tr>
+        <tr><td>Asignar programa a cliente nuevo</td><td>Por cada nuevo miembro</td><td>3–5 minutos</td><td><span class="badge badge-blue">Proceso simple</span></td></tr>
+        <tr><td>Revisar progreso de clientes</td><td>Semanal</td><td>15–20 minutos</td><td><span class="badge badge-green">Trainerize lo consolida</span></td></tr>
+        <tr><td>Responder mensajes en la app</td><td>Diario</td><td>5–10 minutos</td><td><span class="badge badge-gray">Requiere Oscar</span></td></tr>
+        <tr><td>Avanzar cliente al siguiente mes</td><td>Mensual, por cliente</td><td>2 minutos</td><td><span class="badge badge-blue">Proceso simple</span></td></tr>
+        <tr><td>Crear programa para cliente nuevo/especial</td><td>Ocasional</td><td>20–60 min</td><td><span class="badge badge-gray">Requiere criterio</span></td></tr>
+      </table>
+      <div class="callout"><strong>Resumen real del tiempo</strong>
+      Una vez que el setup esté completo, Trainerize requiere entre 20 y 35 minutos por semana de atención activa de Oscar. El resto lo hace el sistema.</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SECCIÓN 2: AUTOMATIZACIÓN COMPLETA
+════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-header">
+    <div class="num">2</div>
+    <div>
+      <h2>Setup de automatización: configúralo una vez</h2>
+      <p>Lo que Oscar escribe hoy, Trainerize lo envía para siempre en el momento exacto</p>
+    </div>
+  </div>
+  <div class="section-body">
+
+    <div class="subsection">
+      <h3>2.1 Los 5 auto-mensajes del protocolo Alloy</h3>
+      <p>Alloy tiene un protocolo de follow-up definido: Día 1, después del primer workout, Semana 2, Semana 4, y mensualmente. Todos estos se configuran en Trainerize como mensajes automáticos y se disparan solos. Oscar los escribe una vez con su propia voz.</p>
+      <div class="automsg-grid">
+        <div class="automsg-card">
+          <div class="automsg-header">
+            <span class="trigger">Día 1 · Bienvenida</span>
+            <span class="tag">Se envía al asignar el programa</span>
+          </div>
+          <div class="automsg-body">
+            <div class="msg">"Bienvenido al equipo. Mañana te veo en el gym pero si tienes cualquier pregunta antes, escríbeme aquí. Esto es tuyo desde hoy."</div>
+            <div class="note">Personalizar con el nombre del cliente. Tono: cercano, no corporativo.</div>
+          </div>
+        </div>
+        <div class="automsg-card">
+          <div class="automsg-header">
+            <span class="trigger">Día 3 · Primer check-in</span>
+            <span class="tag">Después del primer workout</span>
+          </div>
+          <div class="automsg-body">
+            <div class="msg">"¿Cómo te fue? ¿Algún ejercicio que se sintió raro o que quieras que repasemos?"</div>
+            <div class="note">Este mensaje abre conversación. Los clientes que responden tienen retención significativamente mayor.</div>
+          </div>
+        </div>
+        <div class="automsg-card">
+          <div class="automsg-header">
+            <span class="trigger">Semana 2 · Momentum</span>
+            <span class="tag">14 días después del inicio</span>
+          </div>
+          <div class="automsg-body">
+            <div class="msg">"Ya llevas dos semanas. La primera siempre es la más difícil y ya la pasaste. Sigue así."</div>
+            <div class="note">Reconocimiento en el momento exacto donde más clientes abandonan.</div>
+          </div>
+        </div>
+        <div class="automsg-card">
+          <div class="automsg-header">
+            <span class="trigger">Semana 4 · Resultados</span>
+            <span class="tag">30 días después del inicio</span>
+          </div>
+          <div class="automsg-body">
+            <div class="msg">"Primer mes completo. Es momento de hacer tu InBody y ver los números. Esta semana agendamos tu Accountability Session."</div>
+            <div class="note">Conecta con el protocolo de medición mensual de Alloy. Abre la agenda automáticamente.</div>
+          </div>
+        </div>
+      </div>
+      <div class="callout blue"><strong>Cómo configurarlo en Trainerize</strong>
+      Settings → Automation → Auto Messages → New Message. Seleccionar el trigger (Days after program start), escribir el mensaje, guardar. Se aplica automáticamente a todos los clientes que asignes desde ese momento.</div>
+    </div>
+
+    <div class="subsection">
+      <h3>2.2 Programas Mes 1–12: la librería ya existe</h3>
+      <p>Alloy cargó los programas STB, STR y PWR de Mes 1 a Mes 12 directamente en la cuenta de Lakeline. Oscar no tiene que crearlos. Solo tiene que asignarlos correctamente después del FMS.</p>
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h4>Completar FMS en la SPS</h4>
+          <p>La evaluación FMS determina el track del cliente: STB (Stability), STR (Strength) o PWR (Power). Registrar el resultado en Trainerize → Measurements o en las Notes del cliente.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h4>Asignar el programa correcto</h4>
+          <p>Cliente → Programs → Assign Program → seleccionar "Alloy Month 1 [STB/STR/PWR]" según el track. Ajustar fecha de inicio. Listo. El sistema programa automáticamente los 3 workouts semanales.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h4>Avanzar al mes siguiente</h4>
+          <p>Al cumplir 4 semanas, Trainerize puede notificarlo. Oscar revisa el progreso, confirma que el cliente está listo, y asigna "Alloy Month 2 [track]". Tarda 2 minutos.</p>
+        </div>
+      </div>
+      <div class="callout"><strong>Regla de los tracks</strong>
+      STB es para clientes decondicionados, con lesiones o adultos mayores que necesitan fundamentos primero. STR es nivel intermedio. PWR es para clientes atléticos. El FMS lo define, no la impresión visual del cliente.</div>
+    </div>
+
+    <div class="subsection">
+      <h3>2.3 Scheduling y grupos: llenar la agenda sola</h3>
+      <p>Trainerize tiene un módulo de scheduling que permite a los clientes reservar sus propias sesiones sin que Oscar tenga que coordinar manualmente. El setup requiere definir los slots una sola vez.</p>
+      <table>
+        <tr><th>Configuración</th><th>Recomendación para Lakeline</th></tr>
+        <tr><td>Capacidad máxima por sesión</td><td>6 clientes presenciales (cap de Alloy)</td></tr>
+        <tr><td>Slots disponibles</td><td>Definir horarios fijos según la rutina actual de Oscar</td></tr>
+        <tr><td>Tiempo de cancelación mínimo</td><td>12–24 horas (el estándar de Alloy)</td></tr>
+        <tr><td>Lista de espera</td><td>Activar. Cuando alguien cancela, el siguiente en lista recibe notificación automática.</td></tr>
+        <tr><td>Confirmación automática</td><td>Activar. El cliente recibe confirmación + recordatorio 24 horas antes.</td></tr>
+      </table>
+    </div>
+
+    <div class="subsection">
+      <h3>2.4 Adherencia sin llamar a nadie</h3>
+      <p>Cuando un cliente no completa un workout, Trainerize puede notificar a Oscar automáticamente. No hay que revisar cada perfil uno por uno.</p>
+      <table>
+        <tr><th>Señal</th><th>Lo que hace Trainerize</th><th>Lo que puede hacer Oscar</th></tr>
+        <tr><td>Cliente no completa workout en 48h</td><td>Notificación push a Oscar</td><td>Mensaje rápido: "¿Todo bien?" — 10 segundos</td></tr>
+        <tr><td>Cliente completa todos los workouts de la semana</td><td>Visible en el feed de actividad</td><td>Reacción o comentario de reconocimiento</td></tr>
+        <tr><td>Cliente lleva 7 días sin actividad</td><td>Reporte de inactividad</td><td>Llamada o mensaje — antes de que piense en cancelar</td></tr>
+        <tr><td>Progreso de peso o medidas actualizado</td><td>Notificación y gráfica actualizada</td><td>Comentario en el progreso del cliente</td></tr>
+      </table>
+      <div class="callout green"><strong>Por qué esto reduce cancelaciones</strong>
+      La mayoría de las cancelaciones en Alloy no son por insatisfacción con el gym. Son por pérdida de momentum en las primeras 6–8 semanas. Interceptar una semana de inactividad con un mensaje personalizado a tiempo tiene un impacto real en la retención.</div>
+    </div>
+
+    <div class="subsection">
+      <h3>2.5 Leaderboard y comunidad: engagement que se administra solo</h3>
+      <p>Trainerize tiene un leaderboard semanal de workouts completados visible para todos los clientes del gym. Sin que Oscar haga nada, los clientes compiten entre sí, se motivan y se notifican mutuamente. Es comunidad de Alloy funcionando en digital.</p>
+      <div class="callout"><strong>Activarlo tarda 30 segundos</strong>
+      Settings → Community → Weekly Leaderboard → Activar. Los clientes ven quién completó más workouts esa semana. Opcional: Oscar puede publicar una nota semanal de reconocimiento al top 3.</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SECCIÓN 3: MODELO HÍBRIDO (NUEVA)
+════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-header">
+    <div class="num">3</div>
+    <div>
+      <h2>Sesiones híbridas: virtuales en sesiones presenciales</h2>
+      <p>Cómo convertir cupos vacíos en ingreso real, y cómo Trainerize lo hace posible</p>
+    </div>
+  </div>
+  <div class="section-body">
+
+    <div class="subsection">
+      <h3>3.1 El problema que resuelve el modelo híbrido</h3>
+      <p>Una sesión de Alloy tiene cupo para 6 personas. Si en un slot de las 7am llegan 4, los 2 cupos vacíos generan $0 ese día. No es culpa de nadie, simplemente pasa. El modelo híbrido convierte esos 2 cupos vacíos en ingresos que de otra forma no existen.</p>
+      <div class="kpi-grid">
+        <div class="kpi-box">
+          <div class="num">6</div>
+          <div class="label">Cupo máximo por sesión presencial</div>
+        </div>
+        <div class="kpi-box">
+          <div class="num">4</div>
+          <div class="label">Promedio real cuando hay cupos vacíos</div>
+        </div>
+        <div class="kpi-box">
+          <div class="num">2–3</div>
+          <div class="label">Virtuales que pueden llenarlo</div>
+        </div>
+        <div class="kpi-box">
+          <div class="num">$0</div>
+          <div class="label">Costo adicional para Oscar por sesión</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="subsection">
+      <h3>3.2 Cómo funciona la sesión híbrida</h3>
+      <p>El cliente virtual se conecta a la misma sesión que los clientes presenciales. Tiene su programa del día en Trainerize en una pantalla, y en otra pantalla (o mismo dispositivo) tiene la videollamada activa con Oscar y el grupo. Oscar puede verlos, corregirlos y motivarlos durante los descansos entre series, igual que hace con los presenciales.</p>
+
+      <div class="hybrid-diagram">
+        <div class="hybrid-col inperson">
+          <h4>En el gym (4 personas)</h4>
+          <ul>
+            <li>Sesión presencial normal</li>
+            <li>Oscar los observa en tiempo real</li>
+            <li>Acceso al equipo completo del gym</li>
+            <li>Corrección de forma inmediata</li>
+            <li>Experiencia grupal en el espacio</li>
+          </ul>
+        </div>
+        <div class="hybrid-col connector">+</div>
+        <div class="hybrid-col virtual">
+          <h4>Virtual (2–3 personas)</h4>
+          <ul>
+            <li>Siguen su programa en Trainerize</li>
+            <li>Conectados por video al grupo</li>
+            <li>Oscar los ve en pantalla del gym</li>
+            <li>Adaptan ejercicios a su equipo</li>
+            <li>Parte de la misma sesión grupal</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout blue"><strong>El setup técnico</strong>
+      Un monitor o tablet en el gym muestra el video de los clientes virtuales (Zoom, Google Meet o FaceTime). Los clientes virtuales ven a Oscar y al grupo en su pantalla. Trainerize corre por separado en el celular o tablet del cliente virtual. No requiere integración técnica especial, son dos cosas corriendo en paralelo.</div>
+    </div>
+
+    <div class="subsection">
+      <h3>3.3 Por qué el límite es 2–3 virtuales</h3>
+      <p>Más de 3 virtuales simultáneos empieza a crear problemas logísticos reales. No es un número arbitrario.</p>
+      <table>
+        <tr><th>Factor</th><th>Con 2–3 virtuales</th><th>Con 4+ virtuales</th></tr>
+        <tr><td>Atención de Oscar</td><td>Manejable. Puede ver las pantallas durante descansos.</td><td>Imposible de monitorear correctamente junto a 4 presenciales.</td></tr>
+        <tr><td>Audio en la sesión</td><td>Controlable con 2–3 micrófonos abiertos.</td><td>Caos de audio. Las conversaciones se pisan.</td></tr>
+        <tr><td>Tiempo de feedback</td><td>Oscar puede dar 1–2 correcciones virtuales por bloque.</td><td>No hay tiempo suficiente para cubrir a todos.</td></tr>
+        <tr><td>Seguridad</td><td>Oscar puede observar la forma de todos.</td><td>Algunos clientes quedan sin supervisión efectiva.</td></tr>
+        <tr><td>Experiencia del grupo</td><td>Los virtuales se sienten parte de la sesión.</td><td>Se convierte en una transmisión, no una sesión grupal.</td></tr>
+      </table>
+      <div class="callout red"><strong>Regla operacional</strong>
+      Máximo 2 virtuales cuando el grupo presencial tiene 5–6 personas. Máximo 3 virtuales cuando hay 3–4 presenciales. La calidad de la sesión para todos, presenciales y virtuales, depende de mantener este límite.</div>
+    </div>
+
+    <div class="subsection">
+      <h3>3.4 Perfil del cliente apto para sesiones híbridas</h3>
+      <p>No todos los clientes funcionan bien en el formato virtual. Hay un perfil específico que hace que esto funcione.</p>
+      <table>
+        <tr><th>Criterio</th><th>Apto para híbrido</th><th>No apto para híbrido</th></tr>
+        <tr><td>Track Alloy</td><td>STR o PWR. Conocen los patrones, se auto-corrigen.</td><td>STB. Necesitan supervisión directa constante.</td></tr>
+        <tr><td>Tiempo en el programa</td><td>Mínimo 1 mes entrenando con Oscar. Conocen la metodología.</td><td>Cliente nuevo. Primera sesión no puede ser virtual.</td></tr>
+        <tr><td>Autonomía</td><td>Puede seguir su programa de Trainerize solo y ejecuta con buena forma.</td><td>Necesita corrección en cada ejercicio.</td></tr>
+        <tr><td>Equipo disponible</td><td>Tiene pesas ajustables, bandas, o acceso a un gym local.</td><td>Solo tiene su bodyweight y la mayoría de ejercicios requieren equipo.</td></tr>
+        <tr><td>Conectividad</td><td>Conexión estable. Puede sostener una videollamada sin interrupciones.</td><td>Conexión inestable. La sesión se corta constantemente.</td></tr>
+      </table>
+    </div>
+
+    <div class="subsection">
+      <h3>3.5 Cómo configurarlo en Trainerize</h3>
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h4>Crear un grupo "Híbrido" en Trainerize</h4>
+          <p>Groups → Create New Group → Nombrarlo "Lakeline Hybrid". Este grupo agrupa a todos los clientes con membresía híbrida para comunicación y scheduling separado del presencial.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h4>Configurar slots híbridos en el calendario</h4>
+          <p>Schedule → New Session → Tipo: "Online" → Capacidad: 2–3 personas → Vincularlo al mismo horario del slot presencial correspondiente. El cliente ve en la app que hay un "spot virtual" disponible para esa sesión.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h4>Establecer el link de video fijo por horario</h4>
+          <p>Crear un Zoom Room (o Google Meet) permanente por cada slot de sesión. Por ejemplo: el slot de lunes 7am siempre usa el mismo link. Oscar lo pone en la descripción del slot en Trainerize. El cliente lo tiene disponible sin que Oscar tenga que enviarlo cada semana.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <h4>El cliente virtual el día de la sesión</h4>
+          <p>Abre Trainerize para ver su workout del día. Abre el link de video en otra pantalla o pantalla dividida. Se une a la sesión exactamente cuando comienza. Oscar los saluda junto con el grupo presencial y la sesión corre como cualquier otra.</p>
+        </div>
+      </div>
+      <div class="callout"><strong>Una opción adicional: Trainerize Live Sessions</strong>
+      Trainerize tiene una función de Live Sessions integrada que permite hacer video dentro de la misma app. Para grupos pequeños de 2–3 virtuales esto puede funcionar sin necesidad de Zoom. Vale la pena probar qué opción da mejor calidad de video para el setup de Lakeline.</div>
+    </div>
+
+    <div class="subsection">
+      <h3>3.6 El impacto en revenue</h3>
+      <p>Esto no es un proyecto tecnológico. Es un modelo de revenue sobre cupos que hoy generan $0.</p>
+      <table>
+        <tr><th>Escenario</th><th>Sesiones/semana con cupos vacíos</th><th>Virtuales promedio</th><th>Precio híbrido/mes</th><th>Revenue adicional/mes</th></tr>
+        <tr>
+          <td>Conservador</td>
+          <td>3 sesiones con 1 virtual c/u</td>
+          <td>3 virtuales activos</td>
+          <td>$250</td>
+          <td class="rev-highlight">$750/mes</td>
+        </tr>
+        <tr>
+          <td>Moderado</td>
+          <td>5 sesiones con 2 virtuales c/u</td>
+          <td>8–10 virtuales activos</td>
+          <td>$270</td>
+          <td class="rev-highlight">$2,160–$2,700/mes</td>
+        </tr>
+        <tr>
+          <td>Optimizado</td>
+          <td>Slots híbridos en agenda fija</td>
+          <td>12–15 virtuales activos</td>
+          <td>$280</td>
+          <td class="rev-highlight">$3,360–$4,200/mes</td>
+        </tr>
+        <tr class="rev-total">
+          <td colspan="4">Revenue total adicional al año (escenario moderado)</td>
+          <td>$25,920–$32,400</td>
+        </tr>
+      </table>
+      <div class="callout green"><strong>Costo operacional de estos ingresos</strong>
+      Cero contrataciones adicionales. Cero equipo nuevo. Cero espacio extra. Lo único que se necesita es un monitor o tablet en el gym para ver a los virtuales durante la sesión. El costo de ese hardware se recupera en el primer mes.</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SECCIÓN 4: ESTADO ACTUAL TRAINERIZE
+════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-header">
+    <div class="num">4</div>
+    <div>
+      <h2>Estado actual de la cuenta Trainerize Lakeline</h2>
+      <p>Inventario auditado · Mayo 2026 · Brechas a resolver antes del launch híbrido</p>
+    </div>
+  </div>
+  <div class="section-body">
+
+    <div class="subsection">
+      <h3>4.1 Lo que ya está bien</h3>
+      <table>
+        <tr><th>Activo</th><th>Estado</th><th>Nota</th></tr>
+        <tr><td>Biblioteca de workouts (120 total)</td><td><span class="badge badge-green">OK</span></td><td>STB, STR y PWR Mes 1–12 presentes</td></tr>
+        <tr><td>Alloy Month 1 STB (A, B, C)</td><td><span class="badge badge-green">OK</span></td><td>Base del programa de Patricia Arriaza</td></tr>
+        <tr><td>Alloy Month 1 STR y PWR</td><td><span class="badge badge-green">OK</span></td><td>Workouts completos con ejercicios</td></tr>
+        <tr><td>Travel BW / Conditioning / Recovery</td><td><span class="badge badge-blue">Revisar</span></td><td>Presentes pero sin revisar contenido</td></tr>
+      </table>
+    </div>
+
+    <div class="subsection">
+      <h3>4.2 Brechas críticas a resolver</h3>
+      <table>
+        <tr><th>Brecha</th><th>Impacto</th><th>Acción requerida</th><th>Prioridad</th></tr>
+        <tr>
+          <td>FMS no registrado en ningún cliente</td>
+          <td>Sin FMS no se puede asignar el track correcto</td>
+          <td>Registrar en Measurements o Notes del cliente</td>
+          <td><span class="badge badge-red">Crítica</span></td>
+        </tr>
+        <tr>
+          <td>Ningún cliente tiene track asignado</td>
+          <td>Programas asignados al azar, no por nivel</td>
+          <td>Después del FMS, asignar STB/STR/PWR a cada cliente activo</td>
+          <td><span class="badge badge-red">Crítica</span></td>
+        </tr>
+        <tr>
+          <td>Ningún cliente tiene programa Month conectado</td>
+          <td>Trainerize no está funcionando para nadie</td>
+          <td>Conectar programa correcto por track después de asignación</td>
+          <td><span class="badge badge-red">Crítica</span></td>
+        </tr>
+        <tr>
+          <td>Auto-mensajes en texto genérico</td>
+          <td>No reflejan la voz de Oscar ni el protocolo Alloy</td>
+          <td>Reescribir los 5 mensajes clave (ver Sección 2.1)</td>
+          <td><span class="badge badge-gold">Alta</span></td>
+        </tr>
+        <tr>
+          <td>Scheduling no configurado</td>
+          <td>Oscar coordina horarios manualmente</td>
+          <td>Activar scheduling con cap. máx. 6, lista de espera y recordatorios</td>
+          <td><span class="badge badge-gold">Alta</span></td>
+        </tr>
+        <tr>
+          <td>Jim Howard: programa venció Sep 2025</td>
+          <td>Cliente activo sin programa vigente</td>
+          <td>Asignar nuevo programa urgente</td>
+          <td><span class="badge badge-red">Urgente</span></td>
+        </tr>
+        <tr>
+          <td>40+ clientes "Offline" en la cuenta</td>
+          <td>No usan la app. Revenue digital = $0 para ellos.</td>
+          <td>Checklist de confirmación: ¿siguen activos? → protocolo de reactivación</td>
+          <td><span class="badge badge-gold">Alta</span></td>
+        </tr>
+        <tr>
+          <td>30 Day Beginner Program: solo 1 ejercicio c/u</td>
+          <td>Workouts incompletos si algún cliente lo usa</td>
+          <td>Completar o eliminar de la librería</td>
+          <td><span class="badge badge-gray">Baja</span></td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="subsection">
+      <h3>4.3 Los 40+ clientes offline</h3>
+      <p>Hay más de 40 clientes registrados en Trainerize que no usan la app activamente. Antes de invertir tiempo configurando programas para ellos, hay que saber cuáles siguen siendo miembros activos. Esto no lo puede hacer Francisco remotamente, requiere que Oscar lo confirme.</p>
+      <div class="callout"><strong>El checklist que Oscar necesita hacer una sola vez</strong>
+      Revisar la lista de clientes offline en Trainerize. Para cada uno: ¿sigue viniendo al gym? Si sí, enviarle el link de descarga de la app con el auto-mensaje de bienvenida. Si no, archivar el perfil. Ese proceso desbloquea todo lo demás.</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════
+     SECCIÓN 5: PLAN DE ACCIÓN
+════════════════════════════════════════════════ -->
+<div class="section">
+  <div class="section-header">
+    <div class="num">5</div>
+    <div>
+      <h2>Plan de acción para Oscar: en qué orden hacer las cosas</h2>
+      <p>De donde está Lakeline hoy hasta tener el modelo híbrido funcionando</p>
+    </div>
+  </div>
+  <div class="section-body">
+
+    <div class="subsection">
+      <h3>5.1 Las 4 fases en orden</h3>
+      <div class="timeline">
+
+        <div class="timeline-item">
+          <div class="week">Semana 1–2 · Fundamentos</div>
+          <h4>Fase 1: Activar Trainerize para los clientes que sí están</h4>
+          <p>Revisar la lista de clientes offline y confirmar quiénes siguen activos. Registrar FMS y asignar track a cada cliente activo. Conectar el programa Month correcto para cada uno. Reescribir los 5 auto-mensajes. Esto es la base de todo lo demás.</p>
+        </div>
+
+        <div class="timeline-item">
+          <div class="week">Semana 2–3 · Automatización</div>
+          <h4>Fase 2: Configurar scheduling y adherencia automática</h4>
+          <p>Activar el scheduling con los horarios actuales del gym. Configurar capacidad máxima por slot, lista de espera y recordatorios automáticos. Activar notificaciones de inactividad. Activar el leaderboard semanal. Después de esto, la agenda se administra sola.</p>
+        </div>
+
+        <div class="timeline-item">
+          <div class="week">Semana 3–4 · Híbrido piloto</div>
+          <h4>Fase 3: Lanzar sesiones híbridas con 2–3 clientes piloto</h4>
+          <p>Identificar 2–3 clientes STR o PWR existentes que entrenen desde fuera de Austin o que no puedan asistir algunos días. Ofrecerles precio de membresía híbrida. Crear el grupo "Híbrido" en Trainerize. Configurar el Zoom link fijo para sus horarios. Hacer las primeras 2–3 sesiones, ajustar el protocolo, luego escalar.</p>
+        </div>
+
+        <div class="timeline-item">
+          <div class="week">Mes 2 en adelante · Crecimiento</div>
+          <h4>Fase 4: Abrir slots híbridos al mercado externo</h4>
+          <p>Con el modelo probado, ofrecer membresías híbridas como producto oficial de Lakeline. Referidos fuera de Austin. Ex-miembros que se mudaron. Clientes de Oscar de otros contextos. El gym presencial sigue siendo el core, pero el digital tiene su propio canal de adquisición.</p>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="subsection">
+      <h3>5.2 El único paso que desbloquea todo</h3>
+      <p>De todas las cosas en este plan, hay una que Oscar tiene que hacer primero y que no puede hacer nadie más: revisar la lista de clientes y confirmar quiénes están activos. Son 20–30 minutos una sola vez. Sin eso, cualquier configuración en Trainerize puede estar hecha para personas que ya no entrenan ahí.</p>
+      <div class="callout red"><strong>El paso #1 de Oscar</strong>
+      Abrir Trainerize → lista de clientes → revisar offline → marcar quién sigue activo. Eso es todo. Con esa información, Francisco puede configurar el resto sin interrumpir a Oscar más de 5 minutos por semana.</div>
+    </div>
+
+    <div class="subsection">
+      <h3>5.3 Referencia de programas clínicos documentados</h3>
+      <p>Para clientes con condiciones médicas que requieren programación especial, los programas están documentados como referencia en archivos separados.</p>
+      <div class="callout blue"><strong>Documentos complementarios disponibles</strong>
+      <strong>patricia-arriaza-program.html</strong> cubre el caso de Patricia Arriaza con programa de 3 meses completo, perfil clínico, contraindicaciones específicas y guía de setup en Trainerize. Este formato puede usarse como plantilla para otros clientes con condiciones similares.</div>
+    </div>
+
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<div style="background:var(--dark);color:#666;text-align:center;padding:24px;font-size:11px;margin-top:40px">
+  Alloy Personal Training Lakeline TX · Uso interno · Francisco Esquivel · Mayo 2026<br>
+  Fuentes: Alloy guides.co (Marketing, Sales, Program Design) · ABC Trainerize
+</div>
+
+</body>
+</html>
