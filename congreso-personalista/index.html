@@ -37,6 +37,46 @@
     *, *::before, *::after { box-sizing: border-box; }
     html, body { background: var(--black); overflow: hidden; }
 
+    /* ═══════════════════════════════════════════════════════════════
+       CAPAS FIJAS DE FONDO — persisten entre slides
+       (grid hairline + grain procedural — el "mundo" de la presentación)
+    ═══════════════════════════════════════════════════════════════ */
+    body::before {
+      /* Grid hairline arquitectónico — fijo, no se reinicia entre slides */
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
+      background-size: 120px 120px;
+      opacity: 0.6;
+      mix-blend-mode: overlay;
+    }
+    body::after {
+      /* Grain procedural — capa de ruido sutil persistente */
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9998;
+      opacity: 0.35;
+      mix-blend-mode: overlay;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='400'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0.5 0'/></filter><rect width='400' height='400' filter='url(%23n)'/></svg>");
+      background-size: 320px 320px;
+    }
+    /* Vignette radial fija que enmarca toda la presentación */
+    .reveal::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9997;
+      background: radial-gradient(ellipse at center, transparent 0%, transparent 55%, rgba(0,0,0,0.25) 100%);
+    }
+
     .reveal {
       font-family: 'Montserrat', sans-serif;
       color: var(--black);
@@ -1464,9 +1504,24 @@
     fragmentInURL: false,
     /* Autoanimate — transiciones de continuidad estilo Apple */
     autoAnimate: true,
-    autoAnimateDuration: 1.4,
-    autoAnimateEasing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+    autoAnimateDuration: 1.8,
+    autoAnimateEasing: 'cubic-bezier(0.22, 1, 0.36, 1)',
     autoAnimateUnmatched: true,
+  });
+
+  /* Forzar fade entre fondos a 1.6s en lugar del default 0.4s */
+  document.addEventListener('DOMContentLoaded', () => {
+    const style = document.createElement('style');
+    style.textContent = `
+      .reveal .backgrounds .slide-background {
+        transition: opacity 1.6s cubic-bezier(0.22, 1, 0.36, 1) !important;
+      }
+      .reveal .slides > section.fade-in,
+      .reveal .slides > section.fade-out {
+        transition-duration: 1.6s !important;
+      }
+    `;
+    document.head.appendChild(style);
   });
 
   /* ─── Canvas network animado — optimizado para no joder framerate ─── */
