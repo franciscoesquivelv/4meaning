@@ -1509,16 +1509,19 @@
     autoAnimateUnmatched: true,
   });
 
-  /* Forzar fade entre fondos a 1.6s en lugar del default 0.4s */
+  /* Eliminar destellos blancos: forzar fondo negro absoluto en TODOS los containers
+     internos de Reveal y asegurar que las transiciones cubran sin dejar ver el body. */
   document.addEventListener('DOMContentLoaded', () => {
     const style = document.createElement('style');
     style.textContent = `
+      html, body, .reveal, .reveal .slides, .reveal .backgrounds { background: #0a0a0a !important; }
+      /* Cada slide siempre opaco sobre el negro base; nunca se ve el body durante crossfade */
+      .reveal .slides > section { background-color: inherit; }
+      .reveal .slides > section.bg-white { background: #f8f7f5; }
+      .reveal .slides > section.bg-black { background: #0a0a0a; }
+      /* Crossfade más rápido entre fondos para no atravesar el gris medio */
       .reveal .backgrounds .slide-background {
-        transition: opacity 1.6s cubic-bezier(0.22, 1, 0.36, 1) !important;
-      }
-      .reveal .slides > section.fade-in,
-      .reveal .slides > section.fade-out {
-        transition-duration: 1.6s !important;
+        transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1) !important;
       }
     `;
     document.head.appendChild(style);
