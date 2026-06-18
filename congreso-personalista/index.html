@@ -16,8 +16,8 @@
 
   <style>
     /* ═══════════════════════════════════════════════════════════════
-       4MEANING V4 — brutalist cine con movimiento real
-       Canvas animado · marquee · parallax · variedad compositiva
+       4MEANING — guion narrativo (10 bloques)
+       Montserrat · B/N · hairline · brutalist editorial
     ═══════════════════════════════════════════════════════════════ */
 
     :root {
@@ -35,47 +35,7 @@
     }
 
     *, *::before, *::after { box-sizing: border-box; }
-    html, body { background: var(--black); overflow: hidden; }
-
-    /* ═══════════════════════════════════════════════════════════════
-       CAPAS FIJAS DE FONDO — persisten entre slides
-       (grid hairline + grain procedural — el "mundo" de la presentación)
-    ═══════════════════════════════════════════════════════════════ */
-    body::before {
-      /* Grid hairline arquitectónico — fijo, no se reinicia entre slides */
-      content: '';
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 9999;
-      background-image:
-        linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
-      background-size: 120px 120px;
-      opacity: 0.6;
-      mix-blend-mode: overlay;
-    }
-    body::after {
-      /* Grain procedural — capa de ruido sutil persistente */
-      content: '';
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 9998;
-      opacity: 0.35;
-      mix-blend-mode: overlay;
-      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='400'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0.5 0'/></filter><rect width='400' height='400' filter='url(%23n)'/></svg>");
-      background-size: 320px 320px;
-    }
-    /* Vignette radial fija que enmarca toda la presentación */
-    .reveal::after {
-      content: '';
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 9997;
-      background: radial-gradient(ellipse at center, transparent 0%, transparent 55%, rgba(0,0,0,0.25) 100%);
-    }
+    html, body { background: #0a0a0a; overflow: hidden; }
 
     .reveal {
       font-family: 'Montserrat', sans-serif;
@@ -104,86 +64,42 @@
     .bg-white { background: var(--white); color: var(--black); }
     .bg-black { background: var(--black); color: var(--white); }
 
-    /* ─── Reveal.js native artifacts off ─── */
+    /* Chrome de presentación oculto */
     .reveal .progress, .reveal .slide-number { display: none !important; }
-    .reveal .controls { color: rgba(255,255,255,0.2) !important; }
+    .reveal .controls { color: rgba(255,255,255,0.15) !important; }
 
     /* ═══════════════════════════════════════════════════════════════
-       MOVIMIENTO REAL — animaciones de fondo
+       GRAIN procedural sutil
     ═══════════════════════════════════════════════════════════════ */
-
-    /* GRAIN procedural — más visible */
     .grain::before {
       content: '';
       position: absolute;
       inset: 0;
       pointer-events: none;
       z-index: 1;
-      opacity: 0.5;
+      opacity: 0.45;
       mix-blend-mode: overlay;
       background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='400'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.6 0'/></filter><rect width='400' height='400' filter='url(%23n)'/></svg>");
     }
     .bg-black .grain::before {
-      mix-blend-mode: screen;
       opacity: 0.4;
+      mix-blend-mode: screen;
       background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='400'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.42 0'/></filter><rect width='400' height='400' filter='url(%23n)'/></svg>");
     }
 
-    /* MARQUEE infinito horizontal — texto monumental atravesando */
-    @keyframes marquee {
-      from { transform: translate3d(0, 0, 0); }
-      to   { transform: translate3d(-50%, 0, 0); }
-    }
-    .marquee {
+    /* Grid hairline animado en slides oscuros */
+    .grid-anim {
       position: absolute;
-      left: 0; right: 0;
-      pointer-events: none;
-      overflow: hidden;
-      white-space: nowrap;
-      z-index: 0;
-    }
-    .marquee-inner {
-      display: inline-flex;
-      gap: 4rem;
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: -0.04em;
-      line-height: 0.85;
-      animation: marquee 90s linear infinite;
-      will-change: transform;
-      backface-visibility: hidden;
-    }
-    .marquee.size-mega .marquee-inner { font-size: 18rem; }
-    .marquee.size-huge .marquee-inner { font-size: 13rem; }
-    .marquee.size-big  .marquee-inner { font-size: 9rem; }
-    .marquee.color-ghost  .marquee-inner { color: rgba(255,255,255,0.04); }
-    .marquee.color-ghost-light .marquee-inner { color: rgba(0,0,0,0.045); }
-    .marquee.color-outline-d .marquee-inner { -webkit-text-stroke: 1px rgba(255,255,255,0.10); color: transparent; }
-    .marquee.color-outline-l .marquee-inner { -webkit-text-stroke: 1px rgba(0,0,0,0.10); color: transparent; }
-    .marquee.slow .marquee-inner { animation-duration: 140s; }
-    .marquee.reverse .marquee-inner { animation-direction: reverse; }
-
-    /* SWEEP — barrido de luz que cruza lentamente, GPU */
-    @keyframes sweep {
-      from { transform: translate3d(-100%, 0, 0) skewX(-12deg); }
-      to   { transform: translate3d(200%,  0, 0) skewX(-12deg); }
-    }
-    .sweep {
-      position: absolute;
-      top: -20%; bottom: -20%;
-      left: 0; width: 35%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
-      animation: sweep 22s ease-in-out infinite;
+      inset: 0;
       pointer-events: none;
       z-index: 1;
-      will-change: transform;
-      backface-visibility: hidden;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: 120px 120px;
     }
-    .sweep.delay-1 { animation-delay: 4s; }
-    .sweep.dark   { background: linear-gradient(90deg, transparent, rgba(0,0,0,0.04), transparent); }
 
-    /* PULSE — círculo radial latiendo lento, GPU */
+    /* Pulse radial */
     @keyframes pulse {
       0%, 100% { transform: scale3d(1, 1, 1); opacity: 0.35; }
       50%      { transform: scale3d(1.08, 1.08, 1); opacity: 0.6; }
@@ -196,59 +112,9 @@
       animation: pulse 9s ease-in-out infinite;
       pointer-events: none;
       z-index: 0;
-      will-change: transform, opacity;
-      backface-visibility: hidden;
     }
 
-    /* DRIFT — desplazamiento lento ambiental */
-    @keyframes drift {
-      0%, 100% { transform: translate(0, 0); }
-      50%      { transform: translate(2vw, -1vh); }
-    }
-    .drift { animation: drift 25s ease-in-out infinite; will-change: transform; }
-
-    /* PARALLAX SHIFT — capas a velocidades distintas (slide change) */
-    @keyframes parallax-rise {
-      from { transform: translateY(40px); opacity: 0; }
-      to   { transform: translateY(0); opacity: 1; }
-    }
-
-    /* SCAN LINES horizontales descendiendo */
-    @keyframes scanlines {
-      from { background-position: 0 0; }
-      to   { background-position: 0 24px; }
-    }
-    .scanlines {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      z-index: 1;
-      opacity: 0.5;
-      background-image: linear-gradient(transparent 50%, rgba(255,255,255,0.02) 50%);
-      background-size: 100% 4px;
-      animation: scanlines 1.2s linear infinite;
-    }
-
-    /* GRID arquitectónico estático (más eficiente que animar background-position) */
-    .grid-anim {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      z-index: 1;
-      background-image:
-        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
-      background-size: 120px 120px;
-    }
-
-    /* KEN BURNS suave */
-    @keyframes kenburns {
-      from { transform: scale(1.00); }
-      to   { transform: scale(1.08); }
-    }
-    .kenburns { animation: kenburns 30s ease-out forwards; will-change: transform; }
-
-    /* LETTERBOX cine */
+    /* Letterbox cine */
     .letterbox::before, .letterbox::after {
       content: '';
       position: absolute;
@@ -266,7 +132,7 @@
     .reveal section.present .letterbox::after { transform: scaleY(1); }
 
     /* ═══════════════════════════════════════════════════════════════
-       REVEAL ESCALONADO con GPU acceleration
+       REVEAL ESCALONADO
     ═══════════════════════════════════════════════════════════════ */
     .reveal .stagger {
       opacity: 0;
@@ -282,22 +148,9 @@
     .reveal section.present .stagger.d4 { transition-delay: 1.10s; }
     .reveal section.present .stagger.d5 { transition-delay: 1.50s; }
 
-    .reveal .stagger-x { transform: translate3d(60px, 0, 0); }
-    .reveal section.present .stagger-x { transform: translate3d(0,0,0); }
-
-    .reveal .stagger-s { transform: scale3d(0.92, 0.92, 1); }
-    .reveal section.present .stagger-s { transform: scale3d(1, 1, 1); }
-
-    .reveal .stagger-b { filter: blur(20px); }
-    .reveal section.present .stagger-b { filter: blur(0); }
-
-    /* ═══════════════════════════════════════════════════════════════
-       FRAGMENTS — Reveal native, custom estilizados
-       El ponente avanza con clicks · cada elemento entra suave
-    ═══════════════════════════════════════════════════════════════ */
+    /* Fragments para control con click */
     .reveal .fragment {
       transition: opacity 0.95s var(--ease), transform 0.95s var(--ease), filter 0.95s var(--ease);
-      will-change: opacity, transform, filter;
     }
     .reveal .fragment.fade-up      { opacity: 0; transform: translate3d(0, 36px, 0); }
     .reveal .fragment.fade-up.visible { opacity: 1; transform: translate3d(0, 0, 0); }
@@ -307,8 +160,6 @@
     .reveal .fragment.fade-blur.visible { opacity: 1; filter: blur(0); }
     .reveal .fragment.fade-scale   { opacity: 0; transform: scale3d(0.94, 0.94, 1); }
     .reveal .fragment.fade-scale.visible { opacity: 1; transform: scale3d(1, 1, 1); }
-    .reveal .fragment.fade-x       { opacity: 0; transform: translate3d(40px, 0, 0); }
-    .reveal .fragment.fade-x.visible { opacity: 1; transform: translate3d(0, 0, 0); }
     .reveal .fragment.dim-on       { opacity: 1; }
     .reveal .fragment.dim-on.visible { opacity: 0.22; }
 
@@ -316,7 +167,7 @@
        TIPOGRAFÍA — escalas grandes para conferencia
     ═══════════════════════════════════════════════════════════════ */
     .eyebrow {
-      font-size: 1.1rem;
+      font-size: 1rem;
       font-weight: 700;
       letter-spacing: 0.32em;
       text-transform: uppercase;
@@ -325,21 +176,11 @@
     }
     .bg-black .eyebrow { color: var(--muted-d); }
 
-    .micro {
-      font-size: 0.85rem;
-      font-weight: 600;
-      letter-spacing: 0.28em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-    .bg-black .micro { color: var(--hint-d); }
-
     .body-light {
-      font-size: 1.45rem;
+      font-size: 1.4rem;
       font-weight: 300;
       line-height: 1.7;
       color: var(--dark);
-      letter-spacing: 0.002em;
     }
     .bg-black .body-light { color: var(--muted-d); }
 
@@ -350,33 +191,10 @@
       border: 0;
     }
 
-    .stamp {
-      position: absolute;
-      bottom: 3rem; right: 4rem;
-      font-size: 0.9rem;
-      font-weight: 700;
-      letter-spacing: 0.32em;
-      text-transform: uppercase;
-      color: var(--muted);
-      z-index: 10;
-    }
-    .bg-black .stamp { color: var(--hint-d); }
-
-    .logomark {
-      position: absolute;
-      bottom: 2.6rem; left: 4rem;
-      height: 28px;
-      width: auto;
-      opacity: 0.55;
-      z-index: 10;
-    }
-    .bg-black .logomark { opacity: 0.45; }
-
     .glow-soft { text-shadow: 0 0 90px rgba(255,255,255,0.15), 0 0 32px rgba(255,255,255,0.10); }
-    .glow-deep { text-shadow: 0 8px 80px rgba(0,0,0,0.35), 0 2px 6px rgba(0,0,0,0.20); }
 
     /* ═══════════════════════════════════════════════════════════════
-       SLIDE: COVER — split + canvas network animado
+       COVER (split asimétrico)
     ═══════════════════════════════════════════════════════════════ */
     .cover {
       display: grid;
@@ -399,10 +217,9 @@
     }
     .cover-inf {
       position: relative;
-      font-family: 'Montserrat', sans-serif;
       font-weight: 100;
       font-size: 26rem;
-      color: rgba(255,255,255,0.85);
+      color: rgba(255,255,255,0.55);
       line-height: 1;
       letter-spacing: -0.05em;
       z-index: 3;
@@ -431,7 +248,7 @@
       margin: 1rem 0 2.4rem;
     }
     .cover-sub {
-      font-size: 1.25rem;
+      font-size: 1.2rem;
       font-weight: 500;
       letter-spacing: 0.14em;
       text-transform: uppercase;
@@ -441,22 +258,15 @@
       line-height: 1.5;
     }
     .cover-author {
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       font-weight: 700;
       letter-spacing: 0.32em;
       text-transform: uppercase;
       color: var(--muted);
     }
-    .cover-monument-overlay {
-      position: absolute;
-      inset: 0;
-      overflow: hidden;
-      pointer-events: none;
-      z-index: 0;
-    }
 
     /* ═══════════════════════════════════════════════════════════════
-       SLIDE: SILENCIO — marquee vertical lento
+       SILENCIO
     ═══════════════════════════════════════════════════════════════ */
     .silencio {
       width: 100%; height: 100%;
@@ -476,7 +286,7 @@
     }
 
     /* ═══════════════════════════════════════════════════════════════
-       SLIDE: PREGUNTA APERTURA — número monumental + sweep
+       PREGUNTA APERTURA — número monumental + texto izq
     ═══════════════════════════════════════════════════════════════ */
     .q-aper {
       width: 100%; height: 100%;
@@ -509,10 +319,10 @@
       z-index: 3;
       padding-bottom: 4rem;
     }
-    .q-aper-text .soft { color: rgba(255,255,255,0.42); font-weight: 500; }
+    .q-aper-text .soft { color: rgba(255,255,255,0.45); font-weight: 500; }
 
     /* ═══════════════════════════════════════════════════════════════
-       SLIDE: STATEMENT — frase monumental
+       STATEMENT — frase central
     ═══════════════════════════════════════════════════════════════ */
     .statement {
       width: 100%; height: 100%;
@@ -523,11 +333,11 @@
     }
     .statement-eyebrow { margin-bottom: 3rem; z-index: 3; }
     .statement-h {
-      font-size: 7.4rem;
+      font-size: 6.8rem;
       font-weight: 900;
-      line-height: 0.92;
+      line-height: 0.96;
       letter-spacing: -0.045em;
-      max-width: 16ch;
+      max-width: 18ch;
       padding-bottom: 0.18em;
       z-index: 3;
       position: relative;
@@ -536,8 +346,8 @@
     .bg-white .statement-h .ghost { color: rgba(0,0,0,0.18); }
     .statement-body {
       margin-top: 3rem;
-      max-width: 50ch;
-      font-size: 1.45rem;
+      max-width: 52ch;
+      font-size: 1.4rem;
       font-weight: 300;
       line-height: 1.7;
       z-index: 3;
@@ -545,341 +355,152 @@
     }
 
     /* ═══════════════════════════════════════════════════════════════
-       SLIDE: CUATRO FRASES — magazine vertical
+       THREE LAYERS — las tres capas
     ═══════════════════════════════════════════════════════════════ */
-    .magazine {
-      display: grid;
-      grid-template-columns: 3fr 9fr;
+    .layers {
       width: 100%; height: 100%;
-      position: relative;
-    }
-    .magazine-side {
-      background: var(--black);
-      color: var(--white);
-      padding: 6rem 3rem;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      position: relative;
-      overflow: hidden;
-    }
-    .magazine-side .label {
-      font-size: 1.1rem;
-      font-weight: 700;
-      letter-spacing: 0.32em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.42);
-      z-index: 3; position: relative;
-    }
-    .magazine-side .num {
-      font-size: 18rem;
-      font-weight: 100;
-      line-height: 0.85;
-      letter-spacing: -0.05em;
-      color: var(--white);
-      z-index: 3; position: relative;
-    }
-    .magazine-side .foot {
-      font-size: 0.95rem;
-      font-weight: 700;
-      letter-spacing: 0.28em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.42);
-      line-height: 1.6;
-      z-index: 3; position: relative;
-    }
-    .magazine-main {
       padding: 6rem 6rem;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 1.8rem;
-    }
-    .magazine-line {
-      display: grid;
-      grid-template-columns: 4rem 1fr;
-      gap: 2.5rem;
-      align-items: baseline;
-      border-top: 2px solid var(--border);
-      padding-top: 2rem;
-    }
-    .magazine-line:last-child { border-bottom: 2px solid var(--border); padding-bottom: 2rem; }
-    .magazine-line .roman {
-      font-size: 1.4rem;
-      font-weight: 800;
-      letter-spacing: 0.18em;
-      color: var(--muted);
-    }
-    .magazine-line .text {
-      font-size: 2.6rem;
-      font-weight: 600;
-      line-height: 1.05;
-      letter-spacing: -0.025em;
-      text-transform: uppercase;
-    }
-    .magazine-line.bold .text { font-weight: 900; }
-
-    /* ═══════════════════════════════════════════════════════════════
-       SLIDE: CICLO — banda con líneas dibujándose
-    ═══════════════════════════════════════════════════════════════ */
-    .cycle-stage {
-      width: 100%; height: 100%;
-      position: relative;
-      padding: 7rem 6rem 5rem;
       display: grid;
       grid-template-rows: auto auto 1fr;
-      gap: 4rem;
-    }
-    .cycle-band {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      position: relative;
-    }
-    .cycle-band::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 1px;
-      background: currentColor;
-      opacity: 0.18;
-      transform: scaleX(0);
-      transform-origin: left;
-      transition: transform 1.6s var(--ease);
-      transition-delay: 0.3s;
-    }
-    .cycle-band::after {
-      content: '';
-      position: absolute;
-      bottom: 0; left: 0; right: 0;
-      height: 1px;
-      background: currentColor;
-      opacity: 0.18;
-      transform: scaleX(0);
-      transform-origin: right;
-      transition: transform 1.6s var(--ease);
-      transition-delay: 0.6s;
-    }
-    .reveal section.present .cycle-band::before,
-    .reveal section.present .cycle-band::after { transform: scaleX(1); }
-    .cycle-step {
-      padding: 3.5rem 2rem;
-      position: relative;
-      transition: opacity 0.7s var(--ease);
-    }
-    .cycle-step + .cycle-step::before {
-      content: '';
-      position: absolute;
-      left: 0; top: 20%; bottom: 20%;
-      width: 1px;
-      background: currentColor;
-      opacity: 0.18;
-      transform: scaleY(0);
-      transition: transform 1.2s var(--ease);
-      transition-delay: 0.8s;
-    }
-    .reveal section.present .cycle-step + .cycle-step::before { transform: scaleY(1); }
-    .cycle-step .num {
-      font-size: 1.1rem;
-      font-weight: 700;
-      letter-spacing: 0.32em;
-      color: var(--muted);
-      display: block;
-      margin-bottom: 2rem;
-    }
-    .bg-black .cycle-step .num { color: var(--muted-d); }
-    .cycle-step .name {
-      font-size: 2.6rem;
-      font-weight: 800;
-      letter-spacing: -0.03em;
-      text-transform: uppercase;
-      line-height: 1;
-    }
-    .cycle-step.dim { opacity: 0.22; }
-    .cycle-step.active .name { font-weight: 900; }
-    .cycle-step.active .name::after {
-      content: '';
-      display: block;
-      width: 2.4rem; height: 4px;
-      background: currentColor;
-      margin-top: 1.4rem;
-    }
-    .cycle-caption {
-      font-size: 1.4rem;
-      font-weight: 300;
-      line-height: 1.65;
-      max-width: 64ch;
-    }
-
-    /* ═══════════════════════════════════════════════════════════════
-       SLIDE: PREGUNTA FILOSÓFICA — número romano monumental
-    ═══════════════════════════════════════════════════════════════ */
-    .phil-q {
-      width: 100%; height: 100%;
-      position: relative;
-      padding: 6rem 6rem;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      align-items: center;
-      gap: 6rem;
-    }
-    .phil-q-roman {
-      font-size: 32rem;
-      font-weight: 100;
-      line-height: 0.82;
-      letter-spacing: -0.06em;
-      text-align: right;
-      color: var(--black);
-      position: relative;
-    }
-    .bg-white .phil-q-roman { color: var(--black); }
-    .phil-q-roman small {
-      display: block;
-      font-size: 1.1rem;
-      font-weight: 700;
-      letter-spacing: 0.32em;
-      text-transform: uppercase;
-      color: var(--muted);
-      text-align: left;
-      padding-left: 2rem;
-      margin-top: -1.5rem;
-    }
-    .phil-q-text {
-      font-size: 3.4rem;
-      font-weight: 700;
-      line-height: 1.08;
-      letter-spacing: -0.025em;
-      max-width: 24ch;
-    }
-    .phil-q-text .light { font-weight: 300; }
-
-    /* ═══════════════════════════════════════════════════════════════
-       SLIDE: BISAGRA QUÉ/QUIÉN — diagonal split
-    ═══════════════════════════════════════════════════════════════ */
-    .diag {
-      width: 100%; height: 100%;
-      position: relative;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-    }
-    .diag-cell {
-      padding: 5rem 4.5rem;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      position: relative;
-      overflow: hidden;
-    }
-    .diag-cell.left  { background: var(--white); color: var(--black); }
-    .diag-cell.right { background: var(--black); color: var(--white); }
-    .diag-cell .num {
-      font-size: 1rem;
-      font-weight: 700;
-      letter-spacing: 0.32em;
-      text-transform: uppercase;
-      opacity: 0.55;
-      margin-bottom: 2rem;
-    }
-    .diag-cell .label {
-      font-size: 7.5rem;
-      font-weight: 900;
-      letter-spacing: -0.05em;
-      text-transform: uppercase;
-      line-height: 0.88;
-      margin-bottom: 2.5rem;
-    }
-    .diag-cell .desc {
-      font-size: 1.4rem;
-      font-weight: 300;
-      line-height: 1.65;
-      max-width: 30ch;
-    }
-    .diag-marquee {
-      position: absolute;
-      pointer-events: none;
-      z-index: 0;
-      white-space: nowrap;
-      overflow: hidden;
-      width: 100%;
-    }
-
-    /* ═══════════════════════════════════════════════════════════════
-       SLIDE: TRES VALIJAS — cards con profundidad
-    ═══════════════════════════════════════════════════════════════ */
-    .trip {
-      width: 100%; height: 100%;
-      padding: 5rem 6rem 4rem;
-      display: grid;
-      grid-template-rows: auto 1fr auto;
       gap: 3rem;
       position: relative;
     }
-    .trip-head .eyebrow { margin-bottom: 1rem; display: block; }
-    .trip-head .h {
-      font-size: 5rem;
+    .layers-head .eyebrow { display: block; margin-bottom: 1rem; }
+    .layers-head h3 {
+      font-size: 3.6rem;
       font-weight: 900;
       letter-spacing: -0.04em;
-      text-transform: uppercase;
       line-height: 1;
     }
-    .trip-grid {
+    .layers-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 1.4rem;
-      align-self: stretch;
+      gap: 0;
+      border-top: 1px solid var(--border);
     }
-    .trip-cell {
-      padding: 3.2rem 2.2rem;
-      background: var(--white);
-      box-shadow:
-        0 1px 0 var(--border),
-        0 18px 40px -25px rgba(0,0,0,0.18),
-        0 0 0 1px var(--border);
-      display: flex;
-      flex-direction: column;
-      gap: 1.8rem;
-      position: relative;
-      transition: transform 0.6s var(--ease);
+    .layer-cell {
+      padding: 2.8rem 1.8rem;
+      border-right: 1px solid var(--border);
     }
-    .trip-cell:nth-child(1) { transform: translateY(0); }
-    .trip-cell:nth-child(2) { transform: translateY(-1rem); }
-    .trip-cell:nth-child(3) { transform: translateY(0); }
-    .trip-cell .big-n {
-      font-size: 6rem;
-      font-weight: 100;
-      line-height: 0.85;
-      letter-spacing: -0.05em;
-      color: var(--muted);
-    }
-    .trip-cell .lab {
-      font-size: 1rem;
+    .layer-cell:last-child { border-right: 0; }
+    .layer-cell .num {
+      font-size: 0.75rem;
       font-weight: 700;
-      letter-spacing: 0.28em;
-      text-transform: uppercase;
+      letter-spacing: 0.32em;
       color: var(--muted);
+      display: block;
+      margin-bottom: 1.6rem;
     }
-    .trip-cell .h {
-      font-size: 2.4rem;
-      font-weight: 900;
-      letter-spacing: -0.03em;
+    .layer-cell .name {
+      font-size: 1.8rem;
+      font-weight: 800;
+      letter-spacing: -0.025em;
       text-transform: uppercase;
-      line-height: 0.95;
+      line-height: 1;
+      margin-bottom: 1.4rem;
     }
-    .trip-cell .b {
-      font-size: 1.15rem;
+    .layer-cell .desc {
+      font-size: 1rem;
+      font-weight: 300;
+      line-height: 1.65;
+      color: var(--dark);
+    }
+    .layers-caption {
+      font-size: 1.2rem;
+      font-weight: 300;
+      line-height: 1.65;
+      max-width: 62ch;
+      color: var(--dark);
+      align-self: end;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
+       LIST 4 — cuatro planos
+    ═══════════════════════════════════════════════════════════════ */
+    .four {
+      width: 100%; height: 100%;
+      padding: 6rem 6rem;
+      display: grid;
+      grid-template-rows: auto auto 1fr;
+      gap: 3rem;
+      position: relative;
+    }
+    .four-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0;
+      border-top: 1px solid var(--border);
+      border-left: 1px solid var(--border);
+    }
+    .four-cell {
+      padding: 2.2rem 2rem;
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .four-cell .num {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      color: var(--muted);
+      display: block;
+      margin-bottom: 0.6rem;
+    }
+    .four-cell .name {
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+      line-height: 1;
+      margin-bottom: 0.6rem;
+    }
+    .four-cell .desc {
+      font-size: 0.92rem;
       font-weight: 300;
       line-height: 1.55;
       color: var(--dark);
     }
-    .trip-foot {
-      font-size: 0.95rem;
+
+    /* ═══════════════════════════════════════════════════════════════
+       QUOTES — frases cliché en columna
+    ═══════════════════════════════════════════════════════════════ */
+    .quotes {
+      width: 100%; height: 100%;
+      padding: 6rem 6rem;
+      display: grid;
+      grid-template-columns: 4fr 8fr;
+      gap: 5rem;
+      align-items: center;
+      position: relative;
+    }
+    .quotes-left .eyebrow { display: block; margin-bottom: 1.4rem; }
+    .quotes-left .h {
+      font-size: 3rem;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      line-height: 1;
+    }
+    .quotes-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.4rem;
+    }
+    .quotes-list .q {
+      font-size: 1.85rem;
       font-weight: 700;
-      letter-spacing: 0.28em;
+      letter-spacing: -0.015em;
       text-transform: uppercase;
+      line-height: 1.15;
+      color: var(--dark);
+      padding-left: 2.2rem;
+      border-left: 3px solid var(--muted);
+    }
+    .quotes-list .q.dim {
       color: var(--muted);
+      font-weight: 400;
     }
 
     /* ═══════════════════════════════════════════════════════════════
-       SLIDE: TWO ASYMMETRIC — Wojtyła / Frankl
+       TWO ASYMMETRIC — fundamentos filosóficos
     ═══════════════════════════════════════════════════════════════ */
     .two-asym {
       width: 100%; height: 100%;
@@ -892,16 +513,15 @@
     }
     .two-asym-left .eyebrow { display: block; }
     .two-asym-left .num {
-      font-size: 11rem;
-      font-weight: 100;
-      line-height: 0.85;
-      letter-spacing: -0.06em;
-      margin: 1.5rem 0 1rem;
-      color: var(--border);
+      font-size: 5rem;
+      font-weight: 300;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      margin: 0 0 1rem;
+      color: var(--black);
     }
-    .bg-black .two-asym-left .num { color: rgba(255,255,255,0.10); }
     .two-asym-right .h {
-      font-size: 4.4rem;
+      font-size: 3.6rem;
       font-weight: 900;
       letter-spacing: -0.04em;
       text-transform: uppercase;
@@ -913,6 +533,83 @@
     .two-asym-right .muted { color: var(--muted); }
     .bg-black .two-asym-right .muted { color: rgba(255,255,255,0.42); }
 
+    /* ═══════════════════════════════════════════════════════════════
+       AXIS — dos ejes horizontal/vertical
+    ═══════════════════════════════════════════════════════════════ */
+    .axis {
+      width: 100%; height: 100%;
+      padding: 6rem 6rem;
+      display: grid;
+      grid-template-columns: 5fr 7fr;
+      gap: 5rem;
+      align-items: center;
+      position: relative;
+    }
+    .axis-left .eyebrow { display: block; margin-bottom: 1.4rem; }
+    .axis-left .num {
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--muted);
+      display: block;
+      margin-bottom: 1rem;
+    }
+    .axis-left h3 {
+      font-size: 3.4rem;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      margin-bottom: 1.4rem;
+    }
+    .axis-right p { max-width: 52ch; margin-bottom: 1.5rem; }
+
+    /* ═══════════════════════════════════════════════════════════════
+       PRACTICES — ejercicios listados
+    ═══════════════════════════════════════════════════════════════ */
+    .practices {
+      width: 100%; height: 100%;
+      padding: 5rem 6rem;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 3rem;
+      position: relative;
+    }
+    .practices-list {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.4rem;
+    }
+    .practice-card {
+      padding: 2.5rem 2rem;
+      background: var(--white);
+      border: 1px solid var(--border);
+      box-shadow: 0 18px 40px -25px rgba(0,0,0,0.18);
+      display: flex;
+      flex-direction: column;
+      gap: 1.4rem;
+    }
+    .practice-card .lab {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .practice-card .h {
+      font-size: 1.8rem;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      text-transform: uppercase;
+      line-height: 0.95;
+    }
+    .practice-card .b {
+      font-size: 1rem;
+      font-weight: 300;
+      line-height: 1.6;
+      color: var(--dark);
+    }
+
   </style>
 </head>
 <body>
@@ -921,564 +618,463 @@
   <div class="slides">
 
     <!-- ════════════════════════════════════════════════════
-         01. PORTADA — canvas animated network + monument bleed
+         APERTURA — 5 slides (las tres preguntas)
     ════════════════════════════════════════════════════ -->
-    <section data-background-color="#0a0a0a" data-transition="fade">
+
+    <!-- 01. PORTADA -->
+    <section data-background-color="#050505" data-transition="fade">
       <div class="cover">
         <div class="cover-left">
           <canvas class="cover-canvas" data-network></canvas>
           <div class="grain"></div>
-          <div class="cover-inf stagger d2 stagger-b">&infin;</div>
+          <div class="cover-inf stagger d2">&infin;</div>
         </div>
         <div class="cover-right">
-          <div class="cover-monument-overlay">
-            <div class="marquee size-mega color-ghost-light" style="top: -8%;">
-              <div class="marquee-inner"><span>Trascendencia</span><span>&middot;</span><span>Esencia</span><span>&middot;</span><span>Legado</span><span>&middot;</span><span>Trascendencia</span><span>&middot;</span><span>Esencia</span><span>&middot;</span><span>Legado</span><span>&middot;</span></div>
-            </div>
-            <div class="marquee size-mega color-ghost-light reverse slow" style="bottom: -12%;">
-              <div class="marquee-inner"><span>Personalismo</span><span>&middot;</span><span>4Meaning</span><span>&middot;</span><span>Personalismo</span><span>&middot;</span><span>4Meaning</span><span>&middot;</span><span>Personalismo</span><span>&middot;</span><span>4Meaning</span><span>&middot;</span></div>
-            </div>
-          </div>
-          <div style="position:relative; z-index:3;">
-            <span class="eyebrow stagger d1">II Congreso Mundial de Personalismo &nbsp;&middot;&nbsp; Madrid 2026</span>
-            <h1 class="cover-h1 stagger d2" style="margin-top:2.4rem;">Trascendencia,<br>esencia<br>y legado.</h1>
-            <span class="cover-rule stagger d3"></span>
-            <div class="cover-sub stagger d3">Por qué Trascendencia<br>es personalismo aplicado.</div>
-            <div class="cover-author stagger d4">Francisco Esquivel &nbsp;&middot;&nbsp; 4Meaning</div>
-          </div>
+          <span class="eyebrow stagger d1">II Congreso Mundial de Personalismo &nbsp;&middot;&nbsp; Madrid 2026</span>
+          <h1 class="cover-h1 stagger d2" style="margin-top:2.4rem;">Trascendencia,<br>esencia<br>y legado.</h1>
+          <span class="cover-rule stagger d3"></span>
+          <div class="cover-sub stagger d3">Una aplicación pedagógica del personalismo ontológico moderno.</div>
+          <div class="cover-author stagger d4">Francisco Esquivel &nbsp;&middot;&nbsp; 4Meaning</div>
         </div>
       </div>
     </section>
 
-    <!-- ════════════════════════════════════════════════════
-         02. SILENCIO — marquee gigante atravesando lento
-    ════════════════════════════════════════════════════ -->
-    <section data-background-color="#0a0a0a" class="bg-black" data-transition="fade">
+    <!-- 02. SILENCIO INICIAL -->
+    <section data-background-color="#050505" class="bg-black" data-transition="fade">
       <div class="silencio">
         <div class="grain"></div>
         <div class="grid-anim"></div>
-        <div class="marquee size-mega color-outline-d slow" style="top: 30%;">
-          <div class="marquee-inner"><span>Trascendencia</span><span>&middot;</span><span>Trascendencia</span><span>&middot;</span><span>Trascendencia</span><span>&middot;</span></div>
-        </div>
-        <div class="word">Silencio &middot; respirar</div>
+        <div class="word">Antes de empezar</div>
       </div>
     </section>
 
-    <!-- ════════════════════════════════════════════════════
-         03. PREGUNTA 1 — número monumental + sweep
-    ════════════════════════════════════════════════════ -->
-    <section data-background-color="#0a0a0a" class="bg-black" data-auto-animate data-auto-animate-id="apertura">
+    <!-- 03. PREGUNTA UNO -->
+    <section data-background-color="#050505" class="bg-black" data-transition="fade">
       <div class="q-aper">
-        <div class="grain" data-id="bg-grain"></div>
-        <div class="grid-anim" data-id="bg-grid"></div>
-        <div class="sweep"></div>
-        <div class="q-aper-monument stagger-b" data-id="q-monument">01</div>
-        <span class="q-aper-eyebrow eyebrow stagger d1" data-id="q-eyebrow">Una.</span>
-        <h2 class="q-aper-text stagger d2 glow-soft">¿Cuáles son<br>los nombres<br>de sus <span class="soft">ocho</span><br>bisabuelos?</h2>
-        <img src="logos/wht-logo.png" alt="" class="logomark" data-id="logomark-wht">
-        <div class="stamp" data-id="q-stamp">01 &nbsp;/&nbsp; 03</div>
+        <div class="grain"></div>
+        <div class="grid-anim"></div>
+        <div class="q-aper-monument">01</div>
+        <span class="q-aper-eyebrow eyebrow stagger d1">Una.</span>
+        <h2 class="q-aper-text stagger d2 glow-soft">¿Cuáles son los nombres<br>de sus <span class="soft">ocho</span><br>bisabuelos?</h2>
       </div>
     </section>
 
-    <!-- 04. PREGUNTA 2 -->
-    <section data-background-color="#0a0a0a" class="bg-black" data-auto-animate data-auto-animate-id="apertura">
+    <!-- 04. PREGUNTA DOS -->
+    <section data-background-color="#050505" class="bg-black" data-transition="fade">
       <div class="q-aper">
-        <div class="grain" data-id="bg-grain"></div>
-        <div class="grid-anim" data-id="bg-grid"></div>
-        <div class="sweep delay-1"></div>
-        <div class="q-aper-monument stagger-b" data-id="q-monument" style="font-size:36rem;">02</div>
-        <span class="q-aper-eyebrow eyebrow stagger d1" data-id="q-eyebrow">Dos.</span>
+        <div class="grain"></div>
+        <div class="grid-anim"></div>
+        <div class="q-aper-monument" style="font-size:36rem;">02</div>
+        <span class="q-aper-eyebrow eyebrow stagger d1">Dos.</span>
         <h2 class="q-aper-text stagger d2 glow-soft">¿Cómo le pidió<br>su <span class="soft">padre</span><br>la mano<br>a su <span class="soft">madre</span>?</h2>
-        <img src="logos/wht-logo.png" alt="" class="logomark" data-id="logomark-wht">
-        <div class="stamp" data-id="q-stamp">02 &nbsp;/&nbsp; 03</div>
       </div>
     </section>
 
-    <!-- 05. PREGUNTA 3 -->
-    <section data-background-color="#0a0a0a" class="bg-black" data-auto-animate data-auto-animate-id="apertura">
+    <!-- 05. PREGUNTA TRES -->
+    <section data-background-color="#050505" class="bg-black" data-transition="fade">
       <div class="q-aper">
-        <div class="grain" data-id="bg-grain"></div>
-        <div class="grid-anim" data-id="bg-grid"></div>
-        <div class="sweep"></div>
-        <div class="q-aper-monument stagger-b" data-id="q-monument">03</div>
-        <span class="q-aper-eyebrow eyebrow stagger d1" data-id="q-eyebrow">Tres.</span>
+        <div class="grain"></div>
+        <div class="grid-anim"></div>
+        <div class="q-aper-monument">03</div>
+        <span class="q-aper-eyebrow eyebrow stagger d1">Tres.</span>
         <h2 class="q-aper-text stagger d2 glow-soft">Si pudieran grabar<br>dos minutos<br>para sus hijos,<br>antes de morir,<br><span class="soft">¿qué dirían?</span></h2>
-        <img src="logos/wht-logo.png" alt="" class="logomark" data-id="logomark-wht">
-        <div class="stamp" data-id="q-stamp">03 &nbsp;/&nbsp; 03</div>
       </div>
     </section>
 
     <!-- ════════════════════════════════════════════════════
-         06. "Una madre." — escena fundadora del paper
-         (Fragments: la respiración previa es el eyebrow solo;
-          luego "Una madre.", luego body, luego pull quote)
+         BLOQUE 2 — DEFINICIÓN: tres capas (2 slides)
     ════════════════════════════════════════════════════ -->
-    <section data-background-color="#0a0a0a" class="bg-white" data-transition="fade">
+
+    <!-- 06. EL TEMA -->
+    <section data-background-color="#f8f7f5" class="bg-white" data-transition="fade">
       <div class="statement">
-        <div class="grain"></div>
-        <span class="statement-eyebrow eyebrow stagger d1">Hace ocho años.</span>
-        <h2 class="statement-h fragment fade-up" style="margin-top:0;">
-          Una madre.
-        </h2>
-        <p class="statement-body body-light fragment fade-soft" style="max-width:54ch;">Hizo este mismo ejercicio que ustedes acaban de hacer, en uno de nuestros retiros familiares. Tenía hijos adolescentes. Carrera consolidada. Familia funcional.</p>
-        <p class="statement-body body-light fragment fade-soft" style="max-width:54ch; margin-top:1.4rem;">Por todos los indicadores convencionales, <strong style="font-weight:700;">estaba bien</strong>.</p>
-        <p class="statement-body body-light fragment fade-soft" style="max-width:54ch; margin-top:1.4rem;">Y al levantar la mirada, me dijo, casi como una confesión:</p>
-        <p class="fragment fade-blur" style="font-size:2.2rem; font-weight:600; line-height:1.25; letter-spacing:-0.02em; max-width:24ch; margin-top:2.2rem; color:var(--black);">&laquo;Nunca me había hecho la pregunta de qué iba a quedar de mí cuando ya no esté.&raquo;</p>
-        <img src="logos/blk-logo.png" alt="" class="logomark">
-        <div class="stamp">La escena</div>
+        <span class="statement-eyebrow eyebrow stagger d1">Eso que acaban de tocar</span>
+        <h2 class="statement-h stagger d2"><span class="ghost">Tiene un nombre.</span><br>Trascendencia<br>personal.</h2>
+        <p class="statement-body body-light stagger d3">Vengo a defender que se puede definir filosóficamente, demostrar como personalismo aplicado y trabajarse en la práctica.</p>
+      </div>
+    </section>
+
+    <!-- 07. TRES CAPAS -->
+    <section data-background-color="#f8f7f5" class="bg-white" data-transition="fade">
+      <div class="layers">
+        <div class="layers-head">
+          <span class="eyebrow stagger d1">La definición</span>
+          <h3 class="stagger d2">Tres capas ontológicas constituyen la trascendencia personal.</h3>
+        </div>
+        <div class="layers-grid">
+          <div class="layer-cell stagger d3">
+            <span class="num">01</span>
+            <div class="name">Biografía propia</div>
+            <p class="desc">Lo que la persona vive: sus encuentros, sus heridas, sus actos. Su historia singular en curso.</p>
+          </div>
+          <div class="layer-cell stagger d4">
+            <span class="num">02</span>
+            <div class="name">Herencia genealógica</div>
+            <p class="desc">Lo que la persona recibió antes de poder elegir: nombre, idioma, biología, historia familiar.</p>
+          </div>
+          <div class="layer-cell stagger d5">
+            <span class="num">03</span>
+            <div class="name">Autodeterminación axiológica</div>
+            <p class="desc">El gobierno libre de la vida basado en valores objetivos hechos propios.</p>
+          </div>
+        </div>
+        <p class="layers-caption stagger d5">A través de estas tres capas la persona descubre el sentido de su vida y decide su legado.</p>
       </div>
     </section>
 
     <!-- ════════════════════════════════════════════════════
-         07. "Se llama Trascendencia."
+         BLOQUE 3 — PROBLEMA actual (4 slides)
     ════════════════════════════════════════════════════ -->
-    <section data-background-color="#0a0a0a" class="bg-white" data-transition="fade">
+
+    <!-- 08. SATURADOS DE PROPÓSITO -->
+    <section data-background-color="#f8f7f5" class="bg-white" data-transition="fade">
       <div class="statement">
-        <div class="grain"></div>
-        <div class="marquee size-huge color-ghost-light" style="bottom: -10%;">
-          <div class="marquee-inner"><span>Trascendencia</span><span>&middot;</span><span>Trascendencia</span><span>&middot;</span><span>Trascendencia</span><span>&middot;</span></div>
-        </div>
-        <span class="statement-eyebrow eyebrow stagger d1">Lo que esa madre necesitaba</span>
-        <h2 class="statement-h stagger d2"><span class="ghost">Se llama</span><br>Trascendencia.</h2>
-        <p class="statement-body body-light stagger d3">Un programa de acompañamiento biográfico. Quince años. Siete países. 4Meaning, con Patricia Esquivel de Arriaza.</p>
-        <img src="logos/blk-logo.png" alt="" class="logomark">
-        <div class="stamp">Acto I &nbsp;&middot;&nbsp; El programa</div>
+        <span class="statement-eyebrow eyebrow stagger d1">El paisaje contemporáneo</span>
+        <h2 class="statement-h stagger d2">Vivimos saturados<br>de <span class="ghost">propósito.</span></h2>
+        <p class="statement-body body-light stagger d3">Nunca la palabra "sentido" estuvo tan presente en los titulares. Y nunca la pregunta personalista por el sentido fue tan difícil de formular.</p>
       </div>
     </section>
 
-    <!-- ════════════════════════════════════════════════════
-         07. CUATRO FRASES — magazine layout vertical
-    ════════════════════════════════════════════════════ -->
-    <section data-background-color="#0a0a0a" data-transition="fade">
-      <div class="magazine">
-        <div class="magazine-side">
-          <div class="grain"></div>
-          <span class="label stagger d1">Trascendencia</span>
-          <div class="num stagger d2 stagger-s">01</div>
-          <div class="foot stagger d3">En cuatro frases.</div>
+    <!-- 09. ARQUETIPOS -->
+    <section data-background-color="#f8f7f5" class="bg-white" data-transition="fade">
+      <div class="layers">
+        <div class="layers-head">
+          <span class="eyebrow stagger d1">Quién ocupó el lugar</span>
+          <h3 class="stagger d2">El propósito se volvió un mercado.</h3>
         </div>
-        <div class="magazine-main">
-          <div class="magazine-line fragment fade-up"><span class="roman">I</span><span class="text">Toda vida<br>deja huellas.</span></div>
-          <div class="magazine-line fragment fade-up"><span class="roman">II</span><span class="text">Toda huella<br>guarda una historia.</span></div>
-          <div class="magazine-line fragment fade-up"><span class="roman">III</span><span class="text">Toda historia<br>puede revelar tesoros.</span></div>
-          <div class="magazine-line bold fragment fade-up"><span class="roman">IV</span><span class="text">Todo tesoro cuidado<br>puede convertirse en legado.</span></div>
-        </div>
-      </div>
-      <img src="logos/blk-logo.png" alt="" class="logomark">
-      <div class="stamp" style="color:var(--muted);">Acto I &nbsp;&middot;&nbsp; Qué es</div>
-    </section>
-
-    <!-- ════════════════════════════════════════════════════
-         08. EL CICLO — banda con líneas dibujándose
-    ════════════════════════════════════════════════════ -->
-    <section data-background-color="#0a0a0a" class="bg-white" data-transition="fade">
-      <div class="cycle-stage">
-        <div class="grain"></div>
-        <span class="eyebrow stagger d1">El ciclo</span>
-        <h3 class="stagger d2" style="font-size:5rem; font-weight:900; letter-spacing:-0.04em;">Cuatro momentos.<br>Cuatro preguntas.</h3>
-        <div>
-          <div class="cycle-band">
-            <div class="cycle-step fragment fade-up"><span class="num">01</span><span class="name">Huellas</span></div>
-            <div class="cycle-step fragment fade-up"><span class="num">02</span><span class="name">Excavaciones</span></div>
-            <div class="cycle-step fragment fade-up"><span class="num">03</span><span class="name">Tesoros</span></div>
-            <div class="cycle-step fragment fade-up"><span class="num">04</span><span class="name">Legado</span></div>
+        <div class="layers-grid">
+          <div class="layer-cell stagger d3">
+            <span class="num">El gurú</span>
+            <div class="name">El despertar</div>
+            <p class="desc">La promesa de la versión mejor de uno mismo, vendida en cursos cada vez más caros.</p>
           </div>
-          <p class="cycle-caption fragment fade-soft" style="margin-top:3rem;">No son fases administrativas. Son <strong style="font-weight:700;">cuatro preguntas filosóficas</strong> que sostienen el resto de la ponencia.</p>
-        </div>
-      </div>
-      <img src="logos/blk-logo.png" alt="" class="logomark">
-      <div class="stamp">Acto I &nbsp;&middot;&nbsp; Arquitectura</div>
-    </section>
-
-    <!-- ════════════════════════════════════════════════════
-         09–12. PREGUNTAS FILOSÓFICAS — números romanos monumentales
-    ════════════════════════════════════════════════════ -->
-
-    <!-- 09. I · Huellas -->
-    <section data-background-color="#0a0a0a" class="bg-white" data-transition="fade">
-      <div class="phil-q">
-        <div class="grain"></div>
-        <div class="phil-q-roman stagger d1 stagger-s">I<small>Huellas</small></div>
-        <h2 class="phil-q-text stagger d2">¿Qué estoy <span class="light">dejando ya</span>,<br>con la forma en que vivo,<br>amo, lidero<br>y me relaciono?</h2>
-      </div>
-      <img src="logos/blk-logo.png" alt="" class="logomark">
-      <div class="stamp">Acto I &nbsp;&middot;&nbsp; 01 / 04</div>
-    </section>
-
-    <!-- 10. II · Excavaciones -->
-    <section data-background-color="#0a0a0a" class="bg-white" data-transition="fade">
-      <div class="phil-q">
-        <div class="grain"></div>
-        <div class="phil-q-roman stagger d1 stagger-s">II<small>Excavaciones</small></div>
-        <h2 class="phil-q-text stagger d2">¿Qué historia,<br>qué valores,<br>qué <span class="light">raíces</span><br>sostienen esas huellas?</h2>
-      </div>
-      <img src="logos/blk-logo.png" alt="" class="logomark">
-      <div class="stamp">Acto I &nbsp;&middot;&nbsp; 02 / 04</div>
-    </section>
-
-    <!-- 11. III · Tesoros -->
-    <section data-background-color="#0a0a0a" class="bg-white" data-transition="fade">
-      <div class="phil-q">
-        <div class="grain"></div>
-        <div class="phil-q-roman stagger d1 stagger-s">III<small>Tesoros</small></div>
-        <h2 class="phil-q-text stagger d2">¿Qué he <span class="light">descubierto</span><br>en mi vida<br>que merezca ser cuidado<br>y compartido?</h2>
-      </div>
-      <img src="logos/blk-logo.png" alt="" class="logomark">
-      <div class="stamp">Acto I &nbsp;&middot;&nbsp; 03 / 04</div>
-    </section>
-
-    <!-- 12. IV · Legado -->
-    <section data-background-color="#0a0a0a" class="bg-white" data-transition="fade">
-      <div class="phil-q">
-        <div class="grain"></div>
-        <div class="phil-q-roman stagger d1 stagger-s">IV<small>Legado</small></div>
-        <h2 class="phil-q-text stagger d2">¿Qué quiero<br><span class="light">dejar vivo</span><br>en otros<br>cuando yo ya no esté?</h2>
-      </div>
-      <img src="logos/blk-logo.png" alt="" class="logomark">
-      <div class="stamp">Acto I &nbsp;&middot;&nbsp; 04 / 04</div>
-    </section>
-
-    <!-- ════════════════════════════════════════════════════
-         13. BISAGRA QUÉ/QUIÉN — split black/white diagonal
-    ════════════════════════════════════════════════════ -->
-    <section data-background-color="#0a0a0a" data-transition="fade">
-      <div class="diag">
-        <div class="diag-cell left">
-          <div class="marquee size-huge color-ghost-light" style="bottom: -8%;">
-            <div class="marquee-inner"><span>El&nbsp;qué</span><span>&middot;</span><span>El&nbsp;qué</span><span>&middot;</span><span>El&nbsp;qué</span><span>&middot;</span></div>
+          <div class="layer-cell stagger d4">
+            <span class="num">El coach</span>
+            <div class="name">La productividad</div>
+            <p class="desc">El sentido reducido a alta performance. La biografía evaluada por sus KPIs.</p>
           </div>
-          <span class="num stagger d1">Lo que se hereda</span>
-          <h3 class="label stagger d2">El&nbsp;qué.</h3>
-          <p class="desc stagger d3">El conjunto que llega sin permiso: la familia, el idioma, la época, el cuerpo.</p>
-        </div>
-        <div class="diag-cell right">
-          <div class="grain"></div>
-          <div class="marquee size-huge color-ghost reverse" style="top: -8%;">
-            <div class="marquee-inner"><span>El&nbsp;quién</span><span>&middot;</span><span>El&nbsp;quién</span><span>&middot;</span><span>El&nbsp;quién</span><span>&middot;</span></div>
-          </div>
-          <span class="num stagger d2">Lo que se elige llegar a ser</span>
-          <h3 class="label stagger d3 glow-soft">El&nbsp;quién.</h3>
-          <p class="desc stagger d4">La persona que decide dar forma a lo recibido. Auto-determinación, en lenguaje de Wojtyła.</p>
-        </div>
-      </div>
-      <div class="stamp" style="color:rgba(255,255,255,0.5);">Acto I &nbsp;&middot;&nbsp; Bisagra</div>
-    </section>
-
-    <!-- ════════════════════════════════════════════════════
-         14. TRES VALIJAS — cards con profundidad
-    ════════════════════════════════════════════════════ -->
-    <section data-background-color="#0a0a0a" class="bg-white" data-transition="fade">
-      <div class="trip" style="background:#f0ece4;">
-        <div class="grain"></div>
-        <div class="trip-head">
-          <span class="eyebrow stagger d1">Una de las dinámicas</span>
-          <h3 class="h stagger d2">Tres valijas.</h3>
-        </div>
-        <div class="trip-grid">
-          <div class="trip-cell fragment fade-up">
-            <div class="big-n">01</div>
-            <span class="lab">Heredar</span>
-            <div class="h">Lo recibido.</div>
-            <p class="b">Qué traen sin haberlo elegido: apellido, costumbres, dolores, fortalezas.</p>
-          </div>
-          <div class="trip-cell fragment fade-up">
-            <div class="big-n">02</div>
-            <span class="lab">Guardar</span>
-            <div class="h">La esencia.</div>
-            <p class="b">Qué reconocen como suyo y se quedan. La identidad que no negocian.</p>
-          </div>
-          <div class="trip-cell fragment fade-up">
-            <div class="big-n">03</div>
-            <span class="lab">Entregar</span>
-            <div class="h">El legado.</div>
-            <p class="b">Qué entregan hacia adelante. El <strong style="font-weight:700;">quién</strong> que va a vivir en otros.</p>
+          <div class="layer-cell stagger d5">
+            <span class="num">El manifestador</span>
+            <div class="name">La abundancia</div>
+            <p class="desc">El destino como producto de la propia vibración. El sujeto convertido en imán de cosas.</p>
           </div>
         </div>
-        <div class="trip-foot stagger d5">1:30 &nbsp;&middot;&nbsp; in situ &nbsp;&middot;&nbsp; plan B retórico</div>
+        <p class="layers-caption stagger d5">Cada uno construyó una fortuna respondiendo lo que el personalismo lleva noventa años preguntando.</p>
       </div>
-      <img src="logos/blk-logo.png" alt="" class="logomark">
-      <div class="stamp">Acto I &nbsp;&middot;&nbsp; Activación</div>
     </section>
 
-    <!-- ════════════════════════════════════════════════════
-         15. TRANSICIÓN ACTO I → II — corte seco, marquee + pulse
-    ════════════════════════════════════════════════════ -->
+    <!-- 10. FRASES CLICHÉ -->
+    <section data-background-color="#0a0a0a" class="bg-black" data-transition="fade">
+      <div class="quotes">
+        <div class="grain"></div>
+        <div class="quotes-left">
+          <span class="eyebrow stagger d1">Lo que circula</span>
+          <h3 class="h stagger d2 glow-soft">Las frases que ustedes ya leyeron esta semana.</h3>
+        </div>
+        <div class="quotes-list">
+          <div class="q stagger d2" style="color:rgba(255,255,255,0.85); border-left-color:rgba(255,255,255,0.35);">"Desbloquea tu mejor versión."</div>
+          <div class="q stagger d3" style="color:rgba(255,255,255,0.65); border-left-color:rgba(255,255,255,0.25);">"Manifiesta la abundancia."</div>
+          <div class="q stagger d4" style="color:rgba(255,255,255,0.55); border-left-color:rgba(255,255,255,0.18);">"Aumenta tus ingresos en ocho semanas."</div>
+          <div class="q stagger d5" style="color:rgba(255,255,255,0.4); border-left-color:rgba(255,255,255,0.12);">"Convierte tu propósito en tu marca personal."</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 11. VACÍO EXISTENCIAL — Frankl entra -->
     <section data-background-color="#0a0a0a" class="bg-black" data-transition="fade">
       <div class="statement">
         <div class="grain"></div>
-        <div class="grid-anim"></div>
-        <div class="pulse" style="top:20%; left:-20%;"></div>
-        <div class="marquee size-huge color-outline-d" style="top:5%;">
-          <div class="marquee-inner"><span>Dos filósofos</span><span>&middot;</span><span>Dos filósofos</span><span>&middot;</span><span>Dos filósofos</span><span>&middot;</span></div>
-        </div>
-        <h2 class="statement-h stagger d2 glow-soft" style="margin-top:0;">Dos rutas.<br><span class="ghost">Una conclusión.</span></h2>
-        <p class="statement-body body-light stagger d3">Lo que acaban de hacer tiene un nombre filosófico. Hace falta no uno, sino dos, para nombrarlo sin reducirlo.</p>
-        <img src="logos/wht-logo.png" alt="" class="logomark">
-        <div class="stamp">Acto I &nbsp;&rarr;&nbsp; Acto II</div>
+        <div class="pulse" style="top:-15%; right:-25%;"></div>
+        <span class="statement-eyebrow eyebrow stagger d1">Frankl ya tenía un nombre para esto</span>
+        <h2 class="statement-h stagger d2 glow-soft">Vacío<br><span class="ghost">existencial.</span></h2>
+        <p class="statement-body body-light stagger d3" style="max-width:54ch;">El síntoma de un sujeto al que se le ofrecen muchas respuestas, pero no el lenguaje en el que cabe la pregunta original.</p>
       </div>
     </section>
 
     <!-- ════════════════════════════════════════════════════
-         16. PORTADA ACTO II — split + canvas
+         BLOQUE 4 — PROBLEMA DUAL DE 4MEANING (3 slides)
     ════════════════════════════════════════════════════ -->
-    <section data-background-color="#0a0a0a" data-transition="fade">
-      <div class="cover">
-        <div class="cover-left">
-          <canvas class="cover-canvas" data-network></canvas>
-          <div class="grain"></div>
-          <div class="cover-inf stagger d2 stagger-b" style="font-size:22rem; font-weight:100;">02</div>
-        </div>
-        <div class="cover-right">
-          <div class="cover-monument-overlay">
-            <div class="marquee size-huge color-ghost-light slow" style="top:5%;">
-              <div class="marquee-inner"><span>Wojtyła</span><span>&middot;</span><span>Frankl</span><span>&middot;</span><span>Wojtyła</span><span>&middot;</span><span>Frankl</span><span>&middot;</span></div>
-            </div>
-          </div>
-          <div style="position:relative; z-index:3;">
-            <span class="eyebrow stagger d1">Acto II</span>
-            <h1 class="cover-h1 stagger d2" style="margin-top:2.4rem;">Por qué<br>Trascendencia<br>es personalista.</h1>
-            <span class="cover-rule stagger d3"></span>
-            <div class="cover-sub stagger d3">Wojtyła y Frankl<br>como criterios consensuados.</div>
-          </div>
-        </div>
+
+    <!-- 12. DOS CAMPOS, MISMO AGUJERO -->
+    <section data-background-color="#f8f7f5" class="bg-white" data-transition="fade">
+      <div class="statement">
+        <span class="statement-eyebrow eyebrow stagger d1">El problema que 4Meaning intenta abordar</span>
+        <h2 class="statement-h stagger d2">Dos campos.<br><span class="ghost">Un mismo agujero.</span></h2>
+        <p class="statement-body body-light stagger d3">Hay una academia personalista con hondura filosófica, y hay un mercado del propósito con mucha audiencia. La pregunta por el sentido cabe en el primero. La cultura lo busca en el segundo.</p>
       </div>
     </section>
 
-    <!-- ════════════════════════════════════════════════════
-         17. M1 — Wojtyła
-    ════════════════════════════════════════════════════ -->
-    <section data-background-color="#0a0a0a" class="bg-white" data-auto-animate data-auto-animate-id="wf">
+    <!-- 13. LA OPORTUNIDAD PERSONALISTA -->
+    <section data-background-color="#f8f7f5" class="bg-white" data-transition="fade">
       <div class="two-asym">
-        <div class="grain" data-id="bg-grain"></div>
-        <div class="two-asym-left" data-id="wf-left">
-          <span class="num stagger d1 stagger-s" data-id="wf-name" style="font-size:5rem; font-weight:300; letter-spacing:-0.03em; line-height:1; color:var(--black);">Wojtyła</span>
-          <span class="eyebrow stagger d2" data-id="wf-place" style="margin-top:1.4rem; display:block;">Cracovia &nbsp;&middot;&nbsp; 1969</span>
+        <div class="two-asym-left">
+          <span class="eyebrow stagger d1">Lado uno</span>
+          <div class="num stagger d2">01</div>
+          <span class="eyebrow stagger d3">Personalismo</span>
         </div>
-        <div class="two-asym-right" data-id="wf-right">
-          <h3 class="h stagger d2">La persona<br>como acto.</h3>
-          <hr class="rule stagger d3" data-id="wf-rule" style="background:var(--black);">
-          <p class="body-light stagger d3">El conocimiento auténtico de la persona acontece desde el interior de su propio acto. Cada decisión no solo cambia el mundo &mdash; cambia al sujeto que la ejecuta.</p>
-          <p class="body-light stagger d4">Decisión tras decisión, la persona <strong style="font-weight:700;">esculpe su identidad moral</strong>. Aquí está el corazón del personalismo: el <em style="font-style:normal; font-weight:700;">quién</em> que se construye en lo que hace.</p>
-          <p class="body-light stagger d4" style="margin-top:1.4rem; color:var(--muted);">Eso &mdash; esa identidad moral que se esculpe con cada decisión &mdash; era exactamente lo que aquella madre llevaba treinta años construyendo, sin saber que tenía un nombre.</p>
+        <div class="two-asym-right">
+          <h3 class="h stagger d2">Una oportunidad práctica<br>aún abierta.</h3>
+          <hr class="rule stagger d3" style="background:var(--black);">
+          <p class="body-light stagger d3">Wojtyła, Stein, Mounier y Burgos produjeron categorías antropológicas de hondura considerable. Eso ya está construido.</p>
+          <p class="body-light stagger d4">Lo que aún está por desarrollarse es la praxis sistemática que traduzca esas categorías a programas concretos para el ciudadano medio. Ahí es donde aporta 4Meaning.</p>
         </div>
       </div>
-      <img src="logos/blk-logo.png" alt="" class="logomark" data-id="logomark-blk">
-      <div class="stamp" data-id="wf-stamp">Wojtyła</div>
     </section>
 
-    <!-- ════════════════════════════════════════════════════
-         18. M2 — Frankl
-    ════════════════════════════════════════════════════ -->
-    <section data-background-color="#0a0a0a" class="bg-white" data-auto-animate data-auto-animate-id="wf">
+    <!-- 14. LA TRAMPA UTILITARIA -->
+    <section data-background-color="#f8f7f5" class="bg-white" data-transition="fade">
       <div class="two-asym">
-        <div class="grain" data-id="bg-grain"></div>
-        <div class="two-asym-left" data-id="wf-left">
-          <span class="num stagger d1 stagger-s" data-id="wf-name" style="font-size:5rem; font-weight:300; letter-spacing:-0.03em; line-height:1; color:var(--black);">Frankl</span>
-          <span class="eyebrow stagger d2" data-id="wf-place" style="margin-top:1.4rem; display:block;">Viena &nbsp;&middot;&nbsp; 1946</span>
+        <div class="two-asym-left">
+          <span class="eyebrow stagger d1">Lado dos</span>
+          <div class="num stagger d2">02</div>
+          <span class="eyebrow stagger d3">Industria del coaching</span>
         </div>
-        <div class="two-asym-right" data-id="wf-right">
-          <h3 class="h stagger d2">La persona<br>como portadora<br>de un para qué.</h3>
-          <hr class="rule stagger d3" data-id="wf-rule" style="background:var(--black);">
-          <p class="body-light stagger d3">Veinte años antes, en una tradición que no se cruza con la de Cracovia, Frankl llega exactamente al mismo lugar por la puerta del sufrimiento.</p>
-          <p class="body-light stagger d4">El sentido no es abstracción &mdash; es tarea concreta, situada, biográfica. <strong style="font-weight:700;">No se inventa; se descubre.</strong></p>
+        <div class="two-asym-right">
+          <h3 class="h stagger d2">Antropología utilitaria.</h3>
+          <hr class="rule stagger d3" style="background:var(--black);">
+          <p class="body-light stagger d3">El coaching identificó muy bien la falta de sentido. Y la ofrece como solución a partir de un supuesto: el valor de la persona se mide por lo que produce.</p>
+          <p class="body-light stagger d4 muted">La consecuencia, inconsciente para quien la vive, es el vacío que Frankl nombró: respuestas sobran, lenguaje falta.</p>
         </div>
       </div>
-      <img src="logos/blk-logo.png" alt="" class="logomark" data-id="logomark-blk">
-      <div class="stamp" data-id="wf-stamp">Frankl</div>
     </section>
 
     <!-- ════════════════════════════════════════════════════
-         19. M3 CLÍMAX — pulse + letterbox + monument
+         BLOQUE 5 — FUNDAMENTOS FILOSÓFICOS (2 slides)
     ════════════════════════════════════════════════════ -->
+
+    <!-- 15. WOJTYŁA -->
+    <section data-background-color="#f8f7f5" class="bg-white" data-transition="fade">
+      <div class="two-asym">
+        <div class="two-asym-left">
+          <span class="num stagger d1" style="font-size:4.4rem; font-weight:300; letter-spacing:-0.03em; line-height:1; color:var(--black);">Wojtyła</span>
+          <span class="eyebrow stagger d2" style="margin-top:1.4rem; display:block;">Cracovia &nbsp;&middot;&nbsp; 1969</span>
+        </div>
+        <div class="two-asym-right">
+          <h3 class="h stagger d2">La persona<br>es su biografía<br>en acto.</h3>
+          <hr class="rule stagger d3" style="background:var(--black);">
+          <p class="body-light stagger d3">Cada decisión cambia dos cosas a la vez: el mundo de afuera (efecto transitivo) y al sujeto que decide (efecto intransitivo).</p>
+          <p class="body-light stagger d4">No somos solo afectados por nuestra biografía. <strong style="font-weight:700;">Somos nuestra biografía en acto</strong>, esculpida decisión tras decisión.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 16. BURGOS QUÉ/QUIÉN -->
+    <section data-background-color="#f8f7f5" class="bg-white" data-transition="fade">
+      <div class="two-asym">
+        <div class="two-asym-left">
+          <span class="num stagger d1" style="font-size:4.4rem; font-weight:300; letter-spacing:-0.03em; line-height:1; color:var(--black);">Burgos</span>
+          <span class="eyebrow stagger d2" style="margin-top:1.4rem; display:block;">El giro personalista</span>
+        </div>
+        <div class="two-asym-right">
+          <h3 class="h stagger d2">El qué se cataloga.<br>El quién se reconoce.</h3>
+          <hr class="rule stagger d3" style="background:var(--black);">
+          <p class="body-light stagger d3">La pregunta clásica era <em style="font-style:normal; font-weight:600;">¿qué es el hombre?</em>: una sustancia más una racionalidad. Sirve para catalogar especies.</p>
+          <p class="body-light stagger d4">La pregunta personalista es <em style="font-style:normal; font-weight:600;">¿quién es esta persona?</em>: única, irrepetible, consciente y libre. <strong style="font-weight:700;">El qué se sustituye. El quién se acoge.</strong></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════
+         BLOQUE 6 — DOS EJES (3 slides)
+    ════════════════════════════════════════════════════ -->
+
+    <!-- 17. APERTURA DOS EJES -->
+    <section data-background-color="#f8f7f5" class="bg-white" data-transition="fade">
+      <div class="statement">
+        <span class="statement-eyebrow eyebrow stagger d1">El crecimiento personal, repensado</span>
+        <h2 class="statement-h stagger d2">No un eje.<br><span class="ghost">Dos.</span></h2>
+        <p class="statement-body body-light stagger d3">No rechazamos la idea de crecer. Rechazamos la raíz utilitaria que se le ha puesto. Lo definimos en dos ejes que operan a la vez.</p>
+      </div>
+    </section>
+
+    <!-- 18. EJE HORIZONTAL -->
+    <section data-background-color="#f8f7f5" class="bg-white" data-transition="fade">
+      <div class="axis">
+        <div class="axis-left">
+          <span class="num stagger d1">Eje 01</span>
+          <h3 class="stagger d2">Horizontal.</h3>
+          <span class="eyebrow stagger d3">Yo &mdash; Tú &mdash; Nosotros</span>
+        </div>
+        <div class="axis-right">
+          <p class="body-light stagger d2">Wojtyła sostenía que la madurez personal acontece en el encuentro y en la entrega real a otro quién. Salir de uno mismo, entregarse al Tú, formar un Nosotros.</p>
+          <p class="body-light stagger d3">La participación, en su sentido fuerte: la persona alcanza su verdadera identidad <strong style="font-weight:700;">saliendo</strong>, no centrándose.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 19. EJE VERTICAL -->
+    <section data-background-color="#f8f7f5" class="bg-white" data-transition="fade">
+      <div class="axis">
+        <div class="axis-left">
+          <span class="num stagger d1">Eje 02</span>
+          <h3 class="stagger d2">Vertical.</h3>
+          <span class="eyebrow stagger d3">Horizonte superior</span>
+        </div>
+        <div class="axis-right">
+          <p class="body-light stagger d2">La persona comprende el sentido de su vida midiéndola frente a un horizonte superior &mdash; en última instancia, en su apertura al Absoluto.</p>
+          <p class="body-light stagger d3">Superar la simple realidad biológica no es trascender la condición humana. Es habitarla a su altura.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════
+         BLOQUE 7 — FRANKL + CONVERGENCIA (3 slides)
+    ════════════════════════════════════════════════════ -->
+
+    <!-- 20. FRANKL PERSONALISTA SIN SABERLO -->
+    <section data-background-color="#f8f7f5" class="bg-white" data-transition="fade">
+      <div class="statement">
+        <span class="statement-eyebrow eyebrow stagger d1">Aquí entra alguien que no se llamaría personalista</span>
+        <h2 class="statement-h stagger d2">Frankl.<br><span class="ghost">Personalista sin saberlo.</span></h2>
+        <p class="statement-body body-light stagger d3">No es una broma del todo. La literatura reciente &mdash; Costello 2015, Melé y Akrivou 2026 &mdash; lo reconoce como personalista de pleno derecho. Llegó al mismo sujeto desde otra puerta: la clínica del sentido.</p>
+      </div>
+    </section>
+
+    <!-- 21. DOS RUTAS INDEPENDIENTES -->
+    <section data-background-color="#f8f7f5" class="bg-white" data-transition="fade">
+      <div class="quotes">
+        <div class="quotes-left">
+          <span class="eyebrow stagger d1">Dos rutas que no se cruzan</span>
+          <h3 class="h stagger d2">Una misma conclusión.</h3>
+        </div>
+        <div class="quotes-list">
+          <div class="q stagger d2"><strong style="font-weight:900;">Wojtyła</strong> &mdash; cómo se revela la persona en lo que hace</div>
+          <div class="q stagger d3"><strong style="font-weight:900;">Frankl</strong> &mdash; cómo la persona se busca cuando sufre</div>
+          <div class="q stagger d4 dim" style="border-left-color:var(--black); color:var(--black); font-weight:900;">Mismo sujeto al centro: el que se propone sus fines y se construye en sus actos.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 22. CLÍMAX -->
     <section data-background-color="#0a0a0a" class="bg-black" data-transition="fade">
       <div class="statement letterbox">
         <div class="grain"></div>
         <div class="pulse" style="top:-15%; right:-25%;"></div>
-        <div class="marquee size-mega color-outline-d slow" style="bottom:-10%;">
-          <div class="marquee-inner"><span>Convergencia</span><span>&middot;</span><span>Convergencia</span><span>&middot;</span><span>Convergencia</span><span>&middot;</span></div>
-        </div>
         <h2 class="statement-h glow-soft" style="margin-top:0;">
           <span class="fragment fade-up">La misma</span><br>
           <span class="fragment fade-up">pregunta</span><br>
           <span class="fragment fade-blur ghost">desde dos lados.</span>
         </h2>
-        <p class="statement-body body-light fragment fade-soft" style="max-width:58ch;">Wojtyła llega al <strong style="color:white;font-weight:700;">quién</strong> preguntando cómo se revela la persona en su acto. Frankl llega al mismo <strong style="color:white;font-weight:700;">quién</strong> preguntando qué busca la persona cuando sufre. Dos rutas que no se cruzan, una sola conclusión.</p>
-        <p class="statement-body body-light fragment fade-soft" style="max-width:58ch; margin-top:1.4rem;">Y eso es <strong style="color:white;font-weight:700;">la diferencia entre creer algo y constatar algo</strong>. El personalismo, cuando dos tradiciones independientes lo confirman, deja de ser postura ideológica para volverse descripción de cómo el ser humano realmente está hecho.</p>
-        <img src="logos/wht-logo.png" alt="" class="logomark">
+        <p class="statement-body body-light fragment fade-soft" style="max-width:58ch;">Cuando dos métodos llegan a la misma conclusión por caminos que no se cruzan, la conclusión gana fuerza precisamente porque deja de depender de los presupuestos de un solo método.</p>
+        <p class="statement-body body-light fragment fade-soft" style="max-width:58ch; margin-top:1.4rem;">Es <strong style="color:white;font-weight:700;">la diferencia entre creer algo y constatar algo</strong>. El personalismo, así confirmado, deja de ser una postura ideológica para volverse una descripción de cómo el ser humano realmente está hecho.</p>
       </div>
     </section>
 
     <!-- ════════════════════════════════════════════════════
-         20. M4 IMPLICACIÓN
+         BLOQUE 8 — COMPOSICIÓN (2 slides)
     ════════════════════════════════════════════════════ -->
-    <section data-background-color="#0a0a0a" class="bg-white" data-transition="fade">
+
+    <!-- 23. DE TRES CAPAS A CUATRO PLANOS -->
+    <section data-background-color="#f8f7f5" class="bg-white" data-transition="fade">
       <div class="statement">
-        <div class="grain"></div>
-        <div class="marquee size-mega color-ghost-light slow" style="bottom:-12%;">
-          <div class="marquee-inner"><span>Esto es lo que Trascendencia hace</span><span>&middot;</span><span>Esto es lo que Trascendencia hace</span><span>&middot;</span></div>
-        </div>
-        <span class="statement-eyebrow eyebrow stagger d1">Esto es lo que vengo a decir.</span>
-        <h2 class="statement-h stagger d2">Esto es<br>lo que <span class="ghost">Trascendencia</span><br>hace.</h2>
-        <p class="statement-body body-light stagger d3">Sin haber leído a Wojtyła. Sin haber citado a Frankl. La convergencia ya estaba ahí &mdash; en una praxis sostenida durante quince años &mdash; esperando ser nombrada.</p>
+        <span class="statement-eyebrow eyebrow stagger d1">De la definición a la operación</span>
+        <h2 class="statement-h stagger d2">Las tres capas<br>se desdoblan<br>en <span class="ghost">cuatro planos.</span></h2>
+        <p class="statement-body body-light stagger d3">La biografía propia no se vive en abstracto. Se vive en el encuentro con otros y en el enfrentamiento con la finitud. Por eso, al pasar de la definición a la operación, una de las tres capas se desdobla en dos.</p>
       </div>
-      <img src="logos/blk-logo.png" alt="" class="logomark">
     </section>
 
-    <!-- ════════════════════════════════════════════════════
-         21. ACTO III — LEGADO iluminado + Trascendencia bg
-    ════════════════════════════════════════════════════ -->
-    <section data-background-color="#0a0a0a" class="bg-white" data-transition="fade">
-      <div class="cycle-stage">
-        <div class="grain"></div>
-        <img src="logos/logotrascendencia.png" alt="" style="position:absolute; bottom:-6%; left:-3%; width:65%; opacity:0.10; pointer-events:none; z-index:0;">
-        <span class="eyebrow stagger d1">El cuarto plano.</span>
-        <h3 class="stagger d2" style="font-size:5rem; font-weight:900; letter-spacing:-0.04em;">El que cierra<br>el arco entero.</h3>
+    <!-- 24. LOS CUATRO PLANOS -->
+    <section data-background-color="#f8f7f5" class="bg-white" data-transition="fade">
+      <div class="four">
         <div>
-          <div class="cycle-band">
-            <div class="cycle-step dim stagger d3"><span class="num">01</span><span class="name">Huellas</span></div>
-            <div class="cycle-step dim stagger d3"><span class="num">02</span><span class="name">Excavaciones</span></div>
-            <div class="cycle-step dim stagger d3"><span class="num">03</span><span class="name">Tesoros</span></div>
-            <div class="cycle-step active stagger d4 stagger-s"><span class="num">04</span><span class="name">Legado</span></div>
+          <span class="eyebrow stagger d1">Trascendencia, en su composición</span>
+          <h3 class="stagger d2" style="font-size:3.4rem; font-weight:900; letter-spacing:-0.04em; line-height:1; margin-top:1rem;">Los cuatro planos.</h3>
+        </div>
+        <div></div>
+        <div class="four-grid">
+          <div class="four-cell stagger d3">
+            <span class="num">01 &nbsp;&middot;&nbsp; Capa herencia</span>
+            <div class="name">Genealógico</div>
+            <p class="desc">La identidad actual existe porque previamente fuimos recibidos por alguien. Reconocer lo recibido es el primer movimiento.</p>
           </div>
-          <p class="cycle-caption stagger d5" style="margin-top:3rem;">Legado no es nostalgia. Es la <strong style="font-weight:700;">categoría</strong> que cierra el arco entre <strong style="font-weight:700;">persona</strong> y <strong style="font-weight:700;">trascendencia</strong>.</p>
+          <div class="four-cell stagger d3">
+            <span class="num">02 &nbsp;&middot;&nbsp; Capa biografía</span>
+            <div class="name">Intersubjetividad</div>
+            <p class="desc">La madurez personal acontece en el encuentro real con otro quién. La familia, en sentido fuerte, es laboratorio antropológico.</p>
+          </div>
+          <div class="four-cell stagger d4">
+            <span class="num">03 &nbsp;&middot;&nbsp; Capa autodeterminación</span>
+            <div class="name">Axiológica</div>
+            <p class="desc">La persona se esculpe activamente mediante los principios que decide abrazar y las decisiones con las que decide encarnarlos.</p>
+          </div>
+          <div class="four-cell stagger d4">
+            <span class="num">04 &nbsp;&middot;&nbsp; Capa biografía</span>
+            <div class="name">Resiliencia y finitud</div>
+            <p class="desc">El sufrimiento asumido se transforma en hazaña interior. El sentido al sufrir no se inventa &mdash; se descubre.</p>
+          </div>
         </div>
-      </div>
-      <img src="logos/blk-logo.png" alt="" class="logomark">
-      <div class="stamp">Acto III &nbsp;&middot;&nbsp; Apertura</div>
-    </section>
-
-    <!-- ════════════════════════════════════════════════════
-         22. FINITUD
-    ════════════════════════════════════════════════════ -->
-    <section data-background-color="#0a0a0a" class="bg-white" data-transition="fade">
-      <div class="two-asym">
-        <div class="grain"></div>
-        <div class="two-asym-left">
-          <span class="num stagger d1 stagger-s" style="font-size:5rem; font-weight:300; letter-spacing:-0.03em; line-height:1; color:var(--black);">Finitud</span>
-          <span class="eyebrow stagger d2" style="margin-top:1.4rem; display:block;">El plano que queda</span>
-        </div>
-        <div class="two-asym-right">
-          <h3 class="h stagger d2">El sentido<br>no se inventa.<br>Se descubre.</h3>
-          <hr class="rule stagger d3" style="background:var(--black);">
-          <p class="body-light stagger d3">Wojtyła: el sufrimiento asumido libremente se transforma en <strong style="font-weight:700;">hazaña interior</strong>. Frankl: lo que el sujeto busca al sufrir no es placer ni poder. Es sentido. Y ese sentido lo precede.</p>
-          <p class="body-light stagger d4">Por eso el ejercicio con que abrí no era retórica. Era el ejercicio fundamental del plano de la finitud. Era la pregunta de aquella madre &mdash; ahora vuelta filosofía.</p>
-        </div>
-      </div>
-      <img src="logos/blk-logo.png" alt="" class="logomark">
-      <div class="stamp">Acto III &nbsp;&middot;&nbsp; 1 / 3</div>
-    </section>
-
-    <!-- ════════════════════════════════════════════════════
-         23. FOTO·LOGOS — caso
-    ════════════════════════════════════════════════════ -->
-    <section data-background-color="#0a0a0a" class="bg-white" data-transition="fade">
-      <div class="two-asym">
-        <div class="grain"></div>
-        <div class="two-asym-left">
-          <span class="num stagger d1 stagger-s" style="font-size:4.4rem; font-weight:300; letter-spacing:-0.03em; line-height:1; color:var(--black);">Foto&nbsp;&middot;&nbsp;Logos</span>
-          <span class="eyebrow stagger d2" style="margin-top:1.4rem; display:block;">Una pieza del programa</span>
-        </div>
-        <div class="two-asym-right">
-          <h3 class="h stagger d2">La convergencia,<br>hecha herramienta.</h3>
-          <hr class="rule stagger d3" style="background:var(--black);">
-          <p class="body-light stagger d3">Foto&middot;Logos integra imagen y memoria, y reorienta lo que el participante encuentra en su biografía &mdash; sus huellas de sentido &mdash; hacia el horizonte trascendente.</p>
-          <p class="body-light stagger d3">El patrimonio axiológico que el participante elabora se entrega documentado: un video y un libro &mdash; el <strong style="font-weight:700;">Storybook</strong> &mdash; donde la familia queda narrada.</p>
-          <p class="body-light stagger d4">Patricia llegó al personalismo por la práctica, no por la academia. Y eso es exactamente lo que la convergencia W&ndash;F predice.</p>
-        </div>
-      </div>
-      <img src="logos/blk-logo.png" alt="" class="logomark">
-      <div class="stamp">Acto III &nbsp;&middot;&nbsp; 2 / 3</div>
-    </section>
-
-    <!-- ════════════════════════════════════════════════════
-         24. CONVICCIÓN FINAL — texto monumental
-    ════════════════════════════════════════════════════ -->
-    <section data-background-color="#0a0a0a" class="bg-white" data-transition="fade">
-      <div class="statement">
-        <div class="grain"></div>
-        <div class="marquee size-mega color-ghost-light slow" style="top:-8%;">
-          <div class="marquee-inner"><span>Legado</span><span>&middot;</span><span>Legado</span><span>&middot;</span><span>Legado</span><span>&middot;</span></div>
-        </div>
-        <div class="marquee size-huge color-ghost-light reverse" style="bottom:-8%;">
-          <div class="marquee-inner"><span>Trascendencia</span><span>&middot;</span><span>Trascendencia</span><span>&middot;</span></div>
-        </div>
-        <h2 class="statement-h" style="margin-top:0;">
-          <span class="fragment fade-up">Toda vida</span><br>
-          <span class="fragment fade-up">deja huellas.</span><br>
-          <span class="fragment fade-soft ghost">Toda vida</span><br>
-          <span class="fragment fade-blur">puede legarse.</span>
-        </h2>
-      </div>
-      <img src="logos/blk-logo.png" alt="" class="logomark">
-    </section>
-
-    <!-- ════════════════════════════════════════════════════
-         25. AQUELLA MADRE — vuelta simétrica antes del cierre
-    ════════════════════════════════════════════════════ -->
-    <section data-background-color="#0a0a0a" class="bg-white" data-transition="fade">
-      <div class="statement">
-        <div class="grain"></div>
-        <span class="statement-eyebrow eyebrow stagger d1">Aquella madre con la que abrí</span>
-        <h2 class="statement-h stagger d2"><span class="ghost">No necesitaba</span><br>un curso<br>de motivación.</h2>
-        <p class="statement-body body-light stagger d3" style="max-width:54ch;">Necesitaba un <strong style="font-weight:700;">lenguaje</strong> en el que la pregunta cupiera.</p>
-        <p class="statement-body body-light stagger d4" style="max-width:54ch; margin-top:1.4rem; color:var(--muted);">Llevamos quince años traduciendo ese lenguaje. Lo que hoy traje a esta sala es la traducción que tenemos hasta ahora.</p>
-        <img src="logos/blk-logo.png" alt="" class="logomark">
-        <div class="stamp">Vuelta a la escena</div>
       </div>
     </section>
 
     <!-- ════════════════════════════════════════════════════
-         26. CIERRE A — efecto número (letterbox cine)
+         BLOQUE 9 — PRÁCTICA (2 slides)
     ════════════════════════════════════════════════════ -->
-    <section data-background-color="#0a0a0a" class="bg-black" data-auto-animate data-auto-animate-id="cierre">
-      <div class="statement letterbox" data-id="cierre-stage">
-        <div class="grain" data-id="bg-grain"></div>
-        <div class="pulse" data-id="cierre-pulse" style="top:-30%; right:-20%;"></div>
-        <div class="marquee size-mega color-outline-d" style="bottom:-12%;">
-          <div class="marquee-inner"><span>Efecto número</span><span>&middot;</span><span>Efecto número</span><span>&middot;</span></div>
+
+    <!-- 25. TRASCENDENCIA EN LA PRÁCTICA -->
+    <section data-background-color="#f8f7f5" class="bg-white" data-transition="fade">
+      <div class="practices">
+        <div>
+          <span class="eyebrow stagger d1">Trascendencia en la sala</span>
+          <h3 class="stagger d2" style="font-size:3.4rem; font-weight:900; letter-spacing:-0.04em; line-height:1; margin-top:1rem;">Tres dinámicas, quince años, siete países.</h3>
         </div>
-        <h2 class="statement-h glow-soft" style="margin-top:0;">
-          <span class="fragment fade-up">No es</span><br>
-          <span class="fragment fade-up">problema suyo.</span><br>
-          <span class="fragment fade-blur ghost">Es el efecto número.</span>
-        </h2>
-        <p class="statement-body body-light fragment fade-soft" style="max-width:56ch;">Si todavía no saben los nombres de sus ocho bisabuelos &mdash; la cultura del siglo XXI hace muy difícil que lo sepan. No es un fallo individual. Es un fallo estructural &mdash; y es el fallo que el personalismo, traducido a programa, viene a nombrar.</p>
-        <img src="logos/wht-logo.png" alt="" class="logomark" data-id="logomark-wht">
+        <div class="practices-list">
+          <div class="practice-card stagger d3">
+            <span class="lab">Dinámica 01</span>
+            <div class="h">Tres valijas.</div>
+            <p class="b">La pareja elige qué hereda, qué guarda y qué entrega. El paso del qué recibido al quién elegido, hecho objeto.</p>
+          </div>
+          <div class="practice-card stagger d4">
+            <span class="lab">Dinámica 02</span>
+            <div class="h">Mochila de valores.</div>
+            <p class="b">Cada virtud queda asociada a una herramienta concreta. La transmisión del patrimonio moral, vuelta material.</p>
+          </div>
+          <div class="practice-card stagger d5">
+            <span class="lab">Dinámica 03</span>
+            <div class="h">La Caja Negra.</div>
+            <p class="b">La confrontación con la finitud abandona el plano teórico. La nota de despedida revela quiénes deciden haber sido.</p>
+          </div>
+        </div>
       </div>
     </section>
 
-    <!-- ════════════════════════════════════════════════════
-         26. CIERRE B — háganlo · GRACIAS
-    ════════════════════════════════════════════════════ -->
-    <section data-background-color="#0a0a0a" class="bg-black" data-auto-animate data-auto-animate-id="cierre">
-      <div class="statement letterbox" data-id="cierre-stage">
-        <div class="grain" data-id="bg-grain"></div>
-        <div class="pulse" data-id="cierre-pulse" style="top:50%; left:50%; transform:translate3d(-50%,-50%,0); width:120vh; height:120vh;"></div>
-        <div class="marquee size-mega color-outline-d slow" style="top:-12%;">
-          <div class="marquee-inner"><span>Háganlo</span><span>&middot;</span><span>Háganlo</span><span>&middot;</span><span>Háganlo</span><span>&middot;</span></div>
-        </div>
-        <h2 class="statement-h glow-soft" style="margin-top:0;">
-          <span class="fragment fade-up">Háganlo.</span><br>
-          <span class="fragment fade-blur ghost">No por ustedes.</span>
-        </h2>
-        <p class="statement-body body-light fragment fade-soft" style="max-width:56ch;">Por ese <strong style="color:white;font-weight:600;">quién</strong> que va a quedar vivo en los demás cuando ustedes ya no estén.</p>
-        <p class="statement-body body-light fragment fade-soft" style="max-width:56ch; margin-top:1.6rem;">Y a ustedes &mdash; quiero leerlos. Quiero que critiquen lo que hacemos. Es la única manera de hacerlo mejor.</p>
-        <div class="fragment fade-up" style="margin-top:3rem; font-size:1.4rem; font-weight:700; letter-spacing:0.5em; color:white; text-transform:uppercase;">Gracias</div>
-        <img src="logos/wht-logo.png" alt="" class="logomark" data-id="logomark-wht">
-        <div class="stamp">Madrid &nbsp;&middot;&nbsp; 2026</div>
-      </div>
-    </section>
-
-    <!-- ════════════════════════════════════════════════════
-         27. SILENCIO FINAL
-    ════════════════════════════════════════════════════ -->
+    <!-- 26. LA CAJA NEGRA REVELADA -->
     <section data-background-color="#0a0a0a" class="bg-black" data-transition="fade">
-      <div class="silencio">
+      <div class="statement letterbox">
         <div class="grain"></div>
-        <div class="grid-anim"></div>
-        <div class="marquee size-huge color-outline-d slow" style="top:42%;">
-          <div class="marquee-inner"><span>Fin</span><span>&middot;</span><span>Fin</span><span>&middot;</span><span>Fin</span><span>&middot;</span></div>
-        </div>
+        <div class="pulse" style="top:-15%; left:-25%;"></div>
+        <span class="statement-eyebrow eyebrow stagger d1">La tercera pregunta de la apertura</span>
+        <h2 class="statement-h stagger d2 glow-soft">Era<br>La Caja Negra.</h2>
+        <p class="statement-body body-light stagger d3" style="max-width:54ch;">El ejercicio mental que ustedes hicieron al inicio es una versión ligera del que cientos de personas han hecho en nuestros retiros familiares durante quince años. Quien lo hace de verdad &mdash; sin avión, sin metáfora &mdash; rara vez vuelve a ser el mismo.</p>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════
+         BLOQUE 10 — CIERRE (2 slides)
+    ════════════════════════════════════════════════════ -->
+
+    <!-- 27. UNA MADRE -->
+    <section data-background-color="#0a0a0a" class="bg-black" data-transition="fade">
+      <div class="statement">
+        <div class="grain"></div>
+        <span class="statement-eyebrow eyebrow stagger d1">Hace ocho años</span>
+        <h2 class="statement-h stagger d2 glow-soft">Una madre<br>lo hizo<br><span class="ghost">de verdad.</span></h2>
+        <p class="statement-body body-light stagger d3" style="max-width:58ch;">Tenía hijos adolescentes, una carrera consolidada, una familia funcional. Por todos los indicadores convencionales, estaba bien. Al levantar la mirada me dijo, casi como una confesión:</p>
+        <p class="stagger d4" style="font-size:1.8rem; font-weight:600; line-height:1.3; letter-spacing:-0.015em; max-width:30ch; margin-top:2.4rem; color:white;">&laquo;Nunca me había hecho la pregunta de qué iba a quedar de mí cuando ya no esté.&raquo;</p>
+      </div>
+    </section>
+
+    <!-- 28. NO LO POSPONGAN -->
+    <section data-background-color="#0a0a0a" class="bg-black" data-transition="fade">
+      <div class="statement letterbox">
+        <div class="grain"></div>
+        <div class="pulse" style="top:50%; left:50%; transform:translate3d(-50%,-50%,0); width:120vh; height:120vh;"></div>
+        <h2 class="statement-h glow-soft" style="margin-top:0;">
+          <span class="fragment fade-up">No lo pospongan.</span><br>
+          <span class="fragment fade-blur ghost">Háganlo.</span>
+        </h2>
+        <p class="statement-body body-light fragment fade-soft" style="max-width:58ch;">No por ustedes. Por ese <strong style="color:white;font-weight:700;">quién</strong> que va a quedar vivo en los demás cuando ustedes ya no estén.</p>
+        <p class="statement-body body-light fragment fade-soft" style="max-width:58ch; margin-top:1.6rem;">Y a ustedes &mdash; quiero leerlos. Quiero que critiquen lo que hacemos. Es la única manera de hacerlo mejor.</p>
+        <div class="fragment fade-up" style="margin-top:3rem; font-size:1.4rem; font-weight:700; letter-spacing:0.5em; color:white; text-transform:uppercase;">Gracias</div>
       </div>
     </section>
 
@@ -1502,75 +1098,16 @@
     maxScale: 2.0,
     fragments: true,
     fragmentInURL: false,
-    /* Autoanimate — transiciones de continuidad estilo Apple */
-    autoAnimate: true,
-    autoAnimateDuration: 1.8,
-    autoAnimateEasing: 'cubic-bezier(0.22, 1, 0.36, 1)',
-    autoAnimateUnmatched: true,
   });
 
-  /* V13 — Revertir arquitectura que rompía contraste de texto.
-     Cada section vuelve a tener su propio fondo. Conservamos Ken Burns sutil,
-     chrome escondido y blur-in en textos. Sin transición Apple keynote
-     (que causaba momentos texto-sobre-negro). */
-  document.addEventListener('DOMContentLoaded', () => {
-    const style = document.createElement('style');
-    style.textContent = `
-      html, body { background: #0a0a0a; }
-      .reveal section.bg-white { background: #f8f7f5; }
-      .reveal section.bg-black { background: #0a0a0a; }
-
-      /* Esconder chrome de presentación */
-      .reveal .controls,
-      .reveal .progress,
-      .reveal .slide-number,
-      .reveal .stamp,
-      .reveal .logomark { display: none !important; }
-
-      /* Pausar marquees scroll, mantener texto visible */
-      .reveal .marquee-inner { animation: none !important; }
-
-      /* Sin grid global ruidoso */
-      body::before { display: none !important; }
-
-      /* Crossfade rápido entre fondos (evita destellos prolongados) */
-      .reveal .backgrounds .slide-background {
-        transition: opacity 0.35s ease-out !important;
-      }
-
-      /* Ken Burns sutil constante en el primer div del slide */
-      @keyframes kenburnsApple {
-        from { transform: scale(1.00); }
-        to   { transform: scale(1.022); }
-      }
-      .reveal section.present > div:first-child {
-        animation: kenburnsApple 20s ease-out both;
-        transform-origin: center;
-      }
-
-      /* Blur-in en textos staggered + fragments */
-      .reveal .stagger { filter: blur(6px); }
-      .reveal section.present .stagger { filter: blur(0); }
-      .reveal .fragment.fade-up,
-      .reveal .fragment.fade-soft,
-      .reveal .fragment.fade-blur { filter: blur(6px); }
-      .reveal .fragment.fade-up.visible,
-      .reveal .fragment.fade-soft.visible,
-      .reveal .fragment.fade-blur.visible { filter: blur(0); }
-    `;
-    document.head.appendChild(style);
-  });
-
-  /* ─── Canvas network animado — optimizado para no joder framerate ─── */
+  /* Canvas network animado para la portada */
   function initNetwork(canvas) {
     const ctx = canvas.getContext('2d');
     let w, h, points;
     const N = 22;
     const MAX_D = 260;
-    const TARGET_FPS = 30;
-    const FRAME_MS = 1000 / TARGET_FPS;
-    let lastFrame = 0;
-    let running = false;
+    const FRAME_MS = 1000 / 30;
+    let lastFrame = 0, running = false;
 
     function resize() {
       const rect = canvas.getBoundingClientRect();
@@ -1581,36 +1118,26 @@
       ctx.scale(dpr, dpr);
       w = rect.width; h = rect.height;
     }
-
     function makePoints() {
       points = [];
       for (let i = 0; i < N; i++) {
         points.push({
-          x: Math.random() * w,
-          y: Math.random() * h,
+          x: Math.random() * w, y: Math.random() * h,
           vx: (Math.random() - 0.5) * 0.14,
           vy: (Math.random() - 0.5) * 0.14,
         });
       }
     }
-
     function step(now) {
       if (!running) return;
-      if (now - lastFrame < FRAME_MS) {
-        requestAnimationFrame(step);
-        return;
-      }
+      if (now - lastFrame < FRAME_MS) { requestAnimationFrame(step); return; }
       lastFrame = now;
-
       ctx.clearRect(0, 0, w, h);
-
       for (const p of points) {
-        p.x += p.vx;
-        p.y += p.vy;
+        p.x += p.vx; p.y += p.vy;
         if (p.x < 0 || p.x > w) p.vx *= -1;
         if (p.y < 0 || p.y > h) p.vy *= -1;
       }
-
       for (let i = 0; i < N; i++) {
         for (let j = i + 1; j < N; j++) {
           const a = points[i], b = points[j];
@@ -1621,50 +1148,27 @@
             const op = (1 - d / MAX_D) * 0.2;
             ctx.strokeStyle = 'rgba(255,255,255,' + op + ')';
             ctx.lineWidth = 0.6;
-            ctx.beginPath();
-            ctx.moveTo(a.x, a.y);
-            ctx.lineTo(b.x, b.y);
-            ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
           }
         }
       }
-
       for (const p of points) {
         ctx.fillStyle = 'rgba(255,255,255,0.38)';
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, 1.2, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.beginPath(); ctx.arc(p.x, p.y, 1.2, 0, Math.PI * 2); ctx.fill();
       }
-
       requestAnimationFrame(step);
     }
-
-    resize();
-    makePoints();
-    running = true;
-    requestAnimationFrame(step);
+    resize(); makePoints(); running = true; requestAnimationFrame(step);
     window.addEventListener('resize', () => { resize(); makePoints(); });
-
-    /* Pausar canvas cuando el slide no está visible (ahorra batería + suaviza transitions) */
-    return {
-      pause() { running = false; },
-      resume() { if (!running) { running = true; requestAnimationFrame(step); } },
-    };
+    return { pause() { running = false; }, resume() { if (!running) { running = true; requestAnimationFrame(step); } } };
   }
 
-  /* Inicializa canvases y pausa los que no están en el slide actual */
   Reveal.on('ready', () => {
     const ctrls = new Map();
-    document.querySelectorAll('canvas[data-network]').forEach(c => {
-      ctrls.set(c, initNetwork(c));
-    });
-
+    document.querySelectorAll('canvas[data-network]').forEach(c => ctrls.set(c, initNetwork(c)));
     function syncCanvases() {
       const current = Reveal.getCurrentSlide();
-      ctrls.forEach((ctrl, canvas) => {
-        if (current && current.contains(canvas)) ctrl.resume();
-        else ctrl.pause();
-      });
+      ctrls.forEach((ctrl, canvas) => current && current.contains(canvas) ? ctrl.resume() : ctrl.pause());
     }
     syncCanvases();
     Reveal.on('slidechanged', syncCanvases);
