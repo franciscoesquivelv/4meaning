@@ -311,7 +311,7 @@
         100deg,
         rgba(255,255,255,0.08) 0%,
         rgba(255,255,255,0.08) 35%,
-        rgba(245,230,200,0.42) 50%,
+        rgba(252,215,150,0.55) 50%,
         rgba(255,255,255,0.08) 65%,
         rgba(255,255,255,0.08) 100%
       );
@@ -320,11 +320,11 @@
       -webkit-background-clip: text;
               background-clip: text;
       color: transparent;
-      animation: shimmer 7s ease-in-out infinite;
+      animation: shimmer 4s ease-in-out infinite;
     }
     @keyframes shimmer {
       0%   { background-position: 130% 0; }
-      45%  { background-position: -30% 0; }
+      72%  { background-position: -30% 0; }
       100% { background-position: -30% 0; }
     }
     .q-aper-eyebrow { margin-bottom: 0; z-index: 3; position: relative; }
@@ -1219,17 +1219,20 @@
     rememberTargets();
 
     function scrambleOnce(el) {
-      const target = el.dataset.target || el.textContent.trim();
-      const TOTAL = 1200;  // duracion total ms
-      const STEP  = 55;    // intervalo entre cambios ms
+      const target = (el.dataset.target || el.textContent.trim()).padStart(2, '0');
+      const digit1 = target[0];      // se asienta primero
+      const digit2 = target[1];      // se asienta despues
+      const TOTAL      = 1100;       // duracion total ms
+      const FIRST_LOCK = 600;        // ms en los que digit1 ya queda fijo
+      const STEP       = 90;         // menos cambios que antes
       const start = performance.now();
       const tick = () => {
         const elapsed = performance.now() - start;
         if (elapsed >= TOTAL) {
-          el.textContent = target;
+          el.textContent = digit1 + digit2;
           return;
         }
-        const a = Math.floor(Math.random() * 10);
+        const a = elapsed >= FIRST_LOCK ? digit1 : Math.floor(Math.random() * 10);
         const b = Math.floor(Math.random() * 10);
         el.textContent = '' + a + b;
         setTimeout(tick, STEP);
