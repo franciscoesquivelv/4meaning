@@ -807,29 +807,28 @@
       position: relative;
     }
     .typewriter-line {
-      font-size: 3.4rem;
-      font-weight: 300;
+      font-size: 4.4rem;
+      font-weight: 500;
       font-style: italic;
-      letter-spacing: -0.012em;
+      letter-spacing: -0.015em;
       line-height: 1.15;
       color: var(--white);
-      max-width: 28ch;
+      max-width: 24ch;
     }
     .typewriter-line .text {
       display: inline;
     }
     .typewriter-line .cursor {
+      display: none;
+    }
+    .typewriter-line.typing .cursor {
       display: inline-block;
-      width: 0.06em;
+      width: 0.07em;
       height: 0.96em;
       background: currentColor;
       margin-left: 0.08em;
       vertical-align: text-bottom;
       animation: typewriter-blink 0.7s steps(1) infinite;
-      opacity: 0;
-    }
-    .typewriter-line.typing .cursor {
-      opacity: 1;
     }
     @keyframes typewriter-blink {
       0%, 50% { opacity: 1; }
