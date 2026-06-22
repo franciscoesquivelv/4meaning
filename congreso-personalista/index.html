@@ -800,17 +800,17 @@
         <div class="layers-v2-head stagger d1">
           <h3>La trascendencia personal es un proceso ontológico y existencial que integra, conscientemente, tres capas.</h3>
         </div>
-        <div class="layer-label-v2 pos-tl fragment fade-up" data-rot-y="-1.05" data-rot-x="-0.4">
+        <div class="layer-label-v2 pos-tl fragment fade-up" data-rot-y="-1.05" data-rot-x="-0.4" data-pos-x="0.9">
           <span class="num">01</span>
           <div class="name">Biografía propia</div>
           <p class="desc">Lo que la persona va viviendo: sus encuentros, sus heridas, sus actos, su historia singular en curso.</p>
         </div>
-        <div class="layer-label-v2 pos-r fragment fade-up" data-rot-y="1.05" data-rot-x="0">
+        <div class="layer-label-v2 pos-r fragment fade-up" data-rot-y="1.05" data-rot-x="0" data-pos-x="-0.9">
           <span class="num">02</span>
           <div class="name">Herencia genealógica</div>
           <p class="desc">Lo que recibió antes de poder elegir nada: el nombre, el idioma, la biología, la historia familiar.</p>
         </div>
-        <div class="layer-label-v2 pos-bl fragment fade-up" data-rot-y="-0.78" data-rot-x="0.5">
+        <div class="layer-label-v2 pos-bl fragment fade-up" data-rot-y="-0.78" data-rot-x="0.5" data-pos-x="0.6">
           <span class="num">03</span>
           <div class="name">Autodeterminación axiológica</div>
           <p class="desc">El gobierno libre de su vida, basado en valores objetivos que ha hecho propios.</p>
@@ -1366,37 +1366,14 @@
     const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
 
-    /* Env map calido procedural: gradiente ambar-borgoña en lugar de HDR cromado */
-    function buildWarmEnv() {
-      const gradCanvas = document.createElement('canvas');
-      gradCanvas.width = 256;
-      gradCanvas.height = 256;
-      const gctx = gradCanvas.getContext('2d');
-      const grad = gctx.createLinearGradient(0, 0, 0, 256);
-      grad.addColorStop(0, '#fcd796');
-      grad.addColorStop(0.4, '#c4a679');
-      grad.addColorStop(0.7, '#3a2520');
-      grad.addColorStop(1, '#1a0e0e');
-      gctx.fillStyle = grad;
-      gctx.fillRect(0, 0, 256, 256);
-      const tex = new THREE.CanvasTexture(gradCanvas);
-      tex.mapping = THREE.EquirectangularReflectionMapping;
-      const pmrem = new THREE.PMREMGenerator(renderer);
-      const env = pmrem.fromEquirectangular(tex).texture;
-      tex.dispose();
-      pmrem.dispose();
-      return env;
-    }
-    scene.environment = buildWarmEnv();
-
     const geom = new THREE.IcosahedronGeometry(1.95, 0);
-    /* Material translucido para que el icosaedro sea fondo, no
-       protagonista. El titulo y las etiquetas pueden sentarse encima
-       sin pelearse con el. Reflejos metalicos se conservan. */
+    /* Material mate translucido. Sin reflejos metalicos: lee a piedra
+       tallada en lugar de objeto de museo cromado. Sigue siendo de
+       fondo para que titulo y etiquetas se sienten encima. */
     const mat = new THREE.MeshStandardMaterial({
       color: 0xa8855a,
-      metalness: 0.88,
-      roughness: 0.35,
+      metalness: 0.0,
+      roughness: 0.95,
       flatShading: true,
       transparent: true,
       opacity: 0.42,
@@ -1439,6 +1416,27 @@
       requestAnimationFrame(step);
     }
 
+    /* Entrada cinematica: el icosaedro arranca enorme y fuera de pantalla
+       a la izquierda, se mueve al centro mientras se asienta a su tamaño
+       normal. NO es fade in: es traveling shot. */
+    function enter() {
+      gsap.killTweensOf([mesh.position, mesh.scale]);
+      mesh.position.set(-9, 0, 0);
+      mesh.scale.set(2.6, 2.6, 2.6);
+      gsap.to(mesh.position, {
+        x: 0,
+        duration: 1.9,
+        ease: 'power3.out',
+        overwrite: 'auto',
+      });
+      gsap.to(mesh.scale, {
+        x: 1, y: 1, z: 1,
+        duration: 1.9,
+        ease: 'power3.out',
+        overwrite: 'auto',
+      });
+    }
+
     return {
       start() {
         if (running) return;
@@ -1447,7 +1445,11 @@
         requestAnimationFrame(step);
       },
       stop() { running = false; },
-      rotateTo(dy, dx) {
+      enter,
+      /* Movimiento coherente: cada fragment rota el solido HACIA su
+         etiqueta y desplaza la posicion para que el solido cede espacio
+         al texto que aparece. */
+      move(dy, dx, dposX) {
         gsap.to(mesh.rotation, {
           y: '+=' + dy,
           x: '+=' + dx,
@@ -1455,6 +1457,14 @@
           ease: 'power3.out',
           overwrite: 'auto',
         });
+        if (typeof dposX === 'number' && dposX !== 0) {
+          gsap.to(mesh.position, {
+            x: dposX,
+            duration: 1.2,
+            ease: 'power3.out',
+            overwrite: 'auto',
+          });
+        }
       },
     };
   }
@@ -1473,7 +1483,14 @@
     document.querySelectorAll('canvas[data-icosa]').forEach(c => icosaCtrls.set(c, initIcosa(c)));
     function syncIcosa() {
       const current = Reveal.getCurrentSlide();
-      icosaCtrls.forEach((ctrl, canvas) => current && current.contains(canvas) ? ctrl.start() : ctrl.stop());
+      icosaCtrls.forEach((ctrl, canvas) => {
+        if (current && current.contains(canvas)) {
+          ctrl.start();
+          ctrl.enter();
+        } else {
+          ctrl.stop();
+        }
+      });
     }
     syncIcosa();
 
@@ -1542,7 +1559,8 @@
       if (!ctrl) return;
       const dy = parseFloat(frag.dataset.rotY || '0');
       const dx = parseFloat(frag.dataset.rotX || '0');
-      if (dy !== 0 || dx !== 0) ctrl.rotateTo(dy, dx);
+      const posX = frag.dataset.posX ? parseFloat(frag.dataset.posX) : undefined;
+      ctrl.move(dy, dx, posX);
     });
   });
 </script>
