@@ -665,6 +665,79 @@
       padding: 5vh 5vw;
       position: relative;
       overflow: hidden;
+      /* Variables del blob radial. JS las anima con GSAP para que se
+         arrastre al arquetipo activo. */
+      --blob-x: 50%;
+      --blob-y: 50%;
+      --blob-size: 42vh;
+    }
+
+    /* Blob oscuro granulado que sigue al arquetipo activo. Vive sobre
+       el texto base (oscuro) pero debajo del overlay light. */
+    .constellation-blob {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 2;
+      opacity: 0;
+      background: radial-gradient(
+        circle var(--blob-size) at var(--blob-x) var(--blob-y),
+        rgba(26, 14, 14, 0.94) 0%,
+        rgba(26, 14, 14, 0.86) 35%,
+        rgba(26, 14, 14, 0.55) 58%,
+        rgba(26, 14, 14, 0.12) 75%,
+        transparent 85%
+      );
+    }
+    /* Granulado SVG noise enmascarado al blob */
+    .constellation-blob::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='400'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.92' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.55 0'/></filter><rect width='400' height='400' filter='url(%23n)'/></svg>");
+      mix-blend-mode: overlay;
+      opacity: 0.42;
+      -webkit-mask-image: radial-gradient(
+        circle var(--blob-size) at var(--blob-x) var(--blob-y),
+        black 0%, black 50%, transparent 80%
+      );
+      mask-image: radial-gradient(
+        circle var(--blob-size) at var(--blob-x) var(--blob-y),
+        black 0%, black 50%, transparent 80%
+      );
+    }
+
+    /* Overlay con copia del texto en color crema, masked al blob.
+       Vive ENCIMA del texto base y del blob. Solo se ve donde el blob
+       lo descubre (mask radial sincronizada). Esto da la inversion
+       progresiva: el texto va cambiando de color conforme el blob lo
+       toca, no de un solo. */
+    .archetypes-overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 5;
+      opacity: 0;
+      -webkit-mask-image: radial-gradient(
+        circle var(--blob-size) at var(--blob-x) var(--blob-y),
+        black 0%, black 40%, rgba(0,0,0,0.55) 62%, transparent 82%
+      );
+      mask-image: radial-gradient(
+        circle var(--blob-size) at var(--blob-x) var(--blob-y),
+        black 0%, black 40%, rgba(0,0,0,0.55) 62%, transparent 82%
+      );
+    }
+    .archetypes-overlay .archetype {
+      position: absolute;
+      max-width: 34vw;
+    }
+    .archetypes-overlay .archetype-num {
+      color: rgba(252, 232, 200, 0.68);
+    }
+    .archetypes-overlay .archetype-name,
+    .archetypes-overlay .archetype-line {
+      color: #fce8c8;
     }
     .constellation-head {
       position: absolute;
@@ -688,15 +761,15 @@
     }
     .archetype-num {
       position: absolute;
-      font-size: 14rem;
+      font-size: 22rem;
       font-weight: 100;
       letter-spacing: -0.06em;
       line-height: 0.85;
-      color: rgba(196, 166, 121, 0.32);
+      color: rgba(196, 166, 121, 0.36);
       text-transform: uppercase;
       z-index: 0;
-      top: -4rem;
-      left: -3rem;
+      top: -7rem;
+      left: -5rem;
       pointer-events: none;
       white-space: nowrap;
       font-family: 'Montserrat', sans-serif;
@@ -705,8 +778,8 @@
     .archetype.pos-cr .archetype-num,
     .archetype.pos-bc .archetype-num {
       left: auto;
-      right: -3rem;
-      top: -4rem;
+      right: -5rem;
+      top: -7rem;
     }
     .archetype-name {
       position: relative;
@@ -728,11 +801,11 @@
       color: var(--dark);
       margin: 0;
     }
-    /* Posiciones mas concentradas para que la constelacion se sienta
-       conversacion, no exhibicion dispersa. */
-    .archetype.pos-tl { top: 22vh; left: 9vw; max-width: 32vw; }
-    .archetype.pos-cr { top: 40vh; right: 9vw; text-align: right; max-width: 32vw; }
-    .archetype.pos-bc { bottom: 16vh; left: 50%; transform: translateX(-50%); text-align: center; max-width: 36vw; }
+    /* Posiciones tendiendo al centro para que el blob radial pueda
+       cubrirlos sin extremos. */
+    .archetype.pos-tl { top: 26vh; left: 14vw; max-width: 32vw; }
+    .archetype.pos-cr { top: 42vh; right: 14vw; text-align: right; max-width: 32vw; }
+    .archetype.pos-bc { bottom: 20vh; left: 50%; transform: translateX(-50%); text-align: center; max-width: 36vw; }
 
     /* Override del CSS de Reveal para que GSAP controle la opacity
        sin conflictos durante la animacion del pulso de respiracion. */
@@ -1087,6 +1160,10 @@
     <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
       <div class="constellation">
         <p class="constellation-head stagger d1">El propósito, mientras tanto, se fue volviendo un mercado.</p>
+
+        <!-- Blob oscuro granulado, controlado por --blob-x / --blob-y -->
+        <div class="constellation-blob"></div>
+
         <div class="archetype pos-tl fragment constellation-step">
           <span class="archetype-num">01</span>
           <div class="archetype-name">Gurú</div>
@@ -1101,6 +1178,27 @@
           <span class="archetype-num">03</span>
           <div class="archetype-name">Manifestador</div>
           <p class="archetype-line">Convierte tu destino en cuestión de vibración.</p>
+        </div>
+
+        <!-- Overlay con copia del texto en color crema, masked al blob.
+             Solo visible donde el blob lo descubre. Da inversion
+             progresiva del texto conforme el blob lo va tocando. -->
+        <div class="archetypes-overlay" aria-hidden="true">
+          <div class="archetype pos-tl">
+            <span class="archetype-num">01</span>
+            <div class="archetype-name">Gurú</div>
+            <p class="archetype-line">Vende una versión mejorada de ti, a plazos.</p>
+          </div>
+          <div class="archetype pos-cr">
+            <span class="archetype-num">02</span>
+            <div class="archetype-name">Coach</div>
+            <p class="archetype-line">Mide tu vida por los resultados que produce.</p>
+          </div>
+          <div class="archetype pos-bc">
+            <span class="archetype-num">03</span>
+            <div class="archetype-name">Manifestador</div>
+            <p class="archetype-line">Convierte tu destino en cuestión de vibración.</p>
+          </div>
         </div>
       </div>
     </section>
@@ -1895,10 +1993,43 @@
       gsap.killTweensOf(el);
       gsap.to(el, { opacity: 0, duration: 0.5, ease: 'power2.in', overwrite: 'auto' });
     }
+    /* Mover el blob radial al centro del arquetipo activo. Anima las
+       CSS variables del .constellation con GSAP. La primera vez que se
+       activa un arquetipo, ademas hace fade-in del blob y del overlay
+       de texto invertido. */
+    function moveBlobToArchetype(el) {
+      const constellation = el.closest('.constellation');
+      if (!constellation) return;
+      const blob = constellation.querySelector('.constellation-blob');
+      const overlay = constellation.querySelector('.archetypes-overlay');
+      const cRect = constellation.getBoundingClientRect();
+      const aRect = el.getBoundingClientRect();
+      const x = ((aRect.left + aRect.width / 2 - cRect.left) / cRect.width) * 100;
+      const y = ((aRect.top + aRect.height / 2 - cRect.top) / cRect.height) * 100;
+      gsap.to(constellation, {
+        '--blob-x': x + '%',
+        '--blob-y': y + '%',
+        duration: 1.4,
+        ease: 'power3.inOut',
+        overwrite: 'auto',
+      });
+      if (blob) gsap.to(blob, { opacity: 1, duration: 0.8, ease: 'power2.out', overwrite: 'auto' });
+      if (overlay) gsap.to(overlay, { opacity: 1, duration: 0.8, ease: 'power2.out', overwrite: 'auto' });
+    }
+    function hideBlobAll(slide) {
+      const constellation = slide.querySelector('.constellation');
+      if (!constellation) return;
+      const blob = constellation.querySelector('.constellation-blob');
+      const overlay = constellation.querySelector('.archetypes-overlay');
+      if (blob) gsap.to(blob, { opacity: 0, duration: 0.5, ease: 'power2.in', overwrite: 'auto' });
+      if (overlay) gsap.to(overlay, { opacity: 0, duration: 0.5, ease: 'power2.in', overwrite: 'auto' });
+    }
     /* Expuestos en window para que los listeners de Reveal los usen */
     window.__activateArchetype = activateArchetype;
     window.__dimArchetype = dimArchetype;
     window.__hideArchetype = hideArchetype;
+    window.__moveBlobToArchetype = moveBlobToArchetype;
+    window.__hideBlobAll = hideBlobAll;
 
     Reveal.on('slidechanged', (event) => {
       syncCanvases();
@@ -1935,7 +2066,9 @@
 
       /* Constellation step (slide 09): cuando aparece un arquetipo, los
          anteriores se atenuan con pulso de respiracion, este se activa
-         con pulso propio. Acumulativo, no sustitutivo. */
+         con pulso propio. Acumulativo, no sustitutivo.
+         Adicionalmente: el blob radial oscuro se mueve al centro del
+         activo, arrastrado, y el overlay de texto invertido se sincroniza. */
       if (frag.classList.contains('constellation-step')) {
         const steps = slide.querySelectorAll('.constellation-step');
         steps.forEach(step => {
@@ -1945,6 +2078,7 @@
             window.__dimArchetype(step);
           }
         });
+        window.__moveBlobToArchetype(frag);
         return;
       }
 
@@ -1995,17 +2129,19 @@
       }
 
       /* Constellation step (slide 09): al retroceder, ocultar el actual
-         y reactivar el anterior visible. */
+         y reactivar el anterior visible. El blob se mueve al anterior
+         o se oculta si no queda ninguno visible. */
       if (frag.classList.contains('constellation-step')) {
         window.__hideArchetype(frag);
         const steps = Array.from(slide.querySelectorAll('.constellation-step'));
-        /* El "anterior visible" es el ultimo visible que no es frag */
         const stillVisible = steps.filter(s => s !== frag && s.classList.contains('visible'));
         const last = stillVisible[stillVisible.length - 1];
         if (last) {
           window.__activateArchetype(last);
-          /* Los previos siguen atenuados */
           stillVisible.slice(0, -1).forEach(s => window.__dimArchetype(s));
+          window.__moveBlobToArchetype(last);
+        } else {
+          window.__hideBlobAll(slide);
         }
         return;
       }
