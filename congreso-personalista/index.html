@@ -641,7 +641,6 @@
 <!-- Canvas global para el mesh 3D persistente. Vive sobre todos los slides,
      pointer-events:none para no interceptar clicks, z-index bajo para
      quedar detras de los textos pero sobre los fondos. -->
-<canvas id="mesh-canvas" aria-hidden="true" style="position:fixed; inset:0; width:100vw; height:100vh; pointer-events:none; z-index:5;"></canvas>
 
 <div class="reveal">
   <div class="slides">
@@ -1101,152 +1100,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
-<script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script>
-  /* ═══════════════════════════════════════════════════════════════
-     MESH 3D persistente · atmosfera, no protagonismo.
-     Icosaedro (no cubo, no logo corporativo) flotando a la derecha,
-     centrado vertical, con luz unica calida tipo lampara de biblioteca.
-     Rotacion idle contemplativa + impulso adicional al cambiar de slide.
-  ═══════════════════════════════════════════════════════════════ */
-  (function initMesh3D() {
-    const canvas = document.getElementById('mesh-canvas');
-    if (!canvas || typeof THREE === 'undefined') return null;
-
-    const scene = new THREE.Scene();
-
-    /* Camara: leve perspectiva, mesh queda a la derecha del frame */
-    const camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 100);
-    camera.position.set(0, 0, 6);
-
-    const renderer = new THREE.WebGLRenderer({
-      canvas: canvas,
-      antialias: true,
-      alpha: true,
-    });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
-    renderer.setSize(window.innerWidth, window.innerHeight, false);
-    renderer.setClearColor(0x000000, 0);
-
-    /* Geometria: icosaedro detail 0 (20 caras planas, no esfera suave).
-       Lee a piedra tallada, no a joya geometrica reconocible. */
-    const geo = new THREE.IcosahedronGeometry(1, 0);
-
-    /* Volumen translucido en cuero, no opaco brillante */
-    const fillMat = new THREE.MeshPhongMaterial({
-      color: 0x3a2520,           // marron cuero
-      emissive: 0x1a0e0e,        // emisivo borgoña muy bajo, para que no se vea negro puro
-      emissiveIntensity: 0.35,
-      shininess: 18,
-      specular: 0x2a1810,
-      transparent: true,
-      opacity: 0.62,
-      flatShading: true,
-    });
-    const fillMesh = new THREE.Mesh(geo, fillMat);
-
-    /* Aristas en ambar para que las facetas se sugieran sin gritar wireframe */
-    const edges = new THREE.EdgesGeometry(geo);
-    const edgeMat = new THREE.LineBasicMaterial({
-      color: 0xc4a679,           // ambar suave
-      transparent: true,
-      opacity: 0.55,
-    });
-    const edgeLines = new THREE.LineSegments(edges, edgeMat);
-
-    /* Grupo contenedor: rotaciones se aplican al group, no a cada mesh */
-    const meshGroup = new THREE.Group();
-    meshGroup.add(fillMesh);
-    meshGroup.add(edgeLines);
-
-    /* Posicion y escala dependen del viewport */
-    function placeMesh() {
-      const w = window.innerWidth, h = window.innerHeight;
-      const aspect = w / h;
-      camera.aspect = aspect;
-      camera.updateProjectionMatrix();
-
-      /* Mesh a la derecha. En FOV 35 a z=6, el ancho visible horizontal
-         es ~3.78 * aspect. Lo colocamos en aprox 78% hacia la derecha. */
-      const visibleHeight = 2 * Math.tan((35 * Math.PI / 180) / 2) * 6;
-      const visibleWidth = visibleHeight * aspect;
-      meshGroup.position.x = visibleWidth * 0.32;   // derecha
-      meshGroup.position.y = 0;                      // centrado vertical
-      meshGroup.position.z = 0;
-
-      /* Tamaño objetivo: ~20% del alto del viewport.
-         La geometria base mide ~2 de diametro; la escalamos para que
-         ocupe aprox 20% de la altura visible. */
-      const targetWorldSize = visibleHeight * 0.20;
-      const scale = targetWorldSize / 2;
-      meshGroup.scale.setScalar(scale);
-    }
-
-    scene.add(meshGroup);
-
-    /* Luz unica calida desde arriba-izquierda, como la lampara amarilla
-       de una biblioteca de cuero. Es la "lampara" de la metafora visual. */
-    const lamp = new THREE.PointLight(0xfcd796, 1.8, 30, 1.4);
-    lamp.position.set(-4, 4, 3);
-    scene.add(lamp);
-
-    /* Ambiente muy bajo en borgoña: las sombras del mesh tienen
-       tono cuero, no negro frio. */
-    const ambient = new THREE.AmbientLight(0x1a0e0e, 0.42);
-    scene.add(ambient);
-
-    /* Rotacion inicial estetica (no axis-aligned) */
-    meshGroup.rotation.set(0.35, 0.6, 0.12);
-
-    placeMesh();
-    window.addEventListener('resize', () => {
-      renderer.setSize(window.innerWidth, window.innerHeight, false);
-      placeMesh();
-    });
-
-    /* Render loop con pausa cuando la pestaña no es visible */
-    let running = true;
-    function tick() {
-      if (!running) return;
-      /* Rotacion idle contemplativa, casi imperceptible pero viva */
-      meshGroup.rotation.y += 0.0008;
-      meshGroup.rotation.x += 0.0003;
-      renderer.render(scene, camera);
-      requestAnimationFrame(tick);
-    }
-    requestAnimationFrame(tick);
-
-    document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'visible') {
-        if (!running) { running = true; requestAnimationFrame(tick); }
-      } else {
-        running = false;
-      }
-    });
-
-    /* Impulso cinematografico al cambiar de slide */
-    function pulseRotation() {
-      if (typeof gsap === 'undefined') return;
-      /* Direccion y magnitud aleatorias para que cada cambio se sienta
-         distinto, pero acotadas para que el movimiento siga siendo
-         atmosfera y no protagonismo. */
-      const dy = (Math.random() < 0.5 ? -1 : 1) * (Math.PI / 3 + Math.random() * (Math.PI / 6));
-      const dx = (Math.random() < 0.5 ? -1 : 1) * (Math.PI / 8 + Math.random() * (Math.PI / 10));
-      gsap.to(meshGroup.rotation, {
-        y: meshGroup.rotation.y + dy,
-        x: meshGroup.rotation.x + dx,
-        duration: 1.5,
-        ease: 'power2.out',
-        overwrite: 'auto',
-      });
-    }
-
-    /* Exponer hook para que el listener slidechanged lo dispare */
-    window.__meshPulse = pulseRotation;
-    return { pulseRotation };
-  })();
-
   Reveal.initialize({
     hash: true,
     controls: true,
@@ -1404,8 +1258,6 @@
     Reveal.on('slidechanged', () => {
       syncCanvases();
       scrambleCurrentSlide();
-      /* Impulso rotacional del mesh 3D persistente al cambiar de slide */
-      if (typeof window.__meshPulse === 'function') window.__meshPulse();
     });
   });
 </script>
