@@ -524,6 +524,43 @@
     }
 
     /* ═══════════════════════════════════════════════════════════════
+       MONUMENTAL · composicion F (slide 06)
+       Solo dos palabras en pantalla. SplitText mask manual: cada linea
+       vive dentro de un .line con overflow:hidden, y el .line-inner
+       se anima con translateY via GSAP al entrar al slide.
+    ═══════════════════════════════════════════════════════════════ */
+    .monumental {
+      width: 100%; height: 100%;
+      padding: 12vh 7vw;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      position: relative;
+    }
+    .monumental-h {
+      font-size: 11.5rem;
+      font-weight: 900;
+      line-height: 0.92;
+      letter-spacing: -0.045em;
+      text-transform: uppercase;
+      color: var(--dark);
+      text-align: left;
+      max-width: 92vw;
+      margin: 0;
+    }
+    .monumental-h .line {
+      display: block;
+      overflow: hidden;
+      padding-bottom: 0.04em;
+    }
+    .monumental-h .line-inner {
+      display: inline-block;
+      transform: translateY(110%);
+      will-change: transform;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
        LIST 4 · cuatro planos
     ═══════════════════════════════════════════════════════════════ */
     .four {
@@ -789,12 +826,15 @@
          BLOQUE 2 · DEFINICIÓN: tres capas (2 slides)
     ════════════════════════════════════════════════════ -->
 
-    <!-- 06. EL TEMA -->
-    <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
-      <div class="statement">
-        <span class="statement-eyebrow eyebrow stagger d1">Esa pregunta que acaban de hacerse en silencio</span>
-        <h2 class="statement-h stagger d2"><span class="ghost">Es la pregunta por la</span><br>trascendencia<br>personal.</h2>
-        <p class="statement-body body-light stagger d3">Considero que se puede definir filosóficamente con bastante precisión, mostrar como personalismo aplicado, y, sobre todo, trabajarse en la práctica. De eso vengo a hablarles.</p>
+    <!-- 06. EL TEMA · composicion F monumental tipo cinematografico
+         Solo dos palabras en pantalla. SplitText mask por lineas.
+         Lo demas se dice de viva voz. -->
+    <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade" data-monumental="true">
+      <div class="monumental">
+        <h2 class="monumental-h">
+          <span class="line"><span class="line-inner">Trascendencia</span></span>
+          <span class="line"><span class="line-inner">personal.</span></span>
+        </h2>
       </div>
     </section>
 
@@ -1543,10 +1583,30 @@
     }
     scrambleCurrentSlide();
 
+    /* SplitText mask por lineas (manual, sin plugin premium). Cada
+       .line-inner arranca con translateY 110% (oculta dentro del
+       overflow:hidden de .line) y se anima a 0 en stagger. */
+    function animateMonumental(slide) {
+      if (!slide) return;
+      const lines = slide.querySelectorAll('.monumental-h .line-inner');
+      if (!lines.length) return;
+      gsap.set(lines, { yPercent: 110 });
+      gsap.to(lines, {
+        yPercent: 0,
+        duration: 0.95,
+        ease: 'power3.out',
+        stagger: 0.42,
+        delay: 0.2,
+        overwrite: 'auto',
+      });
+    }
+    animateMonumental(Reveal.getCurrentSlide());
+
     Reveal.on('slidechanged', (event) => {
       syncCanvases();
       syncIcosa();
       scrambleCurrentSlide();
+      animateMonumental(event.currentSlide);
 
       /* Migracion de particulas portada -> silencio (h=0 -> h=1) */
       const prevH = event.previousSlide ? Reveal.getIndices(event.previousSlide).h : -1;
