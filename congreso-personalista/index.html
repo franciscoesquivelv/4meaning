@@ -604,15 +604,15 @@
     }
     .depth-bg-word {
       position: absolute;
-      font-size: 26rem;
+      font-size: 22rem;
       font-weight: 100;
       letter-spacing: -0.06em;
       line-height: 0.85;
       color: rgba(196, 166, 121, 0.22);
       text-transform: lowercase;
       z-index: 0;
-      top: 8vh;
-      right: -3vw;
+      top: 12vh;
+      right: 3vw;
       pointer-events: none;
       white-space: nowrap;
       font-family: 'Montserrat', sans-serif;
@@ -620,9 +620,9 @@
     .depth-h {
       position: relative;
       z-index: 2;
-      font-size: 5.4rem;
+      font-size: 5.2rem;
       font-weight: 900;
-      line-height: 0.96;
+      line-height: 1.05;
       letter-spacing: -0.045em;
       text-transform: uppercase;
       color: var(--dark);
@@ -634,7 +634,7 @@
       display: block;
     }
     .depth-block-a {
-      margin-bottom: 0.45em;
+      margin-bottom: 0.6em;
     }
     .depth-block-b {
       padding-left: 22%;
@@ -642,7 +642,8 @@
     .depth-h .line {
       display: block;
       overflow: hidden;
-      padding-bottom: 0.04em;
+      padding-bottom: 0.12em;
+      padding-top: 0.18em;
     }
     .depth-h .line-inner {
       display: inline-block;
@@ -1751,7 +1752,9 @@
           overwrite: 'auto',
         });
       }
-      /* Depth: lineas del block-a primero, despues block-b con pausa */
+      /* Depth: lineas del block-a primero, pausa larga incomoda, despues
+         block-b. La pausa es deliberada: el publico AEP necesita sentir
+         el peso del diagnostico antes de oir el matiz critico. */
       const blockA = slide.querySelectorAll('.depth-h .depth-block-a .line-inner');
       const blockB = slide.querySelectorAll('.depth-h .depth-block-b .line-inner');
       if (blockA.length || blockB.length) {
@@ -1759,20 +1762,20 @@
         if (blockA.length) {
           gsap.to(blockA, {
             yPercent: 0,
-            duration: 0.9,
+            duration: 1.1,
             ease: 'power3.out',
-            stagger: 0.35,
-            delay: 0.3,
+            stagger: 0.55,
+            delay: 0.4,
             overwrite: 'auto',
           });
         }
         if (blockB.length) {
           gsap.to(blockB, {
             yPercent: 0,
-            duration: 0.9,
+            duration: 1.1,
             ease: 'power3.out',
-            stagger: 0.35,
-            delay: 0.3 + blockA.length * 0.35 + 0.6,
+            stagger: 0.55,
+            delay: 0.4 + blockA.length * 0.55 + 1.4,
             overwrite: 'auto',
           });
         }
