@@ -669,8 +669,8 @@
          elipsoidal con rx/ry distintos = blob organico no circulo. */
       --blob-x: 50%;
       --blob-y: 50%;
-      --blob-rx: 58vh;
-      --blob-ry: 42vh;
+      --blob-rx: 85vh;
+      --blob-ry: 60vh;
       --blob-rot: 0deg;
     }
 
@@ -2026,15 +2026,15 @@
       /* Durante el viaje: estirarlo + rotarlo ligeramente.
          Mitad del camino: forma deformada. Final: forma de descanso. */
       tl.to(constellation, {
-        '--blob-rx': '70vh',
-        '--blob-ry': '32vh',
+        '--blob-rx': '100vh',
+        '--blob-ry': '46vh',
         '--blob-rot': (Math.random() > 0.5 ? 12 : -12) + 'deg',
         duration: 1.1,
         ease: 'sine.in',
       }, 0);
       tl.to(constellation, {
-        '--blob-rx': '58vh',
-        '--blob-ry': '42vh',
+        '--blob-rx': '85vh',
+        '--blob-ry': '60vh',
         '--blob-rot': '0deg',
         duration: 1.1,
         ease: 'sine.out',
