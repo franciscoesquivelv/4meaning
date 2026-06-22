@@ -684,13 +684,13 @@
       opacity: 0;
       background: radial-gradient(
         ellipse var(--blob-rx) var(--blob-ry) at var(--blob-x) var(--blob-y),
-        rgba(58, 37, 32, 0.52) 0%,
-        rgba(58, 37, 32, 0.32) 35%,
-        rgba(58, 37, 32, 0.14) 60%,
-        rgba(58, 37, 32, 0.04) 80%,
+        rgba(48, 28, 22, 0.82) 0%,
+        rgba(48, 28, 22, 0.62) 30%,
+        rgba(48, 28, 22, 0.35) 55%,
+        rgba(48, 28, 22, 0.12) 78%,
         transparent 100%
       );
-      filter: blur(14px);
+      filter: blur(8px);
       transform: rotate(var(--blob-rot));
       transform-origin: var(--blob-x) var(--blob-y);
       will-change: transform, filter;
@@ -1987,7 +1987,7 @@
     function activateArchetype(el) {
       gsap.killTweensOf(el);
       gsap.timeline({ overwrite: 'auto' })
-        .to(el, { opacity: 1.0, duration: 1.6, delay: 0.8, ease: 'sine.out' })
+        .to(el, { opacity: 1.0, duration: 1.4, delay: 0.5, ease: 'sine.out' })
         .to(el, { opacity: 0.92, duration: 2.4, ease: 'sine.inOut', repeat: -1, yoyo: true });
     }
     function dimArchetype(el) {
