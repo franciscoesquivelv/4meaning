@@ -686,7 +686,31 @@
       z-index: 3;
       color: var(--dark);
     }
+    .archetype-num {
+      position: absolute;
+      font-size: 14rem;
+      font-weight: 100;
+      letter-spacing: -0.06em;
+      line-height: 0.85;
+      color: rgba(196, 166, 121, 0.32);
+      text-transform: uppercase;
+      z-index: 0;
+      top: -4rem;
+      left: -3rem;
+      pointer-events: none;
+      white-space: nowrap;
+      font-family: 'Montserrat', sans-serif;
+      margin: 0;
+    }
+    .archetype.pos-cr .archetype-num,
+    .archetype.pos-bc .archetype-num {
+      left: auto;
+      right: -3rem;
+      top: -4rem;
+    }
     .archetype-name {
+      position: relative;
+      z-index: 2;
       font-size: 4.6rem;
       font-weight: 900;
       letter-spacing: -0.045em;
@@ -696,15 +720,19 @@
       color: var(--dark);
     }
     .archetype-line {
+      position: relative;
+      z-index: 2;
       font-size: 1.4rem;
       font-weight: 300;
       line-height: 1.4;
       color: var(--dark);
       margin: 0;
     }
-    .archetype.pos-tl { top: 22vh; left: 5vw; max-width: 32vw; }
-    .archetype.pos-cr { top: 40vh; right: 5vw; text-align: right; max-width: 34vw; }
-    .archetype.pos-bc { bottom: 8vh; left: 50%; transform: translateX(-50%); text-align: center; max-width: 38vw; }
+    /* Posiciones mas concentradas para que la constelacion se sienta
+       conversacion, no exhibicion dispersa. */
+    .archetype.pos-tl { top: 22vh; left: 9vw; max-width: 32vw; }
+    .archetype.pos-cr { top: 40vh; right: 9vw; text-align: right; max-width: 32vw; }
+    .archetype.pos-bc { bottom: 16vh; left: 50%; transform: translateX(-50%); text-align: center; max-width: 36vw; }
 
     /* Override del CSS de Reveal para que GSAP controle la opacity
        sin conflictos durante la animacion del pulso de respiracion. */
@@ -1060,14 +1088,17 @@
       <div class="constellation">
         <p class="constellation-head stagger d1">El propósito, mientras tanto, se fue volviendo un mercado.</p>
         <div class="archetype pos-tl fragment constellation-step">
+          <span class="archetype-num">01</span>
           <div class="archetype-name">Gurú</div>
           <p class="archetype-line">Vende una versión mejorada de ti, a plazos.</p>
         </div>
         <div class="archetype pos-cr fragment constellation-step">
+          <span class="archetype-num">02</span>
           <div class="archetype-name">Coach</div>
           <p class="archetype-line">Mide tu vida por los resultados que produce.</p>
         </div>
         <div class="archetype pos-bc fragment constellation-step">
+          <span class="archetype-num">03</span>
           <div class="archetype-name">Manifestador</div>
           <p class="archetype-line">Convierte tu destino en cuestión de vibración.</p>
         </div>
