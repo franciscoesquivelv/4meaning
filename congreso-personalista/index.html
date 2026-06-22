@@ -439,6 +439,84 @@
     }
 
     /* ═══════════════════════════════════════════════════════════════
+       LAYERS V2 · icosaedro metalico central con etiquetas alrededor
+       Composicion especifica de slide 07. NO plantilla.
+    ═══════════════════════════════════════════════════════════════ */
+    .layers-v2 {
+      position: relative;
+      width: 100%; height: 100%;
+      padding: 5vh 5vw;
+      overflow: hidden;
+    }
+    .layers-v2-head {
+      position: absolute;
+      top: 5vh;
+      left: 5vw;
+      max-width: 46vw;
+      z-index: 5;
+    }
+    .layers-v2-head h3 {
+      font-size: 1.4rem;
+      font-weight: 300;
+      line-height: 1.45;
+      color: var(--dark);
+      text-transform: none;
+      letter-spacing: -0.005em;
+      font-style: italic;
+    }
+    .icosa-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%; height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+    .layer-label-v2 {
+      position: absolute;
+      max-width: 22vw;
+      z-index: 4;
+      color: var(--dark);
+    }
+    .layer-label-v2 .num {
+      font-size: 0.72rem;
+      letter-spacing: 0.32em;
+      color: var(--muted);
+      font-weight: 700;
+      display: block;
+      margin-bottom: 0.4rem;
+    }
+    .layer-label-v2 .name {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      text-transform: uppercase;
+      line-height: 1;
+      margin-bottom: 0.7rem;
+    }
+    .layer-label-v2 .desc {
+      font-size: 0.88rem;
+      line-height: 1.55;
+      font-weight: 300;
+      color: var(--dark);
+    }
+    .layer-label-v2.pos-tl { top: 26vh; left: 5vw; }
+    .layer-label-v2.pos-r  { top: 42vh; right: 5vw; text-align: right; max-width: 24vw; }
+    .layer-label-v2.pos-bl { bottom: 12vh; left: 16vw; }
+    .layers-v2-caption {
+      position: absolute;
+      bottom: 5vh;
+      right: 5vw;
+      max-width: 30vw;
+      font-size: 0.8rem;
+      font-weight: 300;
+      line-height: 1.5;
+      color: var(--muted);
+      font-style: italic;
+      z-index: 5;
+      text-align: right;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
        LIST 4 · cuatro planos
     ═══════════════════════════════════════════════════════════════ */
     .four {
@@ -655,7 +733,6 @@
         <div class="cover-left">
           <canvas class="cover-canvas" data-particles></canvas>
           <div class="grain"></div>
-          <div class="cover-inf stagger d2">&infin;</div>
         </div>
         <div class="cover-right">
           <span class="eyebrow stagger d1">II Congreso Mundial de Personalismo &nbsp;&middot;&nbsp; Madrid 2026</span>
@@ -714,31 +791,29 @@
       </div>
     </section>
 
-    <!-- 07. TRES CAPAS -->
-    <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
-      <div class="layers">
-        <div class="layers-head">
-          <span class="eyebrow stagger d1">Cómo la entendemos</span>
-          <h3 class="stagger d2">La trascendencia personal es un proceso ontológico y existencial que integra, conscientemente, tres capas.</h3>
+    <!-- 07. TRES CAPAS · composicion v2 con icosaedro central -->
+    <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade" data-icosa-slide="true">
+      <div class="layers-v2">
+        <canvas class="icosa-canvas" data-icosa></canvas>
+        <div class="layers-v2-head stagger d1">
+          <h3>La trascendencia personal es un proceso ontológico y existencial que integra, conscientemente, tres capas.</h3>
         </div>
-        <div class="layers-grid">
-          <div class="layer-cell stagger d3">
-            <span class="num">01</span>
-            <div class="name">Biografía propia</div>
-            <p class="desc">Lo que la persona va viviendo: sus encuentros, sus heridas, sus actos, su historia singular en curso.</p>
-          </div>
-          <div class="layer-cell stagger d4">
-            <span class="num">02</span>
-            <div class="name">Herencia genealógica</div>
-            <p class="desc">Lo que recibió antes de poder elegir nada: el nombre, el idioma, la biología, la historia familiar.</p>
-          </div>
-          <div class="layer-cell stagger d5">
-            <span class="num">03</span>
-            <div class="name">Autodeterminación axiológica</div>
-            <p class="desc">El gobierno libre de su vida, basado en valores objetivos que ha hecho propios.</p>
-          </div>
+        <div class="layer-label-v2 pos-tl fragment fade-up" data-rot-y="-1.05" data-rot-x="-0.4">
+          <span class="num">01</span>
+          <div class="name">Biografía propia</div>
+          <p class="desc">Lo que la persona va viviendo: sus encuentros, sus heridas, sus actos, su historia singular en curso.</p>
         </div>
-        <p class="layers-caption stagger d5">Cuando una persona integra esas tres capas con consciencia, descubre el sentido de su vida y, desde ahí, puede decidir qué legado dejar.</p>
+        <div class="layer-label-v2 pos-r fragment fade-up" data-rot-y="1.05" data-rot-x="0">
+          <span class="num">02</span>
+          <div class="name">Herencia genealógica</div>
+          <p class="desc">Lo que recibió antes de poder elegir nada: el nombre, el idioma, la biología, la historia familiar.</p>
+        </div>
+        <div class="layer-label-v2 pos-bl fragment fade-up" data-rot-y="-0.78" data-rot-x="0.5">
+          <span class="num">03</span>
+          <div class="name">Autodeterminación axiológica</div>
+          <p class="desc">El gobierno libre de su vida, basado en valores objetivos que ha hecho propios.</p>
+        </div>
+        <p class="layers-v2-caption fragment fade-soft">Cuando una persona integra esas tres capas con consciencia, descubre el sentido de su vida y, desde ahí, puede decidir qué legado dejar.</p>
       </div>
     </section>
 
@@ -1100,6 +1175,8 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script>
   Reveal.initialize({
     hash: true,
@@ -1206,6 +1283,174 @@
     return { pause() { running = false; }, resume() { if (!running) { running = true; requestAnimationFrame(step); } } };
   }
 
+  /* Migracion de particulas cuando se pasa de portada (h=0) a silencio (h=1).
+     Las particulas arrancan en la mitad izquierda de la pantalla (donde
+     vivian en la portada) y se mueven hacia la derecha, desvaneciendose
+     en 3 segundos. Despues el overlay se elimina. */
+  function migrateParticles() {
+    const overlay = document.createElement('canvas');
+    overlay.id = 'particles-migration';
+    overlay.style.cssText = 'position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:1000;';
+    document.body.appendChild(overlay);
+
+    const ctx = overlay.getContext('2d');
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    const w = window.innerWidth, h = window.innerHeight;
+    overlay.width = w * dpr;
+    overlay.height = h * dpr;
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.scale(dpr, dpr);
+
+    const N = 55;
+    const particles = [];
+    for (let i = 0; i < N; i++) {
+      particles.push({
+        x: Math.random() * (w * 0.45),
+        y: Math.random() * h,
+        vx: 1.4 + Math.random() * 2.6,
+        vy: -(0.08 + Math.random() * 0.22),
+        r: 0.7 + Math.random() * 2.2,
+        baseOp: 0.18 + Math.random() * 0.38,
+        phase: Math.random() * Math.PI * 2,
+        phaseSpeed: 0.008 + Math.random() * 0.014,
+      });
+    }
+
+    const TOTAL_DURATION = 3000;
+    const start = performance.now();
+
+    function tick(now) {
+      const elapsed = now - start;
+      const t = Math.min(1, elapsed / TOTAL_DURATION);
+      const fadeOpacity = 1 - t * t;
+
+      ctx.clearRect(0, 0, w, h);
+
+      for (const p of particles) {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.phase += p.phaseSpeed;
+        if (p.y < -10) p.y = h + 10;
+
+        const pulse = Math.sin(p.phase) * 0.06;
+        const op = Math.max(0, (p.baseOp + pulse) * fadeOpacity);
+
+        ctx.fillStyle = 'rgba(245,230,200,' + op + ')';
+        ctx.shadowBlur = p.r * 3;
+        ctx.shadowColor = 'rgba(245,230,200,' + (op * 0.5) + ')';
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.shadowBlur = 0;
+
+      if (elapsed < TOTAL_DURATION) {
+        requestAnimationFrame(tick);
+      } else {
+        overlay.remove();
+      }
+    }
+    requestAnimationFrame(tick);
+  }
+
+  /* Icosaedro metalico para slide 07. Material bronze envejecido con
+     reflejos sutiles via PMREM env map calido. No es demo WebGL: lee
+     a objeto de museo en vitrina. Init solo cuando se entra al slide. */
+  function initIcosa(canvas) {
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
+    camera.position.set(0, 0, 6.2);
+
+    const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+
+    /* Env map calido procedural: gradiente ambar-borgoña en lugar de HDR cromado */
+    function buildWarmEnv() {
+      const gradCanvas = document.createElement('canvas');
+      gradCanvas.width = 256;
+      gradCanvas.height = 256;
+      const gctx = gradCanvas.getContext('2d');
+      const grad = gctx.createLinearGradient(0, 0, 0, 256);
+      grad.addColorStop(0, '#fcd796');
+      grad.addColorStop(0.4, '#c4a679');
+      grad.addColorStop(0.7, '#3a2520');
+      grad.addColorStop(1, '#1a0e0e');
+      gctx.fillStyle = grad;
+      gctx.fillRect(0, 0, 256, 256);
+      const tex = new THREE.CanvasTexture(gradCanvas);
+      tex.mapping = THREE.EquirectangularReflectionMapping;
+      const pmrem = new THREE.PMREMGenerator(renderer);
+      const env = pmrem.fromEquirectangular(tex).texture;
+      tex.dispose();
+      pmrem.dispose();
+      return env;
+    }
+    scene.environment = buildWarmEnv();
+
+    const geom = new THREE.IcosahedronGeometry(1.95, 0);
+    const mat = new THREE.MeshStandardMaterial({
+      color: 0xa8855a,
+      metalness: 0.88,
+      roughness: 0.35,
+      flatShading: true,
+    });
+    const mesh = new THREE.Mesh(geom, mat);
+    scene.add(mesh);
+
+    /* Aristas en ambar para preservar lectura editorial */
+    const edges = new THREE.LineSegments(
+      new THREE.EdgesGeometry(geom),
+      new THREE.LineBasicMaterial({ color: 0xc4a679, transparent: true, opacity: 0.4 })
+    );
+    mesh.add(edges);
+
+    /* Iluminacion: lampara ambar arriba-izquierda + rim crema abajo-derecha + ambient bajo */
+    scene.add(new THREE.AmbientLight(0x3a2520, 0.55));
+    const key = new THREE.PointLight(0xfcd796, 1.8, 18, 1.5);
+    key.position.set(-3.2, 3.0, 4.0);
+    scene.add(key);
+    const rim = new THREE.PointLight(0xf0e6d2, 0.7, 14, 1.7);
+    rim.position.set(2.8, -2.0, 3.0);
+    scene.add(rim);
+
+    function resize() {
+      const rect = canvas.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) return;
+      renderer.setSize(rect.width, rect.height, false);
+      camera.aspect = rect.width / rect.height;
+      camera.updateProjectionMatrix();
+    }
+    window.addEventListener('resize', resize);
+
+    let running = false;
+    function step() {
+      if (!running) return;
+      mesh.rotation.y += 0.0006;
+      mesh.rotation.x += 0.0003;
+      renderer.render(scene, camera);
+      requestAnimationFrame(step);
+    }
+
+    return {
+      start() {
+        if (running) return;
+        running = true;
+        resize();
+        requestAnimationFrame(step);
+      },
+      stop() { running = false; },
+      rotateTo(dy, dx) {
+        gsap.to(mesh.rotation, {
+          y: '+=' + dy,
+          x: '+=' + dx,
+          duration: 1.2,
+          ease: 'power3.out',
+          overwrite: 'auto',
+        });
+      },
+    };
+  }
+
   Reveal.on('ready', () => {
     const ctrls = new Map();
     document.querySelectorAll('canvas[data-particles]').forEach(c => ctrls.set(c, initParticles(c)));
@@ -1215,9 +1460,16 @@
     }
     syncCanvases();
 
-    /* Scramble del numeral monumental al entrar al slide.
-       Una sola vez por slide, ~1.2s, dos digitos aleatorios cambiando
-       cada 50ms hasta asentarse en el numero final. */
+    /* Icosaedro en slides que tengan canvas[data-icosa] (solo slide 07 por ahora). */
+    const icosaCtrls = new Map();
+    document.querySelectorAll('canvas[data-icosa]').forEach(c => icosaCtrls.set(c, initIcosa(c)));
+    function syncIcosa() {
+      const current = Reveal.getCurrentSlide();
+      icosaCtrls.forEach((ctrl, canvas) => current && current.contains(canvas) ? ctrl.start() : ctrl.stop());
+    }
+    syncIcosa();
+
+    /* Scramble del numeral monumental al entrar al slide. */
     function rememberTargets() {
       document.querySelectorAll('.q-aper-monument').forEach(el => {
         if (!el.dataset.target) el.dataset.target = el.textContent.trim();
@@ -1227,11 +1479,11 @@
 
     function scrambleOnce(el) {
       const target = (el.dataset.target || el.textContent.trim()).padStart(2, '0');
-      const digit1 = target[0];      // se asienta primero
-      const digit2 = target[1];      // se asienta despues
-      const TOTAL      = 1100;       // duracion total ms
-      const FIRST_LOCK = 600;        // ms en los que digit1 ya queda fijo
-      const STEP       = 90;         // menos cambios que antes
+      const digit1 = target[0];
+      const digit2 = target[1];
+      const TOTAL      = 1100;
+      const FIRST_LOCK = 600;
+      const STEP       = 90;
       const start = performance.now();
       const tick = () => {
         const elapsed = performance.now() - start;
@@ -1253,11 +1505,36 @@
       const mon = current.querySelector('.q-aper-monument');
       if (mon) scrambleOnce(mon);
     }
-    /* Disparo en el slide inicial y en cada cambio */
     scrambleCurrentSlide();
-    Reveal.on('slidechanged', () => {
+
+    Reveal.on('slidechanged', (event) => {
       syncCanvases();
+      syncIcosa();
       scrambleCurrentSlide();
+
+      /* Migracion de particulas portada -> silencio (h=0 -> h=1) */
+      const prevH = event.previousSlide ? Reveal.getIndices(event.previousSlide).h : -1;
+      const currH = event.currentSlide  ? Reveal.getIndices(event.currentSlide).h  : -1;
+      if (prevH === 0 && currH === 1) {
+        migrateParticles();
+      }
+    });
+
+    /* Rotacion coherente del icosaedro al avanzar fragments en slide 07.
+       Cada fragment lleva data-rot-y y data-rot-x en radianes con la
+       direccion donde aparece la etiqueta. El icosaedro 'mira' hacia alla. */
+    Reveal.on('fragmentshown', (event) => {
+      const frag = event.fragment;
+      if (!frag) return;
+      const slide = frag.closest('section');
+      if (!slide) return;
+      const canvas = slide.querySelector('canvas[data-icosa]');
+      if (!canvas) return;
+      const ctrl = icosaCtrls.get(canvas);
+      if (!ctrl) return;
+      const dy = parseFloat(frag.dataset.rotY || '0');
+      const dx = parseFloat(frag.dataset.rotX || '0');
+      if (dy !== 0 || dx !== 0) ctrl.rotateTo(dy, dx);
     });
   });
 </script>
