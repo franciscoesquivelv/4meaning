@@ -530,6 +530,19 @@
       transition: none;
     }
 
+    /* Cuando el slide tiene la clase .icosa-fill (agregada por JS al
+       disparar el exit), el fondo se vuelve bronce gradual. Esto da
+       continuidad visual con el icosaedro creciendo y garantiza que
+       la frase de cierre tenga contraste contra el fondo, aun si el
+       canvas WebGL falla. */
+    .reveal .slides section.icosa-fill {
+      background: #a8855a !important;
+      transition: background 1.1s cubic-bezier(0.65, 0, 0.35, 1);
+    }
+    .reveal .slides section {
+      transition: background 1.1s cubic-bezier(0.65, 0, 0.35, 1);
+    }
+
     /* ═══════════════════════════════════════════════════════════════
        MONUMENTAL · composicion F (slide 06)
        Solo dos palabras en pantalla. SplitText mask manual: cada linea
@@ -1702,6 +1715,10 @@
           gsap.to(label, { opacity: 0, duration: 0.35, ease: 'power2.in', overwrite: 'auto' });
         });
         if (ctrl) ctrl.exit();
+        /* CSS fallback: el slide section se vuelve bronce gradualmente.
+           Esto garantiza el efecto visual aun si el canvas WebGL no
+           crece correctamente. */
+        slide.classList.add('icosa-fill');
         /* Forzar opacity 0 inline antes del setTimeout para que mientras
            el icosaedro crece, la frase no se vea. Despues setTimeout
            dispara el fade-in cuando el icosaedro esta casi al final. */
@@ -1738,6 +1755,7 @@
          la izquierda y las etiquetas reaparecen sincronizadas. */
       if (frag.dataset.icosaExit === 'true') {
         clearTimeout(window.__closingShowTimer);
+        slide.classList.remove('icosa-fill');
         gsap.to(frag, { opacity: 0, duration: 0.4, ease: 'power2.in', overwrite: 'auto' });
         const canvas = slide.querySelector('canvas[data-icosa]');
         if (canvas) {
