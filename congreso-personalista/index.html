@@ -625,7 +625,7 @@
     <section data-background-color="#050505" data-transition="fade">
       <div class="cover">
         <div class="cover-left">
-          <canvas class="cover-canvas" data-network></canvas>
+          <canvas class="cover-canvas" data-particles></canvas>
           <div class="grain"></div>
           <div class="cover-inf stagger d2">&infin;</div>
         </div>
@@ -1098,12 +1098,11 @@
     fragmentInURL: false,
   });
 
-  /* Canvas network animado para la portada */
-  function initNetwork(canvas) {
+  /* Particulas flotando para la portada · ambiente contemplativo, no red tecnologica */
+  function initParticles(canvas) {
     const ctx = canvas.getContext('2d');
-    let w, h, points;
-    const N = 22;
-    const MAX_D = 260;
+    let w, h, particles;
+    const N = 55;
     const FRAME_MS = 1000 / 30;
     let lastFrame = 0, running = false;
 
@@ -1116,54 +1115,80 @@
       ctx.scale(dpr, dpr);
       w = rect.width; h = rect.height;
     }
-    function makePoints() {
-      points = [];
+
+    function makeParticles() {
+      particles = [];
       for (let i = 0; i < N; i++) {
-        points.push({
-          x: Math.random() * w, y: Math.random() * h,
-          vx: (Math.random() - 0.5) * 0.14,
-          vy: (Math.random() - 0.5) * 0.14,
+        particles.push({
+          x: Math.random() * w,
+          y: Math.random() * h,
+          /* Velocidad de ascenso variable: algunas suben mas rapido, otras casi flotan */
+          vy: -(0.08 + Math.random() * 0.22),
+          /* Deriva horizontal sutil tipo brisa */
+          vx: (Math.random() - 0.5) * 0.06,
+          /* Tamaño variable: algunas grandes con presencia, otras pequeñas para profundidad */
+          r: 0.7 + Math.random() * 2.2,
+          /* Opacidad base + amplitud de pulso */
+          baseOp: 0.18 + Math.random() * 0.38,
+          pulseAmp: 0.05 + Math.random() * 0.12,
+          /* Fase del pulso, distinta por particula para que no respiren al mismo tiempo */
+          phase: Math.random() * Math.PI * 2,
+          phaseSpeed: 0.008 + Math.random() * 0.014,
         });
       }
     }
+
     function step(now) {
       if (!running) return;
       if (now - lastFrame < FRAME_MS) { requestAnimationFrame(step); return; }
       lastFrame = now;
       ctx.clearRect(0, 0, w, h);
-      for (const p of points) {
-        p.x += p.vx; p.y += p.vy;
-        if (p.x < 0 || p.x > w) p.vx *= -1;
-        if (p.y < 0 || p.y > h) p.vy *= -1;
-      }
-      for (let i = 0; i < N; i++) {
-        for (let j = i + 1; j < N; j++) {
-          const a = points[i], b = points[j];
-          const dx = a.x - b.x, dy = a.y - b.y;
-          const d2 = dx * dx + dy * dy;
-          if (d2 < MAX_D * MAX_D) {
-            const d = Math.sqrt(d2);
-            const op = (1 - d / MAX_D) * 0.2;
-            ctx.strokeStyle = 'rgba(255,255,255,' + op + ')';
-            ctx.lineWidth = 0.6;
-            ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
-          }
+
+      for (const p of particles) {
+        /* Movimiento */
+        p.x += p.vx;
+        p.y += p.vy;
+        p.phase += p.phaseSpeed;
+
+        /* Reciclar particulas que salen por arriba: vuelven a entrar por abajo en posicion random */
+        if (p.y < -10) {
+          p.y = h + 10;
+          p.x = Math.random() * w;
         }
+        /* Deriva horizontal con bordes suaves: si se sale, reaparece del otro lado */
+        if (p.x < -10) p.x = w + 10;
+        if (p.x > w + 10) p.x = -10;
+
+        /* Opacidad pulsando */
+        const op = Math.max(0, Math.min(1, p.baseOp + Math.sin(p.phase) * p.pulseAmp));
+
+        /* Color crema calido en lugar de blanco puro · primer toque de calidez */
+        ctx.fillStyle = 'rgba(245, 230, 200,' + op + ')';
+
+        /* Glow muy sutil con shadowBlur para presencia */
+        ctx.shadowBlur = p.r * 3;
+        ctx.shadowColor = 'rgba(245, 230, 200,' + (op * 0.5) + ')';
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fill();
       }
-      for (const p of points) {
-        ctx.fillStyle = 'rgba(255,255,255,0.38)';
-        ctx.beginPath(); ctx.arc(p.x, p.y, 1.2, 0, Math.PI * 2); ctx.fill();
-      }
+
+      ctx.shadowBlur = 0;
       requestAnimationFrame(step);
     }
-    resize(); makePoints(); running = true; requestAnimationFrame(step);
-    window.addEventListener('resize', () => { resize(); makePoints(); });
+
+    resize();
+    makeParticles();
+    running = true;
+    requestAnimationFrame(step);
+    window.addEventListener('resize', () => { resize(); makeParticles(); });
     return { pause() { running = false; }, resume() { if (!running) { running = true; requestAnimationFrame(step); } } };
   }
 
   Reveal.on('ready', () => {
     const ctrls = new Map();
-    document.querySelectorAll('canvas[data-network]').forEach(c => ctrls.set(c, initNetwork(c)));
+    document.querySelectorAll('canvas[data-particles]').forEach(c => ctrls.set(c, initParticles(c)));
     function syncCanvases() {
       const current = Reveal.getCurrentSlide();
       ctrls.forEach((ctrl, canvas) => current && current.contains(canvas) ? ctrl.resume() : ctrl.pause());
