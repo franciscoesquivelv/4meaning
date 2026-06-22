@@ -1164,17 +1164,17 @@
         <!-- Blob oscuro granulado, controlado por --blob-x / --blob-y -->
         <div class="constellation-blob"></div>
 
-        <div class="archetype pos-tl fragment constellation-step">
+        <div class="archetype pos-tl fragment constellation-step" data-blob-x="24" data-blob-y="32">
           <span class="archetype-num">01</span>
           <div class="archetype-name">Gurú</div>
           <p class="archetype-line">Vende una versión mejorada de ti, a plazos.</p>
         </div>
-        <div class="archetype pos-cr fragment constellation-step">
+        <div class="archetype pos-cr fragment constellation-step" data-blob-x="76" data-blob-y="50">
           <span class="archetype-num">02</span>
           <div class="archetype-name">Coach</div>
           <p class="archetype-line">Mide tu vida por los resultados que produce.</p>
         </div>
-        <div class="archetype pos-bc fragment constellation-step">
+        <div class="archetype pos-bc fragment constellation-step" data-blob-x="50" data-blob-y="76">
           <span class="archetype-num">03</span>
           <div class="archetype-name">Manifestador</div>
           <p class="archetype-line">Convierte tu destino en cuestión de vibración.</p>
@@ -2002,10 +2002,11 @@
       if (!constellation) return;
       const blob = constellation.querySelector('.constellation-blob');
       const overlay = constellation.querySelector('.archetypes-overlay');
-      const cRect = constellation.getBoundingClientRect();
-      const aRect = el.getBoundingClientRect();
-      const x = ((aRect.left + aRect.width / 2 - cRect.left) / cRect.width) * 100;
-      const y = ((aRect.top + aRect.height / 2 - cRect.top) / cRect.height) * 100;
+      /* Coordenadas fijas en porcentaje del slide via data attributes.
+         Mas confiables que getBoundingClientRect porque ignoran el
+         bounding box del numeral monumental que sobresale del archetype. */
+      const x = parseFloat(el.dataset.blobX || '50');
+      const y = parseFloat(el.dataset.blobY || '50');
       gsap.to(constellation, {
         '--blob-x': x + '%',
         '--blob-y': y + '%',
