@@ -790,6 +790,61 @@
     .archetypes-overlay .archetype-num {
       color: rgba(252, 232, 200, 0.10);
     }
+
+    /* ═══════════════════════════════════════════════════════════════
+       TYPEWRITER · slide 10 (frases cliche tipeadas una por click)
+       Cada linea aparece con cursor parpadeante mientras se escribe.
+       Cuando termina la frase el cursor desaparece y queda visible.
+    ═══════════════════════════════════════════════════════════════ */
+    .typewriter-stage {
+      width: 100%; height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 2.8rem;
+      padding: 10vh 10vw;
+      position: relative;
+    }
+    .typewriter-line {
+      font-size: 3.4rem;
+      font-weight: 300;
+      font-style: italic;
+      letter-spacing: -0.012em;
+      line-height: 1.15;
+      color: var(--white);
+      max-width: 28ch;
+    }
+    .typewriter-line .text {
+      display: inline;
+    }
+    .typewriter-line .cursor {
+      display: inline-block;
+      width: 0.06em;
+      height: 0.96em;
+      background: currentColor;
+      margin-left: 0.08em;
+      vertical-align: text-bottom;
+      animation: typewriter-blink 0.7s steps(1) infinite;
+      opacity: 0;
+    }
+    .typewriter-line.typing .cursor {
+      opacity: 1;
+    }
+    @keyframes typewriter-blink {
+      0%, 50% { opacity: 1; }
+      50.01%, 100% { opacity: 0; }
+    }
+    /* Override CSS de Reveal para que GSAP/JS controle la opacidad
+       del fragment sin que el typing conflicte con la transicion. */
+    .reveal .slides section .typewriter-line.fragment {
+      opacity: 0;
+      visibility: visible;
+      transition: opacity 0.35s ease;
+    }
+    .reveal .slides section .typewriter-line.fragment.visible {
+      opacity: 1;
+    }
     .archetype-name {
       position: relative;
       z-index: 2;
@@ -1210,20 +1265,15 @@
       </div>
     </section>
 
-    <!-- 10. FRASES CLICHÉ -->
+    <!-- 10. FRASES CLICHÉ · typewriter
+         Tres frases del ensayo se escriben una por click, como si
+         las estuvieran tecleando. Las anteriores quedan visibles.
+         Slide arranca vacia. -->
     <section data-background-color="#1a0e0e" class="bg-black" data-transition="fade">
-      <div class="quotes">
-        <div class="grain"></div>
-        <div class="quotes-left">
-          <span class="eyebrow stagger d1">El lenguaje que se acabó imponiendo</span>
-          <h3 class="h stagger d2 glow-soft">Estoy seguro de que ustedes ya leyeron alguna de estas frases esta semana.</h3>
-        </div>
-        <div class="quotes-list">
-          <div class="q stagger d2" style="color:rgba(255,255,255,0.85); border-left-color:rgba(255,255,255,0.35);">"Desbloquea tu mejor versión."</div>
-          <div class="q stagger d3" style="color:rgba(255,255,255,0.65); border-left-color:rgba(255,255,255,0.25);">"Manifiesta la abundancia."</div>
-          <div class="q stagger d4" style="color:rgba(255,255,255,0.55); border-left-color:rgba(255,255,255,0.18);">"Aumenta tus ingresos en ocho semanas."</div>
-          <div class="q stagger d5" style="color:rgba(255,255,255,0.4); border-left-color:rgba(255,255,255,0.12);">"Convierte tu propósito en tu marca personal."</div>
-        </div>
+      <div class="typewriter-stage">
+        <div class="typewriter-line fragment" data-text="«Sé tu mejor versión.»"><span class="text"></span><span class="cursor"></span></div>
+        <div class="typewriter-line fragment" data-text="«Vive con propósito.»"><span class="text"></span><span class="cursor"></span></div>
+        <div class="typewriter-line fragment" data-text="«Deja huella.»"><span class="text"></span><span class="cursor"></span></div>
       </div>
     </section>
 
@@ -2066,6 +2116,45 @@
     window.__moveBlobToArchetype = moveBlobToArchetype;
     window.__hideBlobAll = hideBlobAll;
 
+    /* Typewriter: escribe letra por letra el contenido de data-text
+       dentro de .text. Cursor parpadea mientras escribe, desaparece
+       al terminar. */
+    function typewriteLine(el) {
+      const text = el.dataset.text || '';
+      const target = el.querySelector('.text');
+      if (!target) return;
+      /* Cancelar typing previo si existe */
+      if (el.__typeTimer) {
+        clearTimeout(el.__typeTimer);
+      }
+      target.textContent = '';
+      el.classList.add('typing');
+      let i = 0;
+      const speed = 52;
+      function step() {
+        if (i >= text.length) {
+          el.classList.remove('typing');
+          el.__typeTimer = null;
+          return;
+        }
+        target.textContent += text[i];
+        i++;
+        el.__typeTimer = setTimeout(step, speed);
+      }
+      step();
+    }
+    function clearTypewriteLine(el) {
+      if (el.__typeTimer) {
+        clearTimeout(el.__typeTimer);
+        el.__typeTimer = null;
+      }
+      const target = el.querySelector('.text');
+      if (target) target.textContent = '';
+      el.classList.remove('typing');
+    }
+    window.__typewriteLine = typewriteLine;
+    window.__clearTypewriteLine = clearTypewriteLine;
+
     Reveal.on('slidechanged', (event) => {
       syncCanvases();
       syncIcosa();
@@ -2098,6 +2187,14 @@
 
       const canvas = slide.querySelector('canvas[data-icosa]');
       const ctrl = canvas ? icosaCtrls.get(canvas) : null;
+
+      /* Typewriter (slide 10): cuando aparece una linea, se escribe
+         letra por letra con cursor parpadeante. Las anteriores quedan
+         visibles ya escritas. */
+      if (frag.classList.contains('typewriter-line')) {
+        window.__typewriteLine(frag);
+        return;
+      }
 
       /* Constellation step (slide 09): cuando aparece un arquetipo, los
          anteriores se atenuan con pulso de respiracion, este se activa
@@ -2161,6 +2258,13 @@
       if (frag.dataset.hideTitle === 'true') {
         const head = slide.querySelector('.layers-v2-head');
         if (head) gsap.to(head, { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' });
+      }
+
+      /* Typewriter (slide 10): al retroceder, limpiar el texto de la
+         linea para que cuando se vuelva a mostrar se reescriba. */
+      if (frag.classList.contains('typewriter-line')) {
+        window.__clearTypewriteLine(frag);
+        return;
       }
 
       /* Constellation step (slide 09): al retroceder, ocultar el actual
