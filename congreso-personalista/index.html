@@ -587,6 +587,73 @@
     }
 
     /* ═══════════════════════════════════════════════════════════════
+       DEPTH LAYERS · composicion I (slide 08)
+       Capas tipograficas en profundidad: palabra muy grande en
+       hairline como marca de agua, frase principal encima en peso
+       fuerte, partida en dos bloques con tension visual por
+       indentacion. SplitText mask por linea con stagger.
+    ═══════════════════════════════════════════════════════════════ */
+    .depth-layers {
+      width: 100%; height: 100%;
+      padding: 8vh 6vw;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      overflow: hidden;
+    }
+    .depth-bg-word {
+      position: absolute;
+      font-size: 26rem;
+      font-weight: 100;
+      letter-spacing: -0.06em;
+      line-height: 0.85;
+      color: rgba(196, 166, 121, 0.22);
+      text-transform: lowercase;
+      z-index: 0;
+      top: 8vh;
+      right: -3vw;
+      pointer-events: none;
+      white-space: nowrap;
+      font-family: 'Montserrat', sans-serif;
+    }
+    .depth-h {
+      position: relative;
+      z-index: 2;
+      font-size: 5.4rem;
+      font-weight: 900;
+      line-height: 0.96;
+      letter-spacing: -0.045em;
+      text-transform: uppercase;
+      color: var(--dark);
+      text-align: left;
+      margin: 0;
+      max-width: 92vw;
+    }
+    .depth-block {
+      display: block;
+    }
+    .depth-block-a {
+      margin-bottom: 0.45em;
+    }
+    .depth-block-b {
+      padding-left: 22%;
+    }
+    .depth-h .line {
+      display: block;
+      overflow: hidden;
+      padding-bottom: 0.04em;
+    }
+    .depth-h .line-inner {
+      display: inline-block;
+      will-change: transform;
+    }
+    .bg-white .depth-h,
+    .bg-white .depth-h .line-inner {
+      color: var(--dark);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
        LIST 4 · cuatro planos
     ═══════════════════════════════════════════════════════════════ */
     .four {
@@ -898,12 +965,23 @@
          BLOQUE 3 · PROBLEMA actual (4 slides)
     ════════════════════════════════════════════════════ -->
 
-    <!-- 08. SATURADOS DE PROPÓSITO -->
+    <!-- 08. SATURADOS DE PROPÓSITO · composicion I capas tipograficas
+         Palabra grande de fondo + frase principal partida en dos bloques.
+         El segundo bloque indentado a la derecha genera tension visual
+         entre lo que la cultura hizo y lo que la cultura impidio. -->
     <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
-      <div class="statement">
-        <span class="statement-eyebrow eyebrow stagger d1">Conviene mirar el paisaje en el que esta pregunta intenta formularse hoy</span>
-        <h2 class="statement-h stagger d2">La cultura contemporánea<br>no eliminó la pregunta.<br><span class="ghost">La volvió imposible de formular.</span></h2>
-        <p class="statement-body body-light stagger d3">Convivimos con una saturación de discursos sobre el propósito y el desarrollo personal que, paradójicamente, dejan al sujeto cosificado y a la pregunta original sin un lenguaje propio en el que quepa.</p>
+      <div class="depth-layers">
+        <span class="depth-bg-word stagger d1">propósito</span>
+        <h2 class="depth-h">
+          <span class="depth-block depth-block-a">
+            <span class="line"><span class="line-inner">La cultura contemporánea</span></span>
+            <span class="line"><span class="line-inner">no eliminó la pregunta.</span></span>
+          </span>
+          <span class="depth-block depth-block-b">
+            <span class="line"><span class="line-inner">La volvió</span></span>
+            <span class="line"><span class="line-inner">imposible de formular.</span></span>
+          </span>
+        </h2>
       </div>
     </section>
 
@@ -1654,28 +1732,59 @@
 
     /* SplitText mask por lineas (manual, sin plugin premium). Cada
        .line-inner arranca con translateY 110% (oculta dentro del
-       overflow:hidden de .line) y se anima a 0 en stagger. */
-    function animateMonumental(slide) {
+       overflow:hidden de .line) y se anima a 0 en stagger.
+       Funciona para .monumental-h (slide 06) y .depth-h (slide 08).
+       En depth-h ademas se aplica un pausa extra entre el block-a
+       y el block-b para generar tension de lectura. */
+    function animateSplitLines(slide) {
       if (!slide) return;
-      const lines = slide.querySelectorAll('.monumental-h .line-inner');
-      if (!lines.length) return;
-      gsap.set(lines, { yPercent: 110 });
-      gsap.to(lines, {
-        yPercent: 0,
-        duration: 0.95,
-        ease: 'power3.out',
-        stagger: 0.42,
-        delay: 0.2,
-        overwrite: 'auto',
-      });
+      /* Monumental: 2 lineas con stagger uniforme */
+      const monLines = slide.querySelectorAll('.monumental-h .line-inner');
+      if (monLines.length) {
+        gsap.set(monLines, { yPercent: 110 });
+        gsap.to(monLines, {
+          yPercent: 0,
+          duration: 0.95,
+          ease: 'power3.out',
+          stagger: 0.42,
+          delay: 0.2,
+          overwrite: 'auto',
+        });
+      }
+      /* Depth: lineas del block-a primero, despues block-b con pausa */
+      const blockA = slide.querySelectorAll('.depth-h .depth-block-a .line-inner');
+      const blockB = slide.querySelectorAll('.depth-h .depth-block-b .line-inner');
+      if (blockA.length || blockB.length) {
+        gsap.set([...blockA, ...blockB], { yPercent: 110 });
+        if (blockA.length) {
+          gsap.to(blockA, {
+            yPercent: 0,
+            duration: 0.9,
+            ease: 'power3.out',
+            stagger: 0.35,
+            delay: 0.3,
+            overwrite: 'auto',
+          });
+        }
+        if (blockB.length) {
+          gsap.to(blockB, {
+            yPercent: 0,
+            duration: 0.9,
+            ease: 'power3.out',
+            stagger: 0.35,
+            delay: 0.3 + blockA.length * 0.35 + 0.6,
+            overwrite: 'auto',
+          });
+        }
+      }
     }
-    animateMonumental(Reveal.getCurrentSlide());
+    animateSplitLines(Reveal.getCurrentSlide());
 
     Reveal.on('slidechanged', (event) => {
       syncCanvases();
       syncIcosa();
       scrambleCurrentSlide();
-      animateMonumental(event.currentSlide);
+      animateSplitLines(event.currentSlide);
 
       /* Migracion de particulas portada -> silencio (h=0 -> h=1) */
       const prevH = event.previousSlide ? Reveal.getIndices(event.previousSlide).h : -1;
