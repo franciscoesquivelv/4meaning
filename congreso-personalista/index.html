@@ -1758,7 +1758,10 @@
       const blockA = slide.querySelectorAll('.depth-h .depth-block-a .line-inner');
       const blockB = slide.querySelectorAll('.depth-h .depth-block-b .line-inner');
       if (blockA.length || blockB.length) {
-        gsap.set([...blockA, ...blockB], { yPercent: 110 });
+        /* yPercent 130 (no 110) para que las tildes esten completamente
+           debajo del padding-top del .line al inicio. Con 110 las tildes
+           asomaban en el espacio del padding antes de tiempo. */
+        gsap.set([...blockA, ...blockB], { yPercent: 130 });
         if (blockA.length) {
           gsap.to(blockA, {
             yPercent: 0,
