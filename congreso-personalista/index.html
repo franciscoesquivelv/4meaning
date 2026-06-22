@@ -665,15 +665,17 @@
       padding: 5vh 5vw;
       position: relative;
       overflow: hidden;
-      /* Variables del blob radial. JS las anima con GSAP para que se
-         arrastre al arquetipo activo. */
+      /* Variables del blob. JS las anima con GSAP. Posicion + tamaño
+         elipsoidal con rx/ry distintos = blob organico no circulo. */
       --blob-x: 50%;
       --blob-y: 50%;
-      --blob-size: 42vh;
+      --blob-rx: 38vh;
+      --blob-ry: 32vh;
+      --blob-rot: 0deg;
     }
 
-    /* Blob oscuro granulado que sigue al arquetipo activo. Vive sobre
-       el texto base (oscuro) pero debajo del overlay light. */
+    /* Blob organico difuso. Sin stops duros, opacidad baja, blur CSS
+       que elimina cualquier linea visible del gradiente. */
     .constellation-blob {
       position: absolute;
       inset: 0;
@@ -681,38 +683,40 @@
       z-index: 2;
       opacity: 0;
       background: radial-gradient(
-        circle var(--blob-size) at var(--blob-x) var(--blob-y),
-        rgba(26, 14, 14, 0.94) 0%,
-        rgba(26, 14, 14, 0.86) 35%,
-        rgba(26, 14, 14, 0.55) 58%,
-        rgba(26, 14, 14, 0.12) 75%,
-        transparent 85%
+        ellipse var(--blob-rx) var(--blob-ry) at var(--blob-x) var(--blob-y),
+        rgba(58, 37, 32, 0.52) 0%,
+        rgba(58, 37, 32, 0.32) 35%,
+        rgba(58, 37, 32, 0.14) 60%,
+        rgba(58, 37, 32, 0.04) 80%,
+        transparent 100%
       );
+      filter: blur(14px);
+      transform: rotate(var(--blob-rot));
+      transform-origin: var(--blob-x) var(--blob-y);
+      will-change: transform, filter;
     }
-    /* Granulado SVG noise enmascarado al blob */
+    /* Granulado SVG noise enmascarado al blob, mas visible. */
     .constellation-blob::after {
       content: '';
       position: absolute;
       inset: 0;
       pointer-events: none;
-      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='400'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.92' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.55 0'/></filter><rect width='400' height='400' filter='url(%23n)'/></svg>");
-      mix-blend-mode: overlay;
-      opacity: 0.42;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='320' height='320'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch' seed='3'/><feColorMatrix values='0 0 0 0 0.22  0 0 0 0 0.14  0 0 0 0 0.12  0 0 0 0.95 0'/></filter><rect width='320' height='320' filter='url(%23n)'/></svg>");
+      mix-blend-mode: multiply;
+      opacity: 0.7;
       -webkit-mask-image: radial-gradient(
-        circle var(--blob-size) at var(--blob-x) var(--blob-y),
-        black 0%, black 50%, transparent 80%
+        ellipse var(--blob-rx) var(--blob-ry) at var(--blob-x) var(--blob-y),
+        black 0%, rgba(0,0,0,0.75) 40%, rgba(0,0,0,0.30) 65%, transparent 90%
       );
       mask-image: radial-gradient(
-        circle var(--blob-size) at var(--blob-x) var(--blob-y),
-        black 0%, black 50%, transparent 80%
+        ellipse var(--blob-rx) var(--blob-ry) at var(--blob-x) var(--blob-y),
+        black 0%, rgba(0,0,0,0.75) 40%, rgba(0,0,0,0.30) 65%, transparent 90%
       );
     }
 
     /* Overlay con copia del texto en color crema, masked al blob.
-       Vive ENCIMA del texto base y del blob. Solo se ve donde el blob
-       lo descubre (mask radial sincronizada). Esto da la inversion
-       progresiva: el texto va cambiando de color conforme el blob lo
-       toca, no de un solo. */
+       Mask con stops MUY graduales para que la inversion del texto
+       sea progresiva sin bordes visibles. */
     .archetypes-overlay {
       position: absolute;
       inset: 0;
@@ -720,12 +724,12 @@
       z-index: 5;
       opacity: 0;
       -webkit-mask-image: radial-gradient(
-        circle var(--blob-size) at var(--blob-x) var(--blob-y),
-        black 0%, black 40%, rgba(0,0,0,0.55) 62%, transparent 82%
+        ellipse var(--blob-rx) var(--blob-ry) at var(--blob-x) var(--blob-y),
+        black 0%, rgba(0,0,0,0.92) 30%, rgba(0,0,0,0.62) 50%, rgba(0,0,0,0.22) 75%, transparent 95%
       );
       mask-image: radial-gradient(
-        circle var(--blob-size) at var(--blob-x) var(--blob-y),
-        black 0%, black 40%, rgba(0,0,0,0.55) 62%, transparent 82%
+        ellipse var(--blob-rx) var(--blob-ry) at var(--blob-x) var(--blob-y),
+        black 0%, rgba(0,0,0,0.92) 30%, rgba(0,0,0,0.62) 50%, rgba(0,0,0,0.22) 75%, transparent 95%
       );
     }
     .archetypes-overlay .archetype {
@@ -2002,20 +2006,39 @@
       if (!constellation) return;
       const blob = constellation.querySelector('.constellation-blob');
       const overlay = constellation.querySelector('.archetypes-overlay');
-      /* Coordenadas fijas en porcentaje del slide via data attributes.
-         Mas confiables que getBoundingClientRect porque ignoran el
-         bounding box del numeral monumental que sobresale del archetype. */
       const x = parseFloat(el.dataset.blobX || '50');
       const y = parseFloat(el.dataset.blobY || '50');
-      gsap.to(constellation, {
+
+      /* Movimiento organico: viaja con sine.inOut (mas suave que power3),
+         y durante el viaje se DEFORMA (rx/ry y rotacion varian) para
+         simular una gota viva, no un circulo rigido. Al llegar al destino
+         recupera su forma de descanso. */
+      const tl = gsap.timeline({ overwrite: 'auto' });
+      tl.to(constellation, {
         '--blob-x': x + '%',
         '--blob-y': y + '%',
-        duration: 1.4,
-        ease: 'power3.inOut',
-        overwrite: 'auto',
-      });
-      if (blob) gsap.to(blob, { opacity: 1, duration: 0.8, ease: 'power2.out', overwrite: 'auto' });
-      if (overlay) gsap.to(overlay, { opacity: 1, duration: 0.8, ease: 'power2.out', overwrite: 'auto' });
+        duration: 2.2,
+        ease: 'sine.inOut',
+      }, 0);
+      /* Durante el viaje: estirarlo + rotarlo ligeramente.
+         Mitad del camino: forma deformada. Final: forma de descanso. */
+      tl.to(constellation, {
+        '--blob-rx': '52vh',
+        '--blob-ry': '26vh',
+        '--blob-rot': (Math.random() > 0.5 ? 14 : -14) + 'deg',
+        duration: 1.1,
+        ease: 'sine.in',
+      }, 0);
+      tl.to(constellation, {
+        '--blob-rx': '38vh',
+        '--blob-ry': '32vh',
+        '--blob-rot': '0deg',
+        duration: 1.1,
+        ease: 'sine.out',
+      }, 1.1);
+
+      if (blob) gsap.to(blob, { opacity: 1, duration: 1.0, ease: 'power2.out', overwrite: 'auto' });
+      if (overlay) gsap.to(overlay, { opacity: 1, duration: 1.0, ease: 'power2.out', overwrite: 'auto' });
     }
     function hideBlobAll(slide) {
       const constellation = slide.querySelector('.constellation');
