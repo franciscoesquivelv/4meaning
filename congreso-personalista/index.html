@@ -556,8 +556,12 @@
     }
     .monumental-h .line-inner {
       display: inline-block;
-      transform: translateY(110%);
       will-change: transform;
+    }
+    /* Refuerzo de color con mayor especificidad para vencer reglas globales */
+    .bg-white .monumental-h,
+    .bg-white .monumental-h .line-inner {
+      color: var(--dark);
     }
 
     /* ═══════════════════════════════════════════════════════════════
