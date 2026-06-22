@@ -2117,29 +2117,50 @@
     window.__hideBlobAll = hideBlobAll;
 
     /* Typewriter: escribe letra por letra el contenido de data-text
-       dentro de .text. Cursor parpadea mientras escribe, desaparece
-       al terminar. */
+       con CADENCIA HUMANA IRREGULAR. Cada letra tiene jitter natural,
+       pausa extra despues de espacios (cambio de palabra), pausa
+       mayor despues de coma, pausa fuerte despues de punto, y de vez
+       en cuando una pausa de "pensamiento". */
     function typewriteLine(el) {
       const text = el.dataset.text || '';
       const target = el.querySelector('.text');
       if (!target) return;
-      /* Cancelar typing previo si existe */
       if (el.__typeTimer) {
         clearTimeout(el.__typeTimer);
       }
       target.textContent = '';
       el.classList.add('typing');
       let i = 0;
-      const speed = 52;
+
+      function delayBefore(currentChar, prevChar) {
+        /* Base: 45-75ms con jitter */
+        let d = 45 + Math.random() * 30;
+        /* Espacios despues de palabra: pausa pequeña extra */
+        if (prevChar === ' ') d += 40 + Math.random() * 70;
+        /* Coma: pausa media */
+        if (prevChar === ',') d += 140 + Math.random() * 140;
+        /* Punto / signo de cierre: pausa mayor */
+        if (prevChar === '.' || prevChar === '?' || prevChar === '!') d += 220 + Math.random() * 220;
+        /* Apertura de comillas francesas: pequeña vacilacion */
+        if (prevChar === '«') d += 90 + Math.random() * 90;
+        /* Ocasional pausa de "pensamiento" (~8% probabilidad) */
+        if (Math.random() < 0.08) d += 140 + Math.random() * 260;
+        /* De vez en cuando una letra acelerada (rafaga) */
+        if (Math.random() < 0.12) d *= 0.45;
+        return d;
+      }
+
       function step() {
         if (i >= text.length) {
           el.classList.remove('typing');
           el.__typeTimer = null;
           return;
         }
+        const prev = i > 0 ? text[i - 1] : '';
         target.textContent += text[i];
         i++;
-        el.__typeTimer = setTimeout(step, speed);
+        const next = text[i] || '';
+        el.__typeTimer = setTimeout(step, delayBefore(next, prev));
       }
       step();
     }
