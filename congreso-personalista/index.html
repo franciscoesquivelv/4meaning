@@ -302,9 +302,30 @@
       font-weight: 200;
       line-height: 0.85;
       letter-spacing: -0.06em;
-      color: rgba(255,255,255,0.08);
       z-index: 0;
       pointer-events: none;
+      /* Shimmer calido continuo: una banda de luz crema recorre el numeral
+         cada 7s, sutil. El color base sigue siendo casi invisible para que
+         el contenido principal mande la jerarquia. */
+      background: linear-gradient(
+        100deg,
+        rgba(255,255,255,0.08) 0%,
+        rgba(255,255,255,0.08) 35%,
+        rgba(245,230,200,0.42) 50%,
+        rgba(255,255,255,0.08) 65%,
+        rgba(255,255,255,0.08) 100%
+      );
+      background-size: 250% 100%;
+      background-position: 100% 0;
+      -webkit-background-clip: text;
+              background-clip: text;
+      color: transparent;
+      animation: shimmer 7s ease-in-out infinite;
+    }
+    @keyframes shimmer {
+      0%   { background-position: 130% 0; }
+      45%  { background-position: -30% 0; }
+      100% { background-position: -30% 0; }
     }
     .q-aper-eyebrow { margin-bottom: 0; z-index: 3; position: relative; }
     .q-aper-text {
@@ -642,9 +663,7 @@
     <!-- 02. SILENCIO INICIAL -->
     <section data-background-color="#050505" class="bg-black" data-transition="fade">
       <div class="silencio">
-        <div class="grain"></div>
-        <div class="grid-anim"></div>
-        <div class="word">Antes de empezar</div>
+        <div class="grain"></div>        <div class="word">Antes de empezar</div>
       </div>
     </section>
 
@@ -652,9 +671,7 @@
     <section data-background-color="#050505" class="bg-black" data-transition="fade">
       <div class="q-aper">
         <div class="grain"></div>
-        <div class="grid-anim"></div>
         <div class="q-aper-monument">01</div>
-        <span class="q-aper-eyebrow eyebrow stagger d1">Una.</span>
         <h2 class="q-aper-text stagger d2 glow-soft">¿Cuáles son los nombres<br>de sus <span class="soft">ocho</span><br>bisabuelos?</h2>
       </div>
     </section>
@@ -662,9 +679,7 @@
     <!-- 04. PREGUNTA DOS -->
     <section data-background-color="#050505" class="bg-black" data-transition="fade">
       <div class="q-aper">
-        <div class="grain"></div>
-        <div class="grid-anim"></div>
-        <div class="q-aper-monument" style="font-size:36rem;">02</div>
+        <div class="grain"></div>        <div class="q-aper-monument" style="font-size:36rem;">02</div>
         <span class="q-aper-eyebrow eyebrow stagger d1">Dos.</span>
         <h2 class="q-aper-text stagger d2 glow-soft">¿Cómo le pidió<br>su <span class="soft">padre</span><br>la mano<br>a su <span class="soft">madre</span>?</h2>
       </div>
@@ -673,9 +688,7 @@
     <!-- 05. PREGUNTA TRES -->
     <section data-background-color="#050505" class="bg-black" data-transition="fade">
       <div class="q-aper">
-        <div class="grain"></div>
-        <div class="grid-anim"></div>
-        <div class="q-aper-monument">03</div>
+        <div class="grain"></div>        <div class="q-aper-monument">03</div>
         <span class="q-aper-eyebrow eyebrow stagger d1">Tres.</span>
         <h2 class="q-aper-text stagger d2 glow-soft">Si pudieran grabar<br>dos minutos<br>para sus hijos,<br>antes de morir,<br><span class="soft">¿qué dirían?</span></h2>
       </div>
@@ -1194,7 +1207,48 @@
       ctrls.forEach((ctrl, canvas) => current && current.contains(canvas) ? ctrl.resume() : ctrl.pause());
     }
     syncCanvases();
-    Reveal.on('slidechanged', syncCanvases);
+
+    /* Scramble del numeral monumental al entrar al slide.
+       Una sola vez por slide, ~1.2s, dos digitos aleatorios cambiando
+       cada 50ms hasta asentarse en el numero final. */
+    function rememberTargets() {
+      document.querySelectorAll('.q-aper-monument').forEach(el => {
+        if (!el.dataset.target) el.dataset.target = el.textContent.trim();
+      });
+    }
+    rememberTargets();
+
+    function scrambleOnce(el) {
+      const target = el.dataset.target || el.textContent.trim();
+      const TOTAL = 1200;  // duracion total ms
+      const STEP  = 55;    // intervalo entre cambios ms
+      const start = performance.now();
+      const tick = () => {
+        const elapsed = performance.now() - start;
+        if (elapsed >= TOTAL) {
+          el.textContent = target;
+          return;
+        }
+        const a = Math.floor(Math.random() * 10);
+        const b = Math.floor(Math.random() * 10);
+        el.textContent = '' + a + b;
+        setTimeout(tick, STEP);
+      };
+      tick();
+    }
+
+    function scrambleCurrentSlide() {
+      const current = Reveal.getCurrentSlide();
+      if (!current) return;
+      const mon = current.querySelector('.q-aper-monument');
+      if (mon) scrambleOnce(mon);
+    }
+    /* Disparo en el slide inicial y en cada cambio */
+    scrambleCurrentSlide();
+    Reveal.on('slidechanged', () => {
+      syncCanvases();
+      scrambleCurrentSlide();
+    });
   });
 </script>
 
