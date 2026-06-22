@@ -655,6 +655,71 @@
     }
 
     /* ═══════════════════════════════════════════════════════════════
+       CONSTELLATION · composicion K (slide 09)
+       Tres bloques en posiciones distintas que aparecen acumulativamente.
+       Cuando llega uno nuevo, los anteriores se atenuan pero permanecen.
+       Cada bloque respira con pulso de opacidad (factor vivo).
+    ═══════════════════════════════════════════════════════════════ */
+    .constellation {
+      width: 100%; height: 100%;
+      padding: 5vh 5vw;
+      position: relative;
+      overflow: hidden;
+    }
+    .constellation-head {
+      position: absolute;
+      top: 5vh;
+      left: 5vw;
+      max-width: 52ch;
+      font-size: 1.5rem;
+      font-weight: 300;
+      font-style: italic;
+      letter-spacing: -0.005em;
+      line-height: 1.4;
+      color: var(--muted);
+      margin: 0;
+      z-index: 1;
+    }
+    .archetype {
+      position: absolute;
+      max-width: 34vw;
+      z-index: 3;
+      color: var(--dark);
+    }
+    .archetype-name {
+      font-size: 4.6rem;
+      font-weight: 900;
+      letter-spacing: -0.045em;
+      text-transform: uppercase;
+      line-height: 0.98;
+      margin: 0 0 0.5em 0;
+      color: var(--dark);
+    }
+    .archetype-line {
+      font-size: 1.4rem;
+      font-weight: 300;
+      line-height: 1.4;
+      color: var(--dark);
+      margin: 0;
+    }
+    .archetype.pos-tl { top: 22vh; left: 5vw; max-width: 32vw; }
+    .archetype.pos-cr { top: 40vh; right: 5vw; text-align: right; max-width: 34vw; }
+    .archetype.pos-bc { bottom: 8vh; left: 50%; transform: translateX(-50%); text-align: center; max-width: 38vw; }
+
+    /* Override del CSS de Reveal para que GSAP controle la opacity
+       sin conflictos durante la animacion del pulso de respiracion. */
+    .reveal .slides section .archetype.fragment {
+      opacity: 0;
+      visibility: visible;
+      transition: none;
+    }
+    .reveal .slides section .archetype.fragment.visible {
+      opacity: 0;
+      visibility: visible;
+      transition: none;
+    }
+
+    /* ═══════════════════════════════════════════════════════════════
        LIST 4 · cuatro planos
     ═══════════════════════════════════════════════════════════════ */
     .four {
@@ -986,31 +1051,26 @@
       </div>
     </section>
 
-    <!-- 09. ARQUETIPOS -->
+    <!-- 09. ARQUETIPOS · composicion K constelacion tipografica acumulativa
+         Tres arquetipos aparecen en posiciones distintas. Cuando aparece
+         uno nuevo, los anteriores no desaparecen: se atenuan. Al final
+         los tres en pantalla simultaneos, visualizando la saturacion.
+         Cada arquetipo respira con pulso de opacidad propio (factor vivo). -->
     <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
-      <div class="layers">
-        <div class="layers-head">
-          <span class="eyebrow stagger d1">Quiénes terminaron ocupando ese espacio</span>
-          <h3 class="stagger d2">El propósito, mientras tanto, se fue volviendo un mercado.</h3>
+      <div class="constellation">
+        <p class="constellation-head stagger d1">El propósito, mientras tanto, se fue volviendo un mercado.</p>
+        <div class="archetype pos-tl fragment constellation-step">
+          <div class="archetype-name">Gurú</div>
+          <p class="archetype-line">Vende una versión mejorada de ti, a plazos.</p>
         </div>
-        <div class="layers-grid">
-          <div class="layer-cell stagger d3">
-            <span class="num">El gurú</span>
-            <div class="name">El despertar</div>
-            <p class="desc">Promete una versión mejorada de uno mismo, que se compra por cuotas en programas cada vez más caros.</p>
-          </div>
-          <div class="layer-cell stagger d4">
-            <span class="num">El coach</span>
-            <div class="name">La productividad</div>
-            <p class="desc">Reduce el sentido a alto rendimiento y mide la biografía por los resultados que produce.</p>
-          </div>
-          <div class="layer-cell stagger d5">
-            <span class="num">El manifestador</span>
-            <div class="name">La abundancia</div>
-            <p class="desc">Coloca el destino como producto de la propia vibración y convierte al sujeto en un imán de cosas.</p>
-          </div>
+        <div class="archetype pos-cr fragment constellation-step">
+          <div class="archetype-name">Coach</div>
+          <p class="archetype-line">Mide tu vida por los resultados que produce.</p>
         </div>
-        <p class="layers-caption stagger d5">Cada uno de estos perfiles ha construido una fortuna respondiendo, con un lenguaje sin densidad antropológica, a la pregunta que el personalismo lleva casi un siglo formulando con rigor.</p>
+        <div class="archetype pos-bc fragment constellation-step">
+          <div class="archetype-name">Manifestador</div>
+          <p class="archetype-line">Convierte tu destino en cuestión de vibración.</p>
+        </div>
       </div>
     </section>
 
@@ -1786,6 +1846,29 @@
     }
     animateSplitLines(Reveal.getCurrentSlide());
 
+    /* Constellation: activar arquetipo con pulso de respiracion (factor vivo)
+       o atenuarlo (opacity baja pero seguir respirando) cuando aparece otro. */
+    function activateArchetype(el) {
+      gsap.killTweensOf(el);
+      gsap.timeline({ overwrite: 'auto' })
+        .to(el, { opacity: 1.0, duration: 0.7, ease: 'power2.out' })
+        .to(el, { opacity: 0.92, duration: 2.4, ease: 'sine.inOut', repeat: -1, yoyo: true });
+    }
+    function dimArchetype(el) {
+      gsap.killTweensOf(el);
+      gsap.timeline({ overwrite: 'auto' })
+        .to(el, { opacity: 0.3, duration: 0.7, ease: 'power2.out' })
+        .to(el, { opacity: 0.22, duration: 3.0, ease: 'sine.inOut', repeat: -1, yoyo: true });
+    }
+    function hideArchetype(el) {
+      gsap.killTweensOf(el);
+      gsap.to(el, { opacity: 0, duration: 0.5, ease: 'power2.in', overwrite: 'auto' });
+    }
+    /* Expuestos en window para que los listeners de Reveal los usen */
+    window.__activateArchetype = activateArchetype;
+    window.__dimArchetype = dimArchetype;
+    window.__hideArchetype = hideArchetype;
+
     Reveal.on('slidechanged', (event) => {
       syncCanvases();
       syncIcosa();
@@ -1818,6 +1901,21 @@
 
       const canvas = slide.querySelector('canvas[data-icosa]');
       const ctrl = canvas ? icosaCtrls.get(canvas) : null;
+
+      /* Constellation step (slide 09): cuando aparece un arquetipo, los
+         anteriores se atenuan con pulso de respiracion, este se activa
+         con pulso propio. Acumulativo, no sustitutivo. */
+      if (frag.classList.contains('constellation-step')) {
+        const steps = slide.querySelectorAll('.constellation-step');
+        steps.forEach(step => {
+          if (step === frag) {
+            window.__activateArchetype(step);
+          } else if (step.classList.contains('visible')) {
+            window.__dimArchetype(step);
+          }
+        });
+        return;
+      }
 
       /* Fragment final con icosa-exit: la forma crece hacia la camara,
          llena la pantalla con su color (bronce solido) y sobre eso
@@ -1863,6 +1961,22 @@
       if (frag.dataset.hideTitle === 'true') {
         const head = slide.querySelector('.layers-v2-head');
         if (head) gsap.to(head, { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' });
+      }
+
+      /* Constellation step (slide 09): al retroceder, ocultar el actual
+         y reactivar el anterior visible. */
+      if (frag.classList.contains('constellation-step')) {
+        window.__hideArchetype(frag);
+        const steps = Array.from(slide.querySelectorAll('.constellation-step'));
+        /* El "anterior visible" es el ultimo visible que no es frag */
+        const stillVisible = steps.filter(s => s !== frag && s.classList.contains('visible'));
+        const last = stillVisible[stillVisible.length - 1];
+        if (last) {
+          window.__activateArchetype(last);
+          /* Los previos siguen atenuados */
+          stillVisible.slice(0, -1).forEach(s => window.__dimArchetype(s));
+        }
+        return;
       }
 
       /* Si era el fragment del cierre (icosa-exit), invertir todo: la
