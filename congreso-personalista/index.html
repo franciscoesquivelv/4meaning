@@ -494,32 +494,25 @@
     .layer-label-v2.pos-r  { top: 38vh; right: 5vw; text-align: right; max-width: 38vw; }
     .layer-label-v2.pos-bl { bottom: 10vh; left: 14vw; }
 
-    /* ═══════════════════════════════════════════════════════════════
-       CLOSING QUOTE · slide 08 (frase de integracion sola, fondo bronce)
-       Color de fondo = color de la forma 3D. Continuidad cromatica
-       que hace sentir que la forma trajo la slide.
-    ═══════════════════════════════════════════════════════════════ */
-    .bg-bronze { background: #a8855a; color: var(--white); }
-    .closing-quote {
-      width: 100%; height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 8vh 10vw;
-      position: relative;
-    }
-    .closing-quote-text {
-      font-size: 3.4rem;
-      font-weight: 300;
-      line-height: 1.22;
-      color: var(--white);
-      max-width: 24ch;
-      letter-spacing: -0.015em;
+    /* Frase de integracion: aparece en el espacio que deja el icosaedro
+       al salir hacia la derecha. Vive dentro del slide 07, no es slide
+       aparte. Posicion centrada donde estaba la forma. */
+    .layers-v2-closing {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      max-width: 58vw;
+      z-index: 6;
       text-align: center;
     }
-    .closing-quote-text em {
-      font-style: normal;
-      font-weight: 700;
+    .layers-v2-closing p {
+      font-size: 2.6rem;
+      font-weight: 300;
+      line-height: 1.28;
+      color: var(--dark);
+      letter-spacing: -0.015em;
+      margin: 0;
     }
 
     /* ═══════════════════════════════════════════════════════════════
@@ -865,13 +858,11 @@
           <div class="name">Autodeterminación axiológica</div>
           <p class="desc">El gobierno libre de su vida, basado en valores objetivos que ha hecho propios.</p>
         </div>
-      </div>
-    </section>
-
-    <!-- 08. INTEGRACION CONSCIENTE · frase sola, fondo bronce (color del icosaedro) -->
-    <section data-background-color="#a8855a" class="bg-bronze" data-transition="slide">
-      <div class="closing-quote">
-        <p class="closing-quote-text">Cuando una persona integra esas tres capas con consciencia, descubre el sentido de su vida y, desde ahí, puede decidir qué legado dejar.</p>
+        <!-- Fragment final: la forma sale a la derecha mientras aparece la frase
+             de integracion en el espacio que deja. Una sola slide, no dos. -->
+        <div class="layers-v2-closing fragment fade-soft" data-icosa-exit="true">
+          <p>Cuando una persona integra esas tres capas con consciencia, descubre el sentido de su vida y, desde ahí, puede decidir qué legado dejar.</p>
+        </div>
       </div>
     </section>
 
@@ -1474,11 +1465,13 @@
 
     /* Entrada cinematica: el icosaedro arranca enorme y fuera de pantalla
        a la izquierda, se mueve al centro mientras se asienta a su tamaño
-       normal. NO es fade in: es traveling shot. */
+       normal. NO es fade in: es traveling shot. Restaura opacidad por si
+       venimos de un estado exit (retroceder al fragment de cierre). */
     function enter() {
-      gsap.killTweensOf([mesh.position, mesh.scale]);
+      gsap.killTweensOf([mesh.position, mesh.scale, mat]);
       mesh.position.set(-9, 0, 0);
       mesh.scale.set(2.6, 2.6, 2.6);
+      mat.opacity = 0;
       gsap.to(mesh.position, {
         x: 0,
         duration: 1.9,
@@ -1489,6 +1482,37 @@
         x: 1, y: 1, z: 1,
         duration: 1.9,
         ease: 'power3.out',
+        overwrite: 'auto',
+      });
+      gsap.to(mat, {
+        opacity: 0.42,
+        duration: 1.4,
+        ease: 'power2.out',
+        overwrite: 'auto',
+      });
+    }
+
+    /* Salida cinematica: traveling shot inverso hacia la derecha, escala
+       crece mientras la opacidad desvanece. Coreografia complementaria
+       a enter(). Se dispara con el fragment final de cierre. */
+    function exit() {
+      gsap.killTweensOf([mesh.position, mesh.scale, mat]);
+      gsap.to(mesh.position, {
+        x: 9,
+        duration: 1.5,
+        ease: 'power3.in',
+        overwrite: 'auto',
+      });
+      gsap.to(mesh.scale, {
+        x: 2.4, y: 2.4, z: 2.4,
+        duration: 1.5,
+        ease: 'power3.in',
+        overwrite: 'auto',
+      });
+      gsap.to(mat, {
+        opacity: 0,
+        duration: 1.2,
+        ease: 'power2.out',
         overwrite: 'auto',
       });
     }
@@ -1502,6 +1526,7 @@
       },
       stop() { running = false; },
       enter,
+      exit,
       /* Movimiento coherente: cada fragment rota el solido HACIA su
          etiqueta y desplaza la posicion para que el solido cede espacio
          al texto que aparece. */
@@ -1638,8 +1663,20 @@
       }
 
       const canvas = slide.querySelector('canvas[data-icosa]');
-      if (!canvas) return;
-      const ctrl = icosaCtrls.get(canvas);
+      const ctrl = canvas ? icosaCtrls.get(canvas) : null;
+
+      /* Fragment final con icosa-exit: la forma sale por la derecha y las
+         etiquetas anteriores se atenuan para dejar protagonismo a la
+         frase de cierre que aparece centrada. */
+      if (frag.dataset.icosaExit === 'true') {
+        if (ctrl) ctrl.exit();
+        slide.querySelectorAll('.layer-label-v2').forEach(label => {
+          gsap.to(label, { opacity: 0.1, duration: 0.8, ease: 'power2.out' });
+        });
+        return;
+      }
+
+      /* Movimiento normal por fragment: rotacion + desplazamiento */
       if (!ctrl) return;
       const dy = parseFloat(frag.dataset.rotY || '0');
       const dx = parseFloat(frag.dataset.rotX || '0');
@@ -1652,10 +1689,24 @@
       if (!frag) return;
       const slide = frag.closest('section');
       if (!slide) return;
+
       /* Si era el fragment que ocultaba el titulo, volver a mostrarlo. */
       if (frag.dataset.hideTitle === 'true') {
         const head = slide.querySelector('.layers-v2-head');
         if (head) gsap.to(head, { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' });
+      }
+
+      /* Si era el fragment del cierre (icosa-exit), devolver la forma
+         al centro y restaurar las etiquetas anteriores. */
+      if (frag.dataset.icosaExit === 'true') {
+        const canvas = slide.querySelector('canvas[data-icosa]');
+        if (canvas) {
+          const ctrl = icosaCtrls.get(canvas);
+          if (ctrl) ctrl.enter();
+        }
+        slide.querySelectorAll('.layer-label-v2').forEach(label => {
+          gsap.to(label, { opacity: 1, duration: 0.8, ease: 'power2.out' });
+        });
       }
     });
   });
