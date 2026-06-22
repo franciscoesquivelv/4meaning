@@ -465,47 +465,62 @@
     }
     .layer-label-v2 {
       position: absolute;
-      max-width: 28vw;
+      max-width: 36vw;
       z-index: 4;
       color: var(--dark);
     }
     .layer-label-v2 .num {
-      font-size: 0.95rem;
+      font-size: 1.25rem;
       letter-spacing: 0.32em;
       color: var(--muted);
       font-weight: 700;
       display: block;
-      margin-bottom: 0.7rem;
-    }
-    .layer-label-v2 .name {
-      font-size: 2.4rem;
-      font-weight: 800;
-      letter-spacing: -0.028em;
-      text-transform: uppercase;
-      line-height: 0.98;
       margin-bottom: 1rem;
     }
+    .layer-label-v2 .name {
+      font-size: 3.2rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      text-transform: uppercase;
+      line-height: 0.96;
+      margin-bottom: 1.4rem;
+    }
     .layer-label-v2 .desc {
-      font-size: 1.15rem;
-      line-height: 1.5;
+      font-size: 1.65rem;
+      line-height: 1.4;
       font-weight: 300;
       color: var(--dark);
     }
-    .layer-label-v2.pos-tl { top: 32vh; left: 5vw; }
-    .layer-label-v2.pos-r  { top: 44vh; right: 5vw; text-align: right; max-width: 30vw; }
-    .layer-label-v2.pos-bl { bottom: 14vh; left: 16vw; }
-    .layers-v2-caption {
-      position: absolute;
-      bottom: 5vh;
-      right: 5vw;
-      max-width: 30vw;
-      font-size: 0.8rem;
+    .layer-label-v2.pos-tl { top: 28vh; left: 5vw; }
+    .layer-label-v2.pos-r  { top: 38vh; right: 5vw; text-align: right; max-width: 38vw; }
+    .layer-label-v2.pos-bl { bottom: 10vh; left: 14vw; }
+
+    /* ═══════════════════════════════════════════════════════════════
+       CLOSING QUOTE · slide 08 (frase de integracion sola, fondo bronce)
+       Color de fondo = color de la forma 3D. Continuidad cromatica
+       que hace sentir que la forma trajo la slide.
+    ═══════════════════════════════════════════════════════════════ */
+    .bg-bronze { background: #a8855a; color: var(--white); }
+    .closing-quote {
+      width: 100%; height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8vh 10vw;
+      position: relative;
+    }
+    .closing-quote-text {
+      font-size: 3.4rem;
       font-weight: 300;
-      line-height: 1.5;
-      color: var(--muted);
-      font-style: italic;
-      z-index: 5;
-      text-align: right;
+      line-height: 1.22;
+      color: var(--white);
+      max-width: 24ch;
+      letter-spacing: -0.015em;
+      text-align: center;
+    }
+    .closing-quote-text em {
+      font-style: normal;
+      font-weight: 700;
     }
 
     /* ═══════════════════════════════════════════════════════════════
@@ -790,7 +805,7 @@
         <div class="layers-v2-head stagger d1">
           <h3>La trascendencia personal es un proceso ontológico y existencial que integra, conscientemente, tres capas.</h3>
         </div>
-        <div class="layer-label-v2 pos-tl fragment fade-up" data-rot-y="-1.05" data-rot-x="-0.4" data-pos-x="0.9">
+        <div class="layer-label-v2 pos-tl fragment fade-up" data-rot-y="-1.05" data-rot-x="-0.4" data-pos-x="0.9" data-hide-title="true">
           <span class="num">01</span>
           <div class="name">Biografía propia</div>
           <p class="desc">Lo que la persona va viviendo: sus encuentros, sus heridas, sus actos, su historia singular en curso.</p>
@@ -805,7 +820,13 @@
           <div class="name">Autodeterminación axiológica</div>
           <p class="desc">El gobierno libre de su vida, basado en valores objetivos que ha hecho propios.</p>
         </div>
-        <p class="layers-v2-caption fragment fade-soft">Cuando una persona integra esas tres capas con consciencia, descubre el sentido de su vida y, desde ahí, puede decidir qué legado dejar.</p>
+      </div>
+    </section>
+
+    <!-- 08. INTEGRACION CONSCIENTE · frase sola, fondo bronce (color del icosaedro) -->
+    <section data-background-color="#a8855a" class="bg-bronze" data-transition="slide">
+      <div class="closing-quote">
+        <p class="closing-quote-text">Cuando una persona integra esas tres capas con consciencia, descubre el sentido de su vida y, desde ahí, puede decidir qué legado dejar.</p>
       </div>
     </section>
 
@@ -1543,6 +1564,14 @@
       if (!frag) return;
       const slide = frag.closest('section');
       if (!slide) return;
+
+      /* Si el fragment lo pide, ocultar el titulo del slide para que las
+         capas tengan toda la pantalla. */
+      if (frag.dataset.hideTitle === 'true') {
+        const head = slide.querySelector('.layers-v2-head');
+        if (head) gsap.to(head, { opacity: 0, y: -20, duration: 0.7, ease: 'power2.out' });
+      }
+
       const canvas = slide.querySelector('canvas[data-icosa]');
       if (!canvas) return;
       const ctrl = icosaCtrls.get(canvas);
@@ -1551,6 +1580,18 @@
       const dx = parseFloat(frag.dataset.rotX || '0');
       const posX = frag.dataset.posX ? parseFloat(frag.dataset.posX) : undefined;
       ctrl.move(dy, dx, posX);
+    });
+
+    Reveal.on('fragmenthidden', (event) => {
+      const frag = event.fragment;
+      if (!frag) return;
+      const slide = frag.closest('section');
+      if (!slide) return;
+      /* Si era el fragment que ocultaba el titulo, volver a mostrarlo. */
+      if (frag.dataset.hideTitle === 'true') {
+        const head = slide.querySelector('.layers-v2-head');
+        if (head) gsap.to(head, { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' });
+      }
     });
   });
 </script>
