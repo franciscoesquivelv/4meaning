@@ -495,10 +495,10 @@
     .layer-label-v2.pos-bl { bottom: 10vh; left: 14vw; }
 
     /* Frase de integracion: aparece despues de que el icosaedro crezca y
-       llene la pantalla con bronce. Vive sobre el canvas (z-index alto)
-       y su color es crema oliva para contrastar con el bronce solido.
-       Opacidad la controla GSAP en runtime, no Reveal. */
-    .layers-v2-closing {
+       llene la pantalla con bronce. GSAP controla opacidad totalmente
+       (sin transition CSS de Reveal que la sobreescriba). El selector
+       hipersespecifico vence el CSS base de .reveal .fragment.visible. */
+    .reveal .slides section .layers-v2-closing.fragment {
       position: absolute;
       top: 50%;
       left: 50%;
@@ -507,6 +507,13 @@
       z-index: 10;
       text-align: center;
       opacity: 0;
+      visibility: visible;
+      transition: none;
+    }
+    .reveal .slides section .layers-v2-closing.fragment.visible {
+      opacity: 0;
+      visibility: visible;
+      transition: none;
     }
     .layers-v2-closing p {
       font-size: 2.6rem;
@@ -515,6 +522,12 @@
       color: var(--white);
       letter-spacing: -0.015em;
       margin: 0;
+    }
+
+    /* Override del transition CSS de Reveal en las etiquetas para evitar
+       conflicto con GSAP cuando se hace el fade-out completo del exit. */
+    .reveal .slides section .layer-label-v2.fragment {
+      transition: none;
     }
 
     /* ═══════════════════════════════════════════════════════════════
