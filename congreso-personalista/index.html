@@ -21,21 +21,24 @@
     ═══════════════════════════════════════════════════════════════ */
 
     :root {
-      --black:    #0a0a0a;
-      --black-2:  #050505;
-      --white:    #f8f7f5;
-      --pure:     #ffffff;
-      --border:   #d8d4cb;
-      --border-d: rgba(255,255,255,0.10);
-      --muted:    #888;
-      --muted-d:  rgba(255,255,255,0.42);
-      --hint-d:   rgba(255,255,255,0.18);
-      --dark:     #222;
+      /* Paleta cuero y madera con toques monasticos (Francisco, 12/06).
+         Sustituye la base brutalist B/N por una identidad calida tipo
+         biblioteca privada de noche con lampara amarilla. */
+      --black:    #1a0e0e;   /* borgoña noche · fondo oscuro */
+      --black-2:  #100808;   /* mas profundo para canvas */
+      --white:    #f0e6d2;   /* crema-oliva monastico · fondo claro */
+      --pure:     #fbe9c4;   /* crema calido · texto principal sobre oscuro */
+      --border:   #c4a679;   /* ambar suave · bordes hairline */
+      --border-d: rgba(232,197,144,0.15);
+      --muted:    #a8855a;   /* oro tierra · texto secundario */
+      --muted-d:  rgba(232,197,144,0.52);
+      --hint-d:   rgba(232,197,144,0.18);
+      --dark:     #3a2520;   /* marron cuero · texto sobre claro */
       --ease:     cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     *, *::before, *::after { box-sizing: border-box; }
-    html, body { background: #0a0a0a; overflow: hidden; }
+    html, body { background: #1a0e0e; overflow: hidden; }
 
     .reveal {
       font-family: 'Montserrat', sans-serif;
@@ -643,7 +646,7 @@
     ════════════════════════════════════════════════════ -->
 
     <!-- 01. PORTADA -->
-    <section data-background-color="#050505" data-transition="fade">
+    <section data-background-color="#1a0e0e" data-transition="fade">
       <div class="cover">
         <div class="cover-left">
           <canvas class="cover-canvas" data-particles></canvas>
@@ -661,14 +664,14 @@
     </section>
 
     <!-- 02. SILENCIO INICIAL -->
-    <section data-background-color="#050505" class="bg-black" data-transition="fade">
+    <section data-background-color="#1a0e0e" class="bg-black" data-transition="fade">
       <div class="silencio">
         <div class="grain"></div>        <div class="word">Antes de empezar</div>
       </div>
     </section>
 
     <!-- 03. PREGUNTA UNO -->
-    <section data-background-color="#050505" class="bg-black" data-transition="fade">
+    <section data-background-color="#1a0e0e" class="bg-black" data-transition="fade">
       <div class="q-aper">
         <div class="grain"></div>
         <div class="q-aper-monument">01</div>
@@ -677,7 +680,7 @@
     </section>
 
     <!-- 04. PREGUNTA DOS -->
-    <section data-background-color="#050505" class="bg-black" data-transition="fade">
+    <section data-background-color="#1a0e0e" class="bg-black" data-transition="fade">
       <div class="q-aper">
         <div class="grain"></div>        <div class="q-aper-monument" style="font-size:36rem;">02</div>
         <span class="q-aper-eyebrow eyebrow stagger d1">Dos.</span>
@@ -686,7 +689,7 @@
     </section>
 
     <!-- 05. PREGUNTA TRES -->
-    <section data-background-color="#050505" class="bg-black" data-transition="fade">
+    <section data-background-color="#1a0e0e" class="bg-black" data-transition="fade">
       <div class="q-aper">
         <div class="grain"></div>        <div class="q-aper-monument">03</div>
         <span class="q-aper-eyebrow eyebrow stagger d1">Tres.</span>
@@ -699,7 +702,7 @@
     ════════════════════════════════════════════════════ -->
 
     <!-- 06. EL TEMA -->
-    <section data-background-color="#f8f7f5" class="bg-white" data-transition="fade">
+    <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
       <div class="statement">
         <span class="statement-eyebrow eyebrow stagger d1">Esa pregunta que acaban de hacerse en silencio</span>
         <h2 class="statement-h stagger d2"><span class="ghost">Es la pregunta por la</span><br>trascendencia<br>personal.</h2>
@@ -708,7 +711,7 @@
     </section>
 
     <!-- 07. TRES CAPAS -->
-    <section data-background-color="#f8f7f5" class="bg-white" data-transition="fade">
+    <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
       <div class="layers">
         <div class="layers-head">
           <span class="eyebrow stagger d1">Cómo la entendemos</span>
@@ -740,7 +743,7 @@
     ════════════════════════════════════════════════════ -->
 
     <!-- 08. SATURADOS DE PROPÓSITO -->
-    <section data-background-color="#f8f7f5" class="bg-white" data-transition="fade">
+    <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
       <div class="statement">
         <span class="statement-eyebrow eyebrow stagger d1">Conviene mirar el paisaje en el que esta pregunta intenta formularse hoy</span>
         <h2 class="statement-h stagger d2">La cultura contemporánea<br>no eliminó la pregunta.<br><span class="ghost">La volvió imposible de formular.</span></h2>
@@ -749,7 +752,7 @@
     </section>
 
     <!-- 09. ARQUETIPOS -->
-    <section data-background-color="#f8f7f5" class="bg-white" data-transition="fade">
+    <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
       <div class="layers">
         <div class="layers-head">
           <span class="eyebrow stagger d1">Quiénes terminaron ocupando ese espacio</span>
@@ -777,7 +780,7 @@
     </section>
 
     <!-- 10. FRASES CLICHÉ -->
-    <section data-background-color="#0a0a0a" class="bg-black" data-transition="fade">
+    <section data-background-color="#1a0e0e" class="bg-black" data-transition="fade">
       <div class="quotes">
         <div class="grain"></div>
         <div class="quotes-left">
@@ -794,7 +797,7 @@
     </section>
 
     <!-- 11. VACÍO EXISTENCIAL · Frankl entra -->
-    <section data-background-color="#0a0a0a" class="bg-black" data-transition="fade">
+    <section data-background-color="#1a0e0e" class="bg-black" data-transition="fade">
       <div class="statement">
         <div class="grain"></div>
         <div class="pulse" style="top:-15%; right:-25%;"></div>
@@ -809,7 +812,7 @@
     ════════════════════════════════════════════════════ -->
 
     <!-- 12. DOS CAMPOS, MISMO AGUJERO -->
-    <section data-background-color="#f8f7f5" class="bg-white" data-transition="fade">
+    <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
       <div class="statement">
         <span class="statement-eyebrow eyebrow stagger d1">El problema que en 4Meaning intentamos abordar</span>
         <h2 class="statement-h stagger d2">Es, en realidad, un<br><span class="ghost">problema dual.</span></h2>
@@ -818,7 +821,7 @@
     </section>
 
     <!-- 13. LA OPORTUNIDAD PERSONALISTA -->
-    <section data-background-color="#f8f7f5" class="bg-white" data-transition="fade">
+    <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
       <div class="two-asym">
         <div class="two-asym-left">
           <span class="eyebrow stagger d1">Por un lado</span>
@@ -835,7 +838,7 @@
     </section>
 
     <!-- 14. LA TRAMPA UTILITARIA -->
-    <section data-background-color="#f8f7f5" class="bg-white" data-transition="fade">
+    <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
       <div class="two-asym">
         <div class="two-asym-left">
           <span class="eyebrow stagger d1">Por otro lado</span>
@@ -856,7 +859,7 @@
     ════════════════════════════════════════════════════ -->
 
     <!-- 15. WOJTYŁA -->
-    <section data-background-color="#f8f7f5" class="bg-white" data-transition="fade">
+    <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
       <div class="two-asym">
         <div class="two-asym-left">
           <span class="num stagger d1" style="font-size:4.4rem; font-weight:300; letter-spacing:-0.03em; line-height:1; color:var(--black);">Wojtyła</span>
@@ -872,7 +875,7 @@
     </section>
 
     <!-- 16. BURGOS QUÉ/QUIÉN -->
-    <section data-background-color="#f8f7f5" class="bg-white" data-transition="fade">
+    <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
       <div class="two-asym">
         <div class="two-asym-left">
           <span class="num stagger d1" style="font-size:4.4rem; font-weight:300; letter-spacing:-0.03em; line-height:1; color:var(--black);">Burgos</span>
@@ -892,7 +895,7 @@
     ════════════════════════════════════════════════════ -->
 
     <!-- 17. APERTURA DOS EJES -->
-    <section data-background-color="#f8f7f5" class="bg-white" data-transition="fade">
+    <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
       <div class="statement">
         <span class="statement-eyebrow eyebrow stagger d1">Sobre el crecimiento personal</span>
         <h2 class="statement-h stagger d2">En 4Meaning lo entendemos<br><span class="ghost">en dos direcciones complementarias.</span></h2>
@@ -901,7 +904,7 @@
     </section>
 
     <!-- 18. EJE HORIZONTAL -->
-    <section data-background-color="#f8f7f5" class="bg-white" data-transition="fade">
+    <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
       <div class="axis">
         <div class="axis-left">
           <span class="num stagger d1">Eje 01</span>
@@ -916,7 +919,7 @@
     </section>
 
     <!-- 19. EJE VERTICAL -->
-    <section data-background-color="#f8f7f5" class="bg-white" data-transition="fade">
+    <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
       <div class="axis">
         <div class="axis-left">
           <span class="num stagger d1">Eje 02</span>
@@ -935,7 +938,7 @@
     ════════════════════════════════════════════════════ -->
 
     <!-- 20. FRANKL PERSONALISTA SIN SABERLO -->
-    <section data-background-color="#f8f7f5" class="bg-white" data-transition="fade">
+    <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
       <div class="statement">
         <span class="statement-eyebrow eyebrow stagger d1">El POM no es la única ruta filosófica que llega a esta centralidad de la persona</span>
         <h2 class="statement-h stagger d2">Viktor Frankl,<br>en cierta forma,<br><span class="ghost">era personalista sin saberlo.</span></h2>
@@ -944,7 +947,7 @@
     </section>
 
     <!-- 21. DOS RUTAS INDEPENDIENTES -->
-    <section data-background-color="#f8f7f5" class="bg-white" data-transition="fade">
+    <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
       <div class="quotes">
         <div class="quotes-left">
           <span class="eyebrow stagger d1">Conviene detenerse aquí</span>
@@ -959,7 +962,7 @@
     </section>
 
     <!-- 22. CLÍMAX -->
-    <section data-background-color="#0a0a0a" class="bg-black" data-transition="fade">
+    <section data-background-color="#1a0e0e" class="bg-black" data-transition="fade">
       <div class="statement letterbox">
         <div class="grain"></div>
         <div class="pulse" style="top:-15%; right:-25%;"></div>
@@ -978,7 +981,7 @@
     ════════════════════════════════════════════════════ -->
 
     <!-- 23. DE TRES CAPAS A CUATRO PLANOS -->
-    <section data-background-color="#f8f7f5" class="bg-white" data-transition="fade">
+    <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
       <div class="statement">
         <span class="statement-eyebrow eyebrow stagger d1">Cuando bajamos de la definición a la práctica</span>
         <h2 class="statement-h stagger d2">Esas tres capas<br>se nos desdoblan<br>en <span class="ghost">cuatro planos.</span></h2>
@@ -987,7 +990,7 @@
     </section>
 
     <!-- 24. LOS CUATRO PLANOS -->
-    <section data-background-color="#f8f7f5" class="bg-white" data-transition="fade">
+    <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
       <div class="four">
         <div>
           <span class="eyebrow stagger d1">Trascendencia, en su composición</span>
@@ -1024,7 +1027,7 @@
     ════════════════════════════════════════════════════ -->
 
     <!-- 25. TRASCENDENCIA EN LA PRÁCTICA -->
-    <section data-background-color="#f8f7f5" class="bg-white" data-transition="fade">
+    <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
       <div class="practices">
         <div>
           <span class="eyebrow stagger d1">Cómo se ve esto, en la práctica</span>
@@ -1051,7 +1054,7 @@
     </section>
 
     <!-- 26. LA CAJA NEGRA REVELADA -->
-    <section data-background-color="#0a0a0a" class="bg-black" data-transition="fade">
+    <section data-background-color="#1a0e0e" class="bg-black" data-transition="fade">
       <div class="statement letterbox">
         <div class="grain"></div>
         <div class="pulse" style="top:-15%; left:-25%;"></div>
@@ -1066,7 +1069,7 @@
     ════════════════════════════════════════════════════ -->
 
     <!-- 27. UNA MADRE -->
-    <section data-background-color="#0a0a0a" class="bg-black" data-transition="fade">
+    <section data-background-color="#1a0e0e" class="bg-black" data-transition="fade">
       <div class="statement">
         <div class="grain"></div>
         <span class="statement-eyebrow eyebrow stagger d1">Quiero terminar con una escena que llevo años recordando</span>
@@ -1077,7 +1080,7 @@
     </section>
 
     <!-- 28. NO LO POSPONGAN -->
-    <section data-background-color="#0a0a0a" class="bg-black" data-transition="fade">
+    <section data-background-color="#1a0e0e" class="bg-black" data-transition="fade">
       <div class="statement letterbox">
         <div class="grain"></div>
         <div class="pulse" style="top:50%; left:50%; transform:translate3d(-50%,-50%,0); width:120vh; height:120vh;"></div>
