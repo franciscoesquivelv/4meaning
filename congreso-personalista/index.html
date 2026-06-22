@@ -494,23 +494,25 @@
     .layer-label-v2.pos-r  { top: 38vh; right: 5vw; text-align: right; max-width: 38vw; }
     .layer-label-v2.pos-bl { bottom: 10vh; left: 14vw; }
 
-    /* Frase de integracion: aparece en el espacio que deja el icosaedro
-       al salir hacia la derecha. Vive dentro del slide 07, no es slide
-       aparte. Posicion centrada donde estaba la forma. */
+    /* Frase de integracion: aparece despues de que el icosaedro crezca y
+       llene la pantalla con bronce. Vive sobre el canvas (z-index alto)
+       y su color es crema oliva para contrastar con el bronce solido.
+       Opacidad la controla GSAP en runtime, no Reveal. */
     .layers-v2-closing {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
       max-width: 58vw;
-      z-index: 6;
+      z-index: 10;
       text-align: center;
+      opacity: 0;
     }
     .layers-v2-closing p {
       font-size: 2.6rem;
       font-weight: 300;
       line-height: 1.28;
-      color: var(--dark);
+      color: var(--white);
       letter-spacing: -0.015em;
       margin: 0;
     }
@@ -860,7 +862,7 @@
         </div>
         <!-- Fragment final: la forma sale a la derecha mientras aparece la frase
              de integracion en el espacio que deja. Una sola slide, no dos. -->
-        <div class="layers-v2-closing fragment fade-soft" data-icosa-exit="true">
+        <div class="layers-v2-closing fragment" data-icosa-exit="true">
           <p>Cuando una persona integra esas tres capas con consciencia, descubre el sentido de su vida y, desde ahí, puede decidir qué legado dejar.</p>
         </div>
       </div>
@@ -1455,20 +1457,24 @@
     window.addEventListener('resize', resize);
 
     let running = false;
+    let freezeRotation = false;
     function step() {
       if (!running) return;
-      mesh.rotation.y += 0.0006;
-      mesh.rotation.x += 0.0003;
+      if (!freezeRotation) {
+        mesh.rotation.y += 0.0006;
+        mesh.rotation.x += 0.0003;
+      }
       renderer.render(scene, camera);
       requestAnimationFrame(step);
     }
 
     /* Entrada cinematica: el icosaedro arranca enorme y fuera de pantalla
        a la izquierda, se mueve al centro mientras se asienta a su tamaño
-       normal. NO es fade in: es traveling shot. Restaura opacidad por si
-       venimos de un estado exit (retroceder al fragment de cierre). */
+       normal. NO es fade in: es traveling shot. Restaura opacidad y
+       rotacion contemplativa por si venimos de un estado exit. */
     function enter() {
       gsap.killTweensOf([mesh.position, mesh.scale, mat]);
+      freezeRotation = false;
       mesh.position.set(-9, 0, 0);
       mesh.scale.set(2.6, 2.6, 2.6);
       mat.opacity = 0;
@@ -1492,26 +1498,30 @@
       });
     }
 
-    /* Salida cinematica: traveling shot inverso hacia la derecha, escala
-       crece mientras la opacidad desvanece. Coreografia complementaria
-       a enter(). Se dispara con el fragment final de cierre. */
+    /* Salida cinematica: la forma crece hacia la camara (scale 1 -> 12)
+       mientras opacidad sube a solido (0.42 -> 1). Posicion queda en el
+       centro: la sensacion es de avance puro hacia adelante, no de
+       movimiento lateral. Rotacion se congela para que se sienta plano
+       que se acerca, no objeto girando. Cuando termina, la pantalla es
+       bronce uniforme y la frase de cierre aparece encima con delay. */
     function exit() {
       gsap.killTweensOf([mesh.position, mesh.scale, mat]);
+      freezeRotation = true;
       gsap.to(mesh.position, {
-        x: 9,
-        duration: 1.5,
+        x: 0, y: 0,
+        duration: 1.2,
         ease: 'power3.in',
         overwrite: 'auto',
       });
       gsap.to(mesh.scale, {
-        x: 2.4, y: 2.4, z: 2.4,
-        duration: 1.5,
+        x: 12, y: 12, z: 12,
+        duration: 1.2,
         ease: 'power3.in',
         overwrite: 'auto',
       });
       gsap.to(mat, {
-        opacity: 0,
-        duration: 1.2,
+        opacity: 1.0,
+        duration: 0.9,
         ease: 'power2.out',
         overwrite: 'auto',
       });
@@ -1665,14 +1675,21 @@
       const canvas = slide.querySelector('canvas[data-icosa]');
       const ctrl = canvas ? icosaCtrls.get(canvas) : null;
 
-      /* Fragment final con icosa-exit: la forma sale por la derecha y las
-         etiquetas anteriores se atenuan para dejar protagonismo a la
-         frase de cierre que aparece centrada. */
+      /* Fragment final con icosa-exit: la forma crece hacia la camara,
+         llena la pantalla con su color (bronce solido) y sobre eso
+         aparece la frase de cierre. Las etiquetas anteriores se van
+         completas para no dejar restos visibles. */
       if (frag.dataset.icosaExit === 'true') {
-        if (ctrl) ctrl.exit();
         slide.querySelectorAll('.layer-label-v2').forEach(label => {
-          gsap.to(label, { opacity: 0.1, duration: 0.8, ease: 'power2.out' });
+          gsap.to(label, { opacity: 0, duration: 0.4, ease: 'power2.in' });
         });
+        if (ctrl) ctrl.exit();
+        /* La frase aparece despues de que la forma llene la pantalla.
+           Delay 1.4s coincide con el final del growth del icosaedro. */
+        gsap.fromTo(frag,
+          { opacity: 0 },
+          { opacity: 1, duration: 0.9, delay: 1.4, ease: 'power2.out', overwrite: 'auto' }
+        );
         return;
       }
 
@@ -1696,16 +1713,18 @@
         if (head) gsap.to(head, { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' });
       }
 
-      /* Si era el fragment del cierre (icosa-exit), devolver la forma
-         al centro y restaurar las etiquetas anteriores. */
+      /* Si era el fragment del cierre (icosa-exit), invertir todo: la
+         frase desvanece primero, despues la forma vuelve a entrar desde
+         la izquierda y las etiquetas reaparecen sincronizadas. */
       if (frag.dataset.icosaExit === 'true') {
+        gsap.to(frag, { opacity: 0, duration: 0.4, ease: 'power2.in', overwrite: 'auto' });
         const canvas = slide.querySelector('canvas[data-icosa]');
         if (canvas) {
           const ctrl = icosaCtrls.get(canvas);
           if (ctrl) ctrl.enter();
         }
         slide.querySelectorAll('.layer-label-v2').forEach(label => {
-          gsap.to(label, { opacity: 1, duration: 0.8, ease: 'power2.out' });
+          gsap.to(label, { opacity: 1, duration: 0.8, delay: 0.5, ease: 'power2.out' });
         });
       }
     });
