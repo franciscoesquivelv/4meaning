@@ -450,19 +450,21 @@
     }
     .layers-v2-head {
       position: absolute;
-      top: 5vh;
-      left: 5vw;
-      max-width: 46vw;
+      top: 8vh;
+      left: 50%;
+      transform: translateX(-50%);
+      max-width: 78vw;
       z-index: 5;
+      text-align: center;
     }
     .layers-v2-head h3 {
-      font-size: 1.4rem;
-      font-weight: 300;
-      line-height: 1.45;
+      font-size: 2.4rem;
+      font-weight: 700;
+      line-height: 1.2;
       color: var(--dark);
       text-transform: none;
-      letter-spacing: -0.005em;
-      font-style: italic;
+      letter-spacing: -0.015em;
+      font-style: normal;
     }
     .icosa-canvas {
       position: absolute;
@@ -473,35 +475,35 @@
     }
     .layer-label-v2 {
       position: absolute;
-      max-width: 22vw;
+      max-width: 28vw;
       z-index: 4;
       color: var(--dark);
     }
     .layer-label-v2 .num {
-      font-size: 0.72rem;
+      font-size: 0.95rem;
       letter-spacing: 0.32em;
       color: var(--muted);
       font-weight: 700;
       display: block;
-      margin-bottom: 0.4rem;
-    }
-    .layer-label-v2 .name {
-      font-size: 1.5rem;
-      font-weight: 800;
-      letter-spacing: -0.025em;
-      text-transform: uppercase;
-      line-height: 1;
       margin-bottom: 0.7rem;
     }
+    .layer-label-v2 .name {
+      font-size: 2.4rem;
+      font-weight: 800;
+      letter-spacing: -0.028em;
+      text-transform: uppercase;
+      line-height: 0.98;
+      margin-bottom: 1rem;
+    }
     .layer-label-v2 .desc {
-      font-size: 0.88rem;
-      line-height: 1.55;
+      font-size: 1.15rem;
+      line-height: 1.5;
       font-weight: 300;
       color: var(--dark);
     }
-    .layer-label-v2.pos-tl { top: 26vh; left: 5vw; }
-    .layer-label-v2.pos-r  { top: 42vh; right: 5vw; text-align: right; max-width: 24vw; }
-    .layer-label-v2.pos-bl { bottom: 12vh; left: 16vw; }
+    .layer-label-v2.pos-tl { top: 32vh; left: 5vw; }
+    .layer-label-v2.pos-r  { top: 44vh; right: 5vw; text-align: right; max-width: 30vw; }
+    .layer-label-v2.pos-bl { bottom: 14vh; left: 16vw; }
     .layers-v2-caption {
       position: absolute;
       bottom: 5vh;
@@ -1388,19 +1390,25 @@
     scene.environment = buildWarmEnv();
 
     const geom = new THREE.IcosahedronGeometry(1.95, 0);
+    /* Material translucido para que el icosaedro sea fondo, no
+       protagonista. El titulo y las etiquetas pueden sentarse encima
+       sin pelearse con el. Reflejos metalicos se conservan. */
     const mat = new THREE.MeshStandardMaterial({
       color: 0xa8855a,
       metalness: 0.88,
       roughness: 0.35,
       flatShading: true,
+      transparent: true,
+      opacity: 0.42,
+      depthWrite: false,
     });
     const mesh = new THREE.Mesh(geom, mat);
     scene.add(mesh);
 
-    /* Aristas en ambar para preservar lectura editorial */
+    /* Aristas en ambar mas tenues para no pelear con el texto encima */
     const edges = new THREE.LineSegments(
       new THREE.EdgesGeometry(geom),
-      new THREE.LineBasicMaterial({ color: 0xc4a679, transparent: true, opacity: 0.4 })
+      new THREE.LineBasicMaterial({ color: 0xc4a679, transparent: true, opacity: 0.28 })
     );
     mesh.add(edges);
 
