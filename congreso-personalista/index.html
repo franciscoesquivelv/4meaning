@@ -1470,8 +1470,11 @@
 
     /* Entrada cinematica: el icosaedro arranca enorme y fuera de pantalla
        a la izquierda, se mueve al centro mientras se asienta a su tamaño
-       normal. NO es fade in: es traveling shot. Restaura opacidad y
-       rotacion contemplativa por si venimos de un estado exit. */
+       de descanso (0.55, no 1.0: el solido debe ser elemento del slide,
+       no tapar las etiquetas que viven a su alrededor). NO es fade in:
+       es traveling shot. Restaura opacidad y rotacion contemplativa
+       por si venimos de un estado exit. */
+    const RESTING_SCALE = 0.55;
     function enter() {
       gsap.killTweensOf([mesh.position, mesh.scale, mat]);
       freezeRotation = false;
@@ -1485,7 +1488,7 @@
         overwrite: 'auto',
       });
       gsap.to(mesh.scale, {
-        x: 1, y: 1, z: 1,
+        x: RESTING_SCALE, y: RESTING_SCALE, z: RESTING_SCALE,
         duration: 1.9,
         ease: 'power3.out',
         overwrite: 'auto',
