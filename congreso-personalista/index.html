@@ -765,15 +765,15 @@
     }
     .archetype-num {
       position: absolute;
-      font-size: 15rem;
+      font-size: 20rem;
       font-weight: 100;
       letter-spacing: -0.06em;
       line-height: 0.85;
-      color: rgba(196, 166, 121, 0.38);
+      color: rgba(196, 166, 121, 0.18);
       text-transform: uppercase;
       z-index: 0;
-      top: -4.5rem;
-      left: -3rem;
+      top: -6.5rem;
+      left: -4.5rem;
       pointer-events: none;
       white-space: nowrap;
       font-family: 'Montserrat', sans-serif;
@@ -782,8 +782,13 @@
     .archetype.pos-cr .archetype-num,
     .archetype.pos-bc .archetype-num {
       left: auto;
-      right: -3rem;
-      top: -4.5rem;
+      right: -4.5rem;
+      top: -6.5rem;
+    }
+    /* En el overlay (texto crema sobre el blob) el numeral tambien
+       muy sutil para no competir con el nombre. */
+    .archetypes-overlay .archetype-num {
+      color: rgba(252, 232, 200, 0.32);
     }
     .archetype-name {
       position: relative;
@@ -1171,17 +1176,17 @@
         <div class="archetype pos-tl fragment constellation-step" data-blob-x="24" data-blob-y="32">
           <span class="archetype-num">01</span>
           <div class="archetype-name">Gurú</div>
-          <p class="archetype-line">Vende una versión mejorada de ti, a plazos.</p>
+          <p class="archetype-line">Promete una versión mejorada del yo, sin tocar al quién.</p>
         </div>
         <div class="archetype pos-cr fragment constellation-step" data-blob-x="76" data-blob-y="50">
           <span class="archetype-num">02</span>
           <div class="archetype-name">Coach</div>
-          <p class="archetype-line">Mide tu vida por los resultados que produce.</p>
+          <p class="archetype-line">Mide la biografía por los resultados que entrega.</p>
         </div>
         <div class="archetype pos-bc fragment constellation-step" data-blob-x="50" data-blob-y="76">
           <span class="archetype-num">03</span>
           <div class="archetype-name">Manifestador</div>
-          <p class="archetype-line">Convierte tu destino en cuestión de vibración.</p>
+          <p class="archetype-line">Cosifica al sujeto: lo convierte en imán de cosas.</p>
         </div>
 
         <!-- Overlay con copia del texto en color crema, masked al blob.
@@ -1191,17 +1196,17 @@
           <div class="archetype pos-tl">
             <span class="archetype-num">01</span>
             <div class="archetype-name">Gurú</div>
-            <p class="archetype-line">Vende una versión mejorada de ti, a plazos.</p>
+            <p class="archetype-line">Promete una versión mejorada del yo, sin tocar al quién.</p>
           </div>
           <div class="archetype pos-cr">
             <span class="archetype-num">02</span>
             <div class="archetype-name">Coach</div>
-            <p class="archetype-line">Mide tu vida por los resultados que produce.</p>
+            <p class="archetype-line">Mide la biografía por los resultados que entrega.</p>
           </div>
           <div class="archetype pos-bc">
             <span class="archetype-num">03</span>
             <div class="archetype-name">Manifestador</div>
-            <p class="archetype-line">Convierte tu destino en cuestión de vibración.</p>
+            <p class="archetype-line">Cosifica al sujeto: lo convierte en imán de cosas.</p>
           </div>
         </div>
       </div>
