@@ -807,42 +807,68 @@
       position: relative;
       overflow: hidden;
     }
-    /* Gradient organico segun research de Santiago (PROJECT.md 11.7.bis).
-       Tecnica: div solido + border-radius + blur 180px + grain SVG
-       estatico mix-blend overlay. Animacion drift translate3d (NO scale
-       ni rotate, que revelarian el centro/borde geometrico). */
-    .typewriter-bg {
+    /* ═══════════════════════════════════════════════════════════════
+       ATMOS BG · gradient organico reutilizable (PROJECT.md 11.7.bis)
+       Tecnica verificada: div solido + border-radius 50% + blur 180px
+       + grain SVG estatico mix-blend overlay. translate3d puro en la
+       animacion (R4: scale revelaria centro geometrico, rotate borde).
+       Usar SELECTIVAMENTE solo donde la slide gane con atmosfera de
+       fondo y no compita con otros elementos atmosfericos.
+    ═══════════════════════════════════════════════════════════════ */
+    .atmos-bg {
       position: absolute;
       inset: 0;
       pointer-events: none;
       z-index: 0;
       overflow: hidden;
     }
-    .typewriter-bg .orb {
+    .atmos-bg .orb {
       position: absolute;
-      width: 95vw;
-      height: 95vw;
-      right: -30vw;
-      bottom: -38vw;
       border-radius: 50%;
-      background: #000;
       filter: blur(180px);
-      opacity: 0.68;
-      animation: orb-drift 13s cubic-bezier(.4, 0, .2, 1) infinite alternate;
       will-change: transform;
     }
-    @keyframes orb-drift {
-      from { transform: translate3d(0, 0, 0); }
-      to   { transform: translate3d(-70px, -55px, 0); }
+    /* Variantes de color: oscuro para slides borgoña, claro calido
+       para slides crema. */
+    .atmos-bg.dark .orb { background: #000; opacity: 0.62; }
+    .atmos-bg.light .orb { background: #c4a679; opacity: 0.42; }
+
+    /* Posiciones por esquina. El origen geometrico del orb cae siempre
+       parcialmente fuera del viewport para no insinuar circunferencia. */
+    .atmos-bg.pos-br .orb {
+      width: 95vw; height: 95vw;
+      right: -30vw; bottom: -38vw;
+      animation: orb-drift-br 13s cubic-bezier(.4, 0, .2, 1) infinite alternate;
     }
-    .typewriter-bg .grain {
+    .atmos-bg.pos-bl .orb {
+      width: 95vw; height: 95vw;
+      left: -30vw; bottom: -38vw;
+      animation: orb-drift-bl 14s cubic-bezier(.4, 0, .2, 1) infinite alternate;
+    }
+    .atmos-bg.pos-tr .orb {
+      width: 90vw; height: 90vw;
+      right: -28vw; top: -35vw;
+      animation: orb-drift-tr 15s cubic-bezier(.4, 0, .2, 1) infinite alternate;
+    }
+    .atmos-bg.pos-tl .orb {
+      width: 90vw; height: 90vw;
+      left: -28vw; top: -35vw;
+      animation: orb-drift-tl 12s cubic-bezier(.4, 0, .2, 1) infinite alternate;
+    }
+    @keyframes orb-drift-br { from { transform: translate3d(0,0,0); } to { transform: translate3d(-70px,-55px,0); } }
+    @keyframes orb-drift-bl { from { transform: translate3d(0,0,0); } to { transform: translate3d(60px,-50px,0); } }
+    @keyframes orb-drift-tr { from { transform: translate3d(0,0,0); } to { transform: translate3d(-55px,60px,0); } }
+    @keyframes orb-drift-tl { from { transform: translate3d(0,0,0); } to { transform: translate3d(65px,55px,0); } }
+
+    .atmos-bg .grain {
       position: absolute;
       inset: 0;
       width: 100%;
       height: 100%;
       mix-blend-mode: overlay;
-      opacity: 0.22;
     }
+    .atmos-bg.dark .grain { opacity: 0.20; }
+    .atmos-bg.light .grain { opacity: 0.14; }
     .typewriter-line {
       position: relative;
       z-index: 2;
@@ -1122,9 +1148,23 @@
 </head>
 <body>
 
-<!-- Canvas global para el mesh 3D persistente. Vive sobre todos los slides,
-     pointer-events:none para no interceptar clicks, z-index bajo para
-     quedar detras de los textos pero sobre los fondos. -->
+<!-- SVG global con definitions de filtros reutilizables. Hidden via
+     width/height 0 y absolute fuera de viewport. Cualquier slide puede
+     referenciar #grain-filter-shared sin redefinirlo. -->
+<svg width="0" height="0" style="position:absolute; pointer-events:none;" aria-hidden="true">
+  <defs>
+    <filter id="grain-filter-shared">
+      <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="2" stitchTiles="stitch" seed="5"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer>
+        <feFuncR type="linear" slope="3"/>
+        <feFuncG type="linear" slope="3"/>
+        <feFuncB type="linear" slope="3"/>
+      </feComponentTransfer>
+      <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -11"/>
+    </filter>
+  </defs>
+</svg>
 
 <div class="reveal">
   <div class="slides">
@@ -1152,8 +1192,12 @@
 
     <!-- 02. SILENCIO INICIAL -->
     <section data-background-color="#1a0e0e" class="bg-black" data-transition="fade">
+      <div class="atmos-bg dark pos-br" aria-hidden="true">
+        <div class="orb"></div>
+        <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
+      </div>
       <div class="silencio">
-        <div class="grain"></div>        <div class="word">Antes de empezar</div>
+        <div class="word">Antes de empezar</div>
       </div>
     </section>
 
@@ -1192,6 +1236,10 @@
          Solo dos palabras en pantalla. SplitText mask por lineas.
          Lo demas se dice de viva voz. -->
     <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade" data-monumental="true">
+      <div class="atmos-bg light pos-tl" aria-hidden="true">
+        <div class="orb"></div>
+        <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
+      </div>
       <div class="monumental">
         <h2 class="monumental-h">
           <span class="line"><span class="line-inner">Trascendencia</span></span>
@@ -1239,6 +1287,10 @@
          El segundo bloque indentado a la derecha genera tension visual
          entre lo que la cultura hizo y lo que la cultura impidio. -->
     <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
+      <div class="atmos-bg light pos-bl" aria-hidden="true">
+        <div class="orb"></div>
+        <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
+      </div>
       <div class="depth-layers">
         <span class="depth-bg-word stagger d1">propósito</span>
         <h2 class="depth-h">
@@ -1309,27 +1361,9 @@
          Slide arranca vacia. -->
     <section data-background-color="#1a0e0e" class="bg-black" data-transition="fade">
       <div class="typewriter-stage">
-        <div class="typewriter-bg" aria-hidden="true">
-          <!-- Orb: div solido + border-radius 50% + blur masivo.
-               Vercel-style. NO radial-gradient (sus stops crean anillos). -->
+        <div class="atmos-bg dark pos-br" aria-hidden="true">
           <div class="orb"></div>
-          <!-- Grain SVG estatico segun receta de gggrain/fffuel:
-               feTurbulence + saturate 0 + slope 3 + matrix alpha threshold
-               severo para preservar solo el grain mas oscuro.
-               Aplicado sobre el orb como overlay opacity 0.22. -->
-          <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-            <filter id="grain-filter">
-              <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="2" stitchTiles="stitch" seed="5"/>
-              <feColorMatrix type="saturate" values="0"/>
-              <feComponentTransfer>
-                <feFuncR type="linear" slope="3"/>
-                <feFuncG type="linear" slope="3"/>
-                <feFuncB type="linear" slope="3"/>
-              </feComponentTransfer>
-              <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -11"/>
-            </filter>
-            <rect width="100%" height="100%" filter="url(#grain-filter)"/>
-          </svg>
+          <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
         </div>
         <div class="typewriter-line fragment" data-text="«Sé tu mejor versión.»"><span class="text"></span><span class="cursor"></span></div>
         <div class="typewriter-line fragment" data-text="«Vive con propósito.»"><span class="text"></span><span class="cursor"></span></div>
@@ -1339,9 +1373,11 @@
 
     <!-- 11. VACÍO EXISTENCIAL · Frankl entra -->
     <section data-background-color="#1a0e0e" class="bg-black" data-transition="fade">
+      <div class="atmos-bg dark pos-tl" aria-hidden="true">
+        <div class="orb"></div>
+        <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
+      </div>
       <div class="statement">
-        <div class="grain"></div>
-        <div class="pulse" style="top:-15%; right:-25%;"></div>
         <span class="statement-eyebrow eyebrow stagger d1">Viktor Frankl ya le había puesto nombre a este síntoma hace ocho décadas</span>
         <h2 class="statement-h stagger d2 glow-soft">Lo llamó vacío<br><span class="ghost">existencial.</span></h2>
         <p class="statement-body body-light stagger d3" style="max-width:54ch;">Es lo que sucede cuando al sujeto le sobran respuestas y le falta, en el fondo, el lenguaje en el que su pregunta original sigue cabiendo.</p>
