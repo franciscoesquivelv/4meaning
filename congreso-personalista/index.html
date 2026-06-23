@@ -851,6 +851,204 @@
        valores y deja el grain perceptible. */
     .atmos-bg.dark .grain { mix-blend-mode: screen; opacity: 0.32; }
     .atmos-bg.light .grain { mix-blend-mode: multiply; opacity: 0.22; }
+
+    /* ═══════════════════════════════════════════════════════════════
+       COMPOSICIONES MULTIPROPOSITO (slides 11-28)
+       Reutilizables, no plantilladas. Cada slide elige una.
+    ═══════════════════════════════════════════════════════════════ */
+
+    /* J · AUTHOR SPREAD: nombre del autor monumental hairline +
+       frase central debajo en peso medio. Slides 15 Wojtyła, 16 Burgos. */
+    .author-spread {
+      width: 100%; height: 100%;
+      padding: 10vh 6vw;
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+    }
+    .author-spread.right { align-items: flex-end; }
+    .author-spread .author-name {
+      font-size: 9rem;
+      font-weight: 200;
+      letter-spacing: -0.05em;
+      line-height: 0.92;
+      color: var(--dark);
+      margin: 0 0 1.2rem 0;
+      text-transform: none;
+      white-space: nowrap;
+    }
+    .author-spread .author-claim {
+      font-size: 3.4rem;
+      font-weight: 800;
+      letter-spacing: -0.035em;
+      line-height: 1.0;
+      color: var(--dark);
+      text-transform: uppercase;
+      max-width: 22ch;
+      margin: 0 0 2rem 0;
+    }
+    .author-spread.right .author-claim { text-align: right; }
+    .author-spread .author-body {
+      font-size: 1.5rem;
+      font-weight: 300;
+      line-height: 1.5;
+      color: var(--dark);
+      max-width: 56ch;
+      margin: 0;
+    }
+    .author-spread.right .author-body { text-align: right; }
+
+    /* H · MAGAZINE column: número hairline gigante a un lado +
+       columna de texto al otro. Slides 13, 14 (problema dual). */
+    .magazine {
+      width: 100%; height: 100%;
+      padding: 8vh 6vw;
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 5fr 7fr;
+      gap: 4vw;
+      align-items: center;
+    }
+    .magazine.flip { grid-template-columns: 7fr 5fr; }
+    .magazine.flip .magazine-num { grid-column: 2; }
+    .magazine.flip .magazine-col { grid-column: 1; }
+    .magazine-num {
+      font-size: 22rem;
+      font-weight: 100;
+      letter-spacing: -0.06em;
+      line-height: 0.85;
+      color: var(--dark);
+      opacity: 0.16;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .magazine-col { max-width: 100%; }
+    .magazine-col h3 {
+      font-size: 3.6rem;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      line-height: 0.98;
+      color: var(--dark);
+      text-transform: uppercase;
+      margin: 0 0 1.6rem 0;
+    }
+    .magazine-col p {
+      font-size: 1.55rem;
+      font-weight: 300;
+      line-height: 1.5;
+      color: var(--dark);
+      margin: 0 0 1rem 0;
+    }
+
+    /* D · CITA AISLADA con imagen opcional de fondo. Slide 27. */
+    .quote-bleed {
+      width: 100%; height: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+    .quote-bleed-img {
+      position: absolute;
+      inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      z-index: 0;
+    }
+    .quote-bleed-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(26,14,14,0.92) 0%, rgba(26,14,14,0.75) 50%, rgba(26,14,14,0.65) 100%);
+      z-index: 1;
+    }
+    .quote-bleed-content {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 10vh 10vw;
+      text-align: center;
+    }
+    .quote-bleed-content p.quote-text {
+      font-size: 3.6rem;
+      font-weight: 300;
+      font-style: italic;
+      line-height: 1.22;
+      letter-spacing: -0.018em;
+      color: var(--white);
+      max-width: 26ch;
+      margin: 0;
+    }
+    .quote-bleed-content p.quote-context {
+      font-size: 1.4rem;
+      font-weight: 400;
+      line-height: 1.4;
+      color: var(--white);
+      opacity: 0.7;
+      max-width: 56ch;
+      margin: 2.4rem 0 0 0;
+      font-style: normal;
+    }
+
+    /* G · FULL-BLEED IMAGE con caption breve */
+    .image-bleed {
+      width: 100%; height: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+    .image-bleed-img {
+      position: absolute;
+      inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      z-index: 0;
+    }
+    .image-bleed-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+    }
+    .image-bleed-overlay.dark { background: linear-gradient(180deg, rgba(26,14,14,0.30) 0%, rgba(26,14,14,0.85) 100%); }
+    .image-bleed-overlay.light { background: linear-gradient(180deg, rgba(240,230,210,0.0) 0%, rgba(240,230,210,0.55) 100%); }
+    .image-bleed-caption {
+      position: absolute;
+      bottom: 8vh;
+      left: 6vw;
+      right: 6vw;
+      z-index: 3;
+      max-width: 70vw;
+    }
+    .image-bleed-caption h2 {
+      font-size: 5.2rem;
+      font-weight: 900;
+      letter-spacing: -0.045em;
+      line-height: 0.96;
+      color: var(--white);
+      text-transform: uppercase;
+      margin: 0 0 1.2rem 0;
+    }
+    .image-bleed-caption.dark h2 { color: var(--white); }
+    .image-bleed-caption.light h2 { color: var(--dark); }
+    .image-bleed-caption p {
+      font-size: 1.4rem;
+      font-weight: 400;
+      line-height: 1.5;
+      color: var(--white);
+      max-width: 60ch;
+      margin: 0;
+    }
+    .image-bleed-caption.light p { color: var(--dark); }
+
+    /* Para constellation acumulativa de 4 elementos (slide 24) */
+    .constellation.four-elements .archetype.pos-tl { top: 18vh; left: 8vw; }
+    .constellation.four-elements .archetype.pos-tr { top: 18vh; right: 8vw; left: auto; text-align: right; }
+    .constellation.four-elements .archetype.pos-bl { bottom: 18vh; left: 8vw; top: auto; }
+    .constellation.four-elements .archetype.pos-br { bottom: 18vh; right: 8vw; left: auto; top: auto; text-align: right; }
     .typewriter-line {
       position: relative;
       z-index: 2;
@@ -1349,16 +1547,18 @@
       </div>
     </section>
 
-    <!-- 11. VACÍO EXISTENCIAL · Frankl entra -->
+    <!-- 11. VACÍO EXISTENCIAL · F monumental oscuro -->
     <section data-background-color="#1a0e0e" class="bg-black" data-transition="fade">
       <div class="atmos-bg dark pos-tl" aria-hidden="true">
         <div class="orb"></div>
         <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
       </div>
-      <div class="statement">
-        <span class="statement-eyebrow eyebrow stagger d1">Viktor Frankl ya le había puesto nombre a este síntoma hace ocho décadas</span>
-        <h2 class="statement-h stagger d2 glow-soft">Lo llamó vacío<br><span class="ghost">existencial.</span></h2>
-        <p class="statement-body body-light stagger d3" style="max-width:54ch;">Es lo que sucede cuando al sujeto le sobran respuestas y le falta, en el fondo, el lenguaje en el que su pregunta original sigue cabiendo.</p>
+      <div class="monumental">
+        <h2 class="monumental-h" style="color:var(--pure);">
+          <span class="line"><span class="line-inner">Vacío</span></span>
+          <span class="line"><span class="line-inner">existencial.</span></span>
+        </h2>
+        <p class="stagger d3" style="font-size:1.65rem; font-weight:300; line-height:1.5; max-width:52ch; color:var(--muted-d); margin-top:3rem; position:relative; z-index:2;">Lo que Frankl le puso nombre hace ocho décadas. Lo que sucede cuando al sujeto le sobran respuestas y le falta, en el fondo, el lenguaje en el que su pregunta original sigue cabiendo.</p>
       </div>
     </section>
 
@@ -1368,44 +1568,47 @@
 
     <!-- 12. DOS CAMPOS, MISMO AGUJERO -->
     <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
-      <div class="statement">
-        <span class="statement-eyebrow eyebrow stagger d1">El problema que en 4Meaning intentamos abordar</span>
-        <h2 class="statement-h stagger d2">Es, en realidad, un<br><span class="ghost">problema dual.</span></h2>
-        <p class="statement-body body-light stagger d3">Por un lado, hay una academia personalista con una hondura filosófica considerable. Por otro, hay un mercado del propósito con muchísima audiencia. La pregunta por el sentido cabe, con todo su peso, en el primero; pero la cultura está acostumbrada a buscarla en el segundo.</p>
+      <div class="atmos-bg light pos-tr" aria-hidden="true">
+        <div class="orb"></div>
+        <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
+      </div>
+      <div class="monumental">
+        <h2 class="monumental-h">
+          <span class="line"><span class="line-inner">Un problema</span></span>
+          <span class="line"><span class="line-inner">dual.</span></span>
+        </h2>
       </div>
     </section>
 
-    <!-- 13. LA OPORTUNIDAD PERSONALISTA -->
+    <!-- 13. LA OPORTUNIDAD PERSONALISTA · composicion H magazine -->
     <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
-      <div class="two-asym">
-        <div class="two-asym-left">
-          <span class="eyebrow stagger d1">Por un lado</span>
-          <div class="num stagger d2">01</div>
-          <span class="eyebrow stagger d3">El personalismo</span>
-        </div>
-        <div class="two-asym-right">
-          <h3 class="h stagger d2">Un terreno de praxis<br>todavía por construir.</h3>
-          <hr class="rule stagger d3" style="background:var(--black);">
-          <p class="body-light stagger d3">Wojtyła, Stein, Mounier y Burgos produjeron categorías antropológicas de una hondura realmente considerable. Ese trabajo, en el plano del pensamiento, está hecho.</p>
-          <p class="body-light stagger d4">Lo que considero que aún tenemos por delante es la traducción de esas categorías a una praxis sistemática que llegue al ciudadano medio. Ahí es donde considero que 4Meaning tiene algo concreto para aportar.</p>
+      <div class="atmos-bg light pos-tl" aria-hidden="true">
+        <div class="orb"></div>
+        <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
+      </div>
+      <div class="magazine">
+        <div class="magazine-num stagger d1">01</div>
+        <div class="magazine-col">
+          <h3 class="stagger d2">Un terreno de praxis todavía por construir.</h3>
+          <p class="stagger d3">Wojtyła, Stein, Mounier y Burgos produjeron categorías antropológicas de una hondura realmente considerable. Ese trabajo, en el plano del pensamiento, está hecho.</p>
+          <p class="stagger d4">Lo que considero que aún tenemos por delante es la traducción de esas categorías a una praxis sistemática que llegue al ciudadano medio. Ahí es donde considero que 4Meaning tiene algo concreto para aportar.</p>
         </div>
       </div>
     </section>
 
-    <!-- 14. LA TRAMPA UTILITARIA -->
+    <!-- 14. LA TRAMPA UTILITARIA · composicion H magazine espejo -->
     <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
-      <div class="two-asym">
-        <div class="two-asym-left">
-          <span class="eyebrow stagger d1">Por otro lado</span>
-          <div class="num stagger d2">02</div>
-          <span class="eyebrow stagger d3">La industria del coaching</span>
+      <div class="atmos-bg light pos-br" aria-hidden="true">
+        <div class="orb"></div>
+        <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
+      </div>
+      <div class="magazine flip">
+        <div class="magazine-col">
+          <h3 class="stagger d2">Una antropología casi siempre implícita, y utilitaria.</h3>
+          <p class="stagger d3">La industria del coaching identificó muy bien la falta de sentido y ofrece soluciones a esa carencia. Lo hace, casi siempre sin nombrarlo, desde el supuesto de que el valor de la persona se mide por lo que produce.</p>
+          <p class="stagger d4">La consecuencia, casi siempre inconsciente para quien la habita, es ese mismo vacío al que Frankl le había puesto nombre: muchas respuestas alrededor y, en el fondo, ninguna que entre del todo.</p>
         </div>
-        <div class="two-asym-right">
-          <h3 class="h stagger d2">Una antropología<br>casi siempre implícita,<br>y utilitaria.</h3>
-          <hr class="rule stagger d3" style="background:var(--black);">
-          <p class="body-light stagger d3">La industria del coaching identificó muy bien la falta de sentido y ofrece soluciones a esa carencia. Lo hace, casi siempre sin nombrarlo, desde el supuesto de que el valor de la persona se mide por lo que produce.</p>
-          <p class="body-light stagger d4 muted">La consecuencia, casi siempre inconsciente para quien la habita, es ese mismo vacío al que Frankl le había puesto nombre: muchas respuestas alrededor y, en el fondo, ninguna que entre del todo.</p>
-        </div>
+        <div class="magazine-num stagger d1">02</div>
       </div>
     </section>
 
@@ -1413,35 +1616,29 @@
          BLOQUE 5 · FUNDAMENTOS FILOSÓFICOS (2 slides)
     ════════════════════════════════════════════════════ -->
 
-    <!-- 15. WOJTYŁA -->
+    <!-- 15. WOJTYŁA · composicion J author-spread -->
     <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
-      <div class="two-asym">
-        <div class="two-asym-left">
-          <span class="num stagger d1" style="font-size:4.4rem; font-weight:300; letter-spacing:-0.03em; line-height:1; color:var(--black);">Wojtyła</span>
-          <span class="eyebrow stagger d2" style="margin-top:1.4rem; display:block;">Cracovia &nbsp;&middot;&nbsp; 1969</span>
-        </div>
-        <div class="two-asym-right">
-          <h3 class="h stagger d2">La persona<br>es su biografía<br>en acto.</h3>
-          <hr class="rule stagger d3" style="background:var(--black);">
-          <p class="body-light stagger d3">Wojtyła propone que cada decisión que tomamos desencadena dos consecuencias a la vez. Una hacia afuera, que interviene en el mundo, a la que llama efecto transitivo. Y otra hacia adentro, que se imprime en el propio sujeto que decide, a la que llama efecto intransitivo.</p>
-          <p class="body-light stagger d4">Decisión tras decisión, la persona termina esculpiendo su propia identidad moral. Por eso considero que <strong style="font-weight:700;">no somos únicamente afectados por nuestra biografía: somos, en sí misma, nuestra biografía en acto</strong>.</p>
-        </div>
+      <div class="atmos-bg light pos-tl" aria-hidden="true">
+        <div class="orb"></div>
+        <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
+      </div>
+      <div class="author-spread">
+        <p class="author-name stagger d1">Wojtyła</p>
+        <h2 class="author-claim stagger d2">La persona es su biografía en acto.</h2>
+        <p class="author-body stagger d3">Cada decisión desencadena dos consecuencias a la vez. Una hacia afuera, que interviene en el mundo, a la que Wojtyła llama efecto transitivo. Y otra hacia adentro, que se imprime en el propio sujeto que decide, a la que llama efecto intransitivo. Decisión tras decisión, la persona termina esculpiendo su propia identidad moral.</p>
       </div>
     </section>
 
-    <!-- 16. BURGOS QUÉ/QUIÉN -->
+    <!-- 16. BURGOS QUÉ/QUIÉN · composicion J author-spread espejo -->
     <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
-      <div class="two-asym">
-        <div class="two-asym-left">
-          <span class="num stagger d1" style="font-size:4.4rem; font-weight:300; letter-spacing:-0.03em; line-height:1; color:var(--black);">Burgos</span>
-          <span class="eyebrow stagger d2" style="margin-top:1.4rem; display:block;">El giro personalista</span>
-        </div>
-        <div class="two-asym-right">
-          <h3 class="h stagger d2">El qué se cataloga.<br>El quién se reconoce.</h3>
-          <hr class="rule stagger d3" style="background:var(--black);">
-          <p class="body-light stagger d3">La antropología clásica analizaba al hombre con categorías diseñadas, en realidad, para objetos: una sustancia más una racionalidad. Son herramientas excelentes para responder a <em style="font-style:normal; font-weight:600;">¿qué es el hombre?</em>, pero, considero, demasiado limitadas para iluminar la pregunta que de verdad importa: <em style="font-style:normal; font-weight:600;">¿quién es esta persona?</em>.</p>
-          <p class="body-light stagger d4">El giro personalista, en Burgos, consiste en colocar a la persona como quicio de toda la antropología: única, irrepetible, consciente y libre. La diferencia entre el qué y el quién deja de ser retórica para volverse ontológica: <strong style="font-weight:700;">el qué se sustituye, el quién se acoge</strong>.</p>
-        </div>
+      <div class="atmos-bg light pos-br" aria-hidden="true">
+        <div class="orb"></div>
+        <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
+      </div>
+      <div class="author-spread right">
+        <p class="author-name stagger d1">Burgos</p>
+        <h2 class="author-claim stagger d2">El qué se cataloga. El quién se reconoce.</h2>
+        <p class="author-body stagger d3">La antropología clásica analizaba al hombre con categorías diseñadas, en realidad, para objetos. Son herramientas excelentes para responder a «qué es el hombre», pero, considero, demasiado limitadas para iluminar la pregunta que de verdad importa: «quién es esta persona». Burgos coloca al quién como quicio de toda la antropología.</p>
       </div>
     </section>
 
@@ -1449,42 +1646,42 @@
          BLOQUE 6 · DOS EJES (3 slides)
     ════════════════════════════════════════════════════ -->
 
-    <!-- 17. APERTURA DOS EJES -->
+    <!-- 17. APERTURA DOS EJES · F monumental -->
     <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
-      <div class="statement">
-        <span class="statement-eyebrow eyebrow stagger d1">Sobre el crecimiento personal</span>
-        <h2 class="statement-h stagger d2">En 4Meaning lo entendemos<br><span class="ghost">en dos direcciones complementarias.</span></h2>
-        <p class="statement-body body-light stagger d3">No tenemos problema con la idea de crecer. Lo que considero que conviene discutir es la raíz utilitaria que la cultura le ha ido poniendo. Por eso, en lugar de un solo eje vertical de productividad, lo desplegamos en dos direcciones que en la práctica operan a la vez.</p>
+      <div class="atmos-bg light pos-bl" aria-hidden="true">
+        <div class="orb"></div>
+        <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
+      </div>
+      <div class="monumental">
+        <h2 class="monumental-h">
+          <span class="line"><span class="line-inner">Dos</span></span>
+          <span class="line"><span class="line-inner">direcciones.</span></span>
+        </h2>
       </div>
     </section>
 
-    <!-- 18. EJE HORIZONTAL -->
-    <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
-      <div class="axis">
-        <div class="axis-left">
-          <span class="num stagger d1">Eje 01</span>
-          <h3 class="stagger d2">Horizontal.</h3>
-          <span class="eyebrow stagger d3">Yo. Tú. Nosotros</span>
-        </div>
-        <div class="axis-right">
-          <p class="body-light stagger d2">Wojtyła denomina a este eje "participación". Lo describe como el camino por el cual el sujeto alcanza su verdadera identidad saliendo de sí mismo, entregándose al Tú y formando con él un Nosotros.</p>
-          <p class="body-light stagger d3">Conviene leerlo en su sentido fuerte: la madurez personal acontece en el encuentro real con otro quién igualmente irrepetible, y la persona termina por hacerse, sobre todo, <strong style="font-weight:700;">saliendo</strong>.</p>
+    <!-- 18. EJE HORIZONTAL · imagen full-bleed con caption -->
+    <section data-background-color="#1a0e0e" data-transition="fade">
+      <div class="image-bleed">
+        <img src="imagenes/married-couple-hugging.avif" alt="" class="image-bleed-img"/>
+        <div class="image-bleed-overlay dark"></div>
+        <div class="image-bleed-caption dark">
+          <h2 class="stagger d2">Horizontal.</h2>
+          <p class="stagger d3">Wojtyła la llama participación: la madurez personal acontece en el encuentro real con otro quién igualmente irrepetible. La persona termina por hacerse, sobre todo, saliendo.</p>
         </div>
       </div>
     </section>
 
-    <!-- 19. EJE VERTICAL -->
+    <!-- 19. EJE VERTICAL · author-spread con cita -->
     <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
-      <div class="axis">
-        <div class="axis-left">
-          <span class="num stagger d1">Eje 02</span>
-          <h3 class="stagger d2">Vertical.</h3>
-          <span class="eyebrow stagger d3">Horizonte superior</span>
-        </div>
-        <div class="axis-right">
-          <p class="body-light stagger d2">La persona termina comprendiendo el sentido de su vida cuando logra medirla frente a un horizonte superior. En última instancia, en su apertura al Absoluto.</p>
-          <p class="body-light stagger d3">Considero que superar la simple realidad biológica, en esta clave, tiene más que ver con habitar la propia condición humana a su altura que con dejarla atrás.</p>
-        </div>
+      <div class="atmos-bg light pos-tr" aria-hidden="true">
+        <div class="orb"></div>
+        <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
+      </div>
+      <div class="author-spread">
+        <p class="author-name stagger d1">Vertical.</p>
+        <h2 class="author-claim stagger d2">Habitar la propia condición a su altura.</h2>
+        <p class="author-body stagger d3">La persona termina comprendiendo el sentido de su vida cuando logra medirla frente a un horizonte superior. Y considero que superar la simple realidad biológica, en esta clave, tiene más que ver con habitarla a su altura que con dejarla atrás.</p>
       </div>
     </section>
 
@@ -1492,42 +1689,44 @@
          BLOQUE 7 · FRANKL + CONVERGENCIA (3 slides)
     ════════════════════════════════════════════════════ -->
 
-    <!-- 20. FRANKL PERSONALISTA SIN SABERLO -->
+    <!-- 20. FRANKL PERSONALISTA SIN SABERLO · author-spread -->
     <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
-      <div class="statement">
-        <span class="statement-eyebrow eyebrow stagger d1">El POM no es la única ruta filosófica que llega a esta centralidad de la persona</span>
-        <h2 class="statement-h stagger d2">Viktor Frankl,<br>en cierta forma,<br><span class="ghost">era personalista sin saberlo.</span></h2>
-        <p class="statement-body body-light stagger d3">Lo digo medio en broma, medio en serio. La literatura reciente (Costello 2015, Melé y Akrivou 2026) ya lo reconoce como personalista de pleno derecho. Llega al mismo sujeto que Wojtyła describe, solo que entrando por otra puerta: la clínica del sentido.</p>
+      <div class="atmos-bg light pos-bl" aria-hidden="true">
+        <div class="orb"></div>
+        <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
+      </div>
+      <div class="author-spread">
+        <p class="author-name stagger d1">Frankl,</p>
+        <h2 class="author-claim stagger d2">personalista sin saberlo.</h2>
+        <p class="author-body stagger d3">Lo digo medio en broma, medio en serio. La literatura reciente ya lo reconoce como personalista de pleno derecho. Llega al mismo sujeto que Wojtyła describe, solo que entrando por otra puerta: la clínica del sentido.</p>
       </div>
     </section>
 
-    <!-- 21. DOS RUTAS INDEPENDIENTES -->
+    <!-- 21. DOS RUTAS INDEPENDIENTES · L typewriter de tres convergencias -->
     <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
-      <div class="quotes">
-        <div class="quotes-left">
-          <span class="eyebrow stagger d1">Conviene detenerse aquí</span>
-          <h3 class="h stagger d2">Considero que esta convergencia es una de las claves del argumento.</h3>
-        </div>
-        <div class="quotes-list">
-          <div class="q stagger d2"><strong style="font-weight:900;">Wojtyła</strong> llega al quién desde la fenomenología del acto: desde el modo en que la persona se revela en lo que hace.</div>
-          <div class="q stagger d3"><strong style="font-weight:900;">Frankl</strong> llega al mismo quién desde la clínica del sentido: desde el modo en que la persona se busca a sí misma cuando sufre.</div>
-          <div class="q stagger d4" style="border-left-color:var(--black); color:var(--black); font-weight:900;">Y aun así, sin influencia mutua, ambas tradiciones terminan poniendo en el centro exactamente lo mismo: un sujeto que se propone sus propios fines y se construye en sus actos.</div>
-        </div>
+      <div class="atmos-bg light pos-br" aria-hidden="true">
+        <div class="orb"></div>
+        <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
+      </div>
+      <div class="typewriter-stage" style="background:transparent;">
+        <div class="typewriter-line fragment" data-text="Wojtyła llega al quién desde la fenomenología del acto." style="color:var(--dark);"><span class="text"></span><span class="cursor"></span></div>
+        <div class="typewriter-line fragment" data-text="Frankl llega al mismo quién desde la clínica del sentido." style="color:var(--dark);"><span class="text"></span><span class="cursor"></span></div>
+        <div class="typewriter-line fragment" data-text="Sin influencia mutua, ponen en el centro exactamente lo mismo." style="color:var(--dark); font-weight: 800;"><span class="text"></span><span class="cursor"></span></div>
       </div>
     </section>
 
-    <!-- 22. CLÍMAX -->
+    <!-- 22. CLÍMAX · F monumental oscuro con ScrambleText uso unico -->
     <section data-background-color="#1a0e0e" class="bg-black" data-transition="fade">
-      <div class="statement letterbox">
-        <div class="grain"></div>
-        <div class="pulse" style="top:-15%; right:-25%;"></div>
-        <h2 class="statement-h glow-soft" style="margin-top:0;">
-          <span class="fragment fade-up">La misma</span><br>
-          <span class="fragment fade-up">pregunta</span><br>
-          <span class="fragment fade-blur ghost">desde dos lados.</span>
+      <div class="atmos-bg dark pos-br" aria-hidden="true">
+        <div class="orb"></div>
+        <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
+      </div>
+      <div class="monumental">
+        <h2 class="monumental-h" style="color:var(--pure);">
+          <span class="line"><span class="line-inner">Constatar,</span></span>
+          <span class="line"><span class="line-inner">no creer.</span></span>
         </h2>
-        <p class="statement-body body-light fragment fade-soft" style="max-width:58ch;">Cuando dos métodos llegan a la misma conclusión por caminos que no se cruzan, la conclusión gana fuerza precisamente porque deja de depender de los presupuestos de un solo método.</p>
-        <p class="statement-body body-light fragment fade-soft" style="max-width:58ch; margin-top:1.4rem;">Es <strong style="color:var(--pure);font-weight:700;">la diferencia entre creer algo y constatar algo</strong>. El personalismo, así confirmado, deja de ser una postura ideológica para volverse una descripción de cómo el ser humano realmente está hecho.</p>
+        <p class="stagger d3" style="font-size:1.65rem; font-weight:300; line-height:1.5; max-width:56ch; color:var(--muted-d); margin-top:3rem; position:relative; z-index:2;">Cuando dos métodos llegan a la misma conclusión por caminos que no se cruzan, la conclusión deja de depender de los presupuestos de un solo método. El personalismo, así confirmado, deja de ser una postura para volverse una descripción.</p>
       </div>
     </section>
 
@@ -1535,44 +1734,53 @@
          BLOQUE 8 · COMPOSICIÓN (2 slides)
     ════════════════════════════════════════════════════ -->
 
-    <!-- 23. DE TRES CAPAS A CUATRO PLANOS -->
+    <!-- 23. DE TRES CAPAS A CUATRO PLANOS · F monumental -->
     <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
-      <div class="statement">
-        <span class="statement-eyebrow eyebrow stagger d1">Cuando bajamos de la definición a la práctica</span>
-        <h2 class="statement-h stagger d2">Esas tres capas<br>se nos desdoblan<br>en <span class="ghost">cuatro planos.</span></h2>
-        <p class="statement-body body-light stagger d3">Sucede que la biografía propia, en concreto, termina viviéndose en dos ámbitos bastante distinguibles: en el encuentro con los otros y en el enfrentamiento con la finitud. Por eso, al pasar de la definición a la operación, una de las tres capas se nos abre en dos planos.</p>
+      <div class="atmos-bg light pos-tl" aria-hidden="true">
+        <div class="orb"></div>
+        <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
+      </div>
+      <div class="monumental">
+        <h2 class="monumental-h">
+          <span class="line"><span class="line-inner">Cuatro</span></span>
+          <span class="line"><span class="line-inner">planos.</span></span>
+        </h2>
       </div>
     </section>
 
-    <!-- 24. LOS CUATRO PLANOS -->
+    <!-- 24. LOS CUATRO PLANOS · K constellation acumulativa con 4 -->
     <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
-      <div class="four">
-        <div>
-          <span class="eyebrow stagger d1">Trascendencia, en su composición</span>
-          <h3 class="stagger d2" style="font-size:3.4rem; font-weight:900; letter-spacing:-0.04em; line-height:1; margin-top:1rem;">Los cuatro planos.</h3>
+      <div class="atmos-bg light pos-br" aria-hidden="true">
+        <div class="orb"></div>
+        <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
+      </div>
+      <div class="constellation four-elements">
+        <div class="constellation-blob"></div>
+        <div class="archetype pos-tl fragment constellation-step" data-blob-x="22" data-blob-y="28">
+          <span class="archetype-num">01</span>
+          <div class="archetype-name">Genealógico</div>
+          <p class="archetype-line">Lo que la persona recibió antes de poder elegir: nombre, idioma, biología, herida transmitida.</p>
         </div>
-        <div></div>
-        <div class="four-grid">
-          <div class="four-cell stagger d3">
-            <span class="num">01 &nbsp;&middot;&nbsp; Viene de la capa: herencia</span>
-            <div class="name">Genealógico</div>
-            <p class="desc">Antes de ejecutar cualquier elección, la persona ya ha recibido una herencia ineludible: una biología, una historia familiar, un lenguaje, una herida transmitida, un nombre. Trabajar este plano supone reconocer todo eso que se ha recibido.</p>
-          </div>
-          <div class="four-cell stagger d3">
-            <span class="num">02 &nbsp;&middot;&nbsp; Viene de la capa: biografía</span>
-            <div class="name">Intersubjetividad</div>
-            <p class="desc">La madurez personal acontece, considero, en el encuentro y en la entrega real a otro quién igualmente irrepetible. La familia, en sentido fuerte, funciona como una especie de laboratorio antropológico de esa entrega.</p>
-          </div>
-          <div class="four-cell stagger d4">
-            <span class="num">03 &nbsp;&middot;&nbsp; Viene de la capa: autodeterminación</span>
-            <div class="name">Axiológica</div>
-            <p class="desc">La persona forja su identidad mediante aquellos actos orientados hacia el bien que reconoce y elige libremente. Bajo la lente del POM, el yo se esculpe activamente a partir de los principios que decide abrazar.</p>
-          </div>
-          <div class="four-cell stagger d4">
-            <span class="num">04 &nbsp;&middot;&nbsp; Viene de la capa: biografía</span>
-            <div class="name">Resiliencia y finitud</div>
-            <p class="desc">Toda biografía humana integra el dolor, el fracaso, la pérdida y, eventualmente, la propia muerte. Asumido libremente, el sufrimiento se transforma en hazaña interior. Frankl agrega un dato decisivo: el sentido, al sufrir, se descubre.</p>
-          </div>
+        <div class="archetype pos-tr fragment constellation-step" data-blob-x="78" data-blob-y="28">
+          <span class="archetype-num">02</span>
+          <div class="archetype-name">Intersubjetividad</div>
+          <p class="archetype-line">La madurez acontece en la entrega real a otro quién. La familia, laboratorio antropológico.</p>
+        </div>
+        <div class="archetype pos-bl fragment constellation-step" data-blob-x="22" data-blob-y="76">
+          <span class="archetype-num">03</span>
+          <div class="archetype-name">Axiológico</div>
+          <p class="archetype-line">El yo se esculpe en los principios que decide abrazar. Actos orientados al bien reconocido.</p>
+        </div>
+        <div class="archetype pos-br fragment constellation-step" data-blob-x="78" data-blob-y="76">
+          <span class="archetype-num">04</span>
+          <div class="archetype-name">Finitud</div>
+          <p class="archetype-line">El sufrimiento asumido se vuelve hazaña interior. El sentido, al sufrir, se descubre.</p>
+        </div>
+        <div class="archetypes-overlay" aria-hidden="true">
+          <div class="archetype pos-tl"><span class="archetype-num">01</span><div class="archetype-name">Genealógico</div><p class="archetype-line">Lo que la persona recibió antes de poder elegir: nombre, idioma, biología, herida transmitida.</p></div>
+          <div class="archetype pos-tr"><span class="archetype-num">02</span><div class="archetype-name">Intersubjetividad</div><p class="archetype-line">La madurez acontece en la entrega real a otro quién. La familia, laboratorio antropológico.</p></div>
+          <div class="archetype pos-bl"><span class="archetype-num">03</span><div class="archetype-name">Axiológico</div><p class="archetype-line">El yo se esculpe en los principios que decide abrazar. Actos orientados al bien reconocido.</p></div>
+          <div class="archetype pos-br"><span class="archetype-num">04</span><div class="archetype-name">Finitud</div><p class="archetype-line">El sufrimiento asumido se vuelve hazaña interior. El sentido, al sufrir, se descubre.</p></div>
         </div>
       </div>
     </section>
@@ -1581,41 +1789,46 @@
          BLOQUE 9 · PRÁCTICA (2 slides)
     ════════════════════════════════════════════════════ -->
 
-    <!-- 25. TRASCENDENCIA EN LA PRÁCTICA -->
+    <!-- 25. TRASCENDENCIA EN LA PRÁCTICA · K constellation tres dinamicas -->
     <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
-      <div class="practices">
-        <div>
-          <span class="eyebrow stagger d1">Cómo se ve esto, en la práctica</span>
-          <h3 class="stagger d2" style="font-size:3.4rem; font-weight:900; letter-spacing:-0.04em; line-height:1; margin-top:1rem;">Quince años de iteración, siete países, varias dinámicas. Hoy quiero mencionarles tres.</h3>
+      <div class="atmos-bg light pos-tr" aria-hidden="true">
+        <div class="orb"></div>
+        <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
+      </div>
+      <div class="constellation">
+        <div class="constellation-blob"></div>
+        <div class="archetype pos-tl fragment constellation-step" data-blob-x="24" data-blob-y="32">
+          <span class="archetype-num">01</span>
+          <div class="archetype-name">Tres valijas</div>
+          <p class="archetype-line">Cada cónyuge analiza la valija que trae de su familia de origen. Eligen qué conservar y qué descartar, y crean juntos una tercera propia.</p>
         </div>
-        <div class="practices-list">
-          <div class="practice-card stagger d3">
-            <span class="lab">Dinámica 01</span>
-            <div class="h">Tres valijas.</div>
-            <p class="b">Cada cónyuge analiza la valija que trae de su familia de origen: los sabores, los gestos, los miedos, las virtudes heredadas. A través de un proceso guiado, la pareja elige qué conservar y qué descartar, y crea juntos una tercera valija propia.</p>
-          </div>
-          <div class="practice-card stagger d4">
-            <span class="lab">Dinámica 02</span>
-            <div class="h">Mochila de valores.</div>
-            <p class="b">El participante asocia sus virtudes y valores a herramientas físicas de supervivencia. La brújula como las metas que orientan, la linterna como la búsqueda de la verdad, la carpa como protección. La transmisión del patrimonio moral, hecha objeto.</p>
-          </div>
-          <div class="practice-card stagger d5">
-            <span class="lab">Dinámica 03</span>
-            <div class="h">La Caja Negra.</div>
-            <p class="b">La consciencia de la finitud abandona el plano teórico y se convierte en experiencia existencial. Para muchos, redactar esa nota de despedida es el primer momento de su vida en que formulan, con cierta lucidez, quiénes deciden haber sido.</p>
-          </div>
+        <div class="archetype pos-cr fragment constellation-step" data-blob-x="76" data-blob-y="50">
+          <span class="archetype-num">02</span>
+          <div class="archetype-name">Mochila de valores</div>
+          <p class="archetype-line">El participante asocia sus virtudes a herramientas físicas: brújula, linterna, carpa. El patrimonio moral, hecho objeto.</p>
+        </div>
+        <div class="archetype pos-bc fragment constellation-step" data-blob-x="50" data-blob-y="76">
+          <span class="archetype-num">03</span>
+          <div class="archetype-name">La Caja Negra</div>
+          <p class="archetype-line">La consciencia de la finitud abandona el plano teórico y se vuelve experiencia. Para muchos, primer momento en que formulan con lucidez quiénes deciden haber sido.</p>
+        </div>
+        <div class="archetypes-overlay" aria-hidden="true">
+          <div class="archetype pos-tl"><span class="archetype-num">01</span><div class="archetype-name">Tres valijas</div><p class="archetype-line">Cada cónyuge analiza la valija que trae de su familia de origen. Eligen qué conservar y qué descartar, y crean juntos una tercera propia.</p></div>
+          <div class="archetype pos-cr"><span class="archetype-num">02</span><div class="archetype-name">Mochila de valores</div><p class="archetype-line">El participante asocia sus virtudes a herramientas físicas: brújula, linterna, carpa. El patrimonio moral, hecho objeto.</p></div>
+          <div class="archetype pos-bc"><span class="archetype-num">03</span><div class="archetype-name">La Caja Negra</div><p class="archetype-line">La consciencia de la finitud abandona el plano teórico y se vuelve experiencia. Para muchos, primer momento en que formulan con lucidez quiénes deciden haber sido.</p></div>
         </div>
       </div>
     </section>
 
-    <!-- 26. LA CAJA NEGRA REVELADA -->
-    <section data-background-color="#1a0e0e" class="bg-black" data-transition="fade">
-      <div class="statement letterbox">
-        <div class="grain"></div>
-        <div class="pulse" style="top:-15%; left:-25%;"></div>
-        <span class="statement-eyebrow eyebrow stagger d1">Quiero volver a la tercera pregunta del principio</span>
-        <h2 class="statement-h stagger d2 glow-soft">Esa pregunta<br>se llama, en el programa,<br><span class="ghost">La Caja Negra.</span></h2>
-        <p class="statement-body body-light stagger d3" style="max-width:54ch;">El ejercicio que ustedes acaban de hacer mentalmente, en silencio, es una versión ligera del que cientos de personas han hecho con nosotros, ya sin avión y sin metáfora, durante los últimos quince años en nuestros retiros familiares. Quien la atraviesa de verdad rara vez vuelve a ser el mismo.</p>
+    <!-- 26. LA CAJA NEGRA REVELADA · G image-bleed con storybook -->
+    <section data-background-color="#1a0e0e" data-transition="fade">
+      <div class="image-bleed">
+        <img src="imagenes/storybook-image.avif" alt="" class="image-bleed-img"/>
+        <div class="image-bleed-overlay dark"></div>
+        <div class="image-bleed-caption dark">
+          <h2 class="stagger d2">La Caja Negra.</h2>
+          <p class="stagger d3">El ejercicio que ustedes acaban de hacer mentalmente, en silencio, es una versión ligera del que cientos de personas han hecho con nosotros durante los últimos quince años. Quien la atraviesa de verdad rara vez vuelve a ser el mismo.</p>
+        </div>
       </div>
     </section>
 
@@ -1623,27 +1836,30 @@
          BLOQUE 10 · CIERRE (2 slides)
     ════════════════════════════════════════════════════ -->
 
-    <!-- 27. UNA MADRE -->
-    <section data-background-color="#1a0e0e" class="bg-black" data-transition="fade">
-      <div class="statement">
-        <div class="grain"></div>
-        <span class="statement-eyebrow eyebrow stagger d1">Quiero terminar con una escena que llevo años recordando</span>
-        <h2 class="statement-h stagger d2 glow-soft">Hace algunos años,<br>en uno de nuestros retiros,<br><span class="ghost">una madre.</span></h2>
-        <p class="statement-body body-light stagger d3" style="max-width:58ch;">Tenía hijos adolescentes, una carrera consolidada, una familia funcional. Por todos los indicadores convencionales estaba, entre comillas, bien. Y aun así, durante la Caja Negra, se quedó en silencio. Cuando terminamos, levantó la mirada y me dijo, casi como una confesión:</p>
-        <p class="stagger d4" style="font-size:1.8rem; font-weight:600; line-height:1.3; letter-spacing:-0.015em; max-width:30ch; margin-top:2.4rem; color:var(--pure);">&laquo;Nunca me había hecho la pregunta de qué iba a quedar de mí cuando ya no esté.&raquo;</p>
+    <!-- 27. UNA MADRE · D quote-bleed con venue como fondo -->
+    <section data-background-color="#1a0e0e" data-transition="fade">
+      <div class="quote-bleed">
+        <img src="imagenes/venue-trascendencia-ceiling.avif" alt="" class="quote-bleed-img"/>
+        <div class="quote-bleed-overlay"></div>
+        <div class="quote-bleed-content">
+          <p class="quote-text stagger d2">«Nunca me había hecho la pregunta de qué iba a quedar de mí cuando ya no esté.»</p>
+          <p class="quote-context stagger d4">Una madre, durante la Caja Negra. Hijos adolescentes, carrera consolidada, familia funcional. Por todos los indicadores convencionales estaba, entre comillas, bien.</p>
+        </div>
       </div>
     </section>
 
-    <!-- 28. NO LO POSPONGAN -->
+    <!-- 28. NO LO POSPONGAN · F monumental cierre -->
     <section data-background-color="#1a0e0e" class="bg-black" data-transition="fade">
-      <div class="statement letterbox">
-        <div class="grain"></div>
-        <div class="pulse" style="top:50%; left:50%; transform:translate3d(-50%,-50%,0); width:120vh; height:120vh;"></div>
-        <h2 class="statement-h glow-soft" style="margin-top:0;">
-          <span class="fragment fade-up">Esa pregunta,</span><br>
-          <span class="fragment fade-blur ghost">no la pospongan.</span>
+      <div class="atmos-bg dark pos-tr" aria-hidden="true">
+        <div class="orb"></div>
+        <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
+      </div>
+      <div class="monumental">
+        <h2 class="monumental-h" style="color:var(--pure);">
+          <span class="line"><span class="line-inner">Esa pregunta,</span></span>
+          <span class="line"><span class="line-inner">no la pospongan.</span></span>
         </h2>
-        <div class="fragment fade-up" style="margin-top:3rem; font-size:1.4rem; font-weight:700; letter-spacing:0.5em; color:var(--pure); text-transform:uppercase;">Gracias</div>
+        <div class="stagger d4" style="margin-top:4rem; font-size:1.4rem; font-weight:700; letter-spacing:0.5em; color:var(--pure); text-transform:uppercase; position:relative; z-index:2;">Gracias</div>
       </div>
     </section>
 
