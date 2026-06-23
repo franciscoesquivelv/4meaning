@@ -807,10 +807,10 @@
       position: relative;
       overflow: hidden;
     }
-    /* Gradient organico via SVG con feGaussianBlur + feDisplacementMap.
-       La elipse base se deforma con turbulencia + se aplica gaussian
-       blur masivo, eliminando cualquier rastro de forma geometrica
-       identificable. Respira con scale + opacity. Cumple regla 11.7. */
+    /* Gradient organico segun research de Santiago (PROJECT.md 11.7.bis).
+       Tecnica: div solido + border-radius + blur 180px + grain SVG
+       estatico mix-blend overlay. Animacion drift translate3d (NO scale
+       ni rotate, que revelarian el centro/borde geometrico). */
     .typewriter-bg {
       position: absolute;
       inset: 0;
@@ -818,27 +818,30 @@
       z-index: 0;
       overflow: hidden;
     }
-    .typewriter-bg svg.bg-organic {
+    .typewriter-bg .orb {
       position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      transform-origin: 78% 82%;
-      animation: bg-wave 10s ease-in-out infinite;
+      width: 95vw;
+      height: 95vw;
+      right: -30vw;
+      bottom: -38vw;
+      border-radius: 50%;
+      background: #000;
+      filter: blur(180px);
+      opacity: 0.68;
+      animation: orb-drift 13s cubic-bezier(.4, 0, .2, 1) infinite alternate;
+      will-change: transform;
     }
-    .typewriter-bg svg.bg-grain {
+    @keyframes orb-drift {
+      from { transform: translate3d(0, 0, 0); }
+      to   { transform: translate3d(-70px, -55px, 0); }
+    }
+    .typewriter-bg .grain {
       position: absolute;
       inset: 0;
       width: 100%;
       height: 100%;
-      opacity: 0.45;
       mix-blend-mode: overlay;
-      transform-origin: 78% 82%;
-      animation: bg-wave 10s ease-in-out infinite;
-    }
-    @keyframes bg-wave {
-      0%, 100% { transform: scale(1); opacity: 0.85; }
-      50%      { transform: scale(1.08); opacity: 1; }
+      opacity: 0.22;
     }
     .typewriter-line {
       position: relative;
@@ -1307,28 +1310,25 @@
     <section data-background-color="#1a0e0e" class="bg-black" data-transition="fade">
       <div class="typewriter-stage">
         <div class="typewriter-bg" aria-hidden="true">
-          <!-- Gradient organico: elipse deformada con feTurbulence +
-               feDisplacementMap, despues feGaussianBlur masivo. Resulta
-               en mancha amorfa sin forma identificable. -->
-          <svg class="bg-organic" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
-            <defs>
-              <filter id="organic-deform" x="-30%" y="-30%" width="160%" height="160%">
-                <feTurbulence type="fractalNoise" baseFrequency="0.012" numOctaves="2" seed="7" result="noise"/>
-                <feDisplacementMap in="SourceGraphic" in2="noise" scale="280" xChannelSelector="R" yChannelSelector="G"/>
-                <feGaussianBlur stdDeviation="120"/>
-              </filter>
-            </defs>
-            <ellipse cx="1480" cy="980" rx="780" ry="620" fill="#000" opacity="0.78" filter="url(#organic-deform)"/>
-          </svg>
-          <!-- Granulado fino sobre el slide. -->
-          <svg class="bg-grain" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
-            <defs>
-              <filter id="grain-noise">
-                <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" seed="3"/>
-                <feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.9 0"/>
-              </filter>
-            </defs>
-            <rect width="100%" height="100%" filter="url(#grain-noise)"/>
+          <!-- Orb: div solido + border-radius 50% + blur masivo.
+               Vercel-style. NO radial-gradient (sus stops crean anillos). -->
+          <div class="orb"></div>
+          <!-- Grain SVG estatico segun receta de gggrain/fffuel:
+               feTurbulence + saturate 0 + slope 3 + matrix alpha threshold
+               severo para preservar solo el grain mas oscuro.
+               Aplicado sobre el orb como overlay opacity 0.22. -->
+          <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+            <filter id="grain-filter">
+              <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="2" stitchTiles="stitch" seed="5"/>
+              <feColorMatrix type="saturate" values="0"/>
+              <feComponentTransfer>
+                <feFuncR type="linear" slope="3"/>
+                <feFuncG type="linear" slope="3"/>
+                <feFuncB type="linear" slope="3"/>
+              </feComponentTransfer>
+              <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -11"/>
+            </filter>
+            <rect width="100%" height="100%" filter="url(#grain-filter)"/>
           </svg>
         </div>
         <div class="typewriter-line fragment" data-text="«Sé tu mejor versión.»"><span class="text"></span><span class="cursor"></span></div>
