@@ -38,7 +38,11 @@
     }
 
     *, *::before, *::after { box-sizing: border-box; }
-    html, body { background: #1a0e0e; overflow: hidden; }
+    html, body { background: #0a0603; overflow: hidden; }  /* base profunda (Candil PASO 0); los slides mantienen su #1a0e0e */
+    /* Reveal pone .reveal-viewport en el body y lo fuerza a blanco; lo
+       sobrescribimos para que la base y las barras de letterbox sean el
+       cuero profundo, nunca blanco. */
+    .reveal-viewport { background: #0a0603; }
 
     .reveal {
       font-family: 'Montserrat', sans-serif;
@@ -190,7 +194,7 @@
     ═══════════════════════════════════════════════════════════════ */
     .cover {
       display: grid;
-      grid-template-columns: 5fr 7fr;
+      grid-template-columns: 4fr 8fr;
       width: 100%; height: 100%;
       position: relative;
     }
@@ -209,7 +213,7 @@
     }
     .cover-right {
       background: var(--white);
-      padding: 5rem 5.5rem;
+      padding: 4.5rem 4rem;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -218,9 +222,9 @@
       overflow: hidden;
     }
     .cover-h1 {
-      font-size: 6.4rem;
+      font-size: 5.9rem;
       font-weight: 900;
-      line-height: 0.88;
+      line-height: 0.9;
       letter-spacing: -0.045em;
       margin-bottom: 3rem;
     }
@@ -230,7 +234,7 @@
       margin: 1rem 0 2.4rem;
     }
     .cover-sub {
-      font-size: 1.2rem;
+      font-size: 1.45rem;
       font-weight: 500;
       letter-spacing: 0.14em;
       text-transform: uppercase;
@@ -295,7 +299,7 @@
         100deg,
         rgba(255,255,255,0.08) 0%,
         rgba(255,255,255,0.08) 35%,
-        rgba(252,215,150,0.55) 50%,
+        rgba(196,166,121,0.55) 50%,
         rgba(255,255,255,0.08) 65%,
         rgba(255,255,255,0.08) 100%
       );
@@ -439,7 +443,7 @@
       text-align: right;
     }
     .layers-v2-head h3 {
-      font-size: 3.4rem;
+      font-size: 4.2rem;
       font-weight: 900;
       line-height: 0.98;
       color: var(--dark);
@@ -477,7 +481,7 @@
       margin-bottom: 1.4rem;
     }
     .layer-label-v2 .desc {
-      font-size: 1.65rem;
+      font-size: 1.9rem;
       line-height: 1.4;
       font-weight: 300;
       color: var(--dark);
@@ -731,11 +735,11 @@
       max-width: 34vw;
     }
     .archetypes-overlay .archetype-num {
-      color: rgba(252, 232, 200, 0.68);
+      color: rgba(251, 233, 196, 0.68);
     }
     .archetypes-overlay .archetype-name,
     .archetypes-overlay .archetype-line {
-      color: #fce8c8;
+      color: #fbe9c4;
     }
     .archetype {
       position: absolute;
@@ -768,8 +772,69 @@
     /* En el overlay (texto crema sobre el blob) el numeral tambien
        muy sutil para no competir con el nombre. */
     .archetypes-overlay .archetype-num {
-      color: rgba(252, 232, 200, 0.10);
+      color: rgba(251, 233, 196, 0.10);
     }
+
+    /* ── NODOS FIJOS (rediseño OLA 1, biblia) ─────────────────────────
+       Reemplaza el blob unico que VIAJABA entre nodos (mancha que se
+       pasea = PowerPoint, blur 8px = silueta nitida, rotacion aleatoria)
+       por un glow oscuro FIJO por nodo que se enciende con opacity+glow.
+       El texto del nodo activo se vuelve crema (inversion LOCAL, fija).
+       Cumple 11.7.2/R4: nada se desplaza por la pantalla, blur 60px. */
+    .constellation-blob { display: none; }   /* blob movil retirado */
+    .archetypes-overlay { display: none; }    /* overlay enmascarado retirado */
+
+    .archetype::before {
+      content: '';
+      position: absolute;
+      left: 50%; top: 46%;
+      width: 56vw; height: 60vh;
+      transform: translate(-50%, -50%);
+      /* nucleo MAS opaco y amplio: el texto crema cabe entero en zona oscura
+         (antes el degradado se desvanecia y los titulos perdian contraste). */
+      background: radial-gradient(ellipse 54% 54% at 50% 50%,
+        rgba(38,22,16,0.97) 0%, rgba(38,22,16,0.93) 40%, rgba(38,22,16,0.66) 66%, rgba(38,22,16,0.2) 85%, transparent 100%);
+      filter: blur(54px);                     /* >> 8px: sin silueta al proyectar */
+      opacity: 0;
+      z-index: -1;
+      pointer-events: none;
+      transition: opacity 1.2s cubic-bezier(.4, 0, .2, 1);
+    }
+    .archetype.lit::before { opacity: 1; animation: nodeBreath 6.5s ease-in-out infinite; }
+    @keyframes nodeBreath { 0%, 100% { opacity: 0.88; } 50% { opacity: 1; } }
+
+    .archetype .archetype-name, .archetype .archetype-line { transition: color 1s ease; }
+    /* halo oscuro: garantiza legibilidad del texto crema aunque caiga en un
+       borde del pozo. Es la red de seguridad de contraste. */
+    .reveal .slides section .archetype.lit .archetype-name,
+    .reveal .slides section .archetype.lit .archetype-line { color: #fbe9c4; text-shadow: 0 2px 16px rgba(14,8,4,0.95), 0 0 38px rgba(14,8,4,0.9), 0 0 74px rgba(14,8,4,0.66); }
+    .reveal .slides section .archetype.lit .archetype-num { color: rgba(251, 233, 196, 0.13); }
+
+    /* Campo ORDENADO y CALIDO de 24/25 (vector invertido respecto a 09):
+       pool mas calido; el nodo central 03 (Hermeneutica del sufrimiento)
+       con glow SOSTENIDO (no parpadea) y mas calido; salvaguarda visual
+       para que NO se lea como los nodos-problema parpadeantes de 09. */
+    .constellation.five-elements .archetype::before {
+      background: radial-gradient(ellipse 50% 50% at 50% 50%,
+        rgba(74,42,30,0.92) 0%, rgba(74,42,30,0.55) 32%, rgba(90,53,32,0.18) 60%, transparent 100%);
+    }
+    .constellation.five-elements .archetype.pos-cc.lit::before {
+      animation: none; opacity: 1;
+      background: radial-gradient(ellipse 52% 52% at 50% 50%,
+        rgba(92,56,34,0.95) 0%, rgba(120,80,40,0.50) 34%, rgba(196,166,121,0.16) 62%, transparent 100%);
+    }
+
+    /* ── CLÍMAX 22 (OLA 1) ────────────────────────────────────────────
+       Ambar que AFLORA bajo el negro durante el beat de silencio (el unico
+       momento del deck en que el ambar pleno emerge), y subtitulo que GSAP
+       revela DESPUES de que el titular respire. */
+    .climax-amber {
+      position: absolute; inset: 0; pointer-events: none; z-index: 1; opacity: 0;
+      background: radial-gradient(ellipse 78% 62% at 50% 64%,
+        rgba(196,166,121,0.24) 0%, rgba(196,166,121,0.10) 38%, rgba(196,166,121,0.0) 70%);
+      filter: blur(46px);
+    }
+    .climax-sub { opacity: 0; }   /* lo revela GSAP tras el respiro del titular */
 
     /* ═══════════════════════════════════════════════════════════════
        TYPEWRITER · slide 10 (frases cliche tipeadas una por click)
@@ -881,7 +946,7 @@
       white-space: nowrap;
     }
     .author-spread .author-claim {
-      font-size: 3.4rem;
+      font-size: 3.9rem;
       font-weight: 800;
       letter-spacing: -0.035em;
       line-height: 1.0;
@@ -892,7 +957,7 @@
     }
     .author-spread.right .author-claim { text-align: right; }
     .author-spread .author-body {
-      font-size: 1.5rem;
+      font-size: 1.85rem;
       font-weight: 300;
       line-height: 1.5;
       color: var(--dark);
@@ -900,6 +965,14 @@
       margin: 0;
     }
     .author-spread.right .author-body { text-align: right; }
+    /* qué/quién diferenciados como CONCEPTOS (no relativos): qué catalogado
+       (mas frio dentro del cuero), quién reconocido (mas calido, con peso). */
+    .author-claim .c-que { color: #6f5a4a; font-weight: 500; }
+    .author-claim .c-quien { color: #a8855a; font-weight: 700; }
+    /* Resaltado calido para 'biografía en acto' (sintesis 4Meaning). */
+    .author-body .hl-warm { color: #a8855a; font-weight: 600; }
+    /* Subtitulo de magazine: la tesis desnuda, un punto mas presente. */
+    .magazine-sub { font-size: 1.7rem; }
 
     /* H · MAGAZINE column: número hairline gigante a un lado +
        columna de texto al otro. Slides 13, 14 (problema dual). */
@@ -956,12 +1029,35 @@
       width: 100%; height: 100%;
       object-fit: cover;
       z-index: 0;
+      /* Recipe fotografico INVARIABLE (token BG-03). Identico en todas las fotos. */
+      filter: sepia(0.15) brightness(0.7) contrast(1.1);
     }
+    /* Overlay base de token: oscurece desde abajo para asentar la cita en el cuero.
+       La cita esta centrada, asi que se refuerza con un velo central tenue dentro
+       del mismo color de token (#0a0603), sin tocar el brightness de la imagen. */
     .quote-bleed-overlay {
       position: absolute;
       inset: 0;
-      background: linear-gradient(135deg, rgba(26,14,14,0.92) 0%, rgba(26,14,14,0.75) 50%, rgba(26,14,14,0.65) 100%);
+      background:
+        radial-gradient(ellipse 90% 70% at 50% 50%, rgba(10,6,3,0.55) 0%, rgba(10,6,3,0.72) 55%, rgba(10,6,3,0.85) 100%),
+        linear-gradient(to top, #0a0603 0%, transparent 60%);
       z-index: 1;
+    }
+    /* Eco del arco maestro 05↔26: numeral '03' fantasma (mismo peso 200 que
+       el q-aper-monument), entre el overlay (1) y la cita (3). Cierra el
+       circulo en pantalla, no solo de voz. */
+    .arc-echo-num {
+      position: absolute;
+      right: 5%; top: 1%;
+      font-size: 26rem;
+      font-weight: 200;
+      line-height: 0.85;
+      letter-spacing: -0.06em;
+      color: rgba(196, 166, 121, 0.08);
+      z-index: 2;
+      pointer-events: none;
+      font-family: 'Montserrat', sans-serif;
+      margin: 0;
     }
     .quote-bleed-content {
       position: absolute;
@@ -975,23 +1071,27 @@
       text-align: center;
     }
     .quote-bleed-content p.quote-text {
-      font-size: 3.6rem;
+      font-size: 3.4rem;
       font-weight: 300;
       font-style: italic;
-      line-height: 1.22;
+      line-height: 1.24;
       letter-spacing: -0.018em;
       color: var(--white);
-      max-width: 26ch;
+      max-width: 32ch;
       margin: 0;
     }
+    /* "Y yo... ¿qué legado dejo?" ANCLADO ABAJO (separado del quote central,
+       ya no se lee como parte del texto principal) y más sólido/presente. */
     .quote-bleed-content p.quote-context {
-      font-size: 1.4rem;
+      position: absolute;
+      bottom: 11vh;
+      left: 10vw; right: 10vw;
+      font-size: 1.8rem;
       font-weight: 400;
       line-height: 1.4;
       color: var(--white);
-      opacity: 0.7;
-      max-width: 56ch;
-      margin: 2.4rem 0 0 0;
+      opacity: 0.9;
+      margin: 0;
       font-style: normal;
     }
 
@@ -1007,13 +1107,15 @@
       width: 100%; height: 100%;
       object-fit: cover;
       z-index: 0;
+      /* Recipe fotografico INVARIABLE (token BG-03). Identico en todas las fotos. */
+      filter: sepia(0.15) brightness(0.7) contrast(1.1);
     }
     .image-bleed-overlay {
       position: absolute;
       inset: 0;
       z-index: 1;
     }
-    .image-bleed-overlay.dark { background: linear-gradient(180deg, rgba(26,14,14,0.30) 0%, rgba(26,14,14,0.85) 100%); }
+    .image-bleed-overlay.dark { background: linear-gradient(to top, #0a0603 0%, transparent 60%); }
     .image-bleed-overlay.light { background: linear-gradient(180deg, rgba(240,230,210,0.0) 0%, rgba(240,230,210,0.55) 100%); }
     .image-bleed-caption {
       position: absolute;
@@ -1035,7 +1137,7 @@
     .image-bleed-caption.dark h2 { color: var(--white); }
     .image-bleed-caption.light h2 { color: var(--dark); }
     .image-bleed-caption p {
-      font-size: 1.4rem;
+      font-size: 1.8rem;
       font-weight: 400;
       line-height: 1.5;
       color: var(--white);
@@ -1044,11 +1146,30 @@
     }
     .image-bleed-caption.light p { color: var(--dark); }
 
-    /* Para constellation acumulativa de 4 elementos (slide 24) */
+    /* Para constellation acumulativa de 4 elementos (slide 24 legacy) */
     .constellation.four-elements .archetype.pos-tl { top: 18vh; left: 8vw; }
     .constellation.four-elements .archetype.pos-tr { top: 18vh; right: 8vw; left: auto; text-align: right; }
     .constellation.four-elements .archetype.pos-bl { bottom: 18vh; left: 8vw; top: auto; }
     .constellation.four-elements .archetype.pos-br { bottom: 18vh; right: 8vw; left: auto; top: auto; text-align: right; }
+
+    /* Para constellation de 5 elementos: layout 2-1-2 (slides 24 y 25) */
+    .constellation.five-elements .archetype.pos-tl { top: 10vh; left: 8vw; }
+    .constellation.five-elements .archetype.pos-tr { top: 10vh; right: 8vw; left: auto; text-align: right; }
+    .constellation.five-elements .archetype.pos-cc { top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; max-width: 36vw; }
+    .constellation.five-elements .archetype.pos-bl { bottom: 10vh; left: 8vw; top: auto; }
+    .constellation.five-elements .archetype.pos-br { bottom: 10vh; right: 8vw; left: auto; top: auto; text-align: right; }
+
+    /* Etiqueta de plano en las dinámicas */
+    .archetype-plano {
+      display: block;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(196, 166, 121, 0.75);
+      margin-top: 0.9rem;
+    }
+    .archetypes-overlay .archetype-plano { color: rgba(251, 233, 196, 0.55); }
     .typewriter-line {
       position: relative;
       z-index: 2;
@@ -1062,6 +1183,19 @@
     }
     .typewriter-line .text {
       display: inline;
+    }
+    /* Remate del clímax (slide 21): 'lo mismo.' oculto hasta que el tecleo
+       termina; entonces entra de golpe con un wipe rapido (no se teclea). */
+    .typewriter-line .text-snap {
+      display: none;   /* NO reserva espacio mientras se teclea: el cursor queda pegado al texto, no adelantado */
+    }
+    .typewriter-line.snapped .text-snap {
+      display: inline-block;
+      animation: snapReveal 0.28s cubic-bezier(.4, 0, .2, 1) both;
+    }
+    @keyframes snapReveal {
+      from { clip-path: inset(0 100% 0 0); opacity: 0; }
+      to   { clip-path: inset(0 0 0 0); opacity: 1; }
     }
     .typewriter-line .cursor {
       display: none;
@@ -1115,18 +1249,18 @@
     .archetype.pos-cr { top: 42vh; right: 14vw; text-align: right; max-width: 32vw; }
     .archetype.pos-bc { bottom: 20vh; left: 50%; transform: translateX(-50%); text-align: center; max-width: 36vw; }
 
-    /* Override del CSS de Reveal para que GSAP controle la opacity
-       sin conflictos durante la animacion del pulso de respiracion. */
+    /* Opacidad de los nodos por CLASE, no por GSAP: evita el conflicto de
+       especificidad con esta misma regla (alta) y da una transicion limpia.
+       base/visible = 0 (revelado pero aun sin encender); .lit = 1 (activo);
+       .dimmed = 0.32 (encendido antes, ahora atenuado, acumulativo). */
     .reveal .slides section .archetype.fragment {
       opacity: 0;
       visibility: visible;
-      transition: none;
+      transition: opacity 1s cubic-bezier(.4, 0, .2, 1);
     }
-    .reveal .slides section .archetype.fragment.visible {
-      opacity: 0;
-      visibility: visible;
-      transition: none;
-    }
+    .reveal .slides section .archetype.fragment.visible { opacity: 0; }
+    .reveal .slides section .archetype.fragment.dimmed { opacity: 0.32; }
+    .reveal .slides section .archetype.fragment.lit { opacity: 1; }
 
     /* ═══════════════════════════════════════════════════════════════
        LIST 4 · cuatro planos
@@ -1324,6 +1458,89 @@
       color: var(--dark);
     }
 
+    /* ════════ RECURSOS GRAFICOS POR DIAPOSITIVA (rediseño 27 conceptos) ════════
+       Cada slide su propia idea, en la misma paleta calida. Namespaced por
+       data-device para que no se pisen. */
+
+    /* s02 · Reloj de arena (silencio inicial) */
+    [data-device="s02"] .silencio { position: absolute; inset: 0; }
+    [data-device="s02"] .word {
+      position: absolute; left: 9vw; bottom: 14vh;
+      color: var(--hint-d); font-size: 2.1rem; font-weight: 300; letter-spacing: 0.02em;
+    }
+    .dev-hourglass {
+      position: absolute; top: 50%; right: 13vw; transform: translateY(-50%);
+      height: 62vh; width: auto; opacity: 0; pointer-events: none; z-index: 2;
+    }
+
+    /* s11 · Foto de soledad en la luz (vacío existencial) — texto izq, foto a sangre */
+    [data-device="s11"] .s11-photo { position: absolute; inset: 0; overflow: hidden; z-index: 0; }
+    [data-device="s11"] .s11-photo img { width: 100%; height: 100%; object-fit: cover; filter: sepia(0.15) brightness(0.6) contrast(1.08); will-change: transform; }
+    [data-device="s11"] .s11-veil { position: absolute; inset: 0; z-index: 1; background: linear-gradient(90deg, rgba(10,6,3,0.95) 0%, rgba(10,6,3,0.8) 34%, rgba(10,6,3,0.32) 66%, rgba(10,6,3,0.08) 100%); }
+    [data-device="s11"] .s11-text { position: absolute; left: 9vw; top: 50%; transform: translateY(-50%); max-width: 42vw; z-index: 3; }
+    [data-device="s11"] .s11-title { font-size: 5rem; font-weight: 600; letter-spacing: -0.02em; color: var(--pure); margin: 0 0 1.8rem; }
+    [data-device="s11"] .s11-body { font-size: 1.85rem; font-weight: 300; line-height: 1.55; color: var(--muted-d); max-width: 42ch; margin: 0; }
+
+    /* s12 · Placa de luz que se parte en dos (problema dual) */
+    [data-device="s12"] .s12-spheres { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+    [data-device="s12"] .s12-stage { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; z-index: 3; }
+    [data-device="s12"] .s12-title { position: relative; z-index: 3; font-size: 6rem; font-weight: 800; letter-spacing: -0.035em; color: var(--dark); }
+
+    /* s13 · Foto de biblioteca en VENTANA enmarcada (profundidad de la filosofía) */
+    [data-device="s13"] .s13-bg { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
+    [data-device="s13"] .s13-bg-img { width: 100%; height: 100%; object-fit: cover; filter: sepia(0.18) brightness(0.5) contrast(1.08); will-change: transform; }
+    [data-device="s13"] .s13-bg-veil { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10,6,3,0.5) 0%, rgba(10,6,3,0.34) 42%, rgba(10,6,3,0.85) 100%); }
+    [data-device="s13"] .s13-particles { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+    [data-device="s13"] .s13-text { position: absolute; left: 0; right: 0; bottom: 13vh; text-align: center; z-index: 3; padding: 0 10vw; }
+    [data-device="s13"] .s13-title { font-size: 5.2rem; font-weight: 800; letter-spacing: -0.03em; line-height: 1.02; color: var(--pure); margin: 0 0 1.6rem; text-shadow: 0 4px 48px rgba(0,0,0,0.78); will-change: filter, transform, opacity; }
+    [data-device="s13"] .s13-body { font-size: 1.95rem; font-weight: 400; line-height: 1.5; color: var(--white); max-width: 54ch; margin: 0 auto; text-shadow: 0 2px 26px rgba(0,0,0,0.82); }
+
+    /* s14 · Balanza desnivelada (la trampa utilitaria) */
+    [data-device="s14"] .s14-ghost { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); font-size: 32rem; font-weight: 100; letter-spacing: -0.06em; line-height: 0.85; color: rgba(168,133,90,0.11); text-transform: lowercase; white-space: nowrap; z-index: 0; pointer-events: none; user-select: none; }
+    [data-device="s14"] .s14-text { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 0 12vw; z-index: 3; }
+    [data-device="s14"] .s14-title { font-size: 5.4rem; font-weight: 800; letter-spacing: -0.035em; line-height: 1.0; color: var(--dark); margin: 0 0 1.9rem; max-width: 20ch; }
+    [data-device="s14"] .s14-body { font-size: 1.85rem; font-weight: 300; line-height: 1.5; color: var(--dark); opacity: 0.85; max-width: 56ch; margin: 0 auto; }
+
+    /* s15 · Sello de lacre que imprime el nombre (Wojtyła) */
+    [data-device="s15"] .s15-text { position: absolute; left: 9vw; top: 50%; transform: translateY(-50%); max-width: 40vw; z-index: 3; }
+    [data-device="s15"] .s15-claim { font-size: 3.4rem; font-weight: 500; letter-spacing: 0.05em; color: var(--dark); margin: 0 0 1.4rem; }
+    [data-device="s15"] .s15-body { font-size: 1.7rem; font-weight: 300; line-height: 1.5; color: var(--dark); max-width: 40ch; margin: 0; }
+    [data-device="s15"] .s15-seal-stage { position: absolute; right: 15vw; top: 50%; transform: translateY(-50%); width: 300px; height: 300px; z-index: 2; }
+    [data-device="s15"] .s15-wax { position: absolute; left: 50%; top: 52%; width: 200px; height: 200px; margin: -100px 0 0 -100px; border-radius: 46% 54% 52% 48% / 50% 48% 52% 50%; background: radial-gradient(circle at 40% 35%, #8a3a2a, #5c1a1a 70%, #3a1010); box-shadow: 0 12px 44px rgba(92,26,26,0.4); }
+    [data-device="s15"] .s15-name { position: absolute; left: 50%; top: 52%; font-family: 'Montserrat', sans-serif; font-size: 2.3rem; font-weight: 600; color: #e8c98a; letter-spacing: 0.02em; text-shadow: 0 1px 0 rgba(0,0,0,0.45), 0 -1px 0 rgba(255,220,160,0.32); z-index: 2; white-space: nowrap; }
+    [data-device="s15"] .s15-die { position: absolute; left: 50%; top: 52%; width: 150px; height: 150px; margin: -75px 0 0 -75px; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #c4a679, #8a6a3a 72%, #5a4528); box-shadow: 0 22px 54px rgba(0,0,0,0.38); }
+
+    /* s24 · Cinco planos: columna con veta de luz que se llena plano a plano */
+    [data-device="s24"] .s24-stage { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+    [data-device="s24"] .s24-col { position: relative; padding-left: 3.4vw; }
+    [data-device="s24"] .s24-spine { position: absolute; left: 0; top: 0.4em; bottom: 0.4em; width: 3px; background: rgba(168,133,90,0.16); border-radius: 2px; overflow: hidden; }
+    [data-device="s24"] .s24-vein { position: absolute; left: 0; top: 0; width: 100%; height: 100%; transform: scaleY(0); transform-origin: top center; background: linear-gradient(#e8c98a, #c4a679 50%, #a8855a); box-shadow: 0 0 14px rgba(196,166,121,0.55); }
+    [data-device="s24"] .s24-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2.3vh; }
+    [data-device="s24"] .s24-plano { display: flex; align-items: baseline; gap: 1.8rem; transition: opacity 0.7s cubic-bezier(.4, 0, .2, 1); }
+    /* el plano que ya pasó se ATENÚA para resaltar el recién aparecido (mas
+       especifico que .fragment.visible de reveal, sin tocar inline styles). */
+    .reveal .slides section.present .s24-plano.fragment.visible.s24-dim { opacity: 0.32; }
+    [data-device="s24"] .s24-num { font-size: 1.9rem; font-weight: 200; color: #a8855a; min-width: 3rem; }
+    [data-device="s24"] .s24-name { font-size: 3.5rem; font-weight: 500; letter-spacing: -0.014em; line-height: 1.05; color: var(--dark); margin: 0 0 0.4rem; }
+    [data-device="s24"] .s24-sub { font-size: 1.85rem; font-weight: 300; line-height: 1.35; color: var(--dark); opacity: 0.72; margin: 0; }
+
+    /* s25 · Cinco dinámicas: cajonera (acordeón) que abre una a una */
+    [data-device="s25"] .s25-stage { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+    [data-device="s25"] .s25-cabinet { width: min(66vw, 1120px); display: flex; flex-direction: column; gap: 1.1vh; }
+    [data-device="s25"] .s25-drawer { border-left: 3px solid rgba(168,133,90,0.22); padding: 0.8vh 0 0.8vh 2rem; }
+    [data-device="s25"] .s25-drawer.open { border-left-color: #c4a679; box-shadow: -14px 0 26px -18px rgba(196,166,121,0.7); }
+    [data-device="s25"] .s25-head { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 1.3rem; row-gap: 0.5rem; }
+    [data-device="s25"] .s25-i { font-size: 1.5rem; font-weight: 200; color: #a8855a; min-width: 2.6rem; }
+    [data-device="s25"] .s25-name { font-size: 2.7rem; font-weight: 500; letter-spacing: -0.012em; color: var(--dark); margin: 0; white-space: nowrap; transition: font-size 0.5s cubic-bezier(.4, 0, .2, 1); }
+    /* la dinámica ACTIVA mantiene el título grande hasta el siguiente click.
+       font-size + nowrap, una línea (sin re-envolver = sin movimiento raro).
+       Con la etiqueta como eyebrow arriba, el título crece libre sin invadirla. */
+    [data-device="s25"] .s25-drawer.open .s25-name { font-size: 3.8rem; }
+    /* la etiqueta del plano va como EYEBROW arriba del título (no a la derecha):
+       así el título puede crecer grande sin invadirla nunca. */
+    [data-device="s25"] .s25-tag { order: -1; flex-basis: 100%; padding-left: 3.9rem; font-size: 1.1rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #a8855a; white-space: nowrap; }
+    [data-device="s25"] .s25-bodywrap { overflow: hidden; height: 0; }
+    [data-device="s25"] .s25-body { font-size: 1.7rem; font-weight: 300; line-height: 1.45; color: var(--dark); opacity: 0.82; max-width: 60ch; margin: 0.8rem 0 0; }
   </style>
 </head>
 <body>
@@ -1370,8 +1587,8 @@
       </div>
     </section>
 
-    <!-- 02. SILENCIO INICIAL -->
-    <section data-background-color="#1a0e0e" class="bg-black" data-transition="fade">
+    <!-- 02. SILENCIO INICIAL · recurso: RELOJ DE ARENA casi detenido (s02) -->
+    <section data-background-color="#1a0e0e" class="bg-black" data-transition="fade" data-device="s02">
       <div class="silencio">
         <div class="word">Antes de empezar</div>
       </div>
@@ -1547,18 +1764,13 @@
       </div>
     </section>
 
-    <!-- 11. VACÍO EXISTENCIAL · F monumental oscuro -->
-    <section data-background-color="#1a0e0e" class="bg-black" data-transition="fade">
-      <div class="atmos-bg dark pos-tl" aria-hidden="true">
-        <div class="orb"></div>
-        <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
-      </div>
-      <div class="monumental">
-        <h2 class="monumental-h" style="color:var(--pure);">
-          <span class="line"><span class="line-inner">Vacío</span></span>
-          <span class="line"><span class="line-inner">existencial.</span></span>
-        </h2>
-        <p class="stagger d3" style="font-size:1.65rem; font-weight:300; line-height:1.5; max-width:52ch; color:var(--muted-d); margin-top:3rem; position:relative; z-index:2;">Lo que Frankl le puso nombre hace ocho décadas. Lo que sucede cuando al sujeto le sobran respuestas y le falta, en el fondo, el lenguaje en el que su pregunta original sigue cabiendo.</p>
+    <!-- 11. VACÍO EXISTENCIAL · recurso: FOTO de soledad en la luz (s11) -->
+    <section data-background-color="#0a0603" class="bg-black" data-transition="fade" data-device="s11">
+      <div class="s11-photo" aria-hidden="true"><img src="imagenes/solitude-in-light-stockcake.jpg" alt=""/></div>
+      <div class="s11-veil" aria-hidden="true"></div>
+      <div class="s11-text">
+        <h2 class="s11-title">Vacío existencial.</h2>
+        <p class="s11-body">Frankl lo nombró así hace ocho décadas: tener todo para vivir, y haber perdido el para qué.</p>
       </div>
     </section>
 
@@ -1566,49 +1778,41 @@
          BLOQUE 4 · PROBLEMA DUAL DE 4MEANING (3 slides)
     ════════════════════════════════════════════════════ -->
 
-    <!-- 12. DOS CAMPOS, MISMO AGUJERO -->
-    <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
+    <!-- 12. UN PROBLEMA DUAL · recurso: PLACA DE LUZ QUE SE PARTE en dos (s12) -->
+    <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade" data-device="s12">
       <div class="atmos-bg light pos-tr" aria-hidden="true">
         <div class="orb"></div>
         <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
       </div>
-      <div class="monumental">
-        <h2 class="monumental-h">
-          <span class="line"><span class="line-inner">Un problema</span></span>
-          <span class="line"><span class="line-inner">dual.</span></span>
-        </h2>
+      <canvas class="s12-spheres" data-spheres aria-hidden="true"></canvas>
+      <div class="s12-stage">
+        <h2 class="s12-title">Un problema dual.</h2>
       </div>
     </section>
 
-    <!-- 13. LA OPORTUNIDAD PERSONALISTA · composicion H magazine -->
-    <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
-      <div class="atmos-bg light pos-tl" aria-hidden="true">
-        <div class="orb"></div>
-        <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
+    <!-- 13. LA OPORTUNIDAD PERSONALISTA · recurso: FOTO biblioteca en VENTANA (profundidad) (s13) -->
+    <section data-background-color="#0a0603" class="bg-black" data-transition="fade" data-device="s13">
+      <div class="s13-bg" aria-hidden="true">
+        <img class="s13-bg-img" src="imagenes/this-library-web.jpg" alt=""/>
+        <div class="s13-bg-veil"></div>
       </div>
-      <div class="magazine">
-        <div class="magazine-num stagger d1">01</div>
-        <div class="magazine-col">
-          <h3 class="stagger d2">Un terreno de praxis todavía por construir.</h3>
-          <p class="stagger d3">Wojtyła, Stein, Mounier y Burgos produjeron categorías antropológicas de una hondura realmente considerable. Ese trabajo, en el plano del pensamiento, está hecho.</p>
-          <p class="stagger d4">Lo que considero que aún tenemos por delante es la traducción de esas categorías a una praxis sistemática que llegue al ciudadano medio. Ahí es donde considero que 4Meaning tiene algo concreto para aportar.</p>
-        </div>
+      <canvas class="s13-particles" aria-hidden="true"></canvas>
+      <div class="s13-text">
+        <h2 class="s13-title">La brecha entre la filosofía y la práctica.</h2>
+        <p class="s13-body">El personalismo tiene la profundidad. Hacen falta más personas que lo traduzcan al lenguaje de la vida ordinaria.</p>
       </div>
     </section>
 
-    <!-- 14. LA TRAMPA UTILITARIA · composicion H magazine espejo -->
-    <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
+    <!-- 14. LA TRAMPA UTILITARIA · recurso: BALANZA DESNIVELADA (s14) -->
+    <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade" data-device="s14">
       <div class="atmos-bg light pos-br" aria-hidden="true">
         <div class="orb"></div>
         <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
       </div>
-      <div class="magazine flip">
-        <div class="magazine-col">
-          <h3 class="stagger d2">Una antropología casi siempre implícita, y utilitaria.</h3>
-          <p class="stagger d3">La industria del coaching identificó muy bien la falta de sentido y ofrece soluciones a esa carencia. Lo hace, casi siempre sin nombrarlo, desde el supuesto de que el valor de la persona se mide por lo que produce.</p>
-          <p class="stagger d4">La consecuencia, casi siempre inconsciente para quien la habita, es ese mismo vacío al que Frankl le había puesto nombre: muchas respuestas alrededor y, en el fondo, ninguna que entre del todo.</p>
-        </div>
-        <div class="magazine-num stagger d1">02</div>
+      <div class="s14-ghost" aria-hidden="true">sentido</div>
+      <div class="s14-text">
+        <h2 class="s14-title">Un mercado que carece de sentido.</h2>
+        <p class="s14-body">La necesidad existe y el mercado la reconoció. Pero las soluciones que ofrece miden a la persona por lo que produce, no por lo que es.</p>
       </div>
     </section>
 
@@ -1616,7 +1820,7 @@
          BLOQUE 5 · FUNDAMENTOS FILOSÓFICOS (2 slides)
     ════════════════════════════════════════════════════ -->
 
-    <!-- 15. WOJTYŁA · composicion J author-spread -->
+    <!-- 15. WOJTYŁA · recurso: SELLO DE LACRE que imprime el nombre (s15) -->
     <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
       <div class="atmos-bg light pos-tl" aria-hidden="true">
         <div class="orb"></div>
@@ -1624,8 +1828,8 @@
       </div>
       <div class="author-spread">
         <p class="author-name stagger d1">Wojtyła</p>
-        <h2 class="author-claim stagger d2">La persona es su biografía en acto.</h2>
-        <p class="author-body stagger d3">Cada decisión desencadena dos consecuencias a la vez. Una hacia afuera, que interviene en el mundo, a la que Wojtyła llama efecto transitivo. Y otra hacia adentro, que se imprime en el propio sujeto que decide, a la que llama efecto intransitivo. Decisión tras decisión, la persona termina esculpiendo su propia identidad moral.</p>
+        <h2 class="author-claim stagger d2">Transitivo · Intransitivo</h2>
+        <p class="author-body stagger d3">La persona no solo tiene una biografía. Es su <strong class="hl-warm">biografía en acto</strong>.</p>
       </div>
     </section>
 
@@ -1637,8 +1841,8 @@
       </div>
       <div class="author-spread right">
         <p class="author-name stagger d1">Burgos</p>
-        <h2 class="author-claim stagger d2">El qué se cataloga. El quién se reconoce.</h2>
-        <p class="author-body stagger d3">La antropología clásica analizaba al hombre con categorías diseñadas, en realidad, para objetos. Son herramientas excelentes para responder a «qué es el hombre», pero, considero, demasiado limitadas para iluminar la pregunta que de verdad importa: «quién es esta persona». Burgos coloca al quién como quicio de toda la antropología.</p>
+        <h2 class="author-claim stagger d2">El <span class="c-que">qué</span> se cataloga. El <span class="c-quien">quién</span> se reconoce.</h2>
+        <p class="author-body stagger d3">Tratar a la persona como quién, y no como qué, es lo que cambia el enfoque de todo lo que hacemos.</p>
       </div>
     </section>
 
@@ -1647,7 +1851,7 @@
     ════════════════════════════════════════════════════ -->
 
     <!-- 17. APERTURA DOS EJES · F monumental -->
-    <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
+    <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade" data-gesture="axes">
       <div class="atmos-bg light pos-bl" aria-hidden="true">
         <div class="orb"></div>
         <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
@@ -1661,7 +1865,7 @@
     </section>
 
     <!-- 18. EJE HORIZONTAL · imagen full-bleed con caption -->
-    <section data-background-color="#1a0e0e" data-transition="fade">
+    <section data-background-color="#1a0e0e" data-transition="fade" data-device="s18">
       <div class="image-bleed">
         <img src="imagenes/married-couple-hugging.avif" alt="" class="image-bleed-img"/>
         <div class="image-bleed-overlay dark"></div>
@@ -1672,16 +1876,15 @@
       </div>
     </section>
 
-    <!-- 19. EJE VERTICAL · author-spread con cita -->
-    <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
-      <div class="atmos-bg light pos-tr" aria-hidden="true">
-        <div class="orb"></div>
-        <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
-      </div>
-      <div class="author-spread">
-        <p class="author-name stagger d1">Vertical.</p>
-        <h2 class="author-claim stagger d2">Habitar la propia condición a su altura.</h2>
-        <p class="author-body stagger d3">La persona termina comprendiendo el sentido de su vida cuando logra medirla frente a un horizonte superior. Y considero que superar la simple realidad biológica, en esta clave, tiene más que ver con habitarla a su altura que con dejarla atrás.</p>
+    <!-- 19. EJE VERTICAL · imagen full-bleed (cielo sobre nubes) con caption · diptico con la 18 -->
+    <section data-background-color="#1a0e0e" data-transition="fade" data-device="s19">
+      <div class="image-bleed">
+        <img src="imagenes/glowing-sunset-sky-clouds-web.jpg" alt="" class="image-bleed-img"/>
+        <div class="image-bleed-overlay dark"></div>
+        <div class="image-bleed-caption dark">
+          <h2 class="stagger d2">Vertical.</h2>
+          <p class="stagger d3"><strong>Habitar la propia condición a su altura.</strong> Encontramos el sentido de la vida cuando la medimos frente a algo más alto que nosotros. Trascender no es dejar atrás lo que somos, sino vivirlo a su altura.</p>
+        </div>
       </div>
     </section>
 
@@ -1711,22 +1914,31 @@
       <div class="typewriter-stage" style="background:transparent;">
         <div class="typewriter-line fragment" data-text="Wojtyła llega al quién desde la fenomenología del acto." style="color:var(--dark);"><span class="text"></span><span class="cursor"></span></div>
         <div class="typewriter-line fragment" data-text="Frankl llega al mismo quién desde la clínica del sentido." style="color:var(--dark);"><span class="text"></span><span class="cursor"></span></div>
-        <div class="typewriter-line fragment" data-text="Sin influencia mutua, ponen en el centro exactamente lo mismo." style="color:var(--dark); font-weight: 800;"><span class="text"></span><span class="cursor"></span></div>
+        <!-- 3a linea: se teclea hasta 'exactamente' y REMATA 'lo mismo.' de golpe
+             (mask rapido). El tecleo CARGA, la resolucion REMATA: acelera el pulso
+             hacia el climax en vez de desinflarlo tecleando lo que el publico ya intuye. -->
+        <div class="typewriter-line fragment" data-text="Sin influencia mutua, ponen en el centro exactamente " style="color:var(--dark); font-weight: 800;"><span class="text"></span><span class="text-snap">lo mismo.</span><span class="cursor"></span></div>
       </div>
     </section>
 
-    <!-- 22. CLÍMAX · F monumental oscuro con ScrambleText uso unico -->
-    <section data-background-color="#1a0e0e" class="bg-black" data-transition="fade">
+    <!-- 22. CLÍMAX · Constatar, no creer · monumental oscuro: beat de silencio + ambar que aflora + subtitulo separado (OLA 1); convergencia de dos icosaedros enteros pendiente (OLA 2) -->
+    <section data-background-color="#1a0e0e" class="bg-black" data-transition="fade" data-gesture="climax">
       <div class="atmos-bg dark pos-br" aria-hidden="true">
         <div class="orb"></div>
         <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
       </div>
+      <!-- Ambar que AFLORA bajo el negro durante el beat de silencio (OLA 1):
+           el unico momento en que el ambar pleno emerge como protagonista. -->
+      <div class="climax-amber" aria-hidden="true"></div>
+      <!-- OLA 2: dos icosaedros ENTEROS que convergen (convergencia paralela
+           hecha geometria). NO dos mitades que encajan (linea roja). -->
+      <canvas class="icosa-canvas" data-icosa-converge></canvas>
       <div class="monumental">
-        <h2 class="monumental-h" style="color:var(--pure);">
+        <h2 class="monumental-h" style="color:var(--pure); position:relative; z-index:3;">
           <span class="line"><span class="line-inner">Constatar,</span></span>
           <span class="line"><span class="line-inner">no creer.</span></span>
         </h2>
-        <p class="stagger d3" style="font-size:1.65rem; font-weight:300; line-height:1.5; max-width:56ch; color:var(--muted-d); margin-top:3rem; position:relative; z-index:2;">Cuando dos métodos llegan a la misma conclusión por caminos que no se cruzan, la conclusión deja de depender de los presupuestos de un solo método. El personalismo, así confirmado, deja de ser una postura para volverse una descripción.</p>
+        <p class="climax-sub" style="font-size:1.9rem; font-weight:300; line-height:1.5; max-width:56ch; color:var(--muted-d); margin-top:3rem; position:relative; z-index:2;">Cuando dos métodos llegan a la misma conclusión por caminos que no se cruzan, la conclusión deja de depender de los presupuestos de un solo método. El personalismo, así confirmado, deja de ser una postura para volverse una descripción.</p>
       </div>
     </section>
 
@@ -1734,53 +1946,36 @@
          BLOQUE 8 · COMPOSICIÓN (2 slides)
     ════════════════════════════════════════════════════ -->
 
-    <!-- 23. DE TRES CAPAS A CUATRO PLANOS · F monumental -->
-    <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
+    <!-- 23. CINCO PLANOS · F monumental -->
+    <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade" data-gesture="slow">
       <div class="atmos-bg light pos-tl" aria-hidden="true">
         <div class="orb"></div>
         <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
       </div>
       <div class="monumental">
         <h2 class="monumental-h">
-          <span class="line"><span class="line-inner">Cuatro</span></span>
+          <span class="line"><span class="line-inner">Cinco</span></span>
           <span class="line"><span class="line-inner">planos.</span></span>
         </h2>
       </div>
     </section>
 
-    <!-- 24. LOS CUATRO PLANOS · K constellation acumulativa con 4 -->
-    <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
+    <!-- 24. LOS CINCO PLANOS · recurso: COLUMNA con veta de luz que se llena (s24) -->
+    <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade" data-device="s24">
       <div class="atmos-bg light pos-br" aria-hidden="true">
         <div class="orb"></div>
         <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
       </div>
-      <div class="constellation four-elements">
-        <div class="constellation-blob"></div>
-        <div class="archetype pos-tl fragment constellation-step" data-blob-x="22" data-blob-y="28">
-          <span class="archetype-num">01</span>
-          <div class="archetype-name">Genealógico</div>
-          <p class="archetype-line">Lo que la persona recibió antes de poder elegir: nombre, idioma, biología, herida transmitida.</p>
-        </div>
-        <div class="archetype pos-tr fragment constellation-step" data-blob-x="78" data-blob-y="28">
-          <span class="archetype-num">02</span>
-          <div class="archetype-name">Intersubjetividad</div>
-          <p class="archetype-line">La madurez acontece en la entrega real a otro quién. La familia, laboratorio antropológico.</p>
-        </div>
-        <div class="archetype pos-bl fragment constellation-step" data-blob-x="22" data-blob-y="76">
-          <span class="archetype-num">03</span>
-          <div class="archetype-name">Axiológico</div>
-          <p class="archetype-line">El yo se esculpe en los principios que decide abrazar. Actos orientados al bien reconocido.</p>
-        </div>
-        <div class="archetype pos-br fragment constellation-step" data-blob-x="78" data-blob-y="76">
-          <span class="archetype-num">04</span>
-          <div class="archetype-name">Finitud</div>
-          <p class="archetype-line">El sufrimiento asumido se vuelve hazaña interior. El sentido, al sufrir, se descubre.</p>
-        </div>
-        <div class="archetypes-overlay" aria-hidden="true">
-          <div class="archetype pos-tl"><span class="archetype-num">01</span><div class="archetype-name">Genealógico</div><p class="archetype-line">Lo que la persona recibió antes de poder elegir: nombre, idioma, biología, herida transmitida.</p></div>
-          <div class="archetype pos-tr"><span class="archetype-num">02</span><div class="archetype-name">Intersubjetividad</div><p class="archetype-line">La madurez acontece en la entrega real a otro quién. La familia, laboratorio antropológico.</p></div>
-          <div class="archetype pos-bl"><span class="archetype-num">03</span><div class="archetype-name">Axiológico</div><p class="archetype-line">El yo se esculpe en los principios que decide abrazar. Actos orientados al bien reconocido.</p></div>
-          <div class="archetype pos-br"><span class="archetype-num">04</span><div class="archetype-name">Finitud</div><p class="archetype-line">El sufrimiento asumido se vuelve hazaña interior. El sentido, al sufrir, se descubre.</p></div>
+      <div class="s24-stage">
+        <div class="s24-col">
+          <div class="s24-spine" aria-hidden="true"><div class="s24-vein"></div></div>
+          <ul class="s24-list">
+            <li class="s24-plano fragment"><span class="s24-num">01</span><div class="s24-txt"><h3 class="s24-name">Intersubjetividad</h3><p class="s24-sub">El yo se descubre en el encuentro.</p></div></li>
+            <li class="s24-plano fragment"><span class="s24-num">02</span><div class="s24-txt"><h3 class="s24-name">Genealógico</h3><p class="s24-sub">Lo que recibes y lo que eliges cargar.</p></div></li>
+            <li class="s24-plano fragment"><span class="s24-num">03</span><div class="s24-txt"><h3 class="s24-name">Hermenéutica del sufrimiento</h3><p class="s24-sub">El fracaso como lugar de sentido.</p></div></li>
+            <li class="s24-plano fragment"><span class="s24-num">04</span><div class="s24-txt"><h3 class="s24-name">Axiológico</h3><p class="s24-sub">Los valores que decides heredar.</p></div></li>
+            <li class="s24-plano fragment"><span class="s24-num">05</span><div class="s24-txt"><h3 class="s24-name">Finitud y legado</h3><p class="s24-sub">Lo que queda cuando ya no estás.</p></div></li>
+          </ul>
         </div>
       </div>
     </section>
@@ -1789,45 +1984,34 @@
          BLOQUE 9 · PRÁCTICA (2 slides)
     ════════════════════════════════════════════════════ -->
 
-    <!-- 25. TRASCENDENCIA EN LA PRÁCTICA · K constellation tres dinamicas -->
-    <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
-      <div class="atmos-bg light pos-tr" aria-hidden="true">
+    <!-- 25. LAS CINCO DINÁMICAS · recurso: CAJONERA (acordeon) que se abre una a una (s25) -->
+    <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade" data-device="s25">
+      <div class="atmos-bg light pos-tl" aria-hidden="true">
         <div class="orb"></div>
         <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
       </div>
-      <div class="constellation">
-        <div class="constellation-blob"></div>
-        <div class="archetype pos-tl fragment constellation-step" data-blob-x="24" data-blob-y="32">
-          <span class="archetype-num">01</span>
-          <div class="archetype-name">Tres valijas</div>
-          <p class="archetype-line">Cada cónyuge analiza la valija que trae de su familia de origen. Eligen qué conservar y qué descartar, y crean juntos una tercera propia.</p>
-        </div>
-        <div class="archetype pos-cr fragment constellation-step" data-blob-x="76" data-blob-y="50">
-          <span class="archetype-num">02</span>
-          <div class="archetype-name">Mochila de valores</div>
-          <p class="archetype-line">El participante asocia sus virtudes a herramientas físicas: brújula, linterna, carpa. El patrimonio moral, hecho objeto.</p>
-        </div>
-        <div class="archetype pos-bc fragment constellation-step" data-blob-x="50" data-blob-y="76">
-          <span class="archetype-num">03</span>
-          <div class="archetype-name">La Caja Negra</div>
-          <p class="archetype-line">La consciencia de la finitud abandona el plano teórico y se vuelve experiencia. Para muchos, primer momento en que formulan con lucidez quiénes deciden haber sido.</p>
-        </div>
-        <div class="archetypes-overlay" aria-hidden="true">
-          <div class="archetype pos-tl"><span class="archetype-num">01</span><div class="archetype-name">Tres valijas</div><p class="archetype-line">Cada cónyuge analiza la valija que trae de su familia de origen. Eligen qué conservar y qué descartar, y crean juntos una tercera propia.</p></div>
-          <div class="archetype pos-cr"><span class="archetype-num">02</span><div class="archetype-name">Mochila de valores</div><p class="archetype-line">El participante asocia sus virtudes a herramientas físicas: brújula, linterna, carpa. El patrimonio moral, hecho objeto.</p></div>
-          <div class="archetype pos-bc"><span class="archetype-num">03</span><div class="archetype-name">La Caja Negra</div><p class="archetype-line">La consciencia de la finitud abandona el plano teórico y se vuelve experiencia. Para muchos, primer momento en que formulan con lucidez quiénes deciden haber sido.</p></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 26. LA CAJA NEGRA REVELADA · G image-bleed con storybook -->
-    <section data-background-color="#1a0e0e" data-transition="fade">
-      <div class="image-bleed">
-        <img src="imagenes/storybook-image.avif" alt="" class="image-bleed-img"/>
-        <div class="image-bleed-overlay dark"></div>
-        <div class="image-bleed-caption dark">
-          <h2 class="stagger d2">La Caja Negra.</h2>
-          <p class="stagger d3">El ejercicio que ustedes acaban de hacer mentalmente, en silencio, es una versión ligera del que cientos de personas han hecho con nosotros durante los últimos quince años. Quien la atraviesa de verdad rara vez vuelve a ser el mismo.</p>
+      <div class="s25-stage">
+        <div class="s25-cabinet">
+          <article class="s25-drawer fragment">
+            <header class="s25-head"><span class="s25-i">01</span><h3 class="s25-name">La historia de la pareja</h3><span class="s25-tag">Intersubjetividad</span></header>
+            <div class="s25-bodywrap"><p class="s25-body">Los años le ponen un velo a los detalles de la relación. La dinámica es volver al noviazgo, al compromiso, a lo que los hizo decir que sí.</p></div>
+          </article>
+          <article class="s25-drawer fragment">
+            <header class="s25-head"><span class="s25-i">02</span><h3 class="s25-name">Las tres valijas</h3><span class="s25-tag">Genealógico</span></header>
+            <div class="s25-bodywrap"><p class="s25-body">Cada cónyuge identifica la herencia que carga. Juntos eligen qué conservar y qué dejar atrás, y con eso forman una tercera valija que es la suya.</p></div>
+          </article>
+          <article class="s25-drawer fragment">
+            <header class="s25-head"><span class="s25-i">03</span><h3 class="s25-name">Evento vivido</h3><span class="s25-tag">Hermenéutica del sufrimiento</span></header>
+            <div class="s25-bodywrap"><p class="s25-body">Cada participante vuelve al momento que más lo marcó. No para superarlo, sino para encontrar el sentido que ya vive dentro de él.</p></div>
+          </article>
+          <article class="s25-drawer fragment">
+            <header class="s25-head"><span class="s25-i">04</span><h3 class="s25-name">La mochila de valores</h3><span class="s25-tag">Axiológico</span></header>
+            <div class="s25-bodywrap"><p class="s25-body">La pareja elige los siete valores que quieren que sus hijos hereden. No los que deberían elegir. Los que eligen.</p></div>
+          </article>
+          <article class="s25-drawer fragment">
+            <header class="s25-head"><span class="s25-i">05</span><h3 class="s25-name">La caja negra</h3><span class="s25-tag">Finitud y legado</span></header>
+            <div class="s25-bodywrap"><p class="s25-body">Una sola pregunta: si ya no pudieras decir nada más, ¿qué quedaría de ti? La respuesta es el legado.</p></div>
+          </article>
         </div>
       </div>
     </section>
@@ -1836,19 +2020,19 @@
          BLOQUE 10 · CIERRE (2 slides)
     ════════════════════════════════════════════════════ -->
 
-    <!-- 27. UNA MADRE · D quote-bleed con venue como fondo -->
+    <!-- 26. UNA MADRE · D quote-bleed con venue como fondo -->
     <section data-background-color="#1a0e0e" data-transition="fade">
       <div class="quote-bleed">
-        <img src="imagenes/venue-trascendencia-ceiling.avif" alt="" class="quote-bleed-img"/>
+        <img src="imagenes/family-pictures-web.jpg" alt="" class="quote-bleed-img"/>
         <div class="quote-bleed-overlay"></div>
         <div class="quote-bleed-content">
-          <p class="quote-text stagger d2">«Nunca me había hecho la pregunta de qué iba a quedar de mí cuando ya no esté.»</p>
-          <p class="quote-context stagger d4">Una madre, durante la Caja Negra. Hijos adolescentes, carrera consolidada, familia funcional. Por todos los indicadores convencionales estaba, entre comillas, bien.</p>
+          <p class="quote-text stagger d2">«Nunca se me ocurrió preguntármelo. Iba de meta en meta, y la pregunta no cabía. Hoy frené, y por primera vez hubo silencio.»</p>
+          <p class="quote-context stagger d4">Y yo... ¿qué legado dejo?</p>
         </div>
       </div>
     </section>
 
-    <!-- 28. NO LO POSPONGAN · F monumental cierre -->
+    <!-- 27. NO LO POSPONGAN · F monumental cierre -->
     <section data-background-color="#1a0e0e" class="bg-black" data-transition="fade">
       <div class="atmos-bg dark pos-tr" aria-hidden="true">
         <div class="orb"></div>
@@ -1859,7 +2043,6 @@
           <span class="line"><span class="line-inner">Esa pregunta,</span></span>
           <span class="line"><span class="line-inner">no la pospongan.</span></span>
         </h2>
-        <div class="stagger d4" style="margin-top:4rem; font-size:1.4rem; font-weight:700; letter-spacing:0.5em; color:var(--pure); text-transform:uppercase; position:relative; z-index:2;">Gracias</div>
       </div>
     </section>
 
@@ -1867,12 +2050,54 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
-<script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+<!-- Three.js como ES Module (necesario para GLTFLoader en r160) + GLTFLoader.
+     Se exponen en window para que el script principal (no-modulo) los use. -->
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+<script type="module">
+  import * as THREE from 'three';
+  import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+  THREE.ColorManagement.enabled = true;
+  window.THREE = THREE;
+  window.__GLTFLoader = GLTFLoader;
+  window.__threeReady = true;
+  window.dispatchEvent(new Event('three-ready'));
+</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/CustomEase.min.js"></script>
 <script>
+  /* Curvas canonicas de la biblia de diseno, registradas como eases nombrados
+     para que GSAP use EXACTAMENTE las cubic-bezier del framework (no aproximaciones).
+     ENTRADA cinematica = (0.16,1,0.3,1) · SALIDA = (0.7,0,1,0.3) acelera al final. */
+  if (window.CustomEase) {
+    gsap.registerPlugin(CustomEase);
+    CustomEase.create('enterCine', '0.16,1,0.3,1');
+    CustomEase.create('exitCine',  '0.7,0,1,0.3');
+    CustomEase.create('atmos',     '0.4,0,0.2,1');
+  }
+
+  /* ════════ REGISTRO DE RECURSOS GRAFICOS POR DIAPOSITIVA ════════
+     Cada slide rediseñada lleva data-device="sNN" y registra su modulo en
+     DEVICES.sNN = { enter(section), fragment(section, frag, shown), leave(section) }.
+     El recurso ESCUCHA al contenido: enter() lo presenta con su animacion
+     propia, fragment() reacciona a cada revelado de texto, leave() lo retira.
+     REGLA: animacion siempre NATURAL — easings de la whitelist (enterCine,
+     power2/3.out, expo.out, sine.inOut, atmos), nunca velocidad constante ni
+     lineal, nunca robotico. Un recurso por slide; jamas se repite. */
+  const DEVICES = {};
+  function deviceEnter(section)  { if (!section) return; const d = DEVICES[section.dataset.device]; if (d && d.enter)    { try { d.enter(section); }    catch (e) { console.warn('device enter', section.dataset.device, e); } } }
+  function deviceLeave(section)  { if (!section) return; const d = DEVICES[section.dataset.device]; if (d && d.leave)    { try { d.leave(section); }    catch (e) {} } }
+  function deviceFragment(section, frag, shown) { if (!section) return; const d = DEVICES[section.dataset.device]; if (d && d.fragment) { try { d.fragment(section, frag, shown); } catch (e) {} } }
+
   Reveal.initialize({
     hash: true,
-    controls: true,
+    controls: false,
     progress: false,
     slideNumber: false,
     transition: 'fade',
@@ -1882,10 +2107,60 @@
     height: 1080,
     margin: 0,
     minScale: 0.2,
-    maxScale: 2.0,
+    /* maxScale alto: en pantallas >4K el lienzo 1920x1080 sigue escalando para
+       LLENAR (no se queda chico con barras). El texto es vectorial y las fotos
+       van a 2560px, asi que aguantan el escalado. */
+    maxScale: 3.0,
     fragments: true,
     fragmentInURL: false,
   });
+
+  /* Dispatch de recursos como listener DEDICADO y temprano (no anidado en
+     'ready'): evita la carrera de timing por la que el recurso a veces no
+     se disparaba al cambiar de slide. Idempotente y aislado. */
+  Reveal.on('slidechanged', (e) => { deviceLeave(e.previousSlide); deviceEnter(e.currentSlide); matchLetterbox(e.currentSlide); });
+
+  /* Barras de letterbox al COLOR de la slide: en cualquier pantalla que no sea
+     16:9 (mas alargada, 4:3, ultrawide) reveal centra el lienzo y deja barras.
+     Pintarlas del color del fondo de la slide hace que se vea a sangre, sin
+     marco, en CUALQUIER proporcion. Fallback: cuero profundo. */
+  function matchLetterbox(slide) {
+    const c = (slide && slide.getAttribute('data-background-color')) || '#0a0603';
+    /* pintar TODO lo que puede quedar visible en las barras de letterbox */
+    document.querySelectorAll('.reveal-viewport, .reveal').forEach(el => { el.style.background = c; });
+    document.documentElement.style.background = c;
+    document.body.style.background = c;
+  }
+
+  /* ADAPTAR A CUALQUIER PANTALLA · el lienzo toma la PROPORCION real de la
+     pantalla (alto logico fijo en 1080, ancho = proporcion). Asi reveal escala
+     proporcionalmente el texto Y llena la pantalla sin franjas. En 16:9 (el
+     proyector estandar) sale EXACTO al diseno 1920x1080. La proporcion se
+     limita a [1.4, 2.1] para no deformar composiciones en pantallas extremas
+     (4:3 / 21:9): ahi quedan franjas minimas, ya del color de cada slide. */
+  let __fitRAF = 0;
+  function fitToScreen() {
+    try {
+      if (!Reveal.isReady || !Reveal.isReady()) return;
+      const w = window.innerWidth, h = window.innerHeight;
+      if (!w || !h) return;
+      const aspect = Math.max(1.4, Math.min(2.1, w / h));
+      const H = 1080;
+      const W = Math.round(H * aspect);
+      const cfg = Reveal.getConfig();
+      if (cfg.width !== W || cfg.height !== H) {
+        Reveal.configure({ width: W, height: H });
+      }
+      Reveal.layout();
+    } catch (e) { /* aun no listo */ }
+  }
+  function scheduleFit() {
+    if (__fitRAF) cancelAnimationFrame(__fitRAF);
+    __fitRAF = requestAnimationFrame(fitToScreen);
+  }
+  window.addEventListener('resize', scheduleFit);
+  document.addEventListener('fullscreenchange', () => setTimeout(fitToScreen, 60));
+  document.addEventListener('webkitfullscreenchange', () => setTimeout(fitToScreen, 60));
 
   /* Particulas flotando para la portada · ambiente contemplativo, no red tecnologica */
   function initParticles(canvas) {
@@ -2045,6 +2320,106 @@
     requestAnimationFrame(tick);
   }
 
+  /* LA BRASA · hilo visible permanente (biblia, Capa 0 Nivel A).
+     Una sola capa de 14 motas crema MUY tenues que viven DURANTE TODA la
+     ponencia, no solo en la portada. Es el polvo del recinto iluminado por
+     velas: lo que convierte 27 laminas en un solo cuerpo que respira.
+     - Vive entre el slide-background y el contenido (insertBefore .slides),
+       asi se ve sobre el color del fondo y debajo del texto.
+     - Opacidad reacciona al fondo: ~0.10 en oscuras, ~0.045 en claras.
+     - Direccion: asciende (apertura) o desciende (cierre, slide 26-27).
+     - Deriva horizontal sin/cos de periodos primos (~41s/53s), NO se pasea
+       por la pantalla (ancla fija + oscilacion), throttle 30fps, pausa en
+       document.hidden. Regla 11.7.2 / R4 respetada. */
+  function initBrasa() {
+    const canvas = document.createElement('canvas');
+    canvas.id = 'brasa-layer';
+    canvas.setAttribute('aria-hidden', 'true');
+    /* Va DELANTE de las slides (polvo en el aire del recinto), no detras: el
+       atmos-bg (orb + grain) de cada slide vive dentro de .slides y, por el
+       aplanamiento de stacking-context, taparia una brasa colocada detras.
+       Delante y a opacidad baja es visible sobre lo oscuro y no daña el texto
+       (mismo principio que la migracion de particulas, que ya va en z alto). */
+    canvas.style.cssText = 'position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:6;';
+    const reveal = document.querySelector('.reveal') || document.body;
+    reveal.appendChild(canvas);
+
+    const ctx = canvas.getContext('2d');
+    let w, h, motes;
+    const N = 16;
+    const FRAME_MS = 1000 / 30;
+    let last = 0, running = true;
+    let densityTarget = 0.09, density = 0.09;  /* multiplicador de opacidad base */
+    let dir = -1;                              /* -1 asciende · +1 desciende */
+    /* CALIDEZ [0..1]: la luz cuenta la emocion sin que el publico lo sepa.
+       Sube el glow ambar y un punto la densidad en los picos (climax, foto
+       de la madre); austera en las preguntas de apertura. Es la intencion de
+       'El Candil' lograda con la brasa, sin shader que reestructure fondos. */
+    let warmthTarget = 0.3, warmth = 0.3;
+
+    function resize() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      w = window.innerWidth; h = window.innerHeight;
+      canvas.width = w * dpr; canvas.height = h * dpr;
+      ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.scale(dpr, dpr);
+    }
+    function make() {
+      motes = [];
+      for (let i = 0; i < N; i++) {
+        motes.push({
+          bx: Math.random() * w,             /* ancla horizontal fija */
+          by: Math.random() * h,
+          r: 1.1 + Math.random() * 3.0,      /* algunas mas grandes captan mas luz */
+          ax: 10 + Math.random() * 24,       /* amplitud de deriva horizontal (px) */
+          px: (41 + Math.random() * 12) * 1000,  /* periodo deriva x (~41-53s) */
+          phx: Math.random() * Math.PI * 2,
+          speed: 0.05 + Math.random() * 0.14,    /* px/frame vertical */
+          opMul: 0.7 + Math.random() * 0.7,
+        });
+      }
+    }
+    function step(now) {
+      if (!running) return;
+      if (document.hidden) { requestAnimationFrame(step); return; }
+      if (now - last < FRAME_MS) { requestAnimationFrame(step); return; }
+      last = now;
+      /* Autocuracion: si el viewport aun no tiene tamano (carga en background),
+         redimensionar cuando aparezca, sin morir. */
+      if (w === 0 || h === 0 || canvas.width === 0) { resize(); make(); if (w === 0 || h === 0) { requestAnimationFrame(step); return; } }
+      density += (densityTarget - density) * 0.04;  /* transicion suave ~1s al cambiar de fondo */
+      warmth += (warmthTarget - warmth) * 0.03;      /* cross-fade termico mas lento (~2s) */
+      ctx.clearRect(0, 0, w, h);
+      const densWarm = density * (1 + warmth * 0.25);          /* un punto mas densa en los picos */
+      const glowK = 0.45 + warmth * 0.55;                      /* el glow ambar crece con la emocion */
+      for (const m of motes) {
+        m.by += dir * m.speed;
+        if (m.by < -12) m.by = h + 12;
+        if (m.by > h + 12) m.by = -12;
+        const x = m.bx + Math.sin(now / m.px + m.phx) * m.ax;
+        const y = m.by;
+        const op = Math.max(0, Math.min(0.17, densWarm * m.opMul));
+        ctx.fillStyle = 'rgba(245,230,200,' + op + ')';
+        ctx.shadowBlur = m.r * 5;
+        ctx.shadowColor = 'rgba(196,166,121,' + (op * glowK) + ')';
+        ctx.beginPath();
+        ctx.arc(x, y, m.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.shadowBlur = 0;
+      requestAnimationFrame(step);
+    }
+    resize(); make(); requestAnimationFrame(step);
+    window.addEventListener('resize', () => { resize(); make(); });
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden && running) { last = 0; requestAnimationFrame(step); }
+    });
+    return {
+      setDensity(t) { densityTarget = t; },
+      setDirection(d) { dir = d; },
+      setWarmth(t) { warmthTarget = Math.max(0, Math.min(1, t)); },
+    };
+  }
+
   /* Icosaedro metalico para slide 07. Material bronze envejecido con
      reflejos sutiles via PMREM env map calido. No es demo WebGL: lee
      a objeto de museo en vitrina. Init solo cuando se entra al slide. */
@@ -2052,41 +2427,82 @@
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
     camera.position.set(0, 0, 6.2);
+    /* Expuesta para el panel lil-gui (depuracion de camara). */
+    window.__icosaCamera = camera;
 
     const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+    /* Tone mapping cinematografico (ACES). Sin sombras (se quitaron: se veian mal). */
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.15;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+    /* mesh = HOLDER (Group): la animacion mueve el grupo, no la geometria.
+       Dentro vive un placeholder procedural (icosaedro PBR) HASTA que sueltes
+       un modelo en modelos/solido.glb; el GLTFLoader lo sustituye en caliente
+       sin tocar la animacion. */
+    const mesh = new THREE.Group();
+    scene.add(mesh);
 
     const geom = new THREE.IcosahedronGeometry(1.95, 0);
-    /* Material mate translucido. Sin reflejos metalicos: lee a piedra
-       tallada en lugar de objeto de museo cromado. Sigue siendo de
-       fondo para que titulo y etiquetas se sienten encima. */
-    const mat = new THREE.MeshStandardMaterial({
+    /* Material FISICO (reacciona a la luz): piedra/bronce tallado, nada de
+       color plano. flatShading da facetas que captan la direccional. */
+    const mat = new THREE.MeshPhysicalMaterial({
       color: 0xa8855a,
-      metalness: 0.0,
-      roughness: 0.95,
+      metalness: 0.15,
+      roughness: 0.55,
+      clearcoat: 0.35,
+      clearcoatRoughness: 0.5,
+      sheen: 0.4,
+      sheenColor: new THREE.Color(0xc4a679),
       flatShading: true,
       transparent: true,
       opacity: 0.42,
       depthWrite: false,
     });
-    const mesh = new THREE.Mesh(geom, mat);
-    scene.add(mesh);
+    const placeholder = new THREE.Mesh(geom, mat);
+    mesh.add(placeholder);
 
-    /* Aristas en ambar mas tenues para no pelear con el texto encima */
-    const edges = new THREE.LineSegments(
-      new THREE.EdgesGeometry(geom),
-      new THREE.LineBasicMaterial({ color: 0xc4a679, transparent: true, opacity: 0.28 })
-    );
-    mesh.add(edges);
-
-    /* Iluminacion: lampara ambar arriba-izquierda + rim crema abajo-derecha + ambient bajo */
-    scene.add(new THREE.AmbientLight(0x3a2520, 0.55));
-    const key = new THREE.PointLight(0xfcd796, 1.8, 18, 1.5);
-    key.position.set(-3.2, 3.0, 4.0);
+    /* Iluminacion elegante (SIN sombras): ambient calido + KEY direccional
+       arriba-izquierda + FILL crema para abrir las caras. */
+    scene.add(new THREE.AmbientLight(0xf0e6d2, 0.6));
+    const key = new THREE.DirectionalLight(0xffe6b8, 2.2);
+    key.position.set(-4, 5, 5);
     scene.add(key);
-    const rim = new THREE.PointLight(0xf0e6d2, 0.7, 14, 1.7);
-    rim.position.set(2.8, -2.0, 3.0);
-    scene.add(rim);
+    const fill = new THREE.DirectionalLight(0xf0e6d2, 0.5);
+    fill.position.set(3, -2, 4);
+    scene.add(fill);
+
+    /* Opacidad unificada: sirve para el placeholder Y para el modelo GLB
+       (recorre el holder). Animamos un proxy {v} -> setSolidOpacity. */
+    const op = { v: 0.42 };
+    function setSolidOpacity(o) {
+      op.v = o;
+      mesh.traverse(n => {
+        if (n.isMesh && n.material) { n.material.transparent = true; n.material.opacity = o; }
+      });
+    }
+
+    /* GLTFLoader: si existe modelos/solido.glb lo carga y SUSTITUYE el
+       placeholder (mismo holder, misma animacion). Si no existe, se queda el
+       procedural. Solo tienes que soltar el .glb en la carpeta modelos/. */
+    try {
+      if (window.__GLTFLoader) {
+        new window.__GLTFLoader().load('modelos/solido.glb', (gltf) => {
+          const model = gltf.scene;
+          const box = new THREE.Box3().setFromObject(model);
+          const size = new THREE.Vector3(); box.getSize(size);
+          const center = new THREE.Vector3(); box.getCenter(center);
+          const s = 3.9 / (Math.max(size.x, size.y, size.z) || 1);
+          model.scale.setScalar(s);
+          model.position.sub(center.multiplyScalar(s));
+          mesh.remove(placeholder);
+          mesh.add(model);
+          setSolidOpacity(op.v);
+          console.log('[icosa] modelo GLB cargado: modelos/solido.glb');
+        }, undefined, () => { /* sin archivo aun: placeholder procedural */ });
+      }
+    } catch (e) { /* GLTFLoader no disponible: placeholder */ }
 
     function resize() {
       const rect = canvas.getBoundingClientRect();
@@ -2098,15 +2514,38 @@
     window.addEventListener('resize', resize);
 
     let running = false;
-    let freezeRotation = false;
+    let baseX = 0;                 /* posicion de reposo en x (la presencia oscila alrededor) */
+    let presenceTweens = [];
+    /* TODA la animacion del solido es GSAP, no matematica en el ciclo de render:
+       el step SOLO redibuja. La PRESENCIA (giro continuo + deriva sin/cos + pulso
+       de opacidad) son tweens GSAP infinitos que arrancan al entrar en reposo. */
     function step() {
       if (!running) return;
-      if (!freezeRotation) {
-        mesh.rotation.y += 0.0006;
-        mesh.rotation.x += 0.0003;
-      }
+      /* Autocura de tamaño (no es animacion): si el canvas sigue en su buffer
+         por defecto al saltar directo a la slide, redimensiona. */
+      const rect = canvas.getBoundingClientRect();
+      if (rect.width > 1 && canvas.width !== Math.round(rect.width * renderer.getPixelRatio())) resize();
       renderer.render(scene, camera);
       requestAnimationFrame(step);
+    }
+    function killPresence() {
+      presenceTweens.forEach(t => t && t.kill());
+      presenceTweens = [];
+    }
+    function startPresence(bx) {
+      killPresence();
+      presenceTweens = [
+        /* Giro con PESO: oscilacion lenta (no velocidad constante / no 'none').
+           expo.inOut da el balanceo cinematografico que pide el nivel premium;
+           deriva + pulso completan la presencia. */
+        gsap.to(mesh.rotation, { y: '+=0.55', duration: 13, ease: 'expo.inOut', yoyo: true, repeat: -1 }),
+        gsap.to(mesh.rotation, { x: '+=0.34', duration: 18, ease: 'expo.inOut', yoyo: true, repeat: -1 }),
+        /* deriva/pulso ARRANCAN desde el reposo actual (no fromTo con salto):
+           antes el 'from' reseteaba la posicion de golpe = el brinco. */
+        gsap.fromTo(mesh.position, { x: bx }, { x: bx + 0.08, duration: 21, ease: 'expo.inOut', yoyo: true, repeat: -1 }),
+        gsap.fromTo(mesh.position, { y: 0 }, { y: 0.07, duration: 28, ease: 'expo.inOut', yoyo: true, repeat: -1 }),
+        gsap.fromTo(op, { v: 0.42 }, { v: 0.46, duration: 7, ease: 'expo.inOut', yoyo: true, repeat: -1, onUpdate: () => setSolidOpacity(op.v) }),
+      ];
     }
 
     /* Entrada cinematica: el icosaedro arranca enorme y fuera de pantalla
@@ -2117,28 +2556,30 @@
        por si venimos de un estado exit. */
     const RESTING_SCALE = 0.55;
     function enter() {
-      gsap.killTweensOf([mesh.position, mesh.scale, mat]);
-      freezeRotation = false;
+      killPresence();
+      gsap.killTweensOf([mesh.position, mesh.scale, op]);
       mesh.position.set(-9, 0, 0);
       mesh.scale.set(2.6, 2.6, 2.6);
-      mat.opacity = 0;
+      setSolidOpacity(0);
       gsap.to(mesh.position, {
         x: 0,
         duration: 1.9,
-        ease: 'power3.out',
+        ease: 'power4.out',
         overwrite: 'auto',
+        onComplete() { baseX = 0; startPresence(0); },
       });
       gsap.to(mesh.scale, {
         x: RESTING_SCALE, y: RESTING_SCALE, z: RESTING_SCALE,
         duration: 1.9,
-        ease: 'power3.out',
+        ease: 'power4.out',
         overwrite: 'auto',
       });
-      gsap.to(mat, {
-        opacity: 0.42,
+      gsap.to(op, {
+        v: 0.42,
         duration: 1.4,
-        ease: 'power2.out',
+        ease: 'power4.out',
         overwrite: 'auto',
+        onUpdate: () => setSolidOpacity(op.v),
       });
     }
 
@@ -2149,25 +2590,26 @@
        que se acerca, no objeto girando. Cuando termina, la pantalla es
        bronce uniforme y la frase de cierre aparece encima con delay. */
     function exit() {
-      gsap.killTweensOf([mesh.position, mesh.scale, mat]);
-      freezeRotation = true;
+      killPresence();   /* mata giro/deriva/pulso: la forma se congela y crece a camara */
+      gsap.killTweensOf([mesh.position, mesh.scale, op]);
       gsap.to(mesh.position, {
         x: 0, y: 0,
         duration: 1.2,
-        ease: 'power3.in',
+        ease: 'expo.inOut',
         overwrite: 'auto',
       });
       gsap.to(mesh.scale, {
         x: 12, y: 12, z: 12,
         duration: 1.2,
-        ease: 'power3.in',
+        ease: 'expo.inOut',
         overwrite: 'auto',
       });
-      gsap.to(mat, {
-        opacity: 1.0,
+      gsap.to(op, {
+        v: 1.0,
         duration: 0.9,
-        ease: 'power2.out',
+        ease: 'power4.out',
         overwrite: 'auto',
+        onUpdate: () => setSolidOpacity(op.v),
       });
     }
 
@@ -2185,24 +2627,468 @@
          etiqueta y desplaza la posicion para que el solido cede espacio
          al texto que aparece. */
       move(dy, dx, dposX) {
+        killPresence();
         gsap.to(mesh.rotation, {
           y: '+=' + dy,
           x: '+=' + dx,
           duration: 1.2,
-          ease: 'power3.out',
+          ease: 'power4.out',
           overwrite: 'auto',
+          onComplete() { if (typeof dposX === 'number') baseX = dposX; startPresence(baseX); },
         });
         if (typeof dposX === 'number' && dposX !== 0) {
           gsap.to(mesh.position, {
             x: dposX,
             duration: 1.2,
-            ease: 'power3.out',
+            ease: 'power4.out',
             overwrite: 'auto',
           });
         }
       },
     };
   }
+
+  /* OLA 2 · DOS ICOSAEDROS ENTEROS QUE CONVERGEN (climax 22).
+     Convergencia PARALELA, no complementariedad: dos solidos identicos y
+     COMPLETOS, cada uno llega de una direccion independiente (A por x
+     negativo, B por z negativo / profundidad) y se SUPERPONEN ocupando el
+     mismo lugar. Coinciden, NO se ensamblan. Encarna que Wojtyla y Frankl
+     llegan al mismo centro por caminos que no se cruzan, cada uno entero. */
+  function initIcosaConverge(canvas) {
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
+    camera.position.set(0, 0, 6.2);
+    const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.15;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+    const geom = new THREE.IcosahedronGeometry(1.95, 0);
+    /* Cada solido es un HOLDER (Group) con placeholder PBR; si sueltas
+       modelos/solido.glb se sustituye en caliente. setOpacity recorre el
+       holder, asi sirve para el placeholder y para el modelo. */
+    function makeSolid() {
+      const mesh = new THREE.Group();
+      const mat = new THREE.MeshPhysicalMaterial({
+        color: 0xa8855a, metalness: 0.15, roughness: 0.55,
+        clearcoat: 0.35, clearcoatRoughness: 0.5,
+        sheen: 0.4, sheenColor: new THREE.Color(0xc4a679),
+        flatShading: true, transparent: true, opacity: 0, depthWrite: false,
+      });
+      const placeholder = new THREE.Mesh(geom, mat);
+      mesh.add(placeholder);
+      scene.add(mesh);
+      const op = { v: 0 };
+      function setOpacity(o) {
+        op.v = o;
+        mesh.traverse(n => { if (n.isMesh && n.material) { n.material.transparent = true; n.material.opacity = o; } });
+      }
+      const solid = { mesh, op, setOpacity };
+      try {
+        if (window.__GLTFLoader) {
+          new window.__GLTFLoader().load('modelos/solido.glb', (gltf) => {
+            const model = gltf.scene;
+            const box = new THREE.Box3().setFromObject(model);
+            const size = new THREE.Vector3(); box.getSize(size);
+            const center = new THREE.Vector3(); box.getCenter(center);
+            const s = 3.9 / (Math.max(size.x, size.y, size.z) || 1);
+            model.scale.setScalar(s);
+            model.position.sub(center.multiplyScalar(s));
+            mesh.remove(placeholder);
+            mesh.add(model);
+            setOpacity(op.v);
+          }, undefined, () => {});
+        }
+      } catch (e) {}
+      return solid;
+    }
+    const A = makeSolid();
+    const B = makeSolid();
+
+    scene.add(new THREE.AmbientLight(0xf0e6d2, 0.6));
+    const key = new THREE.DirectionalLight(0xffe6b8, 2.4);
+    key.position.set(-4, 5, 5);
+    scene.add(key);
+    const fill = new THREE.DirectionalLight(0xf0e6d2, 0.5);
+    fill.position.set(3, -2, 4); scene.add(fill);
+
+    function resize() {
+      const rect = canvas.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) return;
+      renderer.setSize(rect.width, rect.height, false);
+      camera.aspect = rect.width / rect.height;
+      camera.updateProjectionMatrix();
+    }
+    window.addEventListener('resize', resize);
+
+    const RS = 0.62;
+    let running = false;
+    let presenceTweens = [];
+    /* Animacion 100% GSAP: el step solo redibuja. */
+    function step() {
+      if (!running) return;
+      const rect = canvas.getBoundingClientRect();
+      if (rect.width > 1 && canvas.width !== Math.round(rect.width * renderer.getPixelRatio())) resize();
+      renderer.render(scene, camera);
+      requestAnimationFrame(step);
+    }
+    function killPresence() {
+      presenceTweens.forEach(t => t && t.kill());
+      presenceTweens = [];
+    }
+    function startPresence() {
+      killPresence();
+      presenceTweens = [
+        /* oscilacion con PESO, ritmos distintos para que se perciban DOS formas */
+        gsap.to(A.mesh.rotation, { y: '+=0.5', duration: 13, ease: 'expo.inOut', yoyo: true, repeat: -1 }),
+        gsap.to(A.mesh.rotation, { x: '+=0.3', duration: 18, ease: 'expo.inOut', yoyo: true, repeat: -1 }),
+        gsap.to(B.mesh.rotation, { y: '+=0.6', duration: 11, ease: 'expo.inOut', yoyo: true, repeat: -1 }),
+        gsap.to(B.mesh.rotation, { x: '+=0.36', duration: 16, ease: 'expo.inOut', yoyo: true, repeat: -1 }),
+        /* deriva ARRANCA en el reposo (0,0): from = posicion actual = sin snap.
+           Antes empezaba en -0.05 y daba el brinquito al entrar la presencia. */
+        gsap.fromTo([A.mesh.position, B.mesh.position], { x: 0 }, { x: 0.05, duration: 21, ease: 'expo.inOut', yoyo: true, repeat: -1 }),
+        gsap.fromTo([A.mesh.position, B.mesh.position], { y: 0 }, { y: 0.06, duration: 28, ease: 'expo.inOut', yoyo: true, repeat: -1 }),
+        gsap.fromTo(A.op, { v: 0.43 }, { v: 0.47, duration: 7, ease: 'expo.inOut', yoyo: true, repeat: -1, onUpdate: () => A.setOpacity(A.op.v) }),
+        gsap.fromTo(B.op, { v: 0.43 }, { v: 0.47, duration: 7.6, ease: 'expo.inOut', yoyo: true, repeat: -1, onUpdate: () => B.setOpacity(B.op.v) }),
+      ];
+    }
+
+    function converge() {
+      killPresence();
+      gsap.killTweensOf([A.mesh.position, B.mesh.position, A.op, B.op, A.mesh.scale, B.mesh.scale]);
+      A.mesh.position.set(-9, 0, 0);  A.mesh.scale.setScalar(RS); A.setOpacity(0);
+      B.mesh.position.set(0, 0, -13); B.mesh.scale.setScalar(RS); B.setOpacity(0);
+      gsap.to(A.mesh.position, { x: 0, y: 0, z: 0, duration: 2.3, ease: 'power4.out', overwrite: 'auto' });
+      gsap.to(A.op, { v: 0.43, duration: 1.6, ease: 'power4.out', onUpdate: () => A.setOpacity(A.op.v) });
+      gsap.to(B.mesh.position, { x: 0, y: 0, z: 0, duration: 2.3, delay: 0.3, ease: 'power4.out', overwrite: 'auto' });
+      gsap.to(B.op, { v: 0.43, duration: 1.6, delay: 0.3, ease: 'power4.out', onUpdate: () => B.setOpacity(B.op.v) });
+      /* pulso de coincidencia: scale x1.08 y vuelta. Al COMPLETAR (todo ya
+         aterrizado: posiciones en 0, escala en RS) arranca la presencia. Asi
+         no hay carrera entre el aterrizaje y la deriva -> sin brinco. */
+      gsap.to([A.mesh.scale, B.mesh.scale], { x: RS * 1.08, y: RS * 1.08, z: RS * 1.08, duration: 0.8, delay: 2.1, ease: 'power4.out', yoyo: true, repeat: 1,
+        onComplete() { startPresence(); } });
+    }
+    function recede() {
+      killPresence();
+      gsap.killTweensOf([A.mesh.position, B.mesh.position, A.op, B.op, A.mesh.scale, B.mesh.scale]);
+      gsap.to([A.mesh.position, B.mesh.position], { z: -14, duration: 1.2, ease: 'expo.inOut', overwrite: 'auto' });
+      gsap.to(A.op, { v: 0, duration: 1.0, ease: 'expo.inOut', onUpdate: () => A.setOpacity(A.op.v) });
+      gsap.to(B.op, { v: 0, duration: 1.0, ease: 'expo.inOut', onUpdate: () => B.setOpacity(B.op.v) });
+    }
+    return {
+      start() { if (running) return; running = true; resize(); requestAnimationFrame(step); },
+      stop() { running = false; },
+      converge, recede,
+    };
+  }
+
+  /* DOS ESFERAS PBR (slide 12 · problema dual). Estilo del icosaedro: mismo
+     material fisico, misma luz y sombras. Cada esfera vive en un EXTREMO de la
+     pantalla con su centro sobre el borde -> solo se ve la mitad. Entran desde
+     fuera al entrar a la slide y salen al dejarla (transicion con la diapo).
+     Holder + GLTFLoader (modelos/esfera.glb) igual que el icosaedro. */
+  function initSpheres(canvas) {
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
+    camera.position.set(0, 0, 6.2);
+    const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.15;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+    const geom = new THREE.SphereGeometry(2.7, 64, 64);
+    function makeSphere() {
+      const mesh = new THREE.Group();
+      const mat = new THREE.MeshPhysicalMaterial({
+        color: 0xa8855a, metalness: 0.15, roughness: 0.5,
+        clearcoat: 0.4, clearcoatRoughness: 0.45,
+        sheen: 0.45, sheenColor: new THREE.Color(0xc4a679),
+        transparent: true, opacity: 0, depthWrite: false,
+      });
+      const placeholder = new THREE.Mesh(geom, mat);
+      mesh.add(placeholder);
+      scene.add(mesh);
+      const op = { v: 0 };
+      function setOpacity(o) { op.v = o; mesh.traverse(n => { if (n.isMesh && n.material) { n.material.transparent = true; n.material.opacity = o; } }); }
+      const solid = { mesh, op, setOpacity };
+      try {
+        if (window.__GLTFLoader) {
+          new window.__GLTFLoader().load('modelos/esfera.glb', (gltf) => {
+            const model = gltf.scene;
+            const box = new THREE.Box3().setFromObject(model);
+            const size = new THREE.Vector3(); box.getSize(size);
+            const center = new THREE.Vector3(); box.getCenter(center);
+            const s = 5.4 / (Math.max(size.x, size.y, size.z) || 1);
+            model.scale.setScalar(s); model.position.sub(center.multiplyScalar(s));
+            mesh.remove(placeholder); mesh.add(model); setOpacity(op.v);
+          }, undefined, () => {});
+        }
+      } catch (e) {}
+      return solid;
+    }
+    const L = makeSphere();
+    const R = makeSphere();
+
+    scene.add(new THREE.AmbientLight(0xf0e6d2, 0.6));
+    const key = new THREE.DirectionalLight(0xffe6b8, 2.2);
+    key.position.set(-4, 5, 5);
+    scene.add(key);
+    const fill = new THREE.DirectionalLight(0xf0e6d2, 0.5);
+    fill.position.set(3, -2, 4); scene.add(fill);
+
+    let edgeX = 4;    /* x del borde de pantalla en z=0; se recalcula en resize */
+    let innerX = 3.2; /* x al que se ACERCAN (mantiene hueco: radio 2.7 + ~0.5) */
+    function computeEdge() {
+      const halfH = Math.tan((38 * Math.PI / 180) / 2) * camera.position.z;
+      edgeX = halfH * (camera.aspect || 1.78);
+      innerX = Math.max(3.2, edgeX - 1.1);   /* nunca por dentro del radio: no se tocan */
+    }
+    function resize() {
+      const rect = canvas.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) return;
+      renderer.setSize(rect.width, rect.height, false);
+      camera.aspect = rect.width / rect.height;
+      camera.updateProjectionMatrix();
+      computeEdge();
+      if (shown) { L.mesh.position.x = -edgeX; R.mesh.position.x = edgeX; }
+    }
+    window.addEventListener('resize', resize);
+
+    let running = false, shown = false, presence = [];
+    function step() {
+      if (!running) return;
+      const rect = canvas.getBoundingClientRect();
+      if (rect.width > 1 && canvas.width !== Math.round(rect.width * renderer.getPixelRatio())) resize();
+      renderer.render(scene, camera);
+      requestAnimationFrame(step);
+    }
+    function killPresence() { presence.forEach(t => t && t.kill()); presence = []; }
+    function startPresence() {
+      killPresence();
+      /* ACERCAMIENTO ORGÁNICO: las dos esferas se aproximan al centro y vuelven,
+         SIN tocarse (innerX deja hueco), SIEMPRE en movimiento. sine.inOut da
+         velocidad suave (no el 'tirón' robótico de expo); los periodos de L y R
+         son DISTINTOS (9.5 vs 11.5s) para que nunca vayan sincronizadas: el hueco
+         entre ellas cambia todo el rato = natural, vivo, no mecánico. */
+      presence = [
+        gsap.to(L.mesh.rotation, { y: '+=0.6', duration: 17, ease: 'sine.inOut', yoyo: true, repeat: -1 }),
+        gsap.to(R.mesh.rotation, { y: '-=0.6', duration: 15, ease: 'sine.inOut', yoyo: true, repeat: -1 }),
+        gsap.fromTo(L.mesh.position, { x: -edgeX }, { x: -innerX, duration: 9.5, ease: 'sine.inOut', yoyo: true, repeat: -1 }),
+        gsap.fromTo(R.mesh.position, { x: edgeX }, { x: innerX, duration: 11.5, ease: 'sine.inOut', yoyo: true, repeat: -1 }),
+        gsap.fromTo(L.mesh.position, { y: 0 }, { y: 0.14, duration: 19, ease: 'sine.inOut', yoyo: true, repeat: -1 }),
+        gsap.fromTo(R.mesh.position, { y: 0 }, { y: -0.14, duration: 23, ease: 'sine.inOut', yoyo: true, repeat: -1 }),
+        gsap.fromTo(L.op, { v: 0.46 }, { v: 0.52, duration: 8, ease: 'sine.inOut', yoyo: true, repeat: -1, onUpdate: () => L.setOpacity(L.op.v) }),
+        gsap.fromTo(R.op, { v: 0.46 }, { v: 0.52, duration: 9.5, ease: 'sine.inOut', yoyo: true, repeat: -1, onUpdate: () => R.setOpacity(R.op.v) }),
+      ];
+    }
+    function enter() {
+      if (shown) return;
+      shown = true;
+      computeEdge();
+      killPresence();
+      gsap.killTweensOf([L.mesh.position, R.mesh.position, L.op, R.op]);
+      L.mesh.position.set(-edgeX - 3.5, 0, 0);
+      R.mesh.position.set(edgeX + 3.5, 0, 0);
+      L.setOpacity(0); R.setOpacity(0);
+      gsap.to(L.mesh.position, { x: -edgeX, duration: 1.4, ease: 'power4.out', overwrite: 'auto', onComplete: startPresence });
+      gsap.to(R.mesh.position, { x: edgeX, duration: 1.4, ease: 'power4.out', overwrite: 'auto' });
+      gsap.to(L.op, { v: 0.48, duration: 1.3, ease: 'power4.out', onUpdate: () => L.setOpacity(L.op.v) });
+      gsap.to(R.op, { v: 0.48, duration: 1.3, ease: 'power4.out', onUpdate: () => R.setOpacity(R.op.v) });
+    }
+    function exit() {
+      if (!shown) return;
+      shown = false;
+      killPresence();
+      gsap.killTweensOf([L.mesh.position, R.mesh.position, L.op, R.op]);
+      gsap.to(L.mesh.position, { x: -edgeX - 3.5, duration: 1.1, ease: 'expo.inOut', overwrite: 'auto' });
+      gsap.to(R.mesh.position, { x: edgeX + 3.5, duration: 1.1, ease: 'expo.inOut', overwrite: 'auto' });
+      gsap.to(L.op, { v: 0, duration: 0.9, ease: 'expo.inOut', onUpdate: () => L.setOpacity(L.op.v) });
+      gsap.to(R.op, { v: 0, duration: 0.9, ease: 'expo.inOut', onUpdate: () => R.setOpacity(R.op.v), onComplete: () => { running = false; } });
+    }
+    return {
+      start() { if (running) return; running = true; resize(); requestAnimationFrame(step); },
+      stop() { running = false; },
+      enter, exit,
+    };
+  }
+
+  /* ════════ MODULOS DE RECURSOS POR DIAPOSITIVA ════════ */
+
+  /* s02 · SILENCIO INICIAL: solo la frase se descubre con calma. */
+  DEVICES.s02 = {
+    enter(section) {
+      const word = section.querySelector('.word');
+      if (word) { gsap.killTweensOf(word); gsap.fromTo(word, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 1.6, delay: 0.5, ease: 'power4.out' }); }
+    },
+  };
+
+  /* s11 · FOTO de soledad: ken-burns lentísimo (sine.inOut, deriva lateral) +
+     texto que se descubre. Nunca un zoom mecánico de velocidad fija. */
+  DEVICES.s11 = {
+    enter(section) {
+      const img = section.querySelector('.s11-photo img');
+      const t = section.querySelector('.s11-title'), b = section.querySelector('.s11-body');
+      if (img) { gsap.killTweensOf(img); gsap.fromTo(img, { scale: 1.05, xPercent: 0 }, { scale: 1.14, xPercent: -3, duration: 22, ease: 'expo.inOut' }); }
+      if (t) gsap.fromTo(t, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 1.2, delay: 0.3, ease: 'power4.out' });
+      if (b) gsap.fromTo(b, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 1.2, delay: 0.7, ease: 'power4.out' });
+    },
+  };
+
+  /* s12 · PLACA DE LUZ que se parte: el texto se asienta y DESPUÉS la grieta
+     baja y las dos mitades se separan unos grados (encarna 'dual'). */
+  /* s12 · solo el titulo; la dualidad la encarnan las DOS esferas 3D
+     (canvas[data-spheres], initSpheres) que entran por los extremos. */
+  DEVICES.s12 = {
+    enter(section) {
+      const title = section.querySelector('.s12-title');
+      if (title) gsap.fromTo(title, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 1.1, delay: 0.3, ease: 'power4.out' });
+    },
+  };
+
+  /* s13 · FOTO de biblioteca en ventana: zoom hondo y lento (la profundidad
+     de la filosofía) + texto debajo. */
+  DEVICES.s13 = {
+    enter(section) {
+      const img = section.querySelector('.s13-bg-img');
+      const t = section.querySelector('.s13-title'), b = section.querySelector('.s13-body');
+      if (img) { gsap.killTweensOf(img); gsap.fromTo(img, { scale: 1.04 }, { scale: 1.14, duration: 26, ease: 'expo.inOut' }); }
+      /* partículas flotando sobre la foto (reutiliza el campo de la portada) */
+      const canvas = section.querySelector('.s13-particles');
+      if (canvas) {
+        if (!section.__s13particles) section.__s13particles = initParticles(canvas);
+        else section.__s13particles.resume();
+      }
+      /* entrada cinematográfica: el título ENFOCA desde un desenfoque suave
+         mientras sube. Sin tocar el tamaño ni el espaciado (eso causaba el
+         efecto de "se extiende"); solo blur + desplazamiento + opacidad. */
+      if (t) gsap.fromTo(t, { opacity: 0, y: 34, filter: 'blur(22px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 1.9, delay: 0.5, ease: 'power4.out' });
+      if (b) gsap.fromTo(b, { opacity: 0, y: 18, filter: 'blur(9px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 1.45, delay: 1.1, ease: 'power4.out' });
+    },
+    leave(section) {
+      if (section.__s13particles) section.__s13particles.pause();
+    },
+  };
+
+  /* s14 · LA TRAMPA UTILITARIA: la palabra "sentido" enorme y fantasma aflora
+     detrás (lo que el mercado dice perseguir y no toca); el titulo enfoca encima. */
+  DEVICES.s14 = {
+    enter(section) {
+      const ghost = section.querySelector('.s14-ghost');
+      const t = section.querySelector('.s14-title'), b = section.querySelector('.s14-body');
+      if (ghost) gsap.fromTo(ghost, { opacity: 0, scale: 1.08 }, { opacity: 1, scale: 1, duration: 2.6, ease: 'expo.inOut' });
+      if (t) gsap.fromTo(t, { opacity: 0, y: 22, filter: 'blur(12px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 1.4, delay: 0.4, ease: 'power4.out' });
+      if (b) gsap.fromTo(b, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 1.2, delay: 0.9, ease: 'power4.out' });
+    },
+  };
+
+  /* s15 · SELLO DE LACRE: aparece la cera, el cuño BAJA una vez con impacto y
+     al levantarse queda 'Wojtyła' impreso en relieve (la marca permanente). */
+  DEVICES.s15 = {
+    enter(section) {
+      const claim = section.querySelector('.s15-claim'), body = section.querySelector('.s15-body');
+      const wax = section.querySelector('.s15-wax'), name = section.querySelector('.s15-name'), die = section.querySelector('.s15-die');
+      if (claim) gsap.fromTo(claim, { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 1.0, delay: 0.2, ease: 'power4.out' });
+      if (body) gsap.fromTo(body, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 1.0, delay: 0.6, ease: 'power4.out' });
+      if (name) gsap.set(name, { xPercent: -50, yPercent: -50, scale: 0.9, opacity: 0 });
+      if (die) gsap.set(die, { y: -260, opacity: 0 });
+      if (wax) gsap.set(wax, { opacity: 0, scale: 0.8 });
+      const tl = gsap.timeline({ delay: 1.0 });
+      if (wax) tl.to(wax, { opacity: 1, scale: 1, duration: 0.7, ease: 'power4.out' }, 0);
+      if (die) tl.to(die, { opacity: 0.95, duration: 0.3, ease: 'power4.out' }, 0.2)
+        .to(die, { y: 0, duration: 0.55, ease: 'expo.inOut' }, 0.5)
+        .to(die, { y: -300, opacity: 0, duration: 0.85, ease: 'power4.out' }, 1.25);  /* se levanta Y se desvanece: deja el nombre limpio */
+      if (name) tl.to(name, { opacity: 1, scale: 1, duration: 0.5, ease: 'power4.out' }, 1.15);
+    },
+  };
+
+  /* s18→s19 · TRANSICIÓN DE EJES (horizontal → vertical): seamless y cinematográfica.
+     Al dejar la 18 la foto se ELEVA y se desvanece; al entrar la 19 el cielo SUBE a
+     su sitio y sigue un ken-burns lento. El gesto encarna la verticalidad: asciende.
+     (La imagen siempre escala >1 para que el desplazamiento no revele bordes.) */
+  DEVICES.s18 = {
+    enter(section) {
+      const img = section.querySelector('.image-bleed-img');
+      if (img) { gsap.killTweensOf(img); gsap.fromTo(img, { scale: 1.08, yPercent: 0 }, { scale: 1.15, yPercent: -2, duration: 22, ease: 'expo.inOut' }); }
+    },
+    leave(section) {
+      const img = section.querySelector('.image-bleed-img');
+      if (img) gsap.to(img, { yPercent: -8, scale: 1.2, duration: 1.3, ease: 'power4.out', overwrite: 'auto' });
+    },
+  };
+  DEVICES.s19 = {
+    enter(section) {
+      const img = section.querySelector('.image-bleed-img');
+      if (img) {
+        gsap.killTweensOf(img);
+        gsap.fromTo(img, { yPercent: 8, scale: 1.2 }, { yPercent: 0, scale: 1.13, duration: 1.8, ease: 'power4.out' });
+        gsap.to(img, { scale: 1.21, duration: 26, ease: 'expo.inOut', delay: 1.8 });
+      }
+    },
+  };
+
+  /* s24 · CINCO PLANOS: columna con una veta de luz que se llena plano a plano.
+     SIN blob ni inversion de contraste: lista vertical legible, texto oscuro
+     sobre crema. Cada plano revela su fila y la veta crece hasta el. */
+  DEVICES.s24 = {
+    enter(section) {
+      const vein = section.querySelector('.s24-vein');
+      if (vein) gsap.set(vein, { scaleY: 0 });
+      section.querySelectorAll('.s24-plano').forEach(p => p.classList.remove('s24-dim'));
+    },
+    fragment(section, frag, shown) {
+      const planos = [...section.querySelectorAll('.s24-plano')];
+      const i = planos.indexOf(frag);
+      if (i < 0) return;
+      const vein = section.querySelector('.s24-vein');
+      const total = planos.length;
+      if (shown) {
+        gsap.fromTo(frag, { x: -16 }, { x: 0, duration: 0.6, ease: 'power4.out', overwrite: 'auto' });
+        /* resaltar el recién aparecido: TODOS los anteriores se atenúan. */
+        planos.forEach((p, j) => p.classList.toggle('s24-dim', j < i));
+        if (vein) gsap.to(vein, { scaleY: (i + 1) / total, duration: 0.9, ease: 'power4.out', overwrite: 'auto' });
+      } else {
+        /* al retroceder, el anterior (i-1) vuelve a primer plano. */
+        frag.classList.remove('s24-dim');
+        planos.forEach((p, j) => p.classList.toggle('s24-dim', j < i - 1));
+        if (vein) gsap.to(vein, { scaleY: i / total, duration: 0.6, ease: 'expo.inOut', overwrite: 'auto' });
+      }
+    },
+  };
+
+  /* s25 · CINCO DINAMICAS: cajonera/acordeon. Cada dinamica es un cajon que se
+     ABRE al nombrarse (su texto se despliega) y el anterior se cierra a solo su
+     titulo. SIN blob ni contraste: texto oscuro legible sobre crema. */
+  DEVICES.s25 = {
+    enter(section) {
+      section.__s25open = -1;
+      section.querySelectorAll('.s25-drawer').forEach(d => {
+        d.classList.remove('open');
+        const body = d.querySelector('.s25-bodywrap');
+        if (body) gsap.set(body, { height: 0 });
+      });
+    },
+    fragment(section, frag, shown) {
+      const drawers = [...section.querySelectorAll('.s25-drawer')];
+      const i = drawers.indexOf(frag);
+      if (i < 0) return;
+      const openBody = (d) => { const b = d.querySelector('.s25-bodywrap'); d.classList.add('open'); gsap.to(b, { height: 'auto', duration: 0.6, ease: 'power4.out', overwrite: 'auto' }); };
+      const closeBody = (d) => { const b = d.querySelector('.s25-bodywrap'); d.classList.remove('open'); gsap.to(b, { height: 0, duration: 0.45, ease: 'expo.inOut', overwrite: 'auto' }); };
+      if (shown) {
+        if (section.__s25open >= 0 && section.__s25open !== i && drawers[section.__s25open]) closeBody(drawers[section.__s25open]);
+        /* el titulo crece (via clase .open en CSS) y se QUEDA grande hasta el
+           siguiente click; aqui solo el deslizamiento de entrada. */
+        gsap.fromTo(frag, { x: -16 }, { x: 0, duration: 0.55, ease: 'power4.out', overwrite: 'auto' });
+        openBody(frag);
+        section.__s25open = i;
+      } else {
+        closeBody(frag);
+        if (i - 1 >= 0 && drawers[i - 1]) { openBody(drawers[i - 1]); section.__s25open = i - 1; }
+        else section.__s25open = -1;
+      }
+    },
+  };
 
   Reveal.on('ready', () => {
     const ctrls = new Map();
@@ -2213,21 +3099,94 @@
     }
     syncCanvases();
 
-    /* Icosaedro en slides que tengan canvas[data-icosa] (solo slide 07 por ahora). */
+    /* LA BRASA: hilo visible permanente. Reacciona al fondo de cada slide
+       (densidad) y a su lugar en el arco (direccion: asciende salvo en el
+       cierre 26-27 donde el polvo que subio como pregunta cae como legado). */
+    const brasa = initBrasa();
+    window.__brasa = brasa;
+    function updateBrasa(slide) {
+      if (!slide) return;
+      const dark = slide.classList.contains('bg-black');
+      brasa.setDensity(dark ? 0.11 : 0.05);
+      const h = Reveal.getIndices(slide).h;
+      brasa.setDirection(h >= 25 ? 1 : -1);  /* slides 26-27 (indices 25-26): desciende */
+      /* ARCO TERMICO (intencion de El Candil via la brasa): la luz sigue la
+         doble onda emocional. Indices 0-base. Apertura austera (NO consolar),
+         picos calidos en el climax (21) y la madre (25), cierre como ascua. */
+      const WARMTH = {
+        0: 0.30, 1: 0.16, 2: 0.16, 3: 0.14, 4: 0.12,   /* portada + 3 preguntas: penumbra que no consuela */
+        5: 0.34, 6: 0.34,                               /* el tema + tres capas: amanecer */
+        7: 0.30, 8: 0.22, 9: 0.22, 10: 0.24,            /* problema: recaida */
+        11: 0.34, 12: 0.34, 13: 0.34, 14: 0.40, 15: 0.42, /* premisas y ejes: ascenso */
+        16: 0.46, 17: 0.55, 18: 0.46, 19: 0.46, 20: 0.50,
+        21: 1.0,                                         /* CLIMAX 22: el ambar a su maximo */
+        22: 0.42, 23: 0.42, 24: 0.46,                   /* descenso calido */
+        25: 0.66, 26: 0.22,                             /* la madre (pathos) y el cierre como ascua */
+      };
+      const w = (h in WARMTH) ? WARMTH[h] : 0.35;
+      brasa.setWarmth(w);
+    }
+    updateBrasa(Reveal.getCurrentSlide());
+    window.__updateBrasa = updateBrasa;
+
+    /* Recurso grafico de la slide inicial (si tiene data-device). */
+    deviceEnter(Reveal.getCurrentSlide());
+    matchLetterbox(Reveal.getCurrentSlide());
+    fitToScreen();
+
+    /* Solidos 3D (slide 07 y climax 22). Las funciones sync quedan SIEMPRE
+       definidas (las usan slidechanged y los fragments); los mapas se pueblan
+       cuando Three.js (ESM, async) este listo. */
     const icosaCtrls = new Map();
-    document.querySelectorAll('canvas[data-icosa]').forEach(c => icosaCtrls.set(c, initIcosa(c)));
+    const icosaConvergeCtrls = new Map();
+    const spheresCtrls = new Map();
+    window.__icosaCtrls = icosaCtrls;
+
     function syncIcosa() {
       const current = Reveal.getCurrentSlide();
       icosaCtrls.forEach((ctrl, canvas) => {
-        if (current && current.contains(canvas)) {
-          ctrl.start();
-          ctrl.enter();
-        } else {
-          ctrl.stop();
-        }
+        if (current && current.contains(canvas)) { ctrl.start(); ctrl.enter(); }
+        else { ctrl.stop(); }
       });
     }
-    syncIcosa();
+    function syncIcosaConverge() {
+      const current = Reveal.getCurrentSlide();
+      icosaConvergeCtrls.forEach((ctrl, canvas) => {
+        if (current && current.contains(canvas)) { ctrl.start(); ctrl.converge(); }
+        else { ctrl.stop(); }
+      });
+    }
+    function syncSpheres() {
+      const current = Reveal.getCurrentSlide();
+      spheresCtrls.forEach((ctrl, canvas) => {
+        if (current && current.contains(canvas)) { ctrl.start(); ctrl.enter(); }
+        else { ctrl.exit(); }   /* salen por los extremos al dejar la slide */
+      });
+    }
+
+    /* Three.js llega via ES Module (necesario para GLTFLoader): lo esperamos.
+       El resto del deck no depende de Three y ya esta corriendo. try/catch para
+       que un fallo de WebGL/THREE NO tumbe nada. */
+    (function whenThree(tries) {
+      if (window.__threeReady && window.THREE) {
+        try {
+          document.querySelectorAll('canvas[data-icosa]').forEach(c => icosaCtrls.set(c, initIcosa(c)));
+        } catch (e) { console.warn('Icosaedro: Three.js no disponible, se omite.', e); }
+        try {
+          document.querySelectorAll('canvas[data-icosa-converge]').forEach(c => icosaConvergeCtrls.set(c, initIcosaConverge(c)));
+        } catch (e) { console.warn('Convergencia: Three.js no disponible, se omite.', e); }
+        try {
+          document.querySelectorAll('canvas[data-spheres]').forEach(c => spheresCtrls.set(c, initSpheres(c)));
+        } catch (e) { console.warn('Esferas: Three.js no disponible, se omite.', e); }
+        syncIcosa();
+        syncIcosaConverge();
+        syncSpheres();
+      } else if (tries < 150) {
+        setTimeout(() => whenThree(tries + 1), 80);
+      } else {
+        console.warn('Three.js (ESM) no cargo a tiempo; solidos 3D omitidos.');
+      }
+    })(0);
 
     /* Scramble del numeral monumental al entrar al slide. */
     function rememberTargets() {
@@ -2275,18 +3234,62 @@
        y el block-b para generar tension de lectura. */
     function animateSplitLines(slide) {
       if (!slide) return;
-      /* Monumental: 2 lineas con stagger uniforme */
-      const monLines = slide.querySelectorAll('.monumental-h .line-inner');
+      /* Monumental: gesto de revelado PROPIO por slide (data-gesture), no
+         el mismo mask repetido seis veces. Cada gesto deriva del SIGNIFICADO
+         de las dos palabras (eco / dual / ejes opuestos / tempo lento /
+         climax aparte). 06 y 27 conservan el mask clasico. */
+      const mon = slide.querySelector('.monumental-h');
+      const monLines = mon ? mon.querySelectorAll('.line-inner') : [];
+      const gesture = slide.dataset.gesture || 'classic';
       if (monLines.length) {
-        gsap.set(monLines, { yPercent: 110 });
-        gsap.to(monLines, {
-          yPercent: 0,
-          duration: 0.95,
-          ease: 'power3.out',
-          stagger: 0.42,
-          delay: 0.2,
-          overwrite: 'auto',
-        });
+        gsap.killTweensOf(monLines);
+        gsap.set(monLines, { clearProps: 'clipPath,x,scale,opacity,rotation' });
+        const L0 = monLines[0], L1 = monLines[1];
+        if (gesture === 'eco') {
+          /* 11: 'Vacío' entra y queda; 'existencial' entra DESPUÉS, mas
+             pequeña y desplazada, como un eco. No suben juntas. */
+          gsap.set(L0, { yPercent: 110 });
+          gsap.to(L0, { yPercent: 0, duration: 0.95, ease: 'power4.out', delay: 0.2, overwrite: 'auto' });
+          if (L1) {
+            gsap.set(L1, { yPercent: 110, scale: 0.74, x: '0.8em', transformOrigin: 'left center', opacity: 0.85 });
+            gsap.to(L1, { yPercent: 0, duration: 0.9, ease: 'power4.out', delay: 1.55, overwrite: 'auto' });
+          }
+        } else if (gesture === 'dual') {
+          /* 12 'Un problema / dual': wipe horizontal OPUESTO (una de izq,
+             otra de der), encarnando 'dual'. NO el mask vertical. */
+          gsap.set(monLines, { yPercent: 0 });
+          if (L0) { gsap.set(L0, { clipPath: 'inset(0 100% 0 0)', x: '-0.25em' });
+            gsap.to(L0, { clipPath: 'inset(0 0% 0 0)', x: '0em', duration: 1.0, ease: 'power4.out', delay: 0.2, overwrite: 'auto' }); }
+          if (L1) { gsap.set(L1, { clipPath: 'inset(0 0 0 100%)', x: '0.25em' });
+            gsap.to(L1, { clipPath: 'inset(0 0 0 0%)', x: '0em', duration: 1.0, ease: 'power4.out', delay: 0.5, overwrite: 'auto' }); }
+        } else if (gesture === 'axes') {
+          /* 17 'Dos / direcciones': ejes OPUESTOS, una desciende desde
+             arriba, otra asciende desde abajo, simultaneas. */
+          if (L0) { gsap.set(L0, { yPercent: -130 });
+            gsap.to(L0, { yPercent: 0, duration: 1.05, ease: 'power4.out', delay: 0.25, overwrite: 'auto' }); }
+          if (L1) { gsap.set(L1, { yPercent: 130 });
+            gsap.to(L1, { yPercent: 0, duration: 1.05, ease: 'power4.out', delay: 0.25, overwrite: 'auto' }); }
+        } else if (gesture === 'slow') {
+          /* 23 'Cinco / planos': mismo mask vertical pero TEMPO muy lento
+             (respiracion post-climax). Distinto por tiempo, no por vector. */
+          gsap.set(monLines, { yPercent: 110 });
+          gsap.to(monLines, { yPercent: 0, duration: 1.15, ease: 'power4.out', stagger: 0.8, delay: 0.35, overwrite: 'auto' });
+        } else if (gesture === 'climax') {
+          /* 22: BEAT DE SILENCIO (titular entra a 1.6s; antes solo negro +
+             brasa + ambar aflorando) + SUBTITULO SEPARADO tras el respiro.
+             La sala recibe un compas que no ha visto: revelacion en dos tiempos. */
+          gsap.set(monLines, { yPercent: 110 });
+          gsap.to(monLines, { yPercent: 0, duration: 1.0, ease: 'power4.out', stagger: 0.5, delay: 1.6, overwrite: 'auto' });
+          const amber = slide.querySelector('.climax-amber');
+          if (amber) { gsap.set(amber, { opacity: 0 }); gsap.to(amber, { opacity: 1, duration: 2.2, ease: 'expo.inOut', delay: 0.15, overwrite: 'auto' }); }
+          const sub = slide.querySelector('.climax-sub');
+          if (sub) { gsap.set(sub, { opacity: 0, y: 24 }); gsap.to(sub, { opacity: 1, y: 0, duration: 1.1, ease: 'power4.out', delay: 4.4, overwrite: 'auto' }); }
+        } else {
+          /* classic (06, 27): el patron-base. Una sola slide lo significa
+             como 'definicion'; el resto tiene gesto propio. */
+          gsap.set(monLines, { yPercent: 110 });
+          gsap.to(monLines, { yPercent: 0, duration: 0.95, ease: 'power4.out', stagger: 0.42, delay: 0.2, overwrite: 'auto' });
+        }
       }
       /* Depth: lineas del block-a primero, pausa larga incomoda, despues
          block-b. La pausa es deliberada: el publico AEP necesita sentir
@@ -2302,7 +3305,7 @@
           gsap.to(blockA, {
             yPercent: 0,
             duration: 1.1,
-            ease: 'power3.out',
+            ease: 'power4.out',
             stagger: 0.55,
             delay: 0.4,
             overwrite: 'auto',
@@ -2312,7 +3315,7 @@
           gsap.to(blockB, {
             yPercent: 0,
             duration: 1.1,
-            ease: 'power3.out',
+            ease: 'power4.out',
             stagger: 0.55,
             delay: 0.4 + blockA.length * 0.55 + 1.4,
             overwrite: 'auto',
@@ -2327,78 +3330,30 @@
        lleva delay 0.8s + duration 1.6s para coincidir con la llegada del
        blob (que viaja 2.2s total). Asi el texto se 'descubre' a medida
        que el blob llega, no aparece antes. */
+    /* Nodos FIJOS por CLASE (la opacity y el color los maneja el CSS, con
+       transiciones limpias): .lit enciende glow + texto crema; .dimmed lo
+       atenua (acumulativo); sin clases = oculto (vuelve a 0). Nada viaja. */
     function activateArchetype(el) {
-      gsap.killTweensOf(el);
-      /* El archetype no se ve hasta que el blob este casi llegando.
-         Blob viaja 2.2s con sine.inOut. Delay 1.5s + duration 0.8s
-         hace que el archetype empiece a aparecer cuando el blob ya
-         esta cubriendo su zona y termine a los 2.3s con el blob
-         asentado. El blob lo descubre, no aparece antes. */
-      gsap.timeline({ overwrite: 'auto' })
-        .to(el, { opacity: 1.0, duration: 0.8, delay: 1.5, ease: 'sine.out' })
-        .to(el, { opacity: 0.92, duration: 2.4, ease: 'sine.inOut', repeat: -1, yoyo: true });
+      el.classList.remove('dimmed');
+      el.classList.add('lit');
     }
     function dimArchetype(el) {
-      gsap.killTweensOf(el);
-      gsap.timeline({ overwrite: 'auto' })
-        .to(el, { opacity: 0.3, duration: 0.7, ease: 'power2.out' })
-        .to(el, { opacity: 0.22, duration: 3.0, ease: 'sine.inOut', repeat: -1, yoyo: true });
+      el.classList.remove('lit');
+      el.classList.add('dimmed');
     }
     function hideArchetype(el) {
-      gsap.killTweensOf(el);
-      gsap.to(el, { opacity: 0, duration: 0.5, ease: 'power2.in', overwrite: 'auto' });
+      el.classList.remove('lit', 'dimmed');
     }
     /* Mover el blob radial al centro del arquetipo activo. Anima las
        CSS variables del .constellation con GSAP. La primera vez que se
        activa un arquetipo, ademas hace fade-in del blob y del overlay
        de texto invertido. */
-    function moveBlobToArchetype(el) {
-      const constellation = el.closest('.constellation');
-      if (!constellation) return;
-      const blob = constellation.querySelector('.constellation-blob');
-      const overlay = constellation.querySelector('.archetypes-overlay');
-      const x = parseFloat(el.dataset.blobX || '50');
-      const y = parseFloat(el.dataset.blobY || '50');
-
-      /* Movimiento organico: viaja con sine.inOut (mas suave que power3),
-         y durante el viaje se DEFORMA (rx/ry y rotacion varian) para
-         simular una gota viva, no un circulo rigido. Al llegar al destino
-         recupera su forma de descanso. */
-      const tl = gsap.timeline({ overwrite: 'auto' });
-      tl.to(constellation, {
-        '--blob-x': x + '%',
-        '--blob-y': y + '%',
-        duration: 2.2,
-        ease: 'sine.inOut',
-      }, 0);
-      /* Durante el viaje: estirarlo + rotarlo ligeramente.
-         Mitad del camino: forma deformada. Final: forma de descanso. */
-      tl.to(constellation, {
-        '--blob-rx': '100vh',
-        '--blob-ry': '46vh',
-        '--blob-rot': (Math.random() > 0.5 ? 12 : -12) + 'deg',
-        duration: 1.1,
-        ease: 'sine.in',
-      }, 0);
-      tl.to(constellation, {
-        '--blob-rx': '85vh',
-        '--blob-ry': '60vh',
-        '--blob-rot': '0deg',
-        duration: 1.1,
-        ease: 'sine.out',
-      }, 1.1);
-
-      if (blob) gsap.to(blob, { opacity: 1, duration: 1.0, ease: 'power2.out', overwrite: 'auto' });
-      if (overlay) gsap.to(overlay, { opacity: 1, duration: 1.0, ease: 'power2.out', overwrite: 'auto' });
-    }
-    function hideBlobAll(slide) {
-      const constellation = slide.querySelector('.constellation');
-      if (!constellation) return;
-      const blob = constellation.querySelector('.constellation-blob');
-      const overlay = constellation.querySelector('.archetypes-overlay');
-      if (blob) gsap.to(blob, { opacity: 0, duration: 0.5, ease: 'power2.in', overwrite: 'auto' });
-      if (overlay) gsap.to(overlay, { opacity: 0, duration: 0.5, ease: 'power2.in', overwrite: 'auto' });
-    }
+    /* NODOS FIJOS: el blob movil quedo retirado. El glow por nodo (clase
+       .lit, gestionado en activate/dim/hideArchetype) reemplaza el viaje
+       del blob y la inversion de texto enmascarada. Estas funciones se
+       conservan como no-op para no romper a los llamadores existentes. */
+    function moveBlobToArchetype(el) { /* no-op: nodos fijos */ }
+    function hideBlobAll(slide) { /* no-op: nodos fijos */ }
     /* Expuestos en window para que los listeners de Reveal los usen */
     window.__activateArchetype = activateArchetype;
     window.__dimArchetype = dimArchetype;
@@ -2444,6 +3399,11 @@
         if (i >= text.length) {
           el.classList.remove('typing');
           el.__typeTimer = null;
+          /* Si la linea tiene remate (.text-snap), aparece de golpe tras una
+             micro-pausa: el tecleo carga y el remate cierra (slide 21). */
+          if (el.querySelector('.text-snap')) {
+            el.__snapTimer = setTimeout(() => el.classList.add('snapped'), 200);
+          }
           return;
         }
         const prev = i > 0 ? text[i - 1] : '';
@@ -2459,16 +3419,25 @@
         clearTimeout(el.__typeTimer);
         el.__typeTimer = null;
       }
+      if (el.__snapTimer) {
+        clearTimeout(el.__snapTimer);
+        el.__snapTimer = null;
+      }
       const target = el.querySelector('.text');
       if (target) target.textContent = '';
-      el.classList.remove('typing');
+      el.classList.remove('typing', 'snapped');
     }
     window.__typewriteLine = typewriteLine;
     window.__clearTypewriteLine = clearTypewriteLine;
 
     Reveal.on('slidechanged', (event) => {
+      /* (El dispatch de recursos vive en un listener dedicado temprano,
+         registrado tras Reveal.initialize.) */
       syncCanvases();
       syncIcosa();
+      syncIcosaConverge();
+      syncSpheres();
+      updateBrasa(event.currentSlide);
       scrambleCurrentSlide();
       animateSplitLines(event.currentSlide);
 
@@ -2488,12 +3457,13 @@
       if (!frag) return;
       const slide = frag.closest('section');
       if (!slide) return;
+      deviceFragment(slide, frag, true);
 
       /* Si el fragment lo pide, ocultar el titulo del slide para que las
          capas tengan toda la pantalla. */
       if (frag.dataset.hideTitle === 'true') {
         const head = slide.querySelector('.layers-v2-head');
-        if (head) gsap.to(head, { opacity: 0, y: -20, duration: 0.7, ease: 'power2.out' });
+        if (head) gsap.to(head, { opacity: 0, y: -20, duration: 0.7, ease: 'power4.out' });
       }
 
       const canvas = slide.querySelector('canvas[data-icosa]');
@@ -2533,7 +3503,7 @@
          sea fiable y no dependa del ticker de GSAP. */
       if (frag.dataset.icosaExit === 'true') {
         slide.querySelectorAll('.layer-label-v2').forEach(label => {
-          gsap.to(label, { opacity: 0, duration: 0.35, ease: 'power2.in', overwrite: 'auto' });
+          gsap.to(label, { opacity: 0, duration: 0.35, ease: 'expo.inOut', overwrite: 'auto' });
         });
         if (ctrl) ctrl.exit();
         /* CSS fallback: el slide section se vuelve bronce gradualmente.
@@ -2546,7 +3516,7 @@
         frag.style.opacity = '0';
         clearTimeout(window.__closingShowTimer);
         window.__closingShowTimer = setTimeout(() => {
-          gsap.to(frag, { opacity: 1, duration: 0.8, ease: 'power2.out', overwrite: 'auto' });
+          gsap.to(frag, { opacity: 1, duration: 0.8, ease: 'power4.out', overwrite: 'auto' });
         }, 900);
         return;
       }
@@ -2564,11 +3534,12 @@
       if (!frag) return;
       const slide = frag.closest('section');
       if (!slide) return;
+      deviceFragment(slide, frag, false);
 
       /* Si era el fragment que ocultaba el titulo, volver a mostrarlo. */
       if (frag.dataset.hideTitle === 'true') {
         const head = slide.querySelector('.layers-v2-head');
-        if (head) gsap.to(head, { opacity: 1, y: 0, duration: 0.7, ease: 'power2.out' });
+        if (head) gsap.to(head, { opacity: 1, y: 0, duration: 0.7, ease: 'power4.out' });
       }
 
       /* Typewriter (slide 10): al retroceder, limpiar el texto de la
@@ -2602,14 +3573,14 @@
       if (frag.dataset.icosaExit === 'true') {
         clearTimeout(window.__closingShowTimer);
         slide.classList.remove('icosa-fill');
-        gsap.to(frag, { opacity: 0, duration: 0.4, ease: 'power2.in', overwrite: 'auto' });
+        gsap.to(frag, { opacity: 0, duration: 0.4, ease: 'expo.inOut', overwrite: 'auto' });
         const canvas = slide.querySelector('canvas[data-icosa]');
         if (canvas) {
           const ctrl = icosaCtrls.get(canvas);
           if (ctrl) ctrl.enter();
         }
         slide.querySelectorAll('.layer-label-v2').forEach(label => {
-          gsap.to(label, { opacity: 1, duration: 0.8, delay: 0.5, ease: 'power2.out' });
+          gsap.to(label, { opacity: 1, duration: 0.8, delay: 0.5, ease: 'power4.out' });
         });
       }
     });
