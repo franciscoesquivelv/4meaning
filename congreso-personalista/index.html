@@ -1544,6 +1544,47 @@
     [data-device="s25"] .s25-bodywrap { overflow: hidden; height: 0; }
     [data-device="s25"] .s25-body { font-size: 1.7rem; font-weight: 300; line-height: 1.45; color: var(--dark); opacity: 0.82; max-width: 60ch; margin: 0.8rem 0 0; }
   </style>
+  <link rel="stylesheet" href="fuentes/fuentes.css">
+  <style>
+    /* ═══════════ SISTEMA v2 · paleta de la agencia (port a reveal.js) ═══════════ */
+    :root{
+      --teal:#0F2832; --maroon:#4A1C2A; --paper:#FDFBF7; --cream:#F5F0E8;
+      --sand:#D5C4A8; --terra:#B5705A; --ink:#1A1A1A; --taupe:#8A8275;
+      --serif:'Cormorant Garamond', Georgia, serif;
+      --sans:'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    .v2-grain{ position:absolute; inset:0; pointer-events:none; opacity:0.07; mix-blend-mode:overlay;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); background-size:140px 140px; }
+    .logo-pill{ position:absolute; right:3rem; bottom:2.6rem; font-family:var(--sans); font-weight:600;
+      font-size:0.8rem; letter-spacing:0.2em; padding:0.55rem 1.1rem; border-radius:2rem; z-index:4; }
+    .logo-pill.on-light{ color:var(--cream); background:rgba(15,40,50,0.92); }
+    .logo-pill.on-dark{ color:var(--sand); border:1px solid rgba(213,196,168,0.35); }
+    /* --- Portada --- */
+    .v2-cover{ position:absolute; inset:0; background:var(--paper); display:flex; align-items:center; overflow:hidden; }
+    .v2-cover .inner{ position:relative; z-index:2; padding:0 8rem; }
+    .v2-cover .eb{ font-family:var(--sans); font-weight:500; font-size:1.05rem; letter-spacing:0.22em; text-transform:uppercase; color:var(--taupe); margin:0 0 2.6rem; }
+    .v2-cover .t{ font-family:var(--serif); font-weight:300; font-size:8rem; line-height:1.0; letter-spacing:-0.02em; color:var(--ink); margin:0; text-transform:none; }
+    .v2-cover .s{ font-family:var(--serif); font-style:italic; font-weight:400; font-size:2.2rem; line-height:1.3; color:var(--terra); margin:2.8rem 0 0; }
+    .v2-cover .a{ font-family:var(--sans); font-weight:400; font-size:1.05rem; letter-spacing:0.06em; color:#6f665a; margin:2.6rem 0 0; }
+    /* --- Stage genérico (statement / pregunta) sobre teal --- */
+    .v2-stage{ position:absolute; inset:0; display:flex; flex-direction:column; justify-content:flex-end; padding:0 8rem 11rem; overflow:hidden; }
+    .v2-stage.center{ justify-content:center; padding-bottom:0; }
+    .v2-eb{ font-family:var(--sans); font-weight:500; font-size:1.05rem; letter-spacing:0.24em; text-transform:uppercase; color:var(--terra); margin:0 0 2rem; position:relative; z-index:2; }
+    .v2-title{ font-family:var(--serif); font-weight:300; text-transform:none; letter-spacing:-0.02em; line-height:1.03; color:var(--cream); margin:0; position:relative; z-index:2; }
+    .v2-title.lg{ font-size:5.4rem; }
+    .v2-title.xl{ font-size:8rem; }
+    .v2-accent{ color:var(--terra); }
+    .v2-num{ position:absolute; top:5rem; right:8rem; font-family:var(--serif); font-weight:300; font-size:15rem; line-height:0.8; color:var(--sand); opacity:0.85; z-index:1; }
+    /* Overrides de especificidad (las reglas viejas de h1/h2 son fuertes) */
+    .v2-title{ font-family:var(--serif) !important; font-weight:300 !important; text-transform:none !important; letter-spacing:-0.02em !important; color:var(--cream) !important; text-shadow:none !important; }
+    .v2-cover .t{ font-family:var(--serif) !important; font-weight:300 !important; text-transform:none !important; color:var(--ink) !important; text-shadow:none !important; }
+    .v2-cover .eb{ font-family:var(--sans) !important; color:var(--taupe) !important; }
+    .v2-cover .s{ font-family:var(--serif) !important; font-style:italic !important; color:var(--terra) !important; }
+    .v2-cover .a{ font-family:var(--sans) !important; color:#6f665a !important; }
+    .v2-eb{ font-family:var(--sans) !important; text-transform:uppercase !important; color:var(--terra) !important; }
+    .v2-num{ font-family:var(--serif) !important; font-weight:300 !important; color:var(--sand) !important; }
+    .v2-accent{ color:var(--terra) !important; }
+  </style>
 </head>
 <body>
 
@@ -1573,53 +1614,51 @@
     ════════════════════════════════════════════════════ -->
 
     <!-- 01. PORTADA -->
-    <section data-background-color="#1a0e0e" data-transition="fade">
-      <div class="cover">
-        <div class="cover-left">
-          <canvas class="cover-canvas" data-particles></canvas>
-          <div class="grain"></div>
+    <section data-background-color="#FDFBF7" data-transition="fade">
+      <div class="v2-cover">
+        <div class="v2-grain" aria-hidden="true"></div>
+        <div class="inner">
+          <p class="eb stagger d1">II Congreso Mundial de Personalismo &nbsp;&middot;&nbsp; Madrid 2026</p>
+          <h1 class="t stagger d2">Trascendencia,<br>esencia y legado.</h1>
+          <p class="s stagger d3">Una aplicación pedagógica del personalismo ontológico moderno.</p>
+          <p class="a stagger d4">Francisco Esquivel &nbsp;&middot;&nbsp; 4Meaning</p>
         </div>
-        <div class="cover-right">
-          <span class="eyebrow stagger d1">II Congreso Mundial de Personalismo &nbsp;&middot;&nbsp; Madrid 2026</span>
-          <h1 class="cover-h1 stagger d2" style="margin-top:2.4rem;">Trascendencia,<br>esencia<br>y legado.</h1>
-          <span class="cover-rule stagger d3"></span>
-          <div class="cover-sub stagger d3">Una aplicación pedagógica del personalismo ontológico moderno.</div>
-          <div class="cover-author stagger d4">Francisco Esquivel &nbsp;&middot;&nbsp; 4Meaning</div>
-        </div>
+        <div class="logo-pill on-light" aria-hidden="true">&#8734; &middot; 4MEANING</div>
       </div>
     </section>
 
-    <!-- 02. SILENCIO INICIAL · recurso: RELOJ DE ARENA casi detenido (s02) -->
-    <section data-background-color="#1a0e0e" class="bg-black" data-transition="fade" data-device="s02">
-      <div class="silencio">
-        <div class="word">Antes de empezar</div>
+    <!-- 02. SILENCIO INICIAL -->
+    <section data-background-color="#0F2832" data-transition="fade">
+      <div class="v2-stage center">
+        <div class="v2-grain" aria-hidden="true"></div>
+        <h2 class="v2-title lg stagger d2" style="text-align:center;">Antes de empezar.</h2>
       </div>
     </section>
 
     <!-- 03. PREGUNTA UNO -->
-    <section data-background-color="#1a0e0e" class="bg-black" data-transition="fade">
-      <div class="q-aper">
-        <div class="grain"></div>
-        <div class="q-aper-monument">01</div>
-        <h2 class="q-aper-text stagger d2 glow-soft">¿Cuáles son los nombres<br>de sus <span class="soft">ocho</span><br>bisabuelos?</h2>
+    <section data-background-color="#0F2832" data-transition="fade">
+      <div class="v2-stage">
+        <div class="v2-grain" aria-hidden="true"></div>
+        <div class="v2-num stagger d1">01</div>
+        <h2 class="v2-title lg stagger d2">¿Cuáles son los nombres<br>de sus <span class="v2-accent">ocho</span><br>bisabuelos?</h2>
       </div>
     </section>
 
     <!-- 04. PREGUNTA DOS -->
-    <section data-background-color="#1a0e0e" class="bg-black" data-transition="fade">
-      <div class="q-aper">
-        <div class="grain"></div>
-        <div class="q-aper-monument">02</div>
-        <h2 class="q-aper-text stagger d2 glow-soft">¿Cómo le pidió<br>su <span class="soft">padre</span><br>la mano<br>a su <span class="soft">madre</span>?</h2>
+    <section data-background-color="#0F2832" data-transition="fade">
+      <div class="v2-stage">
+        <div class="v2-grain" aria-hidden="true"></div>
+        <div class="v2-num stagger d1">02</div>
+        <h2 class="v2-title lg stagger d2">¿Cómo le pidió su <span class="v2-accent">padre</span><br>la mano a su <span class="v2-accent">madre</span>?</h2>
       </div>
     </section>
 
     <!-- 05. PREGUNTA TRES -->
-    <section data-background-color="#1a0e0e" class="bg-black" data-transition="fade">
-      <div class="q-aper">
-        <div class="grain"></div>
-        <div class="q-aper-monument">03</div>
-        <h2 class="q-aper-text stagger d2 glow-soft">Si pudieran grabar<br>dos minutos<br>para sus hijos,<br>antes de morir,<br><span class="soft">¿qué dirían?</span></h2>
+    <section data-background-color="#0F2832" data-transition="fade">
+      <div class="v2-stage">
+        <div class="v2-grain" aria-hidden="true"></div>
+        <div class="v2-num stagger d1">03</div>
+        <h2 class="v2-title lg stagger d2">Si pudieran grabar dos minutos<br>para sus hijos, antes de morir,<br><span class="v2-accent">¿qué les dirían?</span></h2>
       </div>
     </section>
 
