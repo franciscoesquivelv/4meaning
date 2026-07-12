@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Caso Paulina · El arte que restituye a la persona</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.css">
+  <style>
+    :root{
+      --teal:#0F2832; --cream:#F5F0E8; --paper:#FDFBF7; --maroon:#4A1C2A;
+      --sand:#D5C4A8; --terra:#B5705A; --ink:#1A1A1A; --taupe:#8A8275;
+    }
+    html,body{ background:#0F2832; }
+    .reveal{ font-family:'Montserrat',sans-serif; font-weight:300; }
+    .reveal .slides{ text-align:left; height:1080px; }
+    .reveal .slides > section{ height:1080px !important; top:0 !important; overflow:hidden; }
+    .reveal h1,.reveal h2{ font-family:'Montserrat',sans-serif; font-weight:800; text-transform:uppercase; letter-spacing:-0.03em; line-height:0.96; margin:0; }
+
+    .grain{ position:absolute; inset:0; pointer-events:none; opacity:0.06; mix-blend-mode:overlay; z-index:1;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); background-size:140px 140px; }
+    .pill{ position:absolute; right:3rem; bottom:2.4rem; font-weight:600; font-size:0.78rem;
+      letter-spacing:0.2em; padding:0.5rem 1.05rem; border-radius:2rem; z-index:5; }
+    .pill.on-dark{ color:var(--sand); border:1px solid rgba(213,196,168,0.35); }
+    .pill.on-light{ color:var(--cream); background:rgba(15,40,50,0.9); }
+
+    /* Stage (statement) */
+    .stage{ position:absolute; inset:0; display:flex; flex-direction:column; justify-content:flex-end; padding:0 8rem 9rem; z-index:2; }
+    .stage.center{ justify-content:center; }
+    .eyebrow{ font-weight:600; text-transform:uppercase; letter-spacing:0.24em; font-size:1rem; color:var(--terra); margin:0 0 1.9rem; }
+    .title{ font-size:5rem; }
+    .title.xl{ font-size:6.6rem; }
+    .title.sm{ font-size:3.5rem; }
+    .body{ font-weight:300; font-size:1.85rem; line-height:1.5; max-width:30ch; margin:2.2rem 0 0; }
+    .accent{ color:var(--terra); }
+    .anchor{ font-weight:300; font-size:1.55rem; line-height:1.55; color:var(--terra); max-width:36ch;
+      margin:2.2rem 0 0; border-left:2px solid var(--terra); padding-left:1.4rem; }
+    .src{ display:block; font-size:1.05rem; color:var(--taupe); margin-top:0.6rem; letter-spacing:0.02em; }
+    .dark .title{ color:var(--cream); } .dark .body{ color:var(--sand); }
+    .light .title{ color:var(--ink); } .light .body{ color:#514a40; }
+    .maroon-txt .title{ color:var(--cream); } .maroon-txt .body{ color:var(--sand); }
+
+    /* Split (imagen + texto), imagen completa sin recortar */
+    .split{ position:absolute; inset:0; display:flex; z-index:2; }
+    .split .txt{ flex:0 0 45%; display:flex; flex-direction:column; justify-content:center; padding:0 4rem 0 8rem; }
+    .split .pic{ flex:1; position:relative; display:flex; align-items:center; justify-content:center; padding:6rem 7rem 6rem 2rem; }
+    .split .pic img{ max-width:100%; max-height:100%; object-fit:contain;
+      box-shadow:0 28px 80px rgba(0,0,0,0.45); border-radius:2px; }
+    .light .split .pic img{ box-shadow:0 24px 70px rgba(74,28,42,0.20); }
+    .split .eyebrow{ margin-bottom:1.6rem; }
+
+    /* Portada / cierre */
+    .cover{ position:absolute; inset:0; background:var(--paper); display:flex; align-items:center; padding:0 8rem; overflow:hidden; }
+    .cover .eb{ font-weight:600; text-transform:uppercase; letter-spacing:0.22em; font-size:1rem; color:var(--taupe); margin:0 0 2.4rem; }
+    .cover .h{ font-family:'Montserrat',sans-serif; font-weight:800; text-transform:uppercase; letter-spacing:-0.035em; line-height:0.95; font-size:6rem; color:var(--ink); margin:0; }
+    .cover .sub{ font-weight:500; font-size:1.7rem; letter-spacing:0.02em; color:var(--terra); margin:2.4rem 0 0; }
+    .cover .au{ font-weight:600; text-transform:uppercase; letter-spacing:0.18em; font-size:0.95rem; color:var(--taupe); margin:3rem 0 0; }
+  </style>
+</head>
+<body>
+<div class="reveal">
+  <div class="slides">
+
+    <!-- 00 · PORTADA -->
+    <section data-background-color="#FDFBF7">
+      <div class="cover">
+        <div class="grain"></div>
+        <div style="position:relative;z-index:2;">
+          <p class="eb">II Congreso Mundial de Personalismo &nbsp;&middot;&nbsp; Madrid 2026</p>
+          <h1 class="h">Cuando la palabra<br>no alcanza.</h1>
+          <p class="sub">El arte que restituye a la persona. Un caso.</p>
+          <p class="au">Carolina Heinemann &nbsp;&middot;&nbsp; 4Meaning</p>
+        </div>
+        <div class="pill on-light">&#8734; &middot; 4MEANING</div>
+      </div>
+    </section>
+
+    <!-- 01 · PAULINA (foto · qué -> quién) -->
+    <section data-background-color="#4A1C2A" class="maroon-txt">
+      <div class="grain"></div>
+      <div class="split">
+        <div class="txt">
+          <p class="eyebrow">El encuentro</p>
+          <h2 class="title">Paulina.</h2>
+          <p class="body">19 años. Embarazada, sola, sin recursos. Para el sistema, un caso más.</p>
+        </div>
+        <div class="pic"><img src="imagenes/img1.jpg" alt="Paulina"></div>
+      </div>
+      <div class="pill on-dark">&#8734; &middot; 4MEANING</div>
+    </section>
+
+    <!-- 02 · LA MIRADA (qué -> quién) -->
+    <section data-background-color="#0F2832" class="dark">
+      <div class="grain"></div>
+      <div class="stage">
+        <p class="eyebrow">La mirada</p>
+        <h2 class="title">Un <span class="accent">&laquo;qué&raquo;</span>.<br>O un <span class="accent">&laquo;quién&raquo;</span>.</h2>
+        <p class="body">La miro por lo que es: una persona única, más que sus síntomas. La acompaño sin presionar, a su ritmo.</p>
+      </div>
+      <div class="pill on-dark">&#8734; &middot; 4MEANING</div>
+    </section>
+
+    <!-- 03 · EL PRIMER TRAZO (garabatos) -->
+    <section data-background-color="#0F2832" class="dark">
+      <div class="grain"></div>
+      <div class="split">
+        <div class="txt">
+          <p class="eyebrow">El puente</p>
+          <h2 class="title sm">El primer trazo.</h2>
+          <p class="body">Sigo su trazo. Ella sigue el mío. Los crayones bailan juntos. Reímos.</p>
+        </div>
+        <div class="pic"><img src="imagenes/img2.jpg" alt="Garabatos"></div>
+      </div>
+    </section>
+
+    <!-- 04 · EL ACTO (anclaje Burgos / Wojtyła) -->
+    <section data-background-color="#F5F0E8" class="light">
+      <div class="grain"></div>
+      <div class="stage">
+        <p class="eyebrow">El acto</p>
+        <h2 class="title sm">Importa el proceso,<br>no el resultado.</h2>
+        <p class="anchor">El cuerpo que dibuja es &laquo;materia espiritualizada&raquo;. Al crear, Paulina no solo hace un dibujo: se hace a sí misma.
+          <span class="src">Burgos &middot; Wojtyła (efecto intransitivo del acto)</span></p>
+      </div>
+    </section>
+
+    <!-- 05 · EL MÉTODO (la sensación sentida) -->
+    <section data-background-color="#0F2832" class="dark">
+      <div class="grain"></div>
+      <div class="stage">
+        <p class="eyebrow">El método</p>
+        <h2 class="title">La sensación<br>sentida.</h2>
+        <p class="body">Mente, cuerpo y espíritu. Lo que se siente al escuchar lo que el cuerpo revela.</p>
+      </div>
+      <div class="pill on-dark">&#8734; &middot; 4MEANING</div>
+    </section>
+
+    <!-- 06 · EL NUDO (nudo con lágrimas rojas) -->
+    <section data-background-color="#4A1C2A" class="maroon-txt">
+      <div class="grain"></div>
+      <div class="split">
+        <div class="txt">
+          <p class="eyebrow">La sensación sentida</p>
+          <h2 class="title sm">&laquo;Un nudo en<br>la garganta.&raquo;</h2>
+          <p class="body">No nace de la mente, sino del diálogo entre lo que siente el cuerpo y el arte.</p>
+        </div>
+        <div class="pic"><img src="imagenes/img3.jpg" alt="Nudo con lágrimas"></div>
+      </div>
+    </section>
+
+    <!-- 07 · ¿CÓMO ME SIENTO HOY? (corazón apretado) -->
+    <section data-background-color="#0F2832" class="dark">
+      <div class="grain"></div>
+      <div class="split">
+        <div class="txt">
+          <p class="eyebrow">El cambio de sentido</p>
+          <h2 class="title sm">&laquo;¿Cómo me<br>siento hoy?&raquo;</h2>
+          <p class="body">La invito a encontrar una imagen que lo represente. Corazón apretado y adolorido.</p>
+        </div>
+        <div class="pic"><img src="imagenes/img4.jpg" alt="Corazón apretado"></div>
+      </div>
+    </section>
+
+    <!-- 08 · EL CAMBIO (corazón lágrimas contenidas · Guardini) -->
+    <section data-background-color="#0F2832" class="dark">
+      <div class="grain"></div>
+      <div class="split">
+        <div class="txt">
+          <h2 class="title sm">Vemos la<br>misma imagen.</h2>
+          <p class="anchor">&laquo;La obra de arte es un lugar de encuentro entre dos personas.&raquo; El sentido no se inventa: se descubre.
+            <span class="src">Guardini</span></p>
+        </div>
+        <div class="pic"><img src="imagenes/img5.jpg" alt="Corazón con lágrimas contenidas"></div>
+      </div>
+    </section>
+
+    <!-- 09 · LA PERSONA RESTAURADA (dignidad) -->
+    <section data-background-color="#F5F0E8" class="light">
+      <div class="grain"></div>
+      <div class="stage">
+        <p class="eyebrow">La persona restaurada</p>
+        <h2 class="title">Digna, libre<br>y responsable.</h2>
+        <p class="body">Se reconoce sin victimismo, dueña de su vida. La dignidad no depende de la miseria: es suya, la trae puesta.</p>
+      </div>
+    </section>
+
+    <!-- 10 · EL NACIMIENTO (bebé) -->
+    <section data-background-color="#F5F0E8" class="light">
+      <div class="grain"></div>
+      <div class="split">
+        <div class="txt">
+          <p class="eyebrow">El desenlace</p>
+          <h2 class="title sm">Nace su hija.</h2>
+          <p class="body">Su principal motivación para salir adelante.</p>
+        </div>
+        <div class="pic"><img src="imagenes/img6.jpg" alt="La bebé"></div>
+      </div>
+    </section>
+
+    <!-- 11 · HOY (Paulina y su hija) -->
+    <section data-background-color="#F5F0E8" class="light">
+      <div class="grain"></div>
+      <div class="split">
+        <div class="txt">
+          <h2 class="title sm">Hoy.</h2>
+          <p class="body">Su hija tiene dos años. Es feliz. Las dos están bien.</p>
+        </div>
+        <div class="pic"><img src="imagenes/img7.jpg" alt="Paulina y su hija hoy"></div>
+      </div>
+    </section>
+
+    <!-- 12 · LA TESIS -->
+    <section data-background-color="#0F2832" class="dark">
+      <div class="grain"></div>
+      <div class="stage">
+        <p class="eyebrow">La tesis</p>
+        <h2 class="title xl">El arte llega donde<br>la <span class="accent">palabra</span> no llega.</h2>
+        <p class="body" style="max-width:42ch;">Y le devuelve a la persona su unicidad, su dignidad y su sentido.</p>
+      </div>
+      <div class="pill on-dark">&#8734; &middot; 4MEANING</div>
+    </section>
+
+    <!-- 13 · CIERRE -->
+    <section data-background-color="#FDFBF7">
+      <div class="cover">
+        <div class="grain"></div>
+        <div style="position:relative;z-index:2;">
+          <h1 class="h" style="font-size:4rem;">Gracias.</h1>
+          <p class="au" style="margin-top:2.2rem;">Carolina Heinemann &nbsp;&middot;&nbsp; 4Meaning</p>
+          <p class="au" style="color:var(--terra);margin-top:0.6rem;">II Congreso Mundial de Personalismo &middot; Madrid 2026</p>
+        </div>
+        <div class="pill on-light">&#8734; &middot; 4MEANING</div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.js"></script>
+<script>
+  Reveal.initialize({
+    hash: true, controls: false, progress: false,
+    transition: 'fade', transitionSpeed: 'slow',
+    width: 1920, height: 1080, margin: 0, minScale: 0.2, maxScale: 2.5
+  });
+</script>
+</body>
+</html>
