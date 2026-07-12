@@ -71,6 +71,11 @@
     .bg-white { background: var(--white); color: var(--black); }
     .bg-black { background: var(--black); color: var(--white); }
     .bg-maroon { background: #4A1C2A !important; }  /* granate · bloque de ruido/mercado (texto claro vía bg-black) */
+    /* Logo global 4Meaning (esquina; cambia de variante según el fondo) */
+    #deck-logo{ position:fixed; right:2.6vh; bottom:2.6vh; z-index:60; height:2.5vh; pointer-events:none; }
+    #deck-logo img{ height:100%; width:auto; display:none; opacity:0.82; }
+    #deck-logo.on-light .lg-dark{ display:block; }
+    #deck-logo.on-dark .lg-sand{ display:block; }
 
     /* Chrome de presentación oculto */
     .reveal .progress, .reveal .slide-number { display: none !important; }
@@ -2062,6 +2067,7 @@
     </section>
 
   </div>
+  <div id="deck-logo" aria-hidden="true"><img class="lg-dark" src="logos/4meaning-dark.png" alt=""><img class="lg-sand" src="logos/4meaning-sand.png" alt=""></div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
@@ -2134,6 +2140,10 @@
      'ready'): evita la carrera de timing por la que el recurso a veces no
      se disparaba al cambiar de slide. Idempotente y aislado. */
   Reveal.on('slidechanged', (e) => { deviceLeave(e.previousSlide); deviceEnter(e.currentSlide); matchLetterbox(e.currentSlide); });
+  /* Logo global: variante oscura sobre fondos claros, arena sobre oscuros */
+  function __updDeckLogo(){ var s=Reveal.getCurrentSlide(), el=document.getElementById('deck-logo'); if(!s||!el)return; var light=s.classList.contains('bg-white')||s.classList.contains('has-light-background'); el.classList.toggle('on-light',light); el.classList.toggle('on-dark',!light); }
+  Reveal.on('ready', __updDeckLogo);
+  Reveal.on('slidechanged', __updDeckLogo);
 
   /* Barras de letterbox al COLOR de la slide: en cualquier pantalla que no sea
      16:9 (mas alargada, 4:3, ultrawide) reveal centra el lienzo y deja barras.
