@@ -24,25 +24,25 @@
       /* Paleta cuero y madera con toques monasticos (Francisco, 12/06).
          Sustituye la base brutalist B/N por una identidad calida tipo
          biblioteca privada de noche con lampara amarilla. */
-      --black:    #1a0e0e;   /* borgoña noche · fondo oscuro */
-      --black-2:  #100808;   /* mas profundo para canvas */
-      --white:    #f0e6d2;   /* crema-oliva monastico · fondo claro */
-      --pure:     #fbe9c4;   /* crema calido · texto principal sobre oscuro */
-      --border:   #c4a679;   /* ambar suave · bordes hairline */
-      --border-d: rgba(232,197,144,0.15);
-      --muted:    #a8855a;   /* oro tierra · texto secundario */
-      --muted-d:  rgba(232,197,144,0.68);
-      --hint-d:   rgba(232,197,144,0.18);
-      --dark:     #3a2520;   /* marron cuero · texto sobre claro */
+      --black:    #0F2832;   /* teal noche · fondo oscuro */
+      --black-2:  #0A1C24;   /* teal profundo · canvas */
+      --white:    #F5F0E8;   /* crema · fondo claro */
+      --pure:     #F5F0E8;   /* crema · texto principal sobre oscuro */
+      --border:   #B5705A;   /* terracota · bordes / acento */
+      --border-d: rgba(213,196,168,0.15);
+      --muted:    #B5705A;   /* terracota · texto secundario / eyebrow */
+      --muted-d:  rgba(213,196,168,0.68);
+      --hint-d:   rgba(213,196,168,0.18);
+      --dark:     #1A1A1A;   /* tinta · texto sobre claro */
       --ease:     cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     *, *::before, *::after { box-sizing: border-box; }
-    html, body { background: #0a0603; overflow: hidden; }  /* base profunda (Candil PASO 0); los slides mantienen su #1a0e0e */
+    html, body { background: #0F2832; overflow: hidden; }  /* base profunda teal */
     /* Reveal pone .reveal-viewport en el body y lo fuerza a blanco; lo
        sobrescribimos para que la base y las barras de letterbox sean el
        cuero profundo, nunca blanco. */
-    .reveal-viewport { background: #0a0603; }
+    .reveal-viewport { background: #0F2832; }
 
     .reveal {
       font-family: 'Montserrat', sans-serif;
@@ -70,6 +70,7 @@
 
     .bg-white { background: var(--white); color: var(--black); }
     .bg-black { background: var(--black); color: var(--white); }
+    .bg-maroon { background: #4A1C2A !important; }  /* granate · bloque de ruido/mercado (texto claro vía bg-black) */
 
     /* Chrome de presentación oculto */
     .reveal .progress, .reveal .slide-number { display: none !important; }
@@ -328,7 +329,7 @@
       z-index: 3;
       padding-bottom: 4rem;
     }
-    .q-aper-text .soft { color: rgba(255,255,255,0.45); font-weight: 500; }
+    .q-aper-text .soft { color: #B5705A; font-weight: 600; }
 
     /* ═══════════════════════════════════════════════════════════════
        STATEMENT · frase central
@@ -532,7 +533,7 @@
        la frase de cierre tenga contraste contra el fondo, aun si el
        canvas WebGL falla. */
     .reveal .slides section.icosa-fill {
-      background: #a8855a !important;
+      background: #B5705A !important;
       transition: background 1.1s cubic-bezier(0.65, 0, 0.35, 1);
     }
     .reveal .slides section {
@@ -739,7 +740,7 @@
     }
     .archetypes-overlay .archetype-name,
     .archetypes-overlay .archetype-line {
-      color: #fbe9c4;
+      color: #F5F0E8;
     }
     .archetype {
       position: absolute;
@@ -807,7 +808,7 @@
     /* halo oscuro: garantiza legibilidad del texto crema aunque caiga en un
        borde del pozo. Es la red de seguridad de contraste. */
     .reveal .slides section .archetype.lit .archetype-name,
-    .reveal .slides section .archetype.lit .archetype-line { color: #fbe9c4; text-shadow: 0 2px 16px rgba(14,8,4,0.95), 0 0 38px rgba(14,8,4,0.9), 0 0 74px rgba(14,8,4,0.66); }
+    .reveal .slides section .archetype.lit .archetype-line { color: #F5F0E8; text-shadow: 0 2px 16px rgba(14,8,4,0.95), 0 0 38px rgba(14,8,4,0.9), 0 0 74px rgba(14,8,4,0.66); }
     .reveal .slides section .archetype.lit .archetype-num { color: rgba(251, 233, 196, 0.13); }
 
     /* Campo ORDENADO y CALIDO de 24/25 (vector invertido respecto a 09):
@@ -876,7 +877,7 @@
     /* Variantes de color: oscuro para slides borgoña, claro calido
        para slides crema. */
     .atmos-bg.dark .orb { background: #000; opacity: 0.62; }
-    .atmos-bg.light .orb { background: #c4a679; opacity: 0.42; }
+    .atmos-bg.light .orb { background: #D5C4A8; opacity: 0.42; }
 
     /* Posiciones por esquina. El origen geometrico del orb cae siempre
        parcialmente fuera del viewport para no insinuar circunferencia. */
@@ -968,9 +969,9 @@
     /* qué/quién diferenciados como CONCEPTOS (no relativos): qué catalogado
        (mas frio dentro del cuero), quién reconocido (mas calido, con peso). */
     .author-claim .c-que { color: #6f5a4a; font-weight: 500; }
-    .author-claim .c-quien { color: #a8855a; font-weight: 700; }
+    .author-claim .c-quien { color: #B5705A; font-weight: 700; }
     /* Resaltado calido para 'biografía en acto' (sintesis 4Meaning). */
-    .author-body .hl-warm { color: #a8855a; font-weight: 600; }
+    .author-body .hl-warm { color: #B5705A; font-weight: 600; }
     /* Subtitulo de magazine: la tesis desnuda, un punto mas presente. */
     .magazine-sub { font-size: 1.7rem; }
 
@@ -1034,13 +1035,13 @@
     }
     /* Overlay base de token: oscurece desde abajo para asentar la cita en el cuero.
        La cita esta centrada, asi que se refuerza con un velo central tenue dentro
-       del mismo color de token (#0a0603), sin tocar el brightness de la imagen. */
+       del mismo color de token (#0F2832), sin tocar el brightness de la imagen. */
     .quote-bleed-overlay {
       position: absolute;
       inset: 0;
       background:
         radial-gradient(ellipse 90% 70% at 50% 50%, rgba(10,6,3,0.55) 0%, rgba(10,6,3,0.72) 55%, rgba(10,6,3,0.85) 100%),
-        linear-gradient(to top, #0a0603 0%, transparent 60%);
+        linear-gradient(to top, #0F2832 0%, transparent 60%);
       z-index: 1;
     }
     /* Eco del arco maestro 05↔26: numeral '03' fantasma (mismo peso 200 que
@@ -1115,7 +1116,7 @@
       inset: 0;
       z-index: 1;
     }
-    .image-bleed-overlay.dark { background: linear-gradient(to top, #0a0603 0%, transparent 60%); }
+    .image-bleed-overlay.dark { background: linear-gradient(to top, #0F2832 0%, transparent 60%); }
     .image-bleed-overlay.light { background: linear-gradient(180deg, rgba(240,230,210,0.0) 0%, rgba(240,230,210,0.55) 100%); }
     .image-bleed-caption {
       position: absolute;
@@ -1509,20 +1510,20 @@
     [data-device="s15"] .s15-body { font-size: 1.7rem; font-weight: 300; line-height: 1.5; color: var(--dark); max-width: 40ch; margin: 0; }
     [data-device="s15"] .s15-seal-stage { position: absolute; right: 15vw; top: 50%; transform: translateY(-50%); width: 300px; height: 300px; z-index: 2; }
     [data-device="s15"] .s15-wax { position: absolute; left: 50%; top: 52%; width: 200px; height: 200px; margin: -100px 0 0 -100px; border-radius: 46% 54% 52% 48% / 50% 48% 52% 50%; background: radial-gradient(circle at 40% 35%, #8a3a2a, #5c1a1a 70%, #3a1010); box-shadow: 0 12px 44px rgba(92,26,26,0.4); }
-    [data-device="s15"] .s15-name { position: absolute; left: 50%; top: 52%; font-family: 'Montserrat', sans-serif; font-size: 2.3rem; font-weight: 600; color: #e8c98a; letter-spacing: 0.02em; text-shadow: 0 1px 0 rgba(0,0,0,0.45), 0 -1px 0 rgba(255,220,160,0.32); z-index: 2; white-space: nowrap; }
-    [data-device="s15"] .s15-die { position: absolute; left: 50%; top: 52%; width: 150px; height: 150px; margin: -75px 0 0 -75px; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #c4a679, #8a6a3a 72%, #5a4528); box-shadow: 0 22px 54px rgba(0,0,0,0.38); }
+    [data-device="s15"] .s15-name { position: absolute; left: 50%; top: 52%; font-family: 'Montserrat', sans-serif; font-size: 2.3rem; font-weight: 600; color: #B5705A; letter-spacing: 0.02em; text-shadow: 0 1px 0 rgba(0,0,0,0.45), 0 -1px 0 rgba(181,112,90,0.35); z-index: 2; white-space: nowrap; }
+    [data-device="s15"] .s15-die { position: absolute; left: 50%; top: 52%; width: 150px; height: 150px; margin: -75px 0 0 -75px; border-radius: 50%; background: radial-gradient(circle at 40% 35%, #B5705A, #8a6a3a 72%, #5a4528); box-shadow: 0 22px 54px rgba(0,0,0,0.38); }
 
     /* s24 · Cinco planos: columna con veta de luz que se llena plano a plano */
     [data-device="s24"] .s24-stage { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
     [data-device="s24"] .s24-col { position: relative; padding-left: 3.4vw; }
     [data-device="s24"] .s24-spine { position: absolute; left: 0; top: 0.4em; bottom: 0.4em; width: 3px; background: rgba(168,133,90,0.16); border-radius: 2px; overflow: hidden; }
-    [data-device="s24"] .s24-vein { position: absolute; left: 0; top: 0; width: 100%; height: 100%; transform: scaleY(0); transform-origin: top center; background: linear-gradient(#e8c98a, #c4a679 50%, #a8855a); box-shadow: 0 0 14px rgba(196,166,121,0.55); }
+    [data-device="s24"] .s24-vein { position: absolute; left: 0; top: 0; width: 100%; height: 100%; transform: scaleY(0); transform-origin: top center; background: linear-gradient(#B5705A, #B5705A 50%, #B5705A); box-shadow: 0 0 14px rgba(196,166,121,0.55); }
     [data-device="s24"] .s24-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2.3vh; }
     [data-device="s24"] .s24-plano { display: flex; align-items: baseline; gap: 1.8rem; transition: opacity 0.7s cubic-bezier(.4, 0, .2, 1); }
     /* el plano que ya pasó se ATENÚA para resaltar el recién aparecido (mas
        especifico que .fragment.visible de reveal, sin tocar inline styles). */
     .reveal .slides section.present .s24-plano.fragment.visible.s24-dim { opacity: 0.32; }
-    [data-device="s24"] .s24-num { font-size: 1.9rem; font-weight: 200; color: #a8855a; min-width: 3rem; }
+    [data-device="s24"] .s24-num { font-size: 1.9rem; font-weight: 200; color: #B5705A; min-width: 3rem; }
     [data-device="s24"] .s24-name { font-size: 3.5rem; font-weight: 500; letter-spacing: -0.014em; line-height: 1.05; color: var(--dark); margin: 0 0 0.4rem; }
     [data-device="s24"] .s24-sub { font-size: 1.85rem; font-weight: 300; line-height: 1.35; color: var(--dark); opacity: 0.72; margin: 0; }
 
@@ -1530,9 +1531,9 @@
     [data-device="s25"] .s25-stage { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
     [data-device="s25"] .s25-cabinet { width: min(66vw, 1120px); display: flex; flex-direction: column; gap: 1.1vh; }
     [data-device="s25"] .s25-drawer { border-left: 3px solid rgba(168,133,90,0.22); padding: 0.8vh 0 0.8vh 2rem; }
-    [data-device="s25"] .s25-drawer.open { border-left-color: #c4a679; box-shadow: -14px 0 26px -18px rgba(196,166,121,0.7); }
+    [data-device="s25"] .s25-drawer.open { border-left-color: #B5705A; box-shadow: -14px 0 26px -18px rgba(196,166,121,0.7); }
     [data-device="s25"] .s25-head { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 1.3rem; row-gap: 0.5rem; }
-    [data-device="s25"] .s25-i { font-size: 1.5rem; font-weight: 200; color: #a8855a; min-width: 2.6rem; }
+    [data-device="s25"] .s25-i { font-size: 1.5rem; font-weight: 200; color: #B5705A; min-width: 2.6rem; }
     [data-device="s25"] .s25-name { font-size: 2.7rem; font-weight: 500; letter-spacing: -0.012em; color: var(--dark); margin: 0; white-space: nowrap; transition: font-size 0.5s cubic-bezier(.4, 0, .2, 1); }
     /* la dinámica ACTIVA mantiene el título grande hasta el siguiente click.
        font-size + nowrap, una línea (sin re-envolver = sin movimiento raro).
@@ -1540,50 +1541,9 @@
     [data-device="s25"] .s25-drawer.open .s25-name { font-size: 3.8rem; }
     /* la etiqueta del plano va como EYEBROW arriba del título (no a la derecha):
        así el título puede crecer grande sin invadirla nunca. */
-    [data-device="s25"] .s25-tag { order: -1; flex-basis: 100%; padding-left: 3.9rem; font-size: 1.1rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #a8855a; white-space: nowrap; }
+    [data-device="s25"] .s25-tag { order: -1; flex-basis: 100%; padding-left: 3.9rem; font-size: 1.1rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #B5705A; white-space: nowrap; }
     [data-device="s25"] .s25-bodywrap { overflow: hidden; height: 0; }
     [data-device="s25"] .s25-body { font-size: 1.7rem; font-weight: 300; line-height: 1.45; color: var(--dark); opacity: 0.82; max-width: 60ch; margin: 0.8rem 0 0; }
-  </style>
-  <link rel="stylesheet" href="fuentes/fuentes.css">
-  <style>
-    /* ═══════════ SISTEMA v2 · paleta de la agencia (port a reveal.js) ═══════════ */
-    :root{
-      --teal:#0F2832; --maroon:#4A1C2A; --paper:#FDFBF7; --cream:#F5F0E8;
-      --sand:#D5C4A8; --terra:#B5705A; --ink:#1A1A1A; --taupe:#8A8275;
-      --serif:'Cormorant Garamond', Georgia, serif;
-      --sans:'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    }
-    .v2-grain{ position:absolute; inset:0; pointer-events:none; opacity:0.07; mix-blend-mode:overlay;
-      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); background-size:140px 140px; }
-    .logo-pill{ position:absolute; right:3rem; bottom:2.6rem; font-family:var(--sans); font-weight:600;
-      font-size:0.8rem; letter-spacing:0.2em; padding:0.55rem 1.1rem; border-radius:2rem; z-index:4; }
-    .logo-pill.on-light{ color:var(--cream); background:rgba(15,40,50,0.92); }
-    .logo-pill.on-dark{ color:var(--sand); border:1px solid rgba(213,196,168,0.35); }
-    /* --- Portada --- */
-    .v2-cover{ position:absolute; inset:0; background:var(--paper); display:flex; align-items:center; overflow:hidden; }
-    .v2-cover .inner{ position:relative; z-index:2; padding:0 8rem; }
-    .v2-cover .eb{ font-family:var(--sans); font-weight:500; font-size:1.05rem; letter-spacing:0.22em; text-transform:uppercase; color:var(--taupe); margin:0 0 2.6rem; }
-    .v2-cover .t{ font-family:var(--serif); font-weight:300; font-size:8rem; line-height:1.0; letter-spacing:-0.02em; color:var(--ink); margin:0; text-transform:none; }
-    .v2-cover .s{ font-family:var(--serif); font-style:italic; font-weight:400; font-size:2.2rem; line-height:1.3; color:var(--terra); margin:2.8rem 0 0; }
-    .v2-cover .a{ font-family:var(--sans); font-weight:400; font-size:1.05rem; letter-spacing:0.06em; color:#6f665a; margin:2.6rem 0 0; }
-    /* --- Stage genérico (statement / pregunta) sobre teal --- */
-    .v2-stage{ position:absolute; inset:0; display:flex; flex-direction:column; justify-content:flex-end; padding:0 8rem 11rem; overflow:hidden; }
-    .v2-stage.center{ justify-content:center; padding-bottom:0; }
-    .v2-eb{ font-family:var(--sans); font-weight:500; font-size:1.05rem; letter-spacing:0.24em; text-transform:uppercase; color:var(--terra); margin:0 0 2rem; position:relative; z-index:2; }
-    .v2-title{ font-family:var(--serif); font-weight:300; text-transform:none; letter-spacing:-0.02em; line-height:1.03; color:var(--cream); margin:0; position:relative; z-index:2; }
-    .v2-title.lg{ font-size:5.4rem; }
-    .v2-title.xl{ font-size:8rem; }
-    .v2-accent{ color:var(--terra); }
-    .v2-num{ position:absolute; top:5rem; right:8rem; font-family:var(--serif); font-weight:300; font-size:15rem; line-height:0.8; color:var(--sand); opacity:0.85; z-index:1; }
-    /* Overrides de especificidad (las reglas viejas de h1/h2 son fuertes) */
-    .v2-title{ font-family:var(--serif) !important; font-weight:300 !important; text-transform:none !important; letter-spacing:-0.02em !important; color:var(--cream) !important; text-shadow:none !important; }
-    .v2-cover .t{ font-family:var(--serif) !important; font-weight:300 !important; text-transform:none !important; color:var(--ink) !important; text-shadow:none !important; }
-    .v2-cover .eb{ font-family:var(--sans) !important; color:var(--taupe) !important; }
-    .v2-cover .s{ font-family:var(--serif) !important; font-style:italic !important; color:var(--terra) !important; }
-    .v2-cover .a{ font-family:var(--sans) !important; color:#6f665a !important; }
-    .v2-eb{ font-family:var(--sans) !important; text-transform:uppercase !important; color:var(--terra) !important; }
-    .v2-num{ font-family:var(--serif) !important; font-weight:300 !important; color:var(--sand) !important; }
-    .v2-accent{ color:var(--terra) !important; }
   </style>
 </head>
 <body>
@@ -1614,51 +1574,53 @@
     ════════════════════════════════════════════════════ -->
 
     <!-- 01. PORTADA -->
-    <section data-background-color="#FDFBF7" data-transition="fade">
-      <div class="v2-cover">
-        <div class="v2-grain" aria-hidden="true"></div>
-        <div class="inner">
-          <p class="eb stagger d1">II Congreso Mundial de Personalismo &nbsp;&middot;&nbsp; Madrid 2026</p>
-          <h1 class="t stagger d2">Trascendencia,<br>esencia y legado.</h1>
-          <p class="s stagger d3">Una aplicación pedagógica del personalismo ontológico moderno.</p>
-          <p class="a stagger d4">Francisco Esquivel &nbsp;&middot;&nbsp; 4Meaning</p>
+    <section data-background-color="#0F2832" data-transition="fade">
+      <div class="cover">
+        <div class="cover-left">
+          <canvas class="cover-canvas" data-particles></canvas>
+          <div class="grain"></div>
         </div>
-        <div class="logo-pill on-light" aria-hidden="true">&#8734; &middot; 4MEANING</div>
+        <div class="cover-right">
+          <span class="eyebrow stagger d1">II Congreso Mundial de Personalismo &nbsp;&middot;&nbsp; Madrid 2026</span>
+          <h1 class="cover-h1 stagger d2" style="margin-top:2.4rem;">Trascendencia,<br>esencia<br>y legado.</h1>
+          <span class="cover-rule stagger d3"></span>
+          <div class="cover-sub stagger d3">Una aplicación pedagógica del personalismo ontológico moderno.</div>
+          <div class="cover-author stagger d4">Francisco Esquivel &nbsp;&middot;&nbsp; 4Meaning</div>
+        </div>
       </div>
     </section>
 
-    <!-- 02. SILENCIO INICIAL -->
-    <section data-background-color="#0F2832" data-transition="fade">
-      <div class="v2-stage center">
-        <div class="v2-grain" aria-hidden="true"></div>
-        <h2 class="v2-title lg stagger d2" style="text-align:center;">Antes de empezar.</h2>
+    <!-- 02. SILENCIO INICIAL · recurso: RELOJ DE ARENA casi detenido (s02) -->
+    <section data-background-color="#0F2832" class="bg-black" data-transition="fade" data-device="s02">
+      <div class="silencio">
+        <div class="word">Antes de empezar</div>
       </div>
     </section>
 
     <!-- 03. PREGUNTA UNO -->
-    <section data-background-color="#0F2832" data-transition="fade">
-      <div class="v2-stage">
-        <div class="v2-grain" aria-hidden="true"></div>
-        <div class="v2-num stagger d1">01</div>
-        <h2 class="v2-title lg stagger d2">¿Cuáles son los nombres<br>de sus <span class="v2-accent">ocho</span><br>bisabuelos?</h2>
+    <section data-background-color="#0F2832" class="bg-black" data-transition="fade">
+      <div class="q-aper">
+        <div class="grain"></div>
+        <div class="q-aper-monument">01</div>
+        <h2 class="q-aper-text stagger d2 glow-soft">¿Cuáles son los nombres<br>de sus <span class="soft">ocho</span><br>bisabuelos?</h2>
       </div>
     </section>
 
     <!-- 04. PREGUNTA DOS -->
-    <section data-background-color="#0F2832" data-transition="fade">
-      <div class="v2-stage">
-        <div class="v2-grain" aria-hidden="true"></div>
-        <div class="v2-num stagger d1">02</div>
-        <h2 class="v2-title lg stagger d2">¿Cómo le pidió su <span class="v2-accent">padre</span><br>la mano a su <span class="v2-accent">madre</span>?</h2>
+    <section data-background-color="#0F2832" class="bg-black" data-transition="fade">
+      <div class="q-aper">
+        <div class="grain"></div>
+        <div class="q-aper-monument">02</div>
+        <h2 class="q-aper-text stagger d2 glow-soft">¿Cómo le pidió<br>su <span class="soft">padre</span><br>la mano<br>a su <span class="soft">madre</span>?</h2>
       </div>
     </section>
 
     <!-- 05. PREGUNTA TRES -->
-    <section data-background-color="#0F2832" data-transition="fade">
-      <div class="v2-stage">
-        <div class="v2-grain" aria-hidden="true"></div>
-        <div class="v2-num stagger d1">03</div>
-        <h2 class="v2-title lg stagger d2">Si pudieran grabar dos minutos<br>para sus hijos, antes de morir,<br><span class="v2-accent">¿qué les dirían?</span></h2>
+    <section data-background-color="#0F2832" class="bg-black" data-transition="fade">
+      <div class="q-aper">
+        <div class="grain"></div>
+        <div class="q-aper-monument">03</div>
+        <h2 class="q-aper-text stagger d2 glow-soft">Si pudieran grabar<br>dos minutos<br>para sus hijos,<br>antes de morir,<br><span class="soft">¿qué dirían?</span></h2>
       </div>
     </section>
 
@@ -1669,7 +1631,7 @@
     <!-- 06. EL TEMA · composicion F monumental tipo cinematografico
          Solo dos palabras en pantalla. SplitText mask por lineas.
          Lo demas se dice de viva voz. -->
-    <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
+    <section data-background-color="#F5F0E8" class="bg-white" data-transition="fade">
       <div class="atmos-bg light pos-tl" aria-hidden="true">
         <div class="orb"></div>
         <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
@@ -1683,7 +1645,7 @@
     </section>
 
     <!-- 07. TRES CAPAS · composicion v2 con icosaedro central -->
-    <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
+    <section data-background-color="#F5F0E8" class="bg-white" data-transition="fade">
       <div class="layers-v2">
         <canvas class="icosa-canvas" data-icosa></canvas>
         <div class="layers-v2-head stagger d1">
@@ -1720,7 +1682,7 @@
          Palabra grande de fondo + frase principal partida en dos bloques.
          El segundo bloque indentado a la derecha genera tension visual
          entre lo que la cultura hizo y lo que la cultura impidio. -->
-    <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
+    <section data-background-color="#4A1C2A" class="bg-black bg-maroon" data-transition="fade">
       <div class="atmos-bg light pos-bl" aria-hidden="true">
         <div class="orb"></div>
         <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
@@ -1745,7 +1707,7 @@
          uno nuevo, los anteriores no desaparecen: se atenuan. Al final
          los tres en pantalla simultaneos, visualizando la saturacion.
          Cada arquetipo respira con pulso de opacidad propio (factor vivo). -->
-    <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
+    <section data-background-color="#4A1C2A" class="bg-black bg-maroon" data-transition="fade">
       <div class="constellation">
         <!-- Blob oscuro granulado, controlado por --blob-x / --blob-y -->
         <div class="constellation-blob"></div>
@@ -1793,7 +1755,7 @@
          Tres frases del ensayo se escriben una por click, como si
          las estuvieran tecleando. Las anteriores quedan visibles.
          Slide arranca vacia. -->
-    <section data-background-color="#1a0e0e" class="bg-black" data-transition="fade">
+    <section data-background-color="#0F2832" class="bg-black" data-transition="fade">
       <div class="typewriter-stage">
         <div class="atmos-bg dark pos-br" aria-hidden="true">
           <div class="orb"></div>
@@ -1806,7 +1768,7 @@
     </section>
 
     <!-- 11. VACÍO EXISTENCIAL · recurso: FOTO de soledad en la luz (s11) -->
-    <section data-background-color="#0a0603" class="bg-black" data-transition="fade" data-device="s11">
+    <section data-background-color="#0F2832" class="bg-black" data-transition="fade" data-device="s11">
       <div class="s11-photo" aria-hidden="true"><img src="imagenes/solitude-in-light-stockcake.jpg" alt=""/></div>
       <div class="s11-veil" aria-hidden="true"></div>
       <div class="s11-text">
@@ -1820,7 +1782,7 @@
     ════════════════════════════════════════════════════ -->
 
     <!-- 12. UN PROBLEMA DUAL · recurso: PLACA DE LUZ QUE SE PARTE en dos (s12) -->
-    <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade" data-device="s12">
+    <section data-background-color="#F5F0E8" class="bg-white" data-transition="fade" data-device="s12">
       <div class="atmos-bg light pos-tr" aria-hidden="true">
         <div class="orb"></div>
         <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
@@ -1832,7 +1794,7 @@
     </section>
 
     <!-- 13. LA OPORTUNIDAD PERSONALISTA · recurso: FOTO biblioteca en VENTANA (profundidad) (s13) -->
-    <section data-background-color="#0a0603" class="bg-black" data-transition="fade" data-device="s13">
+    <section data-background-color="#F5F0E8" class="bg-white" data-transition="fade" data-device="s13">
       <div class="s13-bg" aria-hidden="true">
         <img class="s13-bg-img" src="imagenes/this-library-web.jpg" alt=""/>
         <div class="s13-bg-veil"></div>
@@ -1845,7 +1807,7 @@
     </section>
 
     <!-- 14. LA TRAMPA UTILITARIA · recurso: BALANZA DESNIVELADA (s14) -->
-    <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade" data-device="s14">
+    <section data-background-color="#4A1C2A" class="bg-black bg-maroon" data-transition="fade" data-device="s14">
       <div class="atmos-bg light pos-br" aria-hidden="true">
         <div class="orb"></div>
         <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
@@ -1862,7 +1824,7 @@
     ════════════════════════════════════════════════════ -->
 
     <!-- 15. WOJTYŁA · recurso: SELLO DE LACRE que imprime el nombre (s15) -->
-    <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
+    <section data-background-color="#F5F0E8" class="bg-white" data-transition="fade">
       <div class="atmos-bg light pos-tl" aria-hidden="true">
         <div class="orb"></div>
         <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
@@ -1875,7 +1837,7 @@
     </section>
 
     <!-- 16. BURGOS QUÉ/QUIÉN · composicion J author-spread espejo -->
-    <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
+    <section data-background-color="#F5F0E8" class="bg-white" data-transition="fade">
       <div class="atmos-bg light pos-br" aria-hidden="true">
         <div class="orb"></div>
         <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
@@ -1892,7 +1854,7 @@
     ════════════════════════════════════════════════════ -->
 
     <!-- 17. APERTURA DOS EJES · F monumental -->
-    <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade" data-gesture="axes">
+    <section data-background-color="#0F2832" class="bg-black" data-transition="fade" data-gesture="axes">
       <div class="atmos-bg light pos-bl" aria-hidden="true">
         <div class="orb"></div>
         <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
@@ -1906,7 +1868,7 @@
     </section>
 
     <!-- 18. EJE HORIZONTAL · imagen full-bleed con caption -->
-    <section data-background-color="#1a0e0e" data-transition="fade" data-device="s18">
+    <section data-background-color="#0F2832" data-transition="fade" data-device="s18">
       <div class="image-bleed">
         <img src="imagenes/married-couple-hugging.avif" alt="" class="image-bleed-img"/>
         <div class="image-bleed-overlay dark"></div>
@@ -1918,7 +1880,7 @@
     </section>
 
     <!-- 19. EJE VERTICAL · imagen full-bleed (cielo sobre nubes) con caption · diptico con la 18 -->
-    <section data-background-color="#1a0e0e" data-transition="fade" data-device="s19">
+    <section data-background-color="#0F2832" data-transition="fade" data-device="s19">
       <div class="image-bleed">
         <img src="imagenes/glowing-sunset-sky-clouds-web.jpg" alt="" class="image-bleed-img"/>
         <div class="image-bleed-overlay dark"></div>
@@ -1934,7 +1896,7 @@
     ════════════════════════════════════════════════════ -->
 
     <!-- 20. FRANKL PERSONALISTA SIN SABERLO · author-spread -->
-    <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
+    <section data-background-color="#F5F0E8" class="bg-white" data-transition="fade">
       <div class="atmos-bg light pos-bl" aria-hidden="true">
         <div class="orb"></div>
         <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
@@ -1947,7 +1909,7 @@
     </section>
 
     <!-- 21. DOS RUTAS INDEPENDIENTES · L typewriter de tres convergencias -->
-    <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade">
+    <section data-background-color="#F5F0E8" class="bg-white" data-transition="fade">
       <div class="atmos-bg light pos-br" aria-hidden="true">
         <div class="orb"></div>
         <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
@@ -1963,7 +1925,7 @@
     </section>
 
     <!-- 22. CLÍMAX · Constatar, no creer · monumental oscuro: beat de silencio + ambar que aflora + subtitulo separado (OLA 1); convergencia de dos icosaedros enteros pendiente (OLA 2) -->
-    <section data-background-color="#1a0e0e" class="bg-black" data-transition="fade" data-gesture="climax">
+    <section data-background-color="#0F2832" class="bg-black" data-transition="fade" data-gesture="climax">
       <div class="atmos-bg dark pos-br" aria-hidden="true">
         <div class="orb"></div>
         <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
@@ -1988,7 +1950,7 @@
     ════════════════════════════════════════════════════ -->
 
     <!-- 23. CINCO PLANOS · F monumental -->
-    <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade" data-gesture="slow">
+    <section data-background-color="#F5F0E8" class="bg-white" data-transition="fade" data-gesture="slow">
       <div class="atmos-bg light pos-tl" aria-hidden="true">
         <div class="orb"></div>
         <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
@@ -2002,7 +1964,7 @@
     </section>
 
     <!-- 24. LOS CINCO PLANOS · recurso: COLUMNA con veta de luz que se llena (s24) -->
-    <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade" data-device="s24">
+    <section data-background-color="#F5F0E8" class="bg-white" data-transition="fade" data-device="s24">
       <div class="atmos-bg light pos-br" aria-hidden="true">
         <div class="orb"></div>
         <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
@@ -2026,7 +1988,7 @@
     ════════════════════════════════════════════════════ -->
 
     <!-- 25. LAS CINCO DINÁMICAS · recurso: CAJONERA (acordeon) que se abre una a una (s25) -->
-    <section data-background-color="#f0e6d2" class="bg-white" data-transition="fade" data-device="s25">
+    <section data-background-color="#F5F0E8" class="bg-white" data-transition="fade" data-device="s25">
       <div class="atmos-bg light pos-tl" aria-hidden="true">
         <div class="orb"></div>
         <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
@@ -2062,7 +2024,7 @@
     ════════════════════════════════════════════════════ -->
 
     <!-- 26. FOTOLOGOS · la técnica que materializa: la filosofía hecha legado entregable (imagen-bleed) -->
-    <section data-background-color="#1a0e0e" data-transition="fade" data-device="s26fl">
+    <section data-background-color="#0F2832" data-transition="fade" data-device="s26fl">
       <div class="image-bleed">
         <img src="imagenes/holding-hands-married-couple.avif" alt="" class="image-bleed-img"/>
         <div class="image-bleed-overlay dark"></div>
@@ -2074,7 +2036,7 @@
     </section>
 
     <!-- 27. UNA MADRE · D quote-bleed con fotos de familia de fondo -->
-    <section data-background-color="#1a0e0e" data-transition="fade">
+    <section data-background-color="#0F2832" data-transition="fade">
       <div class="quote-bleed">
         <img src="imagenes/family-pictures-web.jpg" alt="" class="quote-bleed-img"/>
         <div class="quote-bleed-overlay"></div>
@@ -2086,7 +2048,7 @@
     </section>
 
     <!-- 28. NO LO POSPONGAN · F monumental cierre -->
-    <section data-background-color="#1a0e0e" class="bg-black" data-transition="fade">
+    <section data-background-color="#0F2832" class="bg-black" data-transition="fade">
       <div class="atmos-bg dark pos-tr" aria-hidden="true">
         <div class="orb"></div>
         <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
@@ -2178,7 +2140,7 @@
      Pintarlas del color del fondo de la slide hace que se vea a sangre, sin
      marco, en CUALQUIER proporcion. Fallback: cuero profundo. */
   function matchLetterbox(slide) {
-    const c = (slide && slide.getAttribute('data-background-color')) || '#0a0603';
+    const c = (slide && slide.getAttribute('data-background-color')) || '#0F2832';
     /* pintar TODO lo que puede quedar visible en las barras de letterbox */
     document.querySelectorAll('.reveal-viewport, .reveal').forEach(el => { el.style.background = c; });
     document.documentElement.style.background = c;
@@ -2501,13 +2463,13 @@
     /* Material FISICO (reacciona a la luz): piedra/bronce tallado, nada de
        color plano. flatShading da facetas que captan la direccional. */
     const mat = new THREE.MeshPhysicalMaterial({
-      color: 0xa8855a,
+      color: 0xb5705a,
       metalness: 0.15,
       roughness: 0.55,
       clearcoat: 0.35,
       clearcoatRoughness: 0.5,
       sheen: 0.4,
-      sheenColor: new THREE.Color(0xc4a679),
+      sheenColor: new THREE.Color(0xb5705a),
       flatShading: true,
       transparent: true,
       opacity: 0.42,
@@ -2518,11 +2480,11 @@
 
     /* Iluminacion elegante (SIN sombras): ambient calido + KEY direccional
        arriba-izquierda + FILL crema para abrir las caras. */
-    scene.add(new THREE.AmbientLight(0xf0e6d2, 0.6));
-    const key = new THREE.DirectionalLight(0xffe6b8, 2.2);
+    scene.add(new THREE.AmbientLight(0xf5f0e8, 0.6));
+    const key = new THREE.DirectionalLight(0xf5f0e8, 2.2);
     key.position.set(-4, 5, 5);
     scene.add(key);
-    const fill = new THREE.DirectionalLight(0xf0e6d2, 0.5);
+    const fill = new THREE.DirectionalLight(0xf5f0e8, 0.5);
     fill.position.set(3, -2, 4);
     scene.add(fill);
 
@@ -2724,9 +2686,9 @@
     function makeSolid() {
       const mesh = new THREE.Group();
       const mat = new THREE.MeshPhysicalMaterial({
-        color: 0xa8855a, metalness: 0.15, roughness: 0.55,
+        color: 0xb5705a, metalness: 0.15, roughness: 0.55,
         clearcoat: 0.35, clearcoatRoughness: 0.5,
-        sheen: 0.4, sheenColor: new THREE.Color(0xc4a679),
+        sheen: 0.4, sheenColor: new THREE.Color(0xb5705a),
         flatShading: true, transparent: true, opacity: 0, depthWrite: false,
       });
       const placeholder = new THREE.Mesh(geom, mat);
@@ -2759,11 +2721,11 @@
     const A = makeSolid();
     const B = makeSolid();
 
-    scene.add(new THREE.AmbientLight(0xf0e6d2, 0.6));
-    const key = new THREE.DirectionalLight(0xffe6b8, 2.4);
+    scene.add(new THREE.AmbientLight(0xf5f0e8, 0.6));
+    const key = new THREE.DirectionalLight(0xf5f0e8, 2.4);
     key.position.set(-4, 5, 5);
     scene.add(key);
-    const fill = new THREE.DirectionalLight(0xf0e6d2, 0.5);
+    const fill = new THREE.DirectionalLight(0xf5f0e8, 0.5);
     fill.position.set(3, -2, 4); scene.add(fill);
 
     function resize() {
@@ -2855,9 +2817,9 @@
     function makeSphere() {
       const mesh = new THREE.Group();
       const mat = new THREE.MeshPhysicalMaterial({
-        color: 0xa8855a, metalness: 0.15, roughness: 0.5,
+        color: 0xb5705a, metalness: 0.15, roughness: 0.5,
         clearcoat: 0.4, clearcoatRoughness: 0.45,
-        sheen: 0.45, sheenColor: new THREE.Color(0xc4a679),
+        sheen: 0.45, sheenColor: new THREE.Color(0xb5705a),
         transparent: true, opacity: 0, depthWrite: false,
       });
       const placeholder = new THREE.Mesh(geom, mat);
@@ -2884,11 +2846,11 @@
     const L = makeSphere();
     const R = makeSphere();
 
-    scene.add(new THREE.AmbientLight(0xf0e6d2, 0.6));
-    const key = new THREE.DirectionalLight(0xffe6b8, 2.2);
+    scene.add(new THREE.AmbientLight(0xf5f0e8, 0.6));
+    const key = new THREE.DirectionalLight(0xf5f0e8, 2.2);
     key.position.set(-4, 5, 5);
     scene.add(key);
-    const fill = new THREE.DirectionalLight(0xf0e6d2, 0.5);
+    const fill = new THREE.DirectionalLight(0xf5f0e8, 0.5);
     fill.position.set(3, -2, 4); scene.add(fill);
 
     let edgeX = 4;    /* x del borde de pantalla en z=0; se recalcula en resize */
