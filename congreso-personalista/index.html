@@ -1806,7 +1806,19 @@
          BLOQUE 4 · PROBLEMA DUAL DE 4MEANING (3 slides)
     ════════════════════════════════════════════════════ -->
 
-    <!-- 12. LA OPORTUNIDAD PERSONALISTA · recurso: FOTO biblioteca en VENTANA (profundidad) (s13) -->
+    <!-- 12. UN EXCESO Y UNA ESCASEZ (antes 'Un problema dual') · enmarca el diagnostico (s12) -->
+    <section data-background-color="#F5F0E8" class="bg-white" data-transition="fade" data-device="s12">
+      <div class="atmos-bg light pos-tr" aria-hidden="true">
+        <div class="orb"></div>
+        <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
+      </div>
+      <canvas class="s12-spheres" data-spheres aria-hidden="true"></canvas>
+      <div class="s12-stage">
+        <h2 class="s12-title">Un exceso y una escasez.</h2>
+      </div>
+    </section>
+
+    <!-- 13. LA BRECHA (la carencia; oportunidad personalista) · FOTO biblioteca (s13) -->
     <section data-background-color="#F5F0E8" class="bg-white" data-transition="fade" data-device="s13">
       <div class="s13-bg" aria-hidden="true">
         <img class="s13-bg-img" src="imagenes/this-library-web.jpg" alt=""/>
@@ -1816,18 +1828,6 @@
       <div class="s13-text">
         <h2 class="s13-title">La brecha entre la filosofía y la práctica.</h2>
         <p class="s13-body">El personalismo tiene la profundidad. Hacen falta más personas que lo traduzcan al lenguaje de la vida ordinaria.</p>
-      </div>
-    </section>
-
-    <!-- 13. UN PROBLEMA DUAL · recurso: PLACA DE LUZ QUE SE PARTE en dos (s12) -->
-    <section data-background-color="#F5F0E8" class="bg-white" data-transition="fade" data-device="s12">
-      <div class="atmos-bg light pos-tr" aria-hidden="true">
-        <div class="orb"></div>
-        <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
-      </div>
-      <canvas class="s12-spheres" data-spheres aria-hidden="true"></canvas>
-      <div class="s12-stage">
-        <h2 class="s12-title">Un problema dual.</h2>
       </div>
     </section>
 
@@ -2876,6 +2876,9 @@
     }
     const L = makeSphere();
     const R = makeSphere();
+    /* Asimetria: el guion habla de "un exceso y una escasez" (no del mismo
+       tamano). L = el exceso (grande); R = la escasez (mucho mas pequena). */
+    R.mesh.scale.setScalar(0.5);
 
     scene.add(new THREE.AmbientLight(0xf5f0e8, 0.6));
     const key = new THREE.DirectionalLight(0xf5f0e8, 2.2);
