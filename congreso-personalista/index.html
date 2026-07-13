@@ -1076,27 +1076,26 @@
       padding: 10vh 10vw;
       text-align: center;
     }
+    /* Peso invertido: el quote pasa a línea pequeña de apoyo (arriba)... */
     .quote-bleed-content p.quote-text {
-      font-size: 3.4rem;
+      font-size: 1.7rem;
       font-weight: 300;
       font-style: italic;
-      line-height: 1.24;
-      letter-spacing: -0.018em;
-      color: var(--white);
-      max-width: 32ch;
-      margin: 0;
-    }
-    /* "Y yo... ¿qué legado dejo?" ANCLADO ABAJO (separado del quote central,
-       ya no se lee como parte del texto principal) y más sólido/presente. */
-    .quote-bleed-content p.quote-context {
-      position: absolute;
-      bottom: 11vh;
-      left: 10vw; right: 10vw;
-      font-size: 1.8rem;
-      font-weight: 400;
       line-height: 1.4;
+      letter-spacing: 0;
       color: var(--white);
-      opacity: 0.9;
+      opacity: 0.6;
+      max-width: 46ch;
+      margin: 0 0 3.4rem 0;
+    }
+    /* ...y la pregunta "Y yo... ¿qué legado dejo?" es ahora el título monumental. */
+    .quote-bleed-content p.quote-context {
+      font-size: 5.6rem;
+      font-weight: 300;
+      line-height: 1.04;
+      letter-spacing: -0.02em;
+      color: var(--white);
+      max-width: 20ch;
       margin: 0;
       font-style: normal;
     }
@@ -2047,7 +2046,7 @@
         <div class="quote-bleed-overlay"></div>
         <div class="quote-bleed-content">
           <p class="quote-text stagger d2">«Nunca se me ocurrió preguntármelo. Siempre había algo más urgente. Y cuando me lo preguntaron, no supe qué decir.»</p>
-          <p class="quote-context stagger d4">Y yo... ¿qué legado dejo?</p>
+          <p class="quote-context stagger d4">Y yo...<br>¿qué legado dejo?</p>
         </div>
       </div>
     </section>
