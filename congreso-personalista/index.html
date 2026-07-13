@@ -1577,6 +1577,18 @@
     [data-device="s25"] .s25-detail-eyebrow { font-size: 1rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: #D08C74; margin: 0 0 1rem; }
     [data-device="s25"] .s25-detail-text { font-size: 1.45rem; line-height: 1.5; color: #E9DEC8; font-weight: 300; margin: 0; }
     html.no-gsap [data-device="s25"] .s25-detail-panel { opacity: 1; transform: translate(0,-50%); }
+
+    /* stesti · TESTIMONIOS: video con sonido, play manual. */
+    [data-device="stesti"] .testi-stage { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3vh; padding: 0 8vw; z-index: 3; }
+    [data-device="stesti"] .testi-frame { position: relative; width: min(62vw, 1180px); aspect-ratio: 16 / 9; background: #0A1C24; border: 1px solid rgba(213,196,168,0.16); border-radius: 4px; overflow: hidden; box-shadow: 0 40px 100px -42px rgba(0,0,0,0.72); display: flex; align-items: center; justify-content: center; }
+    [data-device="stesti"] .testi-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; background: #0A1C24; }
+    [data-device="stesti"] .testi-placeholder { position: absolute; z-index: 1; left: 0; right: 0; bottom: 15%; text-align: center; font-size: 1.05rem; letter-spacing: 0.22em; text-transform: uppercase; color: #D5C4A8; opacity: 0.5; font-weight: 600; pointer-events: none; }
+    [data-device="stesti"] .testi-play { position: absolute; z-index: 2; left: 50%; top: 50%; transform: translate(-50%,-50%); width: 92px; height: 92px; border: none; background: none; padding: 0; cursor: pointer; transition: opacity .3s, transform .35s var(--ease); }
+    [data-device="stesti"] .testi-play:hover { transform: translate(-50%,-50%) scale(1.08); }
+    [data-device="stesti"] .testi-play svg { width: 100%; height: 100%; }
+    [data-device="stesti"] .testi-play circle { fill: rgba(245,240,232,0.94); }
+    [data-device="stesti"] .testi-play path { fill: #0F2832; }
+    [data-device="stesti"] .testi-frame.playing .testi-play, [data-device="stesti"] .testi-frame.playing .testi-placeholder { opacity: 0; pointer-events: none; }
   </style>
 </head>
 <body>
@@ -2097,7 +2109,27 @@
       </div>
     </section>
 
-    <!-- 27. UNA MADRE · D quote-bleed con fotos de familia de fondo -->
+    <!-- 27. TESTIMONIOS · video con sonido, reproduccion MANUAL (boton play). Video pendiente. -->
+    <section data-background-color="#0F2832" class="bg-black" data-transition="fade" data-device="stesti">
+      <div class="atmos-bg dark pos-br" aria-hidden="true">
+        <div class="orb"></div>
+        <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
+      </div>
+      <div class="testi-stage">
+        <p class="eyebrow testi-eyebrow stagger d1">Testimonios &middot; Trascendencia</p>
+        <div class="testi-frame stagger d2">
+          <!-- Cuando tengas el video: pon src (y opcional poster) en el <video>.
+               Ej: <video class="testi-video" src="videos/testimonios.mp4" poster="imagenes/testi-poster.jpg" playsinline preload="metadata"></video> -->
+          <video class="testi-video" playsinline preload="metadata"></video>
+          <span class="testi-placeholder">Video de testimonios &middot; con sonido</span>
+          <button class="testi-play" type="button" aria-label="Reproducir video con sonido">
+            <svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="48"/><path d="M40 31 L71 50 L40 69 Z"/></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 28. UNA MADRE · D quote-bleed con fotos de familia de fondo -->
     <section data-background-color="#0F2832" data-transition="fade">
       <div class="quote-bleed">
         <img src="imagenes/family-pictures-web.jpg" alt="" class="quote-bleed-img"/>
@@ -2202,6 +2234,30 @@
   function __updDeckLogo(){ var s=Reveal.getCurrentSlide(), el=document.getElementById('deck-logo'); if(!s||!el)return; var light; if(s.dataset&&s.dataset.logo){ light=(s.dataset.logo==='light'); } else { light=s.classList.contains('bg-white')||s.classList.contains('has-light-background'); } el.classList.toggle('on-light',light); el.classList.toggle('on-dark',!light); }
   Reveal.on('ready', __updDeckLogo);
   Reveal.on('slidechanged', __updDeckLogo);
+
+  /* Testimonios: video CON SONIDO, reproduccion manual (el autoplay con audio
+     lo bloquea el navegador). El click del boton es el gesto de usuario que
+     habilita el sonido. Se pausa al salir de la slide. */
+  document.querySelectorAll('[data-device="stesti"] .testi-frame').forEach((frame) => {
+    const btn = frame.querySelector('.testi-play');
+    const v = frame.querySelector('.testi-video');
+    if (btn && v) btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const hasSrc = v.currentSrc || v.getAttribute('src') || v.querySelector('source');
+      if (!hasSrc) return;                 /* placeholder: aun sin video */
+      const p = v.play();
+      if (p && p.then) p.then(() => frame.classList.add('playing')).catch(() => {});
+      else frame.classList.add('playing');
+    });
+  });
+  Reveal.on('slidechanged', (e) => {
+    document.querySelectorAll('[data-device="stesti"] .testi-video').forEach((v) => {
+      if (!e.currentSlide || !e.currentSlide.contains(v)) {
+        try { v.pause(); } catch (err) {}
+        const f = v.closest('.testi-frame'); if (f) f.classList.remove('playing');
+      }
+    });
+  });
 
   /* Barras de letterbox al COLOR de la slide: en cualquier pantalla que no sea
      16:9 (mas alargada, 4:3, ultrawide) reveal centra el lienzo y deja barras.
@@ -3222,7 +3278,7 @@
         16: 0.46, 17: 0.55, 18: 0.46, 19: 0.46, 20: 0.50,
         21: 1.0,                                         /* CLIMAX 22: el ambar a su maximo */
         22: 0.42, 23: 0.42, 24: 0.46,                   /* descenso calido */
-        25: 0.50, 26: 0.66, 27: 0.22,                   /* FotoLogos (calido), la madre (pathos) y el cierre como ascua */
+        25: 0.50, 26: 0.55, 27: 0.66, 28: 0.22,         /* FotoLogos, testimonios, la madre (pathos) y el cierre como ascua */
       };
       const w = (h in WARMTH) ? WARMTH[h] : 0.35;
       brasa.setWarmth(w);
