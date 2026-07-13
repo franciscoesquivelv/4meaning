@@ -8,11 +8,8 @@
   <link rel="icon" href="logos/blk-icon.png" media="(prefers-color-scheme: light)">
   <link rel="icon" href="logos/wht-icon.png" media="(prefers-color-scheme: dark)">
 
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css">
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="vendor/reveal.css">
+  <link rel="stylesheet" href="fonts/montserrat.css">
 
   <style>
     /* ═══════════════════════════════════════════════════════════════
@@ -31,6 +28,7 @@
       --border:   #B5705A;   /* terracota · bordes / acento */
       --border-d: rgba(213,196,168,0.15);
       --muted:    #B5705A;   /* terracota · texto secundario / eyebrow */
+      --muted-2:  #9A4E38;   /* terracota oscura · texto pequeño sobre fondo claro (pasa WCAG AA) */
       --muted-d:  rgba(213,196,168,0.68);
       --hint-d:   rgba(213,196,168,0.18);
       --dark:     #1A1A1A;   /* tinta · texto sobre claro */
@@ -150,6 +148,18 @@
     .reveal section.present .stagger.d4 { transition-delay: 1.10s; }
     .reveal section.present .stagger.d5 { transition-delay: 1.50s; }
 
+    /* Accesibilidad: respeta prefers-reduced-motion (WCAG 2.2.2 / 2.3.3).
+       Deja el contenido en su estado final visible, sin animar ni loops. */
+    @media (prefers-reduced-motion: reduce) {
+      .reveal .stagger { opacity: 1 !important; transform: none !important; transition: none !important; }
+      .reveal section.present .stagger.dim { opacity: 0.25 !important; }
+      *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+    }
+
+    /* Fallback si GSAP no carga: el cuerpo de las 5 dinamicas (s25) se abre por
+       GSAP; sin el, mostrarlo para no perder contenido nuclear de la ponencia. */
+    html.no-gsap [data-device="s25"] .s25-bodywrap { height: auto !important; }
+
     /* Fragments para control con click */
     .reveal .fragment {
       transition: opacity 0.95s var(--ease), transform 0.95s var(--ease), filter 0.95s var(--ease);
@@ -177,6 +187,8 @@
       display: inline-block;
     }
     .bg-black .eyebrow { color: var(--muted-d); }
+    /* Portada: eyebrow sobre el panel crema -> terracota oscura para pasar AA */
+    .cover-right .eyebrow { color: var(--muted-2); }
 
     .body-light {
       font-size: 1.4rem;
@@ -254,7 +266,7 @@
       font-weight: 700;
       letter-spacing: 0.32em;
       text-transform: uppercase;
-      color: var(--muted);
+      color: var(--muted-2);
     }
 
     /* ═══════════════════════════════════════════════════════════════
@@ -325,7 +337,7 @@
     .q-aper-text {
       align-self: end;
       font-size: 5.2rem;
-      font-weight: 800;
+      font-weight: 600;
       line-height: 1.05;
       letter-spacing: -0.03em;
       text-transform: uppercase;
@@ -334,7 +346,10 @@
       z-index: 3;
       padding-bottom: 4rem;
     }
-    .q-aper-text .soft { color: #B5705A; font-weight: 600; }
+    /* El enfasis gana por PESO y luz, no por un color de menor contraste:
+       antes era terracota peso 600 (mas apagado que el cuerpo 800, la
+       jerarquia se invertia). Ahora crema pleno + peso 900. */
+    .q-aper-text .soft { color: var(--pure); font-weight: 900; }
 
     /* ═══════════════════════════════════════════════════════════════
        STATEMENT · frase central
@@ -1551,7 +1566,7 @@
     [data-device="s25"] .s25-drawer.open .s25-name { font-size: 3.8rem; }
     /* la etiqueta del plano va como EYEBROW arriba del título (no a la derecha):
        así el título puede crecer grande sin invadirla nunca. */
-    [data-device="s25"] .s25-tag { order: -1; flex-basis: 100%; padding-left: 3.9rem; font-size: 1.1rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #B5705A; white-space: nowrap; }
+    [data-device="s25"] .s25-tag { order: -1; flex-basis: 100%; padding-left: 3.9rem; font-size: 1.1rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted-2); white-space: nowrap; }
     [data-device="s25"] .s25-bodywrap { overflow: hidden; height: 0; }
     [data-device="s25"] .s25-body { font-size: 1.7rem; font-weight: 300; line-height: 1.45; color: var(--dark); opacity: 0.82; max-width: 60ch; margin: 0.8rem 0 0; }
   </style>
@@ -2075,7 +2090,7 @@
   <div id="deck-logo" aria-hidden="true"><img class="lg-dark" src="logos/4meaning-dark.png" alt=""><img class="lg-sand" src="logos/4meaning-sand.png" alt=""></div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="vendor/reveal.js"></script>
 <!-- Three.js como ES Module (necesario para GLTFLoader en r160) + GLTFLoader.
      Se exponen en window para que el script principal (no-modulo) los use. -->
 <script type="importmap">
@@ -2095,8 +2110,9 @@
   window.__threeReady = true;
   window.dispatchEvent(new Event('three-ready'));
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/CustomEase.min.js"></script>
+<script src="vendor/gsap.min.js" onerror="document.documentElement.classList.add('no-gsap')"></script>
+<script src="vendor/CustomEase.min.js"></script>
+<script>if(typeof gsap==='undefined')document.documentElement.classList.add('no-gsap');</script>
 <script>
   /* Curvas canonicas de la biblia de diseno, registradas como eases nombrados
      para que GSAP use EXACTAMENTE las cubic-bezier del framework (no aproximaciones).
