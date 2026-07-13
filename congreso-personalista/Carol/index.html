@@ -92,12 +92,14 @@
     .axes .p{ font-weight:300; font-size:1.55rem; color:var(--sand); margin-top:1.6rem; line-height:1.45; max-width:22ch; }
 
     /* Portada / cierre */
-    .cover{ position:absolute; inset:0; background:var(--paper); display:flex; align-items:center; padding:0 8rem; overflow:hidden; }
-    .cover .kx{ font-weight:500; text-transform:uppercase; letter-spacing:0.2em; font-size:0.9rem; color:var(--terra); margin:0 0 1.4rem; }
+    .cover{ position:absolute; inset:0; background:var(--paper); display:flex; align-items:center; padding:0 9rem; overflow:hidden; }
+    .cover-in{ position:relative; z-index:3; }
+    .cover .kx{ display:inline-flex; align-items:center; gap:1.3rem; font-weight:600; text-transform:uppercase; letter-spacing:0.24em; font-size:1.05rem; color:var(--terra); margin:0 0 2.7rem; }
+    .cover .kx::before{ content:""; width:3.6rem; height:2px; background:var(--terra); }
     .cover .eb{ font-weight:600; text-transform:uppercase; letter-spacing:0.22em; font-size:0.95rem; color:var(--taupe); margin:0 0 2.4rem; }
-    .cover .h{ font-family:'Montserrat'; font-weight:800; text-transform:uppercase; letter-spacing:-0.035em; line-height:0.94; font-size:6rem; color:var(--ink); margin:0; }
-    .cover .sub{ font-weight:500; font-size:1.6rem; color:var(--terra); margin:2.4rem 0 0; }
-    .cover .au{ font-weight:600; text-transform:uppercase; letter-spacing:0.18em; font-size:0.95rem; color:var(--taupe); margin:3rem 0 0; }
+    .cover .h{ font-family:'Montserrat'; font-weight:800; text-transform:uppercase; letter-spacing:-0.038em; line-height:0.9; font-size:7.6rem; color:var(--ink); margin:0; }
+    .cover .sub{ font-weight:400; font-size:1.8rem; line-height:1.4; color:#5a5248; margin:2.8rem 0 0; }
+    .cover .au{ font-weight:600; text-transform:uppercase; letter-spacing:0.18em; font-size:1.1rem; color:var(--taupe); margin:3.4rem 0 0; }
 
     /* ---- Entrada escalonada ---- */
     @keyframes upIn{ from{ opacity:0; transform:translateY(34px);} to{ opacity:1; transform:none;} }
@@ -117,12 +119,12 @@
     <!-- 00 · PORTADA -->
     <section data-background-color="#FDFBF7">
       <div class="cover">
+        <div class="orb sand" style="top:-26%;right:-14%;opacity:0.62;"></div>
         <div class="grain"></div>
-        <div style="position:relative;z-index:3;">
-          <p class="kx">Arteterapia &middot; una mirada personalista y logoterapéutica</p>
-          <p class="eb">II Congreso Mundial de Personalismo &nbsp;&middot;&nbsp; Madrid 2026</p>
-          <h1 class="h">Cuando la palabra<br>no alcanza.</h1>
-          <p class="sub">El arte como mediación entre la persona y el sentido.</p>
+        <div class="cover-in">
+          <p class="kx">II Congreso Mundial de Personalismo &nbsp;&middot;&nbsp; Madrid 2026</p>
+          <h1 class="h">Cuando la <span class="accent">palabra</span><br>no alcanza.</h1>
+          <p class="sub">Arteterapia: el arte como mediación<br>entre la persona y el sentido.</p>
           <p class="au">Carolina Heinemann &nbsp;&middot;&nbsp; 4Meaning</p>
         </div>
         <img class="logo" src="../logos/4meaning-dark.png" alt="4Meaning">
@@ -197,7 +199,7 @@
       <div class="bcap">
         <p class="eyebrow">Valores de actitud &middot; mujer en crisis</p>
         <h2 class="title lg">Paulina.</h2>
-        <p class="body">17 años. Embarazada, sola, sin recursos. Para el sistema, un caso más.</p>
+        <p class="body">Diecisiete años, embarazada, sin ningún tipo de apoyo, sin trabajo.</p>
       </div>
       <img class="logo" src="../logos/4meaning-sand.png" alt="4Meaning">
     </section>
@@ -234,7 +236,7 @@
         <div class="txt">
           <p class="eyebrow">El puente</p>
           <h2 class="title sm">El crayón<br>se volvió diálogo.</h2>
-          <p class="body">Primero yo sigo su trazo. Después ella el mío. Hubo risa. Hubo conexión sin palabras.</p>
+          <p class="body">Primero yo sigo su trazo, después ella el mío. Hubo risa, hubo conexión sin palabras.</p>
         </div>
       </div>
       <img class="logo" src="../logos/4meaning-sand.png" alt="4Meaning">
@@ -285,7 +287,7 @@
         <div class="txt">
           <p class="eyebrow">El cambio de sentido</p>
           <h2 class="title sm">«¿Cómo me<br>siento hoy?»</h2>
-          <p class="body">La invito a encontrar una imagen que lo represente. Un corazón apretado y adolorido.</p>
+          <p class="body">La invito a encontrar una imagen que lo represente: un corazón apretado y adolorido.</p>
         </div>
       </div>
       <img class="logo" src="../logos/4meaning-sand.png" alt="4Meaning">
@@ -340,7 +342,7 @@
       <div class="grain"></div>
       <div class="bcap">
         <h2 class="title lg">Hoy.</h2>
-        <p class="body">Su hija tiene dos años. Es feliz. Las dos están bien.</p>
+        <p class="body">Su hija tiene dos años y es feliz. Las dos están bien.</p>
       </div>
       <img class="logo" src="../logos/4meaning-sand.png" alt="4Meaning">
     </section>
