@@ -588,6 +588,12 @@
     .bg-white .monumental-h .line-inner {
       color: var(--dark);
     }
+    /* Blindaje: cualquier monumental sobre fondo oscuro va en crema (evita
+       titulo tinta-sobre-teal casi invisible, p.ej. slide 17 "Dos direcciones") */
+    .bg-black .monumental-h,
+    .bg-black .monumental-h .line-inner {
+      color: var(--pure);
+    }
 
     /* ═══════════════════════════════════════════════════════════════
        DEPTH LAYERS · composicion I (slide 08)
@@ -1578,7 +1584,7 @@
     ════════════════════════════════════════════════════ -->
 
     <!-- 01. PORTADA -->
-    <section data-background-color="#0F2832" data-transition="fade">
+    <section data-background-color="#0F2832" data-transition="fade" data-logo="light">
       <div class="cover">
         <div class="cover-left">
           <canvas class="cover-canvas" data-particles></canvas>
@@ -2140,7 +2146,7 @@
      se disparaba al cambiar de slide. Idempotente y aislado. */
   Reveal.on('slidechanged', (e) => { deviceLeave(e.previousSlide); deviceEnter(e.currentSlide); matchLetterbox(e.currentSlide); });
   /* Logo global: variante oscura sobre fondos claros, arena sobre oscuros */
-  function __updDeckLogo(){ var s=Reveal.getCurrentSlide(), el=document.getElementById('deck-logo'); if(!s||!el)return; var light=s.classList.contains('bg-white')||s.classList.contains('has-light-background'); el.classList.toggle('on-light',light); el.classList.toggle('on-dark',!light); }
+  function __updDeckLogo(){ var s=Reveal.getCurrentSlide(), el=document.getElementById('deck-logo'); if(!s||!el)return; var light; if(s.dataset&&s.dataset.logo){ light=(s.dataset.logo==='light'); } else { light=s.classList.contains('bg-white')||s.classList.contains('has-light-background'); } el.classList.toggle('on-light',light); el.classList.toggle('on-dark',!light); }
   Reveal.on('ready', __updDeckLogo);
   Reveal.on('slidechanged', __updDeckLogo);
 
