@@ -158,7 +158,6 @@
 
     /* Fallback si GSAP no carga: el cuerpo de las 5 dinamicas (s25) se abre por
        GSAP; sin el, mostrarlo para no perder contenido nuclear de la ponencia. */
-    html.no-gsap [data-device="s25"] .s25-bodywrap { height: auto !important; }
 
     /* Fragments para control con click */
     .reveal .fragment {
@@ -1555,20 +1554,23 @@
     /* s25 · Cinco dinámicas: MAESTRO-DETALLE. Izquierda = lista de dinámicas
        (cajones). Derecha = panel maroon que EMERGE con media + explicación a
        fondo de la dinámica activa. */
-    [data-device="s25"] .s25-stage { position: absolute; inset: 0; display: flex; align-items: center; justify-content: flex-start; padding: 0 0 0 7vw; }
-    [data-device="s25"] .s25-cabinet { width: 40vw; display: flex; flex-direction: column; gap: 1.0vh; position: relative; z-index: 3; }
-    [data-device="s25"] .s25-drawer { border-left: 3px solid rgba(168,133,90,0.22); padding: 0.7vh 0 0.7vh 1.8rem; }
+    /* Cabinet y panel son hermanos FLEX en el mismo sistema de coordenadas
+       (antes el panel usaba right:0, anclado al ancho interno de la slide
+       de reveal, no al viewport real como el cabinet: eso generaba un hueco
+       enorme e impredecible entre ambos). Con flex + gap el hueco es exacto
+       y controlable. */
+    [data-device="s25"] .s25-stage { position: absolute; inset: 0; display: flex; align-items: center; justify-content: flex-start; padding: 0 0 0 7vw; gap: 2vw; }
+    [data-device="s25"] .s25-cabinet { width: 48vw; flex: none; display: flex; flex-direction: column; gap: 1.7vh; position: relative; z-index: 3; }
+    [data-device="s25"] .s25-drawer { border-left: 3px solid rgba(168,133,90,0.22); padding: 1vh 0 1vh 2rem; }
     [data-device="s25"] .s25-drawer.open { border-left-color: #B5705A; }
-    [data-device="s25"] .s25-head { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 1.1rem; row-gap: 0.4rem; }
-    [data-device="s25"] .s25-i { font-size: 1.3rem; font-weight: 200; color: #B5705A; min-width: 2.4rem; }
-    [data-device="s25"] .s25-name { font-size: 2.1rem; font-weight: 500; letter-spacing: -0.012em; color: var(--dark); margin: 0; white-space: nowrap; transition: font-size 0.5s cubic-bezier(.4, 0, .2, 1); }
-    [data-device="s25"] .s25-drawer.open .s25-name { font-size: 3rem; }
-    [data-device="s25"] .s25-tag { order: -1; flex-basis: 100%; padding-left: 3.5rem; font-size: 1rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted-2); white-space: nowrap; }
-    [data-device="s25"] .s25-bodywrap { overflow: hidden; height: 0; }
-    [data-device="s25"] .s25-body { font-size: 1.4rem; font-weight: 300; line-height: 1.45; color: var(--dark); opacity: 0.82; max-width: 34ch; margin: 0.7rem 0 0; }
-    /* Panel de detalle (derecha, maroon, emerge desde el borde) */
-    [data-device="s25"] .s25-detail-panel { position: absolute; right: 0; top: 50%; width: 46vw; height: 78vh; background: #4A1C2A; border-radius: 5px 0 0 5px; transform: translate(70px, -50%); opacity: 0; transition: opacity .6s var(--ease), transform .6s var(--ease); z-index: 4; overflow: hidden; box-shadow: -34px 0 90px -46px rgba(0,0,0,0.55); }
-    [data-device="s25"] .s25-detail-panel.on { transform: translate(0, -50%); opacity: 1; }
+    [data-device="s25"] .s25-head { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 1.2rem; row-gap: 0.4rem; }
+    [data-device="s25"] .s25-i { font-size: 1.5rem; font-weight: 200; color: #B5705A; min-width: 2.7rem; }
+    [data-device="s25"] .s25-name { font-size: 2.5rem; font-weight: 500; letter-spacing: -0.012em; color: var(--dark); margin: 0; white-space: nowrap; transition: font-size 0.5s cubic-bezier(.4, 0, .2, 1); }
+    [data-device="s25"] .s25-drawer.open .s25-name { font-size: 3.5rem; }
+    [data-device="s25"] .s25-tag { order: -1; flex-basis: 100%; padding-left: 4.2rem; font-size: 1.05rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted-2); white-space: nowrap; }
+    /* Panel de detalle (derecha, maroon, emerge con fade + slide-in) */
+    [data-device="s25"] .s25-detail-panel { position: relative; width: 46vw; height: 78vh; flex: none; background: #4A1C2A; border-radius: 5px; transform: translateX(46px); opacity: 0; transition: opacity .6s var(--ease), transform .6s var(--ease); z-index: 4; overflow: hidden; box-shadow: 0 40px 100px -46px rgba(0,0,0,0.55); }
+    [data-device="s25"] .s25-detail-panel.on { transform: translateX(0); opacity: 1; }
     [data-device="s25"] .s25-detail { position: absolute; inset: 4.2vh 3.2vw; display: flex; flex-direction: column; opacity: 0; transition: opacity .5s var(--ease); pointer-events: none; }
     [data-device="s25"] .s25-detail.active { opacity: 1; }
     [data-device="s25"] .s25-media { width: 100%; height: 54%; flex: none; border: 1.5px dashed rgba(213,196,168,0.42); border-radius: 3px; background: rgba(213,196,168,0.05); display: flex; align-items: center; justify-content: center; margin-bottom: 3.2vh; overflow: hidden; }
@@ -1576,7 +1578,7 @@
     [data-device="s25"] .s25-media-label { font-size: 1rem; letter-spacing: 0.22em; text-transform: uppercase; color: #D5C4A8; opacity: 0.55; font-weight: 600; }
     [data-device="s25"] .s25-detail-eyebrow { font-size: 1rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: #D08C74; margin: 0 0 1rem; }
     [data-device="s25"] .s25-detail-text { font-size: 1.45rem; line-height: 1.5; color: #E9DEC8; font-weight: 300; margin: 0; }
-    html.no-gsap [data-device="s25"] .s25-detail-panel { opacity: 1; transform: translate(0,-50%); }
+    html.no-gsap [data-device="s25"] .s25-detail-panel { opacity: 1; transform: translateX(0); }
 
     /* stesti · TESTIMONIOS: video con sonido, play manual. */
     [data-device="stesti"] .testi-stage { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3vh; padding: 0 8vw; z-index: 3; }
@@ -2044,23 +2046,18 @@
         <div class="s25-cabinet">
           <article class="s25-drawer fragment">
             <header class="s25-head"><span class="s25-i">01</span><h3 class="s25-name">Arqueología en el yo</h3><span class="s25-tag">Intersubjetividad</span></header>
-            <div class="s25-bodywrap"><p class="s25-body">Empezamos por uno mismo: hacer arqueología en las raíces, reconocer la propia historia, tomar conciencia de ella y asumirla.</p></div>
           </article>
           <article class="s25-drawer fragment">
             <header class="s25-head"><span class="s25-i">02</span><h3 class="s25-name">Las tres valijas</h3><span class="s25-tag">Genealógico</span></header>
-            <div class="s25-bodywrap"><p class="s25-body">Cada cónyuge identifica la herencia que carga. Juntos eligen qué conservar y qué dejar atrás, y con eso forman una tercera valija que es la suya.</p></div>
           </article>
           <article class="s25-drawer fragment">
             <header class="s25-head"><span class="s25-i">03</span><h3 class="s25-name">Evento vivido</h3><span class="s25-tag">Hermenéutica del sufrimiento</span></header>
-            <div class="s25-bodywrap"><p class="s25-body">Cada participante vuelve al momento que más lo marcó. No para superarlo, sino para encontrar el sentido que ya vive dentro de él.</p></div>
           </article>
           <article class="s25-drawer fragment">
             <header class="s25-head"><span class="s25-i">04</span><h3 class="s25-name">La mochila de valores</h3><span class="s25-tag">Axiológico</span></header>
-            <div class="s25-bodywrap"><p class="s25-body">La pareja elige los siete valores que quieren que sus hijos hereden. No los que deberían elegir. Los que eligen.</p></div>
           </article>
           <article class="s25-drawer fragment">
             <header class="s25-head"><span class="s25-i">05</span><h3 class="s25-name">La caja negra</h3><span class="s25-tag">Finitud y legado</span></header>
-            <div class="s25-bodywrap"><p class="s25-body">Una sola pregunta: si ya no pudieras decir nada más, ¿qué quedaría de ti? La respuesta es el legado.</p></div>
           </article>
         </div>
         <aside class="s25-detail-panel" aria-hidden="true">
@@ -3214,11 +3211,7 @@
   DEVICES.s25 = {
     enter(section) {
       section.__s25open = -1;
-      section.querySelectorAll('.s25-drawer').forEach(d => {
-        d.classList.remove('open');
-        const body = d.querySelector('.s25-bodywrap');
-        if (body && window.gsap) gsap.set(body, { height: 0 });
-      });
+      section.querySelectorAll('.s25-drawer').forEach(d => d.classList.remove('open'));
       const panel = section.querySelector('.s25-detail-panel');
       if (panel) panel.classList.remove('on');
       section.querySelectorAll('.s25-detail').forEach(x => x.classList.remove('active'));
@@ -3229,19 +3222,18 @@
       if (i < 0) return;
       const details = [...section.querySelectorAll('.s25-detail')];
       const panel = section.querySelector('.s25-detail-panel');
-      const openBody = (d) => { const b = d.querySelector('.s25-bodywrap'); d.classList.add('open'); if (window.gsap) gsap.to(b, { height: 'auto', duration: 0.6, ease: 'power4.out', overwrite: 'auto' }); };
-      const closeBody = (d) => { const b = d.querySelector('.s25-bodywrap'); d.classList.remove('open'); if (window.gsap) gsap.to(b, { height: 0, duration: 0.45, ease: 'expo.inOut', overwrite: 'auto' }); };
-      /* al activarse una dinamica: emerge el panel derecho y muestra SU detalle */
+      /* al activarse una dinamica: su titulo crece (clase .open), emerge el
+         panel derecho y muestra SU detalle (foto/video + texto a fondo). */
       const showDetail = (idx) => { if (panel) panel.classList.add('on'); details.forEach((x, k) => x.classList.toggle('active', k === idx)); };
       if (shown) {
-        if (section.__s25open >= 0 && section.__s25open !== i && drawers[section.__s25open]) closeBody(drawers[section.__s25open]);
+        if (section.__s25open >= 0 && section.__s25open !== i && drawers[section.__s25open]) drawers[section.__s25open].classList.remove('open');
         if (window.gsap) gsap.fromTo(frag, { x: -16 }, { x: 0, duration: 0.55, ease: 'power4.out', overwrite: 'auto' });
-        openBody(frag);
+        frag.classList.add('open');
         showDetail(i);
         section.__s25open = i;
       } else {
-        closeBody(frag);
-        if (i - 1 >= 0 && drawers[i - 1]) { openBody(drawers[i - 1]); showDetail(i - 1); section.__s25open = i - 1; }
+        frag.classList.remove('open');
+        if (i - 1 >= 0 && drawers[i - 1]) { drawers[i - 1].classList.add('open'); showDetail(i - 1); section.__s25open = i - 1; }
         else { if (panel) panel.classList.remove('on'); details.forEach(x => x.classList.remove('active')); section.__s25open = -1; }
       }
     },
