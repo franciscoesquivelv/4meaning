@@ -59,6 +59,11 @@
     .ov.maroon{ background:linear-gradient(72deg, rgba(74,28,42,0.98) 0%, rgba(74,28,42,0.86) 30%, rgba(74,28,42,0.42) 60%, rgba(74,28,42,0.06) 86%); }
     .bcap{ position:absolute; left:8rem; bottom:10rem; z-index:3; max-width:34ch; }
 
+    /* Fondo de video (dos clips verticales) */
+    .vidbg{ position:absolute; inset:0; display:flex; gap:2px; z-index:1; overflow:hidden; background:#0A1C24; }
+    .vidbg video{ flex:1 1 50%; width:50%; height:100%; object-fit:cover; }
+    .ov-v{ position:absolute; inset:0; z-index:2; background:radial-gradient(135% 100% at -8% 108%, rgba(10,28,36,0.96) 0%, rgba(10,28,36,0.74) 22%, rgba(10,28,36,0.24) 46%, rgba(10,28,36,0) 64%); }
+
     /* Obra enmarcada (dibujos) */
     .framed{ position:absolute; inset:0; display:flex; align-items:center; z-index:3; }
     .framed.rev{ flex-direction:row-reverse; }
@@ -340,13 +345,44 @@
       <img class="logo" src="../logos/4meaning-sand.png" alt="4Meaning">
     </section>
 
-    <!-- 16 · LOS OTROS ÁMBITOS -->
-    <section data-background-color="#4A1C2A" class="maroon-txt">
+    <!-- 16 · PAREJAS (valores vivenciales) -->
+    <section data-background-color="#F5F0E8" class="light">
       <div class="grain"></div>
+      <div class="ghost" style="bottom:3%;right:-1%;font-size:13rem;color:var(--ink);">NOSOTROS</div>
       <div class="stage">
-        <p class="eyebrow">Un mismo camino</p>
-        <h2 class="title sm">Lo mismo ocurre con<br>las parejas y los niños.</h2>
-        <p class="body">Con las parejas, los valores vivenciales: el encuentro que dignifica. Con los niños, los creativos: dar algo de sí al mundo. El mismo arte. La misma antropología.</p>
+        <p class="eyebrow">El mismo arte, otras vidas &middot; parejas</p>
+        <h2 class="title lg">El encuentro<br>que dignifica.</h2>
+        <p class="body">En Trascendencia, las parejas vuelven a su primera mirada. El tú como condición del yo. «Me veo en el otro y el otro se ve en mí.»</p>
+      </div>
+    </section>
+
+    <!-- 17 · NIÑOS DEL BASURERO · setup (valores creativos) -->
+    <section data-background-color="#0F2832" class="dark">
+      <div class="bleed">
+        <img src="imagenes/ninos.jpg" alt="Niños en un taller de arteterapia" style="object-position:50% 44%;">
+        <div class="ov teal"></div>
+      </div>
+      <div class="grain"></div>
+      <div class="bcap">
+        <p class="eyebrow">Valores creativos &middot; niños en pobreza extrema</p>
+        <h2 class="title lg">De «miembro»<br>a «prójimo».</h2>
+        <p class="body">No un caso a intervenir, sino un quién a dignificar. Dan algo de sí al mundo, aunque ese mundo sea de cartón, crayón y música improvisada.</p>
+      </div>
+      <img class="logo" src="../logos/4meaning-sand.png" alt="4Meaning">
+    </section>
+
+    <!-- 18 · NIÑOS DEL BASURERO · el taller vivo (video de fondo) -->
+    <section data-background-color="#0A1C24" class="dark">
+      <div class="vidbg">
+        <video src="videos/ninos-a.mp4" muted loop playsinline preload="auto"></video>
+        <video src="videos/ninos-b.mp4" muted loop playsinline preload="auto"></video>
+        <div class="ov-v"></div>
+      </div>
+      <div class="grain"></div>
+      <div class="bcap">
+        <p class="eyebrow">El taller, vivo</p>
+        <h2 class="title sm">Las emociones<br>se mueven.</h2>
+        <p class="body">Se reconocen, se mueven, y pueden moverse. Sin que nadie se lo explique.</p>
       </div>
       <img class="logo" src="../logos/4meaning-sand.png" alt="4Meaning">
     </section>
@@ -386,6 +422,15 @@
     transition: 'fade', transitionSpeed: 'slow', backgroundTransition: 'fade',
     width: 1920, height: 1080, margin: 0, minScale: 0.2, maxScale: 2.5
   });
+  function __playVids(slide){
+    document.querySelectorAll('.vidbg video').forEach(function(v){ try{ v.pause(); }catch(e){} });
+    if(!slide) return;
+    slide.querySelectorAll('.vidbg video').forEach(function(v){
+      try{ v.currentTime = 0; var p = v.play(); if(p && p.catch){ p.catch(function(){}); } }catch(e){}
+    });
+  }
+  Reveal.on('ready', function(e){ __playVids(e.currentSlide); });
+  Reveal.on('slidechanged', function(e){ __playVids(e.currentSlide); });
 </script>
 </body>
 </html>
