@@ -52,13 +52,34 @@
 
     /* Full-bleed cinematográfico (fotos) */
     .bleed{ position:absolute; inset:0; overflow:hidden; z-index:1; }
-    .bleed img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
-    .reveal .slides section.present .bleed img{ animation:ken 20s ease-out both; }
+    .bleed img, .bleed video{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+    .reveal .slides section.present .bleed img, .reveal .slides section.present .bleed video{ animation:ken 20s ease-out both; }
     @keyframes ken{ from{ transform:scale(1.12);} to{ transform:scale(1.0);} }
     .bleed .ov{ position:absolute; inset:0; z-index:1; }
     .ov.teal{ background:linear-gradient(72deg, rgba(15,40,50,0.97) 0%, rgba(15,40,50,0.8) 30%, rgba(15,40,50,0.32) 60%, rgba(15,40,50,0.04) 85%); }
     .ov.maroon{ background:linear-gradient(72deg, rgba(74,28,42,0.98) 0%, rgba(74,28,42,0.86) 30%, rgba(74,28,42,0.42) 60%, rgba(74,28,42,0.06) 86%); }
     .bcap{ position:absolute; left:8rem; bottom:10rem; z-index:3; max-width:34ch; }
+    .ap-placeholder{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; background:#0A1C24; }
+    .ap-placeholder span{ color:#D5C4A8; opacity:0.55; font-size:1.05rem; letter-spacing:0.22em; text-transform:uppercase; font-weight:600; }
+
+    /* Paneles emergentes de "tres caminos" (slide 04): cada uno es un
+       .fragment que cubre casi toda la pagina. Reveal solo marca UN
+       fragment como .current-fragment a la vez (los demas, vistos o no,
+       quedan sin esa clase) -> el efecto "se reduce y emerge el
+       siguiente" es nativo, sin JS de estado. !important vence la regla
+       propia de reveal .fragment.visible{opacity:1} para que un panel ya
+       visitado SI vuelva a colapsarse al dejar de ser el actual. */
+    .reveal .slides section .ambito-panel.fragment{ position:absolute; inset:4% 6%; z-index:6; border-radius:6px; overflow:hidden; opacity:0 !important; visibility:visible !important; transform:translateY(3vh) scale(0.96); transform-origin:var(--ox,50%) 65%; transition:opacity .6s var(--ease), transform .6s var(--ease); pointer-events:none; box-shadow:0 60px 140px -50px rgba(20,10,6,0.6); }
+    .reveal .slides section .ambito-panel.fragment.current-fragment{ opacity:1 !important; transform:translateY(0) scale(1); pointer-events:auto; }
+    .ambito-panel .bcap{ left:6rem; bottom:7rem; max-width:36ch; }
+    .ambito-panel .bcap .title{ color:var(--cream); }
+    .ambito-panel .bcap .body{ color:var(--sand); }
+    .ambito-panel .bcap .eyebrow{ color:var(--terra-soft); }
+
+    /* Portada: una obra a sangre, texto protegido a la izquierda */
+    .cover-img{ position:absolute; inset:0; z-index:1; }
+    .cover-img img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:72% 38%; filter:saturate(0.8) brightness(0.94); }
+    .cover-img .ov-cover{ position:absolute; inset:0; background:linear-gradient(90deg, rgba(253,251,247,1) 0%, rgba(253,251,247,0.95) 34%, rgba(253,251,247,0.55) 56%, rgba(253,251,247,0.05) 80%); }
 
     /* Collage de fondo (mosaico de obras) + overlay: reusa .ov/.grain del
        sistema .bleed para que quede en la misma familia visual. Filas flex
@@ -66,10 +87,11 @@
        por flex-grow segun orientacion (retrato angosto, paisaje ancho). */
     .collage{ position:absolute; inset:0; overflow:hidden; z-index:1; display:flex; flex-direction:column; gap:3px; background:#0A1C24; }
     .collage .crow{ display:flex; gap:3px; min-height:0; }
-    .collage .crow img{ height:100%; width:100%; object-fit:cover; display:block; filter:saturate(0.5) brightness(0.6) contrast(1.05); }
+    .collage .crow img{ height:100%; width:100%; object-fit:cover; display:block; }
     .collage .crow img.p{ flex:1; }
     .collage .crow img.l{ flex:1.85; }
     .collage .ov{ position:absolute; inset:0; z-index:2; }
+    .collage .ov.teal{ background:linear-gradient(72deg, rgba(15,40,50,0.97) 0%, rgba(15,40,50,0.88) 35%, rgba(15,40,50,0.68) 60%, rgba(15,40,50,0.38) 80%, rgba(15,40,50,0.12) 95%); }
     .reveal .slides section.present .collage img{ animation:collageKen 26s ease-out both; }
     @keyframes collageKen{ from{ transform:scale(1.07);} to{ transform:scale(1.0);} }
 
@@ -136,11 +158,14 @@
     <!-- 00 · PORTADA -->
     <section data-background-color="#FDFBF7">
       <div class="cover">
-        <div class="orb sand" style="top:-26%;right:-14%;opacity:0.62;"></div>
+        <div class="cover-img">
+          <img src="imagenes/collage/c13.jpg" alt="">
+          <div class="ov-cover"></div>
+        </div>
         <div class="grain"></div>
         <div class="cover-in">
           <p class="kx">II Congreso Mundial de Personalismo &nbsp;&middot;&nbsp; Madrid 2026</p>
-          <h1 class="h">Arteterapia.</h1>
+          <h1 class="h">Artes expresivas.</h1>
           <p class="sub"><span class="sub-lead">Una mirada personalista y logoterapéutica.</span><br>El arte como mediación entre la persona y el sentido.</p>
           <p class="au">Carolina Heinemann &nbsp;&middot;&nbsp; 4Meaning</p>
         </div>
@@ -152,13 +177,13 @@
     <section data-background-color="#0F2832" class="dark">
       <div class="collage">
         <div class="crow" style="flex:1.6;">
-          <img class="p" src="imagenes/collage/c1.jpg" alt="">
-          <img class="l" src="imagenes/collage/c6.jpg" alt="">
-          <img class="l" src="imagenes/collage/c11.jpg" alt="">
+          <img class="p" src="imagenes/collage/c1.jpg" alt="" loading="lazy">
+          <img class="l" src="imagenes/collage/c6.jpg" alt="" loading="lazy">
+          <img class="l" src="imagenes/collage/c11.jpg" alt="" loading="lazy">
         </div>
         <div class="crow" style="flex:1;">
-          <img class="p" src="imagenes/collage/c5.jpg" alt="">
-          <img class="l" src="imagenes/collage/c17.jpg" alt="">
+          <img class="p" src="imagenes/collage/c5.jpg" alt="" loading="lazy">
+          <img class="l" src="imagenes/collage/c17.jpg" alt="" loading="lazy">
         </div>
         <div class="ov teal"></div>
       </div>
@@ -203,7 +228,7 @@
       <img class="logo" src="../logos/4meaning-sand.png" alt="4Meaning">
     </section>
 
-    <!-- 04 · TRES CAMINOS (mapa) -->
+    <!-- 04 · TRES CAMINOS (mapa) + 3 paneles emergentes (uno por click) -->
     <section data-background-color="#F5F0E8" class="light">
       <div class="grain"></div>
       <div class="map">
@@ -213,6 +238,45 @@
           <div class="col"><div class="k">Valores creativos</div><div class="v">Niños</div><div class="d">En pobreza extrema. Dar algo de sí al mundo.</div></div>
           <div class="col"><div class="k">Valores vivenciales</div><div class="v">Parejas</div><div class="d">El encuentro, el amor, el reconocimiento mutuo.</div></div>
           <div class="col on"><div class="k">Valores de actitud</div><div class="v">Mujeres en crisis</div><div class="d">Reconstruir desde dentro cuando la realidad no cambia. Hoy: Paulina.</div></div>
+        </div>
+      </div>
+
+      <!-- Panel 1/3 · Niños (un video, no imagen) -->
+      <div class="ambito-panel fragment" data-ambito="ninos" style="--ox:18%;">
+        <div class="bleed">
+          <video src="videos/ninos-a.mp4" muted loop playsinline></video>
+          <div class="ov teal"></div>
+        </div>
+        <div class="bcap">
+          <p class="eyebrow">Valores creativos &middot; niños en pobreza extrema</p>
+          <h2 class="title lg">De <span class="accent">miembro</span><br>a <span class="accent">prójimo</span>.</h2>
+          <p class="body">No un caso a intervenir, sino un quién a dignificar. Dan algo de sí al mundo, aunque ese mundo sea de cartón, crayón y música improvisada.</p>
+        </div>
+      </div>
+
+      <!-- Panel 2/3 · Parejas / Trascendencia (imagen pendiente) -->
+      <div class="ambito-panel fragment" data-ambito="parejas" style="--ox:50%;">
+        <div class="bleed">
+          <div class="ap-placeholder"><span>Foto o video</span></div>
+          <div class="ov maroon"></div>
+        </div>
+        <div class="bcap">
+          <p class="eyebrow">Valores vivenciales &middot; parejas</p>
+          <h2 class="title lg">El encuentro<br>que dignifica.</h2>
+          <p class="body">En Trascendencia, las parejas vuelven a su primera mirada. El tú como condición del yo. «Me veo en el otro y el otro se ve en mí.»</p>
+        </div>
+      </div>
+
+      <!-- Panel 3/3 · Mujeres en crisis (imagen pendiente; entra directo el caso Paulina despues) -->
+      <div class="ambito-panel fragment" data-ambito="mujeres" style="--ox:82%;">
+        <div class="bleed">
+          <div class="ap-placeholder"><span>Foto o video</span></div>
+          <div class="ov teal"></div>
+        </div>
+        <div class="bcap">
+          <p class="eyebrow">Valores de actitud &middot; mujer en crisis</p>
+          <h2 class="title lg">Mujeres en crisis.</h2>
+          <p class="body">Reconstruir desde dentro cuando la realidad no cambia. Hoy: Paulina.</p>
         </div>
       </div>
     </section>
@@ -286,13 +350,13 @@
     <section data-background-color="#0F2832" class="dark">
       <div class="collage">
         <div class="crow" style="flex:1.3;">
-          <img class="l" src="imagenes/collage/c14.jpg" alt="">
-          <img class="p" src="imagenes/collage/c9.jpg" alt="">
+          <img class="l" src="imagenes/collage/c14.jpg" alt="" loading="lazy">
+          <img class="p" src="imagenes/collage/c9.jpg" alt="" loading="lazy">
         </div>
         <div class="crow" style="flex:1;">
-          <img class="p" src="imagenes/collage/c3.jpg" alt="">
-          <img class="l" src="imagenes/collage/c15.jpg" alt="">
-          <img class="p" src="imagenes/collage/c2.jpg" alt="">
+          <img class="p" src="imagenes/collage/c3.jpg" alt="" loading="lazy">
+          <img class="l" src="imagenes/collage/c15.jpg" alt="" loading="lazy">
+          <img class="p" src="imagenes/collage/c2.jpg" alt="" loading="lazy">
         </div>
         <div class="ov teal"></div>
       </div>
@@ -386,65 +450,24 @@
       <img class="logo" src="../logos/4meaning-sand.png" alt="4Meaning">
     </section>
 
-    <!-- 16 · PAREJAS (valores vivenciales) -->
-    <section data-background-color="#F5F0E8" class="light">
-      <div class="grain"></div>
-      <div class="ghost" style="bottom:3%;right:-1%;font-size:13rem;color:var(--ink);">NOSOTROS</div>
-      <div class="stage">
-        <p class="eyebrow">Valores vivenciales &middot; parejas</p>
-        <h2 class="title lg">El encuentro<br>que dignifica.</h2>
-        <p class="body">En Trascendencia, las parejas vuelven a su primera mirada. El tú como condición del yo. «Me veo en el otro y el otro se ve en mí.»</p>
-      </div>
-    </section>
-
-    <!-- 17 · NIÑOS DEL BASURERO · setup (valores creativos) -->
-    <section data-background-color="#0F2832" class="dark">
-      <div class="bleed">
-        <img src="imagenes/ninos.jpg" alt="Niños en un taller de arteterapia" style="object-position:50% 44%;">
-        <div class="ov teal"></div>
-      </div>
-      <div class="grain"></div>
-      <div class="bcap">
-        <p class="eyebrow">Valores creativos &middot; niños en pobreza extrema</p>
-        <h2 class="title lg">De <span class="accent">miembro</span><br>a <span class="accent">prójimo</span>.</h2>
-        <p class="body">No un caso a intervenir, sino un quién a dignificar. Dan algo de sí al mundo, aunque ese mundo sea de cartón, crayón y música improvisada.</p>
-      </div>
-      <img class="logo" src="../logos/4meaning-sand.png" alt="4Meaning">
-    </section>
-
-    <!-- 18 · NIÑOS DEL BASURERO · el taller vivo (video de fondo) -->
-    <section data-background-color="#0A1C24" class="dark">
-      <div class="vidbg">
-        <video src="videos/ninos-a.mp4" poster="imagenes/ninos.jpg" muted loop playsinline preload="metadata"></video>
-        <video src="videos/ninos-b.mp4" poster="imagenes/ninos.jpg" muted loop playsinline preload="metadata"></video>
-        <div class="ov-v"></div>
-      </div>
-      <div class="grain"></div>
-      <div class="bcap">
-        <p class="eyebrow">El taller, vivo</p>
-        <h2 class="title sm">Las emociones<br>se mueven.</h2>
-        <p class="body">Se reconocen, se mueven, y pueden moverse. Sin que nadie se lo explique.</p>
-      </div>
-      <img class="logo" src="../logos/4meaning-sand.png" alt="4Meaning">
-    </section>
 
     <!-- 17 · LA TESIS (cierre, collage de obras) -->
     <section data-background-color="#0A1C24" class="dark">
       <div class="collage" style="background:#0A1C24;">
-        <div class="crow" style="flex:1;">
-          <img class="p" src="imagenes/collage/c13.jpg" alt="">
-          <img class="p" src="imagenes/collage/c8.jpg" alt="">
-          <img class="p" src="imagenes/collage/c4.jpg" alt="">
+        <div class="crow" style="flex:1.4;">
+          <img class="p" src="imagenes/collage/c13.jpg" alt="" loading="lazy">
+          <img class="p" src="imagenes/collage/c8.jpg" alt="" loading="lazy">
+          <img class="p" src="imagenes/collage/c4.jpg" alt="" loading="lazy">
         </div>
         <div class="crow" style="flex:1;">
-          <img class="l" src="imagenes/collage/c7.jpg" alt="">
-          <img class="p" src="imagenes/collage/c12.jpg" alt="">
+          <img class="l" src="imagenes/collage/c7.jpg" alt="" loading="lazy">
+          <img class="p" src="imagenes/collage/c12.jpg" alt="" loading="lazy">
         </div>
-        <div class="crow" style="flex:0.9;">
-          <img class="p" src="imagenes/collage/c10.jpg" alt="">
-          <img class="l" src="imagenes/collage/c16.jpg" alt="">
+        <div class="crow" style="flex:0.8;">
+          <img class="p" src="imagenes/collage/c10.jpg" alt="" loading="lazy">
+          <img class="l" src="imagenes/collage/c16.jpg" alt="" loading="lazy">
         </div>
-        <div class="ov teal" style="background:linear-gradient(72deg, rgba(10,28,36,0.98) 0%, rgba(10,28,36,0.86) 30%, rgba(10,28,36,0.42) 60%, rgba(10,28,36,0.06) 86%);"></div>
+        <div class="ov teal"></div>
       </div>
       <div class="grain"></div>
       <div class="stage mid">
@@ -487,6 +510,26 @@
   }
   Reveal.on('ready', function(e){ __playVids(e.currentSlide); });
   Reveal.on('slidechanged', function(e){ __playVids(e.currentSlide); });
+
+  /* Paneles "tres caminos": el video del panel niños reproduce SOLO
+     mientras ese panel es el fragment actual (evita seguir reproduciendo
+     fuera de pantalla al avanzar a parejas/mujeres). Se resincroniza en
+     cualquier evento relevante, sin asumir el orden exacto en que
+     reveal dispara fragmentshown/fragmenthidden. */
+  function __syncAmbitoVideo(){
+    document.querySelectorAll('.ambito-panel').forEach(function(p){
+      var v = p.querySelector('video');
+      if(!v) return;
+      if(p.classList.contains('current-fragment')){
+        try{ v.currentTime = 0; var pr = v.play(); if(pr && pr.catch){ pr.catch(function(){}); } }catch(e){}
+      } else {
+        try{ v.pause(); }catch(e){}
+      }
+    });
+  }
+  Reveal.on('fragmentshown', __syncAmbitoVideo);
+  Reveal.on('fragmenthidden', __syncAmbitoVideo);
+  Reveal.on('slidechanged', __syncAmbitoVideo);
 </script>
 </body>
 </html>
