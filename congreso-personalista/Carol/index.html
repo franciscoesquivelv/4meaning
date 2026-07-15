@@ -29,7 +29,9 @@
     @keyframes orbFloat{ from{ transform:translate(-4%,-3%) scale(1);} to{ transform:translate(6%,5%) scale(1.12);} }
 
     /* ---- Logo ---- */
-    .logo{ position:absolute; right:3.4rem; bottom:2.8rem; height:2.4rem; width:auto; z-index:6; opacity:0.9; }
+    .logo{ position:absolute; right:3.4rem; bottom:2.8rem; height:2.4rem; width:auto; z-index:6; opacity:0.9;
+      filter:drop-shadow(0 1px 3px rgba(0,0,0,0.55)) drop-shadow(0 0 10px rgba(0,0,0,0.35)); }
+    .cover .logo{ height:3.2rem; opacity:1; }
 
     /* ---- Roles tipográficos ---- */
     .eyebrow{ font-weight:600; text-transform:uppercase; letter-spacing:0.26em; font-size:1rem; color:var(--terra-deep); margin:0 0 1.9rem; position:relative; z-index:3; }
@@ -79,7 +81,9 @@
     /* Portada: una obra a sangre, texto protegido a la izquierda */
     .cover-img{ position:absolute; inset:0; z-index:1; }
     .cover-img img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:72% 38%; filter:saturate(0.8) brightness(0.94); }
-    .cover-img .ov-cover{ position:absolute; inset:0; background:linear-gradient(90deg, rgba(253,251,247,1) 0%, rgba(253,251,247,0.95) 34%, rgba(253,251,247,0.55) 56%, rgba(253,251,247,0.05) 80%); }
+    .cover-img .ov-cover{ position:absolute; inset:0; background:
+      radial-gradient(30% 40% at 97% 97%, rgba(253,251,247,0.92) 0%, rgba(253,251,247,0.4) 55%, rgba(253,251,247,0) 100%),
+      linear-gradient(90deg, rgba(253,251,247,1) 0%, rgba(253,251,247,0.95) 34%, rgba(253,251,247,0.55) 56%, rgba(253,251,247,0.05) 80%); }
 
     /* Collage de fondo (mosaico de obras) + overlay: reusa .ov/.grain del
        sistema .bleed para que quede en la misma familia visual. Filas flex
@@ -179,8 +183,8 @@
       <div class="ghost" style="top:10%;right:-3%;font-size:16rem;color:var(--sand);">LENGUAJE</div>
       <div class="stage">
         <p class="eyebrow">Qué son las artes expresivas</p>
-        <h2 class="title lg">Cualquier medio<br>de expresión.</h2>
-        <p class="body" style="max-width:46ch;">Artes visuales, movimiento, danza, música, escritura, teatro: un proceso creativo para la expresión emocional. La terapia con arte es una de sus expresiones.</p>
+        <h2 class="title lg">Utilizan cualquier<br>medio de expresión artística.</h2>
+        <p class="body" style="max-width:46ch;">Un proceso creativo que facilita la expresión emocional.</p>
       </div>
       <img class="logo" src="../logos/4meaning-sand.png" alt="4Meaning">
     </section>
@@ -247,7 +251,7 @@
         <p class="eyebrow">Tres caminos al sentido</p>
         <h2 class="title" style="color:var(--ink)">Un proceso, tres ámbitos.</h2>
         <div class="cols">
-          <div class="col"><div class="k">Valores creativos</div><div class="v">Niños</div><div class="d">En pobreza extrema. Dar algo de sí al mundo.</div></div>
+          <div class="col"><div class="k">Valores creativos</div><div class="v">Niños</div><div class="d">En zonas de riesgo. Dar algo de sí al mundo.</div></div>
           <div class="col"><div class="k">Valores vivenciales</div><div class="v">Parejas</div><div class="d">El encuentro, el amor, el reconocimiento mutuo.</div></div>
           <div class="col on"><div class="k">Valores de actitud</div><div class="v">Mujeres en crisis</div><div class="d">Reconstruir desde dentro cuando la realidad no cambia. Hoy: Paulina.</div></div>
         </div>
@@ -260,9 +264,9 @@
           <div class="ov teal"></div>
         </div>
         <div class="bcap">
-          <p class="eyebrow">Valores creativos &middot; niños en pobreza extrema</p>
+          <p class="eyebrow">Valores creativos &middot; niños en zonas de riesgo</p>
           <h2 class="title lg">De <span class="accent">miembro</span><br>a <span class="accent">prójimo</span>.</h2>
-          <p class="body">No un caso a intervenir, sino un quién a dignificar. Dan algo de sí al mundo, aunque ese mundo sea de cartón, crayón y música improvisada.</p>
+          <p class="body">Viven en alerta, entre el basurero, la calle y la violencia. El arte les abre un espacio propio para respirar tranquilos y empezar a cambiar su historia.</p>
         </div>
       </div>
 
@@ -275,40 +279,25 @@
         <div class="bcap">
           <p class="eyebrow">Valores vivenciales &middot; parejas</p>
           <h2 class="title lg">El encuentro<br>que dignifica.</h2>
-          <p class="body">En Trascendencia, las parejas vuelven a su primera mirada. El tú como condición del yo. «Me veo en el otro y el otro se ve en mí.»</p>
+          <p class="body">En Trascendencia, las parejas vuelven a su primera mirada: me reconozco en el tú como condición del yo.</p>
         </div>
       </div>
 
-      <!-- Panel 3/3 · Mujeres en crisis (imagen pendiente; entra directo el caso Paulina despues) -->
+      <!-- Panel 3/3 · Mujeres en crisis: aquí empieza el caso de Paulina -->
       <div class="ambito-panel fragment" data-ambito="mujeres" style="--ox:82%;">
         <div class="bleed">
-          <div class="ap-placeholder"><span>Foto o video</span></div>
+          <img src="imagenes/img1.jpg" alt="Paulina" style="object-position:60% 22%;">
           <div class="ov teal"></div>
         </div>
         <div class="bcap">
           <p class="eyebrow">Valores de actitud &middot; mujer en crisis</p>
-          <h2 class="title lg">Mujeres en crisis.</h2>
-          <p class="body">Reconstruir desde dentro cuando la realidad no cambia. Hoy: Paulina.</p>
+          <h2 class="title lg">Paulina.</h2>
+          <p class="body">Diecisiete años, embarazada, sin ningún tipo de apoyo, sin trabajo. Reconstruir desde dentro cuando la realidad no cambia.</p>
         </div>
       </div>
     </section>
 
-    <!-- 06 · PAULINA (foto a sangre) -->
-    <section data-background-color="#4A1C2A" class="maroon-txt">
-      <div class="bleed">
-        <img src="imagenes/img1.jpg" alt="Paulina" style="object-position:60% 22%;">
-        <div class="ov maroon"></div>
-      </div>
-      <div class="grain"></div>
-      <div class="bcap">
-        <p class="eyebrow">Valores de actitud &middot; mujer en crisis</p>
-        <h2 class="title lg">Paulina.</h2>
-        <p class="body">Diecisiete años, embarazada, sin ningún tipo de apoyo, sin trabajo.</p>
-      </div>
-      <img class="logo" src="../logos/4meaning-sand.png" alt="4Meaning">
-    </section>
-
-    <!-- 07 · LA MIRADA -->
+    <!-- 06 · LA MIRADA -->
     <section data-background-color="#0F2832" class="dark">
       <div class="grain"></div>
       <div class="ghost" style="top:9%;right:-4%;font-size:14rem;color:var(--sand);">PERSONA</div>
@@ -320,7 +309,7 @@
       <img class="logo" src="../logos/4meaning-sand.png" alt="4Meaning">
     </section>
 
-    <!-- 07b · EL SILENCIO (punto de partida) -->
+    <!-- 06b · EL SILENCIO (punto de partida) -->
     <section data-background-color="#0A1C24" class="dark">
       <div class="grain"></div>
       <div class="ghost" style="top:19%;left:-1%;font-size:18rem;color:var(--sand);">SILENCIO</div>
@@ -332,7 +321,7 @@
       <img class="logo" src="../logos/4meaning-sand.png" alt="4Meaning">
     </section>
 
-    <!-- 08 · EL PRIMER TRAZO (obra · garabatos) -->
+    <!-- 07 · EL PRIMER TRAZO (obra · garabatos) -->
     <section data-background-color="#0F2832" class="dark">
       <div class="grain"></div>
       <div class="framed">
@@ -346,7 +335,7 @@
       <img class="logo" src="../logos/4meaning-sand.png" alt="4Meaning">
     </section>
 
-    <!-- 09 · EL ACTO (anclaje) -->
+    <!-- 08 · EL ACTO (anclaje) -->
     <section data-background-color="#F5F0E8" class="light">
       <div class="grain"></div>
       <div class="ghost" style="bottom:4%;left:-1%;font-size:15rem;color:var(--ink);">ACTO</div>
@@ -358,7 +347,7 @@
       </div>
     </section>
 
-    <!-- 10 · LA SENSACIÓN SENTIDA (collage de obras tactiles/texturales) -->
+    <!-- 09 · LA SENSACIÓN SENTIDA (collage de obras tactiles/texturales) -->
     <section data-background-color="#0F2832" class="dark">
       <div class="collage">
         <div class="crow" style="flex:1.3;">
@@ -381,7 +370,7 @@
       <img class="logo" src="../logos/4meaning-sand.png" alt="4Meaning">
     </section>
 
-    <!-- 11 · EL NUDO (obra) -->
+    <!-- 10 · EL NUDO (obra) -->
     <section data-background-color="#4A1C2A" class="maroon-txt">
       <div class="grain"></div>
       <div class="framed rev">
@@ -394,7 +383,7 @@
       <img class="logo" src="../logos/4meaning-sand.png" alt="4Meaning">
     </section>
 
-    <!-- 12 · ¿CÓMO ME SIENTO HOY? (obra) -->
+    <!-- 11 · ¿CÓMO ME SIENTO HOY? (obra) -->
     <section data-background-color="#0F2832" class="dark">
       <div class="grain"></div>
       <div class="framed">
@@ -408,7 +397,7 @@
       <img class="logo" src="../logos/4meaning-sand.png" alt="4Meaning">
     </section>
 
-    <!-- 13 · EL CAMBIO (obra · Guardini) -->
+    <!-- 12 · EL CAMBIO (obra · Guardini) -->
     <section data-background-color="#0F2832" class="dark">
       <div class="grain"></div>
       <div class="framed rev">
@@ -422,7 +411,7 @@
       <img class="logo" src="../logos/4meaning-sand.png" alt="4Meaning">
     </section>
 
-    <!-- 14 · LA PERSONA RESTAURADA -->
+    <!-- 13 · LA PERSONA RESTAURADA -->
     <section data-background-color="#F5F0E8" class="light">
       <div class="grain"></div>
       <div class="ghost" style="top:6%;right:-1%;font-size:14rem;color:var(--ink);">DIGNA</div>
@@ -433,7 +422,7 @@
       </div>
     </section>
 
-    <!-- 15 · EL NACIMIENTO (foto a sangre) -->
+    <!-- 14 · EL NACIMIENTO (foto a sangre) -->
     <section data-background-color="#0F2832" class="dark">
       <div class="bleed">
         <img src="imagenes/img6.jpg" alt="La bebé" style="object-position:50% 30%;">
@@ -443,12 +432,12 @@
       <div class="bcap">
         <p class="eyebrow">El desenlace</p>
         <h2 class="title lg">Nace su hija.</h2>
-        <p class="body">Su principal motivación para salir adelante.</p>
+        <p class="body">Su principal motivación para salir adelante. Empieza a elaborar su nueva identidad.</p>
       </div>
       <img class="logo" src="../logos/4meaning-sand.png" alt="4Meaning">
     </section>
 
-    <!-- 16 · HOY (foto a sangre) -->
+    <!-- 15 · HOY (foto a sangre) -->
     <section data-background-color="#0F2832" class="dark">
       <div class="bleed">
         <img src="imagenes/img7.jpg" alt="Paulina y su hija hoy" style="object-position:50% 28%;">
@@ -457,13 +446,13 @@
       <div class="grain"></div>
       <div class="bcap">
         <h2 class="title lg">Hoy.</h2>
-        <p class="body">Su hija tiene dos años y es feliz. Las dos están bien.</p>
+        <p class="body">Camila, su hija, tiene dos años y es hoy su principal sentido de vida. Las dos están bien.</p>
       </div>
       <img class="logo" src="../logos/4meaning-sand.png" alt="4Meaning">
     </section>
 
 
-    <!-- 17 · LA TESIS (cierre, collage de obras) -->
+    <!-- 16 · LA TESIS (cierre, collage de obras) -->
     <section data-background-color="#0A1C24" class="dark">
       <div class="collage" style="background:#0A1C24;">
         <div class="crow" style="flex:1.4;">
@@ -490,7 +479,7 @@
       <img class="logo" src="../logos/4meaning-sand.png" alt="4Meaning">
     </section>
 
-    <!-- 18 · CIERRE -->
+    <!-- 17 · CIERRE -->
     <section data-background-color="#FDFBF7">
       <div class="cover">
         <div class="grain"></div>
