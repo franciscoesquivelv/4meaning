@@ -99,6 +99,8 @@
     .collage .ov.teal{ background:linear-gradient(72deg, rgba(15,40,50,0.97) 0%, rgba(15,40,50,0.88) 35%, rgba(15,40,50,0.68) 60%, rgba(15,40,50,0.38) 80%, rgba(15,40,50,0.12) 95%); }
     .reveal .slides section.present .collage img{ animation:collageKen 26s ease-out both; }
     @keyframes collageKen{ from{ transform:scale(1.07);} to{ transform:scale(1.0);} }
+    .reveal .slides section.present .collage img.czoom{ animation:collageKenZoom 26s ease-out both; }
+    @keyframes collageKenZoom{ from{ transform:scale(1.32);} to{ transform:scale(1.2);} }
 
     /* Fondo de video (dos clips verticales) */
     .vidbg{ position:absolute; inset:0; display:flex; gap:2px; z-index:1; overflow:hidden; background:#0A1C24; }
@@ -214,25 +216,7 @@
       <img class="logo" src="../logos/4meaning-sand.png" alt="4Meaning">
     </section>
 
-    <!-- 03 · DOS EJES -->
-    <section data-background-color="#0F2832" class="dark">
-      <div class="grain"></div>
-      <div class="axes">
-        <div class="half">
-          <p class="k">Eje 1 &middot; Antropología</p>
-          <div class="n">Personalismo</div>
-          <p class="p">La persona: creadora, única, irrepetible, con una dignidad que no depende de las circunstancias. <span style="color:var(--taupe)">Wojtyła &middot; Burgos &middot; Mounier</span></p>
-        </div>
-        <div class="half">
-          <p class="k">Eje 2 &middot; Sentido</p>
-          <div class="n">Logoterapia</div>
-          <p class="p">Tres caminos al sentido: los valores creativos, los vivenciales y los de actitud. <span style="color:var(--taupe)">Viktor Frankl</span></p>
-        </div>
-      </div>
-      <img class="logo" src="../logos/4meaning-sand.png" alt="4Meaning">
-    </section>
-
-    <!-- 04 · PERSONALISMO (unidad en tres dimensiones) -->
+    <!-- 03 · PERSONALISMO (unidad en tres dimensiones) -->
     <section data-background-color="#0A1C24" class="dark">
       <div class="grain"></div>
       <div class="ghost" style="bottom:3%;right:-2%;font-size:15rem;color:var(--sand);">ESPÍRITU</div>
@@ -245,7 +229,7 @@
       <img class="logo" src="../logos/4meaning-sand.png" alt="4Meaning">
     </section>
 
-    <!-- 05 · LA PERSONA (monumental, maroon) -->
+    <!-- 04 · LA PERSONA (monumental, maroon) -->
     <section data-background-color="#4A1C2A" class="maroon-txt">
       <div class="orb terra" style="bottom:-20%;left:-8%;"></div>
       <div class="grain"></div>
@@ -254,6 +238,19 @@
         <p class="eyebrow">La persona</p>
         <h2 class="title lg">Creadora.<br>Única. <span class="accent">Digna.</span></h2>
         <p class="body">El ser humano es creador. Al crear, se construye a sí mismo. El cuerpo es «materia espiritualizada», el lienzo del espíritu.</p>
+      </div>
+      <img class="logo" src="../logos/4meaning-sand.png" alt="4Meaning">
+    </section>
+
+
+    <!-- 05 · LOGOTERAPIA (tres caminos al sentido) -->
+    <section data-background-color="#0A1C24" class="dark">
+      <div class="grain"></div>
+      <div class="ghost" style="bottom:3%;left:-2%;font-size:15rem;color:var(--sand);">SENTIDO</div>
+      <div class="stage">
+        <p class="eyebrow">Eje 2 &middot; Sentido</p>
+        <h2 class="title lg">Logoterapia.</h2>
+        <p class="body">Tres caminos al sentido: los valores <span class="accent">creativos</span>, los <span class="accent">vivenciales</span> y los de <span class="accent">actitud</span>. <span class="src">Viktor Frankl</span></p>
       </div>
       <img class="logo" src="../logos/4meaning-sand.png" alt="4Meaning">
     </section>
@@ -267,7 +264,7 @@
         <div class="cols">
           <div class="col"><div class="k">Valores creativos</div><div class="v">Niños</div><div class="d">En zonas de riesgo. Dar algo de sí al mundo.</div></div>
           <div class="col"><div class="k">Valores vivenciales</div><div class="v">Parejas</div><div class="d">El encuentro, el amor, el reconocimiento mutuo.</div></div>
-          <div class="col on"><div class="k">Valores de actitud</div><div class="v" style="font-weight:900;">Mujeres en crisis</div><div class="d">Reconstruir desde dentro cuando la realidad no cambia. Hoy: Paulina.</div></div>
+          <div class="col on"><div class="k">Valores de actitud</div><div class="v" style="font-weight:900;color:var(--ink);">Mujeres en crisis</div><div class="d">Reconstruir desde dentro cuando la realidad no cambia. Hoy: Paulina.</div></div>
         </div>
       </div>
 
@@ -290,7 +287,7 @@
           <div class="ap-placeholder"><span>Foto o video</span></div>
           <div class="ov maroon"></div>
         </div>
-        <div class="bcap">
+        <div class="bcap" style="max-width:52ch;">
           <p class="eyebrow">Valores vivenciales &middot; parejas</p>
           <h2 class="title lg">El encuentro<br>que dignifica.</h2>
           <p class="body">En Trascendencia, las parejas vuelven a su primera mirada: me reconozco en el tú como condición del yo.</p>
@@ -359,7 +356,7 @@
         </div>
         <div class="crow" style="flex:1;">
           <img class="p" src="imagenes/collage/c3.jpg" alt="" loading="lazy">
-          <img class="l" src="imagenes/collage/c15.jpg" alt="" loading="lazy">
+          <img class="l czoom" src="imagenes/collage/c15.jpg" alt="" loading="lazy" style="transform-origin:left center;">
           <img class="p" src="imagenes/collage/c2.jpg" alt="" loading="lazy">
         </div>
         <div class="ov teal"></div>
