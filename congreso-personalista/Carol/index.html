@@ -77,6 +77,7 @@
     .ambito-panel .bcap .title{ color:var(--cream); }
     .ambito-panel .bcap .body{ color:var(--sand); }
     .ambito-panel .bcap .eyebrow{ color:var(--terra-soft); }
+    .ambito-panel .bcap .src{ color:#B8AC96; }
 
     /* Portada: una obra a sangre, texto protegido a la izquierda */
     .cover-img{ position:absolute; inset:0; z-index:1; }
@@ -89,8 +90,8 @@
        sistema .bleed para que quede en la misma familia visual. Filas flex
        (no grid-span) = cero riesgo de huecos; cada fila reparte sus imagenes
        por flex-grow segun orientacion (retrato angosto, paisaje ancho). */
-    .collage{ position:absolute; inset:0; overflow:hidden; z-index:1; display:flex; flex-direction:column; gap:3px; background:#0A1C24; }
-    .collage .crow{ display:flex; gap:3px; min-height:0; }
+    .collage{ position:absolute; inset:0; overflow:hidden; z-index:1; display:flex; flex-direction:column; gap:0; background:#0A1C24; }
+    .collage .crow{ display:flex; gap:0; min-height:0; }
     .collage .crow img{ height:100%; width:100%; object-fit:cover; display:block; }
     .collage .crow img.p{ flex:1; }
     .collage .crow img.l{ flex:1.85; }
@@ -207,8 +208,8 @@
       <div class="ghost" style="top:8%;left:-2%;font-size:22rem;color:var(--sand);">ARTE</div>
       <div class="stage mid">
         <p class="eyebrow">La tesis</p>
-        <h2 class="title xl">El arte es<br>una <span class="accent">mediación</span>.</h2>
-        <p class="body" style="max-width:40ch;">Entre el mundo interior de la persona y el lenguaje en que ese mundo puede pensarse, comunicarse y transformarse.</p>
+        <h2 class="title xl">El arte actúa<br>como una <span class="accent">mediación</span>.</h2>
+        <p class="body" style="max-width:40ch;">Entre el mundo interior de la persona y aquello que quiere comunicar.</p>
       </div>
       <img class="logo" src="../logos/4meaning-sand.png" alt="4Meaning">
     </section>
@@ -253,7 +254,7 @@
         <div class="cols">
           <div class="col"><div class="k">Valores creativos</div><div class="v">Niños</div><div class="d">En zonas de riesgo. Dar algo de sí al mundo.</div></div>
           <div class="col"><div class="k">Valores vivenciales</div><div class="v">Parejas</div><div class="d">El encuentro, el amor, el reconocimiento mutuo.</div></div>
-          <div class="col on"><div class="k">Valores de actitud</div><div class="v">Mujeres en crisis</div><div class="d">Reconstruir desde dentro cuando la realidad no cambia. Hoy: Paulina.</div></div>
+          <div class="col on"><div class="k">Valores de actitud</div><div class="v" style="font-weight:900;">Mujeres en crisis</div><div class="d">Reconstruir desde dentro cuando la realidad no cambia. Hoy: Paulina.</div></div>
         </div>
       </div>
 
@@ -266,7 +267,7 @@
         <div class="bcap">
           <p class="eyebrow">Valores creativos &middot; niños en zonas de riesgo</p>
           <h2 class="title lg">Un respiro.<br>Un <span class="accent">cambio</span>.</h2>
-          <p class="body">Viven en alerta, entre el basurero, la calle y la violencia. El arte les abre un espacio propio para respirar tranquilos y empezar a cambiar su historia.</p>
+          <p class="body">Viven en comunidades alrededor del basurero, en condiciones de vulnerabilidad social y violencia. El arte les abre un espacio propio para transformar su historia.</p>
         </div>
       </div>
 
@@ -280,6 +281,7 @@
           <p class="eyebrow">Valores vivenciales &middot; parejas</p>
           <h2 class="title lg">El encuentro<br>que dignifica.</h2>
           <p class="body">En Trascendencia, las parejas vuelven a su primera mirada: me reconozco en el tú como condición del yo.</p>
+          <p class="body" style="font-style:italic; margin-top:1rem;">«El ser humano se constituye como persona en relación con el otro.» <span class="src">Martín Buber</span></p>
         </div>
       </div>
 
@@ -292,24 +294,12 @@
         <div class="bcap">
           <p class="eyebrow">Valores de actitud &middot; mujer en crisis</p>
           <h2 class="title lg">Paulina.</h2>
-          <p class="body">Diecisiete años, embarazada, sin ningún tipo de apoyo, sin trabajo. Reconstruir desde dentro cuando la realidad no cambia.</p>
+          <p class="body">Diecinueve años, embarazada y sin ningún tipo de trabajo. Reconstruir desde dentro cuando la realidad no cambia.</p>
         </div>
       </div>
     </section>
 
-    <!-- 06 · LA MIRADA -->
-    <section data-background-color="#0F2832" class="dark">
-      <div class="grain"></div>
-      <div class="ghost" style="top:9%;right:-4%;font-size:14rem;color:var(--sand);">PERSONA</div>
-      <div class="stage">
-        <p class="eyebrow">La mirada</p>
-        <h2 class="title lg">Un <span class="accent">qué</span>.<br>O un <span class="accent">quién</span>.</h2>
-        <p class="body">Su dignidad no se perdió con la situación: es un dato ontológico, no un atributo social. Solo necesitaba reconocerla. El arte fue el lenguaje que se lo permitió.</p>
-      </div>
-      <img class="logo" src="../logos/4meaning-sand.png" alt="4Meaning">
-    </section>
-
-    <!-- 06b · EL SILENCIO (punto de partida) -->
+    <!-- 06 · EL SILENCIO (punto de partida) -->
     <section data-background-color="#0A1C24" class="dark">
       <div class="grain"></div>
       <div class="ghost" style="top:19%;left:-1%;font-size:18rem;color:var(--sand);">SILENCIO</div>
@@ -363,9 +353,9 @@
       </div>
       <div class="grain"></div>
       <div class="stage mid">
-        <p class="eyebrow">El método</p>
+        <p class="eyebrow">El proceso</p>
         <h2 class="title lg">La sensación<br>sentida.</h2>
-        <p class="body">Trabajamos las tres dimensiones: mente, cuerpo y espíritu. Lo que se siente al escuchar lo que el cuerpo revela.</p>
+        <p class="body">Es lo que surge al entrar en contacto con su interior, representado en color, forma, imagen o frase.</p>
       </div>
       <img class="logo" src="../logos/4meaning-sand.png" alt="4Meaning">
     </section>
@@ -376,7 +366,7 @@
       <div class="framed rev">
         <div class="pic"><img src="imagenes/img3.jpg" alt="Nudo con lágrimas"></div>
         <div class="txt">
-          <h2 class="title sm">«Un nudo<br>en la garganta.»</h2>
+          <h2 class="title sm">Un nudo<br>en la garganta.</h2>
           <p class="body">No nace de la mente, sino del diálogo entre lo que siente el cuerpo y el arte.</p>
         </div>
       </div>
@@ -387,7 +377,7 @@
     <section data-background-color="#0F2832" class="dark">
       <div class="grain"></div>
       <div class="framed">
-        <div class="pic"><img src="imagenes/img4.jpg" alt="Corazón apretado"></div>
+        <div class="pic" style="flex-basis:60%;"><img src="imagenes/img4.jpg" alt="Corazón apretado" style="max-height:88vh;"></div>
         <div class="txt">
           <p class="eyebrow">El cambio de sentido</p>
           <h2 class="title sm">«¿Cómo me<br>siento hoy?»</h2>
@@ -446,13 +436,25 @@
       <div class="grain"></div>
       <div class="bcap">
         <h2 class="title lg">Hoy.</h2>
-        <p class="body">Camila, su hija, tiene dos años y es hoy su principal sentido de vida. Las dos están bien.</p>
+        <p class="body">Camila, su hija, tiene dos años y es hoy su principal sentido de vida.</p>
       </div>
       <img class="logo" src="../logos/4meaning-sand.png" alt="4Meaning">
     </section>
 
 
-    <!-- 16 · LA TESIS (cierre, collage de obras) -->
+    <!-- 16 · LA MIRADA -->
+    <section data-background-color="#0F2832" class="dark">
+      <div class="grain"></div>
+      <div class="ghost" style="top:9%;right:-4%;font-size:14rem;color:var(--sand);">PERSONA</div>
+      <div class="stage">
+        <p class="eyebrow">La mirada</p>
+        <h2 class="title lg">Un <span class="accent">qué</span>.<br>O un <span class="accent">quién</span>.</h2>
+        <p class="body">Su dignidad no se perdió con la situación: es un dato ontológico, no un atributo social. Solo necesitaba reconocerla. El arte fue el lenguaje que se lo permitió.</p>
+      </div>
+      <img class="logo" src="../logos/4meaning-sand.png" alt="4Meaning">
+    </section>
+
+    <!-- 17 · LA TESIS (cierre, collage de obras) -->
     <section data-background-color="#0A1C24" class="dark">
       <div class="collage" style="background:#0A1C24;">
         <div class="crow" style="flex:1.4;">
@@ -474,12 +476,12 @@
       <div class="stage mid">
         <p class="eyebrow">El cierre</p>
         <h2 class="title xl">El arte llega donde<br>la <span class="accent">palabra</span> no llega.</h2>
-        <p class="body" style="max-width:44ch;">No es un recurso técnico añadido. Es traducir una antropología verdadera al lenguaje del arte, para que la persona encuentre en su propia obra lo que de otro modo le costaría reconocer en sí misma.</p>
+        <p class="body" style="max-width:44ch;">No es un recurso técnico añadido. Es traducir una antropología verdadera al lenguaje de creatividad, para que la persona encuentre en su propia obra lo que de otro modo le costaría reconocer en sí misma.</p>
       </div>
       <img class="logo" src="../logos/4meaning-sand.png" alt="4Meaning">
     </section>
 
-    <!-- 17 · CIERRE -->
+    <!-- 18 · CIERRE -->
     <section data-background-color="#FDFBF7">
       <div class="cover">
         <div class="grain"></div>
