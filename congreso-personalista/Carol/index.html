@@ -99,8 +99,6 @@
     .collage .ov.teal{ background:linear-gradient(72deg, rgba(15,40,50,0.97) 0%, rgba(15,40,50,0.88) 35%, rgba(15,40,50,0.68) 60%, rgba(15,40,50,0.38) 80%, rgba(15,40,50,0.12) 95%); }
     .reveal .slides section.present .collage img{ animation:collageKen 26s ease-out both; }
     @keyframes collageKen{ from{ transform:scale(1.07);} to{ transform:scale(1.0);} }
-    .reveal .slides section.present .collage img.czoom{ animation:collageKenZoom 26s ease-out both; }
-    @keyframes collageKenZoom{ from{ transform:scale(1.32);} to{ transform:scale(1.2);} }
 
     /* Fondo de video (dos clips verticales) */
     .vidbg{ position:absolute; inset:0; display:flex; gap:2px; z-index:1; overflow:hidden; background:#0A1C24; }
@@ -356,7 +354,7 @@
         </div>
         <div class="crow" style="flex:1;">
           <img class="p" src="imagenes/collage/c3.jpg" alt="" loading="lazy">
-          <img class="l czoom" src="imagenes/collage/c15.jpg" alt="" loading="lazy" style="transform-origin:left center;">
+          <img class="l" src="imagenes/collage/c15.jpg" alt="" loading="lazy">
           <img class="p" src="imagenes/collage/c2.jpg" alt="" loading="lazy">
         </div>
         <div class="ov teal"></div>
