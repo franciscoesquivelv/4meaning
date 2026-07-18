@@ -20,34 +20,47 @@
 <meta name="twitter:image"       content="https://4meaning.life/personalab/stock/sunset-lake-view-sun-shining.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --primary:       #395640;
-    --primary-light: #4a7055;
-    --primary-mid:   #5c8c6a;
-    --primary-sage:  #7aad88;
-    --primary-mist:  #b5d4bc;
-    --primary-frost: #e4f0e7;
-    --primary-faint: #f2f8f3;
-    --ink:           #0d1a0e;
-    --ink-soft:      #283929;
-    --muted:         #6b8472;
-    --warm-white:    #f8f6f1;
-    --white:         #ffffff;
-    --border:        #cee4d2;
+    /* Casa de marca 4 Meaning — rampa teal + acento terracota (ver /BRAND.md) */
+    --primary:       #002B34;   /* Verde Petróleo · rector */
+    --primary-light: #0A3B45;
+    --primary-mid:   #2A6470;   /* teal medio · bordes/checks */
+    --primary-sage:  #B9735A;   /* Terracota · acento humano */
+    --primary-mist:  #A9C7C6;   /* teal claro */
+    --primary-frost: #DCE9E7;
+    --primary-faint: #EEF4F3;
+    --ink:           #14181B;   /* Tinta */
+    --ink-soft:      #2A3438;
+    --muted:         #6F7777;   /* Gris Criterio */
+    --warm-white:    #FAF8F4;   /* blanco cálido */
+    --white:         #FFFFFF;
+    --border:        #E7E1D8;
+    --serif:         "Cormorant Garamond", Georgia, "Times New Roman", serif;
+    --sans:          -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
   }
 
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
 
   body {
-    font-family: 'Montserrat', sans-serif;
+    font-family: var(--sans);
     background: var(--warm-white);
     color: var(--ink);
     line-height: 1.6;
     overflow-x: hidden;
+    font-weight: 300;
+    -webkit-font-smoothing: antialiased;
   }
+
+  /* Títulos editoriales en Cormorant Garamond — jerarquía por escala y aire */
+  .hero-headline,
+  .section-title,
+  .paraquien-title,
+  .cierre-title,
+  .dolor-number,
+  .modulo-num { font-family: var(--serif); letter-spacing: -0.005em; }
 
   /* ─── NAV ─────────────────────────────────────────── */
   #navbar {

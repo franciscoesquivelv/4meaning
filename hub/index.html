@@ -7,18 +7,21 @@
   <title>Hub Operativo — Trascendencia</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:       #0a0a0a;
-      --surface:  #141414;
-      --surface2: #1c1c1c;
-      --border:   #272727;
-      --border-hi:#3a3a3a;
-      --text:     #f8f7f5;
-      --muted:    #666666;
+      /* Casa de marca 4 Meaning — base teal profunda + acento terracota (/BRAND.md) */
+      --bg:       #002026;   /* Verde Petróleo profundo · canvas */
+      --surface:  #0A3B45;   /* teal elevado */
+      --surface2: #114A55;
+      --border:   rgba(255,255,255,0.10);
+      --border-hi:#B9735A;   /* Terracota · acento */
+      --text:     #FAF8F4;
+      --muted:    #90A6A9;   /* teal-gris legible */
+      --serif:    "Cormorant Garamond", Georgia, serif;
+      --sans:     -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
     }
 
     html { scroll-behavior: smooth; }
@@ -26,7 +29,7 @@
     body {
       background: var(--bg);
       color: var(--text);
-      font-family: 'Montserrat', sans-serif;
+      font-family: var(--sans);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
@@ -49,11 +52,12 @@
       opacity: 0.85;
     }
     .brand-eyebrow {
-      font-size: 9px;
-      font-weight: 600;
+      font-family: "Courier New", Courier, monospace;
+      font-size: 10px;
+      font-weight: 400;
       letter-spacing: 0.28em;
       text-transform: uppercase;
-      color: var(--muted);
+      color: var(--border-hi);
     }
 
     .tools-grid {
@@ -118,7 +122,7 @@
       border-radius: 3px;
       width: fit-content;
     }
-    .tool-status.ready { background: rgba(255,255,255,0.08); color: var(--text); }
+    .tool-status.ready { background: rgba(185,115,90,0.18); color: #E7C3B3; }
     .tool-status.soon  { background: rgba(255,255,255,0.03); color: var(--muted); }
 
     .divider {
