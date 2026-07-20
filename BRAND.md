@@ -80,20 +80,23 @@ legado/Trascendencia.
 La jerarquía se construye con **escala, aire, ritmo y composición — no con
 negritas**. Se evita el uso de pesos 800/900 y las mayúsculas apretadas.
 
+**Decisión de la web (por preferencia del cliente): tipografía 100% sans serif.**
+Los títulos van en la sans a pesos ligeros (200–300) y gran escala; se descartó
+la capa serif editorial (Cormorant) en el sitio.
+
 | Rol | Familia | Stack CSS | Uso |
 |-----|---------|-----------|-----|
-| Editorial | Cormorant Garamond | `"Cormorant Garamond", Georgia, serif` | Títulos, citas, manifiestos, momentos profundos |
-| Sans | Helvetica Neue (sistema) | `-apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif` | Navegación, cuerpo, materiales comerciales, digital |
-| Técnica | Courier New | `"Courier New", Courier, monospace` | Códigos, etiquetas, eyebrows, notas técnicas |
+| Sans (única) | Helvetica Neue (sistema) | `-apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif` | Títulos, cuerpo, navegación, eyebrows, todo |
 
 > La marca especifica Avenir Next / Helvetica Neue para la sans. Como Avenir no
 > es una fuente web libre, se usa el stack de sistema Helvetica Neue (fiel,
-> sin dependencias externas). Cormorant Garamond se carga desde Google Fonts.
+> sin dependencias externas y sin cargar fuentes externas).
 
 **Pautas.**
-- Display editorial en Cormorant, pesos 300–500, `line-height` generoso.
-- Eyebrows y etiquetas en Courier, mayúsculas, `letter-spacing` amplio.
-- Cuerpo en sans, peso 300–400, mucho interlineado (aire).
+- Display en sans, pesos 200–300 a gran escala, `line-height` ajustado (0.98–1.1).
+- Énfasis con color (terracota/vino) y peso 500, no con negritas pesadas.
+- Eyebrows en sans, mayúsculas, `letter-spacing` amplio (0.3em+).
+- Cuerpo en sans, peso 300, mucho interlineado (aire).
 
 ---
 

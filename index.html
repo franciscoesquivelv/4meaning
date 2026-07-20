@@ -11,13 +11,10 @@
 <meta property="og:url"         content="https://4meaning.life/">
 <meta property="og:title"       content="4 Meaning · Para que la vida tenga sentido">
 <meta property="og:description" content="Experiencias para vivir con propósito y sentido. Conocerme · Crecer · Conectar · Trascender.">
-<meta property="og:image"       content="https://4meaning.life/logos-4meaning/blk-logo.png">
+<meta property="og:image"       content="https://4meaning.life/assets/hero-silueta.webp">
 
 <link rel="icon" href="logos/blk-icon.png" media="(prefers-color-scheme: light)">
 <link rel="icon" href="logos/wht-icon.png" media="(prefers-color-scheme: dark)">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&display=swap" rel="stylesheet">
 <style>
 
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -34,12 +31,10 @@
     --white:   #FFFFFF;
     --paper:   #FAF8F4;   /* blanco cálido */
     --line:    #E7E1D8;   /* filete sobre claro */
-    --line-dk: rgba(255,255,255,0.12);
+    --line-dk: rgba(255,255,255,0.14);
 
-    --serif: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+    /* Tipografía 100% sans serif (sistema Helvetica Neue) */
     --sans:  -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
-    --mono:  "Courier New", Courier, monospace;
-
     --ease:  cubic-bezier(0.16, 1, 0.3, 1);
   }
 
@@ -54,12 +49,11 @@
     font-weight: 300;
   }
 
-  /* Eyebrow técnico (Courier) — recurrente en toda la marca */
+  /* Eyebrow — sans, mayúsculas, mucho tracking */
   .eyebrow {
-    font-family: var(--mono);
     font-size: 0.66rem;
-    font-weight: 400;
-    letter-spacing: 0.28em;
+    font-weight: 500;
+    letter-spacing: 0.34em;
     text-transform: uppercase;
     color: var(--terra);
   }
@@ -68,540 +62,274 @@
   #nav {
     position: fixed;
     top: 0; left: 0; right: 0;
-    height: 74px;
+    height: 76px;
     z-index: 200;
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 3.5rem;
-    background: rgba(250,248,244,0.86);
-    backdrop-filter: saturate(140%) blur(12px);
-    border-bottom: 1px solid var(--line);
-    transition: border-color 0.3s;
+    background: transparent;
+    transition: background 0.4s var(--ease), border-color 0.4s, box-shadow 0.4s;
+    border-bottom: 1px solid transparent;
+  }
+  #nav.scrolled {
+    background: rgba(250,248,244,0.9);
+    backdrop-filter: saturate(150%) blur(14px);
+    border-bottom-color: var(--line);
   }
 
   .nav-logo img { height: 26px; width: auto; display: block; }
+  .nav-logo .logo-dark  { display: none; }
+  .nav-logo .logo-light { display: block; }
+  #nav.scrolled .nav-logo .logo-dark  { display: block; }
+  #nav.scrolled .nav-logo .logo-light { display: none; }
 
-  .nav-links {
-    display: flex;
-    gap: 2.75rem;
-    list-style: none;
-    align-items: center;
-  }
-
+  .nav-links { display: flex; gap: 2.75rem; list-style: none; align-items: center; }
   .nav-links a {
     font-size: 0.72rem;
     font-weight: 400;
     letter-spacing: 0.04em;
     text-decoration: none;
-    color: var(--gray);
+    color: rgba(255,255,255,0.82);
     transition: color 0.2s;
   }
-  .nav-links a:hover { color: var(--teal); }
+  .nav-links a:hover { color: var(--white); }
+  #nav.scrolled .nav-links a { color: var(--gray); }
+  #nav.scrolled .nav-links a:hover { color: var(--teal); }
 
   .nav-cta {
-    color: var(--teal) !important;
-    border: 1px solid var(--teal);
+    color: var(--white) !important;
+    border: 1px solid rgba(255,255,255,0.5);
     padding: 0.6rem 1.4rem;
     border-radius: 999px;
-    transition: background 0.25s, color 0.25s !important;
+    transition: background 0.25s, color 0.25s, border-color 0.25s !important;
   }
-  .nav-cta:hover {
-    background: var(--teal) !important;
-    color: var(--white) !important;
-  }
+  .nav-cta:hover { background: var(--white) !important; color: var(--teal) !important; border-color: var(--white); }
+  #nav.scrolled .nav-cta { color: var(--teal) !important; border-color: var(--teal); }
+  #nav.scrolled .nav-cta:hover { background: var(--teal) !important; color: var(--white) !important; }
 
-  /* ── HERO ────────────────────────────────── */
+  /* ── HERO — foto cinematográfica full-screen ── */
   .hero {
-    display: grid;
-    grid-template-columns: 1.05fr 1fr;
-    min-height: 100vh;
-    padding-top: 74px;
-  }
-
-  .hero-visual {
-    background: var(--teal);
-    display: flex;
-    align-items: center;
-    justify-content: center;
     position: relative;
+    min-height: 100vh;
+    min-height: 100svh;
+    display: flex;
+    align-items: flex-end;
     overflow: hidden;
   }
-  .hero-visual::before {
-    content: '';
+  .hero-bg {
     position: absolute;
     inset: 0;
-    background-image:
-      radial-gradient(circle at 30% 30%, rgba(185,115,90,0.18), transparent 55%),
-      radial-gradient(circle at 75% 78%, rgba(10,59,69,0.9), transparent 60%);
-    pointer-events: none;
+    background: #06232B url("assets/hero-silueta.webp") center 30% / cover no-repeat;
+    transform: scale(1.05);
+    animation: heroZoom 14s ease-out forwards;
   }
-  .hero-icon {
-    width: 40%;
-    max-width: 190px;
-    opacity: 0.92;
+  @keyframes heroZoom { to { transform: scale(1); } }
+  /* Degradado teal para legibilidad y marca */
+  .hero-scrim {
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(180deg, rgba(0,30,38,0.45) 0%, rgba(0,30,38,0) 30%, rgba(0,30,38,0.15) 55%, rgba(0,25,33,0.92) 100%),
+      linear-gradient(90deg, rgba(0,30,38,0.6) 0%, rgba(0,30,38,0.05) 55%, transparent 100%);
+  }
+
+  .hero-inner {
     position: relative;
-    animation: fadeIn 1.4s 0.3s both;
+    width: 100%;
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 0 3.5rem 6rem;
   }
-  .hero-seal {
-    position: absolute;
-    bottom: 2.5rem;
-    left: 3.5rem;
-    font-family: var(--mono);
-    font-size: 0.6rem;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.32);
-  }
-
-  .hero-text {
-    background: var(--paper);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 4rem 4.5rem 4rem 4.75rem;
-  }
-
-  .hero-eyebrow { margin-bottom: 2.25rem; opacity: 0; animation: fadeUp 0.9s 0.4s forwards; }
-
+  .hero-eyebrow { color: var(--terra-2); margin-bottom: 1.75rem; opacity: 0; animation: fadeUp 0.9s 0.4s forwards; }
   .hero-h1 {
-    font-family: var(--serif);
-    font-size: clamp(3.4rem, 6vw, 6.4rem);
-    font-weight: 400;
+    font-size: clamp(3rem, 8vw, 8rem);
+    font-weight: 200;
     line-height: 0.98;
-    letter-spacing: -0.01em;
-    color: var(--teal);
-    margin-bottom: 2.25rem;
-    opacity: 0;
-    animation: fadeUp 1s 0.6s forwards;
+    letter-spacing: -0.02em;
+    color: var(--white);
+    max-width: 15ch;
+    margin-bottom: 2rem;
+    text-shadow: 0 2px 40px rgba(0,20,26,0.5);
+    opacity: 0; animation: fadeUp 1s 0.55s forwards;
   }
-  .hero-h1 em {
-    font-style: italic;
-    font-weight: 300;
-    color: var(--terra);
-  }
-
+  .hero-h1 strong { font-weight: 500; color: var(--terra-2); }
   .hero-body {
-    font-size: 0.95rem;
+    font-size: 1rem;
     font-weight: 300;
-    line-height: 2;
-    color: var(--gray);
-    max-width: 44ch;
+    line-height: 1.9;
+    color: rgba(255,255,255,0.82);
+    max-width: 46ch;
     margin-bottom: 2.75rem;
-    opacity: 0;
-    animation: fadeUp 1s 0.8s forwards;
+    opacity: 0; animation: fadeUp 1s 0.75s forwards;
   }
-
-  .hero-actions {
-    display: flex;
-    gap: 1.5rem;
-    align-items: center;
-    flex-wrap: wrap;
-    opacity: 0;
-    animation: fadeUp 1s 1s forwards;
-  }
+  .hero-actions { display: flex; gap: 1.5rem; align-items: center; flex-wrap: wrap; opacity: 0; animation: fadeUp 1s 0.95s forwards; }
 
   .btn-fill {
-    font-size: 0.72rem;
-    font-weight: 400;
-    letter-spacing: 0.04em;
-    text-decoration: none;
-    color: var(--white);
-    background: var(--teal);
-    padding: 0.95rem 1.9rem;
-    border-radius: 999px;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6rem;
-    border: 1px solid var(--teal);
-    transition: background 0.25s, transform 0.25s var(--ease);
+    font-size: 0.74rem; font-weight: 500; letter-spacing: 0.04em;
+    text-decoration: none; color: var(--teal); background: var(--white);
+    padding: 1rem 2rem; border-radius: 999px;
+    display: inline-flex; align-items: center; gap: 0.6rem;
+    border: 1px solid var(--white);
+    transition: transform 0.25s var(--ease), background 0.25s, color 0.25s;
   }
-  .btn-fill:hover { background: var(--teal-2); transform: translateY(-2px); }
+  .btn-fill:hover { transform: translateY(-2px); background: var(--terra); border-color: var(--terra); color: var(--white); }
 
   .btn-ghost {
-    font-size: 0.72rem;
-    font-weight: 400;
-    letter-spacing: 0.04em;
-    text-decoration: none;
-    color: var(--gray);
-    border-bottom: 1px solid var(--line);
-    padding-bottom: 3px;
+    font-size: 0.74rem; font-weight: 400; letter-spacing: 0.04em;
+    text-decoration: none; color: rgba(255,255,255,0.9);
+    border-bottom: 1px solid rgba(255,255,255,0.4); padding-bottom: 3px;
     transition: color 0.2s, border-color 0.2s;
   }
-  .btn-ghost:hover { color: var(--teal); border-color: var(--terra); }
+  .btn-ghost:hover { color: var(--white); border-color: var(--terra); }
 
-  /* ── SOBRE / PROPÓSITO ───────────────────── */
-  .intro {
-    padding: 9rem 3.5rem;
-    background: var(--paper);
-    border-top: 1px solid var(--line);
+  .hero-scroll {
+    position: absolute; bottom: 2rem; right: 3.5rem;
+    font-size: 0.58rem; font-weight: 500; letter-spacing: 0.24em; text-transform: uppercase;
+    color: rgba(255,255,255,0.55);
+    writing-mode: vertical-rl; display: flex; align-items: center; gap: 0.9rem;
   }
+  .hero-scroll::after { content: ''; width: 1px; height: 44px; background: linear-gradient(rgba(255,255,255,0.5), transparent); }
+
+  /* Botones sólidos oscuros (secciones claras) */
+  .btn-teal {
+    font-size: 0.74rem; font-weight: 500; letter-spacing: 0.04em;
+    text-decoration: none; color: var(--white); background: var(--teal);
+    padding: 1rem 2.2rem; border-radius: 999px;
+    display: inline-flex; align-items: center; gap: 0.6rem; border: 1px solid var(--teal);
+    transition: transform 0.25s var(--ease), background 0.25s;
+  }
+  .btn-teal:hover { background: var(--teal-2); transform: translateY(-2px); }
+
+  /* ── PROPÓSITO ─────────────────────────────── */
+  .intro { padding: 9rem 3.5rem; background: var(--paper); }
   .intro-inner {
-    max-width: 1160px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 5fr 7fr;
-    gap: 7rem;
-    align-items: start;
+    max-width: 1160px; margin: 0 auto;
+    display: grid; grid-template-columns: 5fr 7fr; gap: 7rem; align-items: start;
   }
   .section-label { display: block; margin-bottom: 2rem; }
-
   .intro-heading {
-    font-family: var(--serif);
-    font-size: clamp(2.4rem, 4.2vw, 4rem);
-    font-weight: 400;
-    line-height: 1.04;
-    letter-spacing: -0.01em;
-    color: var(--teal);
+    font-size: clamp(2rem, 3.8vw, 3.4rem);
+    font-weight: 200; line-height: 1.08; letter-spacing: -0.02em; color: var(--teal);
   }
-  .intro-heading em { font-style: italic; color: var(--terra); }
-
-  .intro-body {
-    font-size: 1.02rem;
-    font-weight: 300;
-    line-height: 1.95;
-    color: var(--ink);
-    margin-bottom: 1.6rem;
-  }
-  .intro-body strong { font-weight: 500; color: var(--wine); }
-  .intro-body .sub {
-    display: block;
-    margin-top: 1.6rem;
-    font-size: 0.9rem;
-    color: var(--gray);
-  }
+  .intro-heading strong { font-weight: 500; color: var(--terra); }
+  .intro-body { font-size: 1.05rem; font-weight: 300; line-height: 1.95; color: var(--ink); margin-bottom: 1.6rem; }
+  .intro-body b { font-weight: 500; color: var(--wine); }
+  .intro-body .sub { display: block; margin-top: 1.6rem; font-size: 0.92rem; color: var(--gray); }
   .intro-divider { width: 2.5rem; height: 2px; background: var(--terra); margin: 2.75rem 0; }
 
   /* ── PILARES ─────────────────────────────── */
-  .pillars {
-    background: var(--teal);
-    color: var(--white);
-    padding: 7rem 3.5rem;
-  }
+  .pillars { background: var(--teal); color: var(--white); padding: 7.5rem 3.5rem; }
   .pillars-head {
-    max-width: 1160px;
-    margin: 0 auto 4rem;
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 3rem;
-    flex-wrap: wrap;
+    max-width: 1160px; margin: 0 auto 4rem;
+    display: flex; align-items: flex-end; justify-content: space-between; gap: 3rem; flex-wrap: wrap;
   }
-  .pillars-head h2 {
-    font-family: var(--serif);
-    font-size: clamp(2rem, 3.4vw, 3.2rem);
-    font-weight: 400;
-    line-height: 1.05;
-  }
+  .pillars-head h2 { font-size: clamp(1.9rem, 3.2vw, 2.9rem); font-weight: 200; line-height: 1.1; letter-spacing: -0.02em; }
   .pillars-head .eyebrow { color: var(--terra-2); }
-  .pillars-head p {
-    max-width: 34ch;
-    font-size: 0.9rem;
-    font-weight: 300;
-    line-height: 1.85;
-    color: rgba(255,255,255,0.6);
-  }
-  .pillars-grid {
-    max-width: 1160px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0;
-  }
-  .pillar {
-    padding: 2.5rem 1.75rem 2.5rem 0;
-    border-top: 1px solid var(--line-dk);
-  }
-  .pillar-n {
-    font-family: var(--mono);
-    font-size: 0.66rem;
-    letter-spacing: 0.2em;
-    color: var(--terra-2);
-    display: block;
-    margin-bottom: 1.5rem;
-  }
-  .pillar h3 {
-    font-family: var(--serif);
-    font-size: 1.9rem;
-    font-weight: 400;
-    margin-bottom: 0.9rem;
-  }
-  .pillar p {
-    font-size: 0.82rem;
-    font-weight: 300;
-    line-height: 1.7;
-    color: rgba(255,255,255,0.55);
-  }
+  .pillars-head p { max-width: 34ch; font-size: 0.92rem; font-weight: 300; line-height: 1.85; color: rgba(255,255,255,0.6); }
+  .pillars-grid { max-width: 1160px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; }
+  .pillar { padding: 2.5rem 1.75rem 0 0; border-top: 1px solid var(--line-dk); }
+  .pillar-n { font-size: 0.66rem; letter-spacing: 0.2em; color: var(--terra-2); display: block; margin-bottom: 1.5rem; font-weight: 500; }
+  .pillar h3 { font-size: 1.5rem; font-weight: 300; margin-bottom: 0.9rem; letter-spacing: -0.01em; }
+  .pillar p { font-size: 0.84rem; font-weight: 300; line-height: 1.75; color: rgba(255,255,255,0.58); }
 
   /* ── MÉTODO · Huellas → Legado ───────────── */
-  .method {
-    background: var(--paper);
-    padding: 9rem 3.5rem;
-  }
+  .method { background: var(--paper); padding: 9rem 3.5rem; }
   .method-inner { max-width: 1160px; margin: 0 auto; }
-  .method-head { margin-bottom: 4.5rem; max-width: 40ch; }
+  .method-head { margin-bottom: 4.5rem; max-width: 44ch; }
   .method-head .eyebrow { margin-bottom: 1.75rem; display: block; }
-  .method-head h2 {
-    font-family: var(--serif);
-    font-size: clamp(2rem, 3.6vw, 3.2rem);
-    font-weight: 400;
-    line-height: 1.08;
-    color: var(--teal);
-  }
-  .steps {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 2px;
-    background: var(--line);
-    border: 1px solid var(--line);
-  }
-  .step {
-    background: var(--paper);
-    padding: 2.75rem 2rem 3rem;
-    position: relative;
-  }
-  .step-n {
-    font-family: var(--mono);
-    font-size: 0.62rem;
-    letter-spacing: 0.2em;
-    color: var(--terra);
-    display: block;
-    margin-bottom: 1.5rem;
-  }
-  .step h3 {
-    font-family: var(--serif);
-    font-size: 1.75rem;
-    font-weight: 400;
-    color: var(--teal);
-    margin-bottom: 0.85rem;
-  }
-  .step p {
-    font-size: 0.82rem;
-    font-weight: 300;
-    line-height: 1.75;
-    color: var(--gray);
-  }
+  .method-head h2 { font-size: clamp(1.9rem, 3.4vw, 2.9rem); font-weight: 200; line-height: 1.12; color: var(--teal); letter-spacing: -0.02em; }
+  .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; background: var(--line); border: 1px solid var(--line); }
+  .step { background: var(--paper); padding: 2.75rem 2rem 3rem; transition: background 0.3s; }
+  .step:hover { background: var(--white); }
+  .step-n { font-size: 0.62rem; letter-spacing: 0.2em; color: var(--terra); display: block; margin-bottom: 1.5rem; font-weight: 600; text-transform: uppercase; }
+  .step h3 { font-size: 1.4rem; font-weight: 300; color: var(--teal); margin-bottom: 0.85rem; letter-spacing: -0.01em; }
+  .step p { font-size: 0.84rem; font-weight: 300; line-height: 1.75; color: var(--gray); }
 
   /* ── EXPERIENCIAS ────────────────────────── */
-  .exp {
-    background: var(--paper);
-    padding: 2rem 3.5rem 9rem;
-  }
+  .exp { background: var(--paper); padding: 2rem 3.5rem 9rem; }
   .exp-header {
-    max-width: 1160px;
-    margin: 0 auto 3.5rem;
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 3rem;
-    padding-bottom: 2.5rem;
-    border-bottom: 1px solid var(--line);
-    flex-wrap: wrap;
+    max-width: 1160px; margin: 0 auto 3.5rem;
+    display: flex; align-items: flex-end; justify-content: space-between; gap: 3rem;
+    padding-bottom: 2.5rem; border-bottom: 1px solid var(--line); flex-wrap: wrap;
   }
-  .exp-heading {
-    font-family: var(--serif);
-    font-size: clamp(2rem, 3.6vw, 3.2rem);
-    font-weight: 400;
-    line-height: 1.05;
-    color: var(--teal);
-  }
-  .exp-sub {
-    font-size: 0.9rem;
-    font-weight: 300;
-    line-height: 1.85;
-    color: var(--gray);
-    max-width: 34ch;
-    text-align: right;
-  }
+  .exp-heading { font-size: clamp(1.9rem, 3.4vw, 2.9rem); font-weight: 200; line-height: 1.08; color: var(--teal); letter-spacing: -0.02em; }
+  .exp-sub { font-size: 0.92rem; font-weight: 300; line-height: 1.85; color: var(--gray); max-width: 34ch; text-align: right; }
 
-  .exp-grid {
-    max-width: 1160px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-  }
+  .exp-grid { max-width: 1160px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
   .card {
-    display: flex;
-    flex-direction: column;
-    text-decoration: none;
-    padding: 3.25rem 3rem 3rem;
-    position: relative;
-    overflow: hidden;
-    border-radius: 4px;
-    transition: transform 0.4s var(--ease);
+    display: flex; flex-direction: column; text-decoration: none;
+    padding: 3.25rem 3rem 3rem; position: relative; overflow: hidden; border-radius: 6px;
+    transition: transform 0.4s var(--ease), box-shadow 0.4s var(--ease);
   }
-  .card:hover { transform: translateY(-4px); }
+  .card:hover { transform: translateY(-4px); box-shadow: 0 24px 60px -20px rgba(0,20,26,0.45); }
+  .card-wine { background: var(--wine); }
+  .card-teal { background: var(--teal); }
 
-  .card-wine  { background: var(--wine); }
-  .card-teal  { background: var(--teal); }
-
-  .card-num {
-    font-family: var(--mono);
-    font-size: 0.62rem;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    margin-bottom: 2.75rem;
-    color: var(--terra-2);
-  }
-  .card-logo {
-    display: block;
-    height: 30px;
-    width: auto;
-    max-width: 78%;
-    margin-bottom: 1.5rem;
-  }
-  .card-tag {
-    font-family: var(--serif);
-    font-size: 1.35rem;
-    font-weight: 400;
-    font-style: italic;
-    line-height: 1.3;
-    margin-bottom: 2rem;
-    color: rgba(255,255,255,0.92);
-  }
+  .card-num { font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 2.5rem; color: var(--terra-2); font-weight: 500; }
+  /* Logos normalizados a blanco sobre tarjetas oscuras */
+  .card-logo { display: block; height: 26px; width: auto; max-width: 74%; margin-bottom: 1.5rem; }
+  .card-logo.invert { filter: brightness(0) invert(1); }        /* logo negro → blanco */
+  .card-tag { font-size: 1.15rem; font-weight: 300; line-height: 1.35; margin-bottom: 2rem; color: rgba(255,255,255,0.94); letter-spacing: -0.01em; }
   .card-rule { width: 2.5rem; height: 2px; background: var(--terra); margin-bottom: 2rem; }
-  .card-desc {
-    font-size: 0.85rem;
-    font-weight: 300;
-    line-height: 1.9;
-    margin-bottom: 2.5rem;
-    color: rgba(255,255,255,0.6);
-  }
+  .card-desc { font-size: 0.86rem; font-weight: 300; line-height: 1.9; margin-bottom: 2.5rem; color: rgba(255,255,255,0.62); }
   .card-link {
-    font-size: 0.72rem;
-    font-weight: 400;
-    letter-spacing: 0.04em;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.55rem;
-    color: var(--white);
-    border-bottom: 1px solid var(--terra);
-    padding-bottom: 3px;
-    align-self: flex-start;
-    margin-top: auto;
+    font-size: 0.72rem; font-weight: 500; letter-spacing: 0.04em;
+    display: inline-flex; align-items: center; gap: 0.55rem; color: var(--white);
+    border-bottom: 1px solid var(--terra); padding-bottom: 3px; align-self: flex-start; margin-top: auto;
     transition: gap 0.25s;
   }
   .card:hover .card-link { gap: 1rem; }
 
   /* ── CTA ─────────────────────────────────── */
-  .cta {
-    background: var(--teal);
-    padding: 9rem 3.5rem;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-  .cta::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at 50% 120%, rgba(185,115,90,0.25), transparent 60%);
-    pointer-events: none;
-  }
-  .cta-label { color: var(--terra-2); margin-bottom: 2.25rem; position: relative; }
-  .cta-title {
-    font-family: var(--serif);
-    font-size: clamp(2.6rem, 5vw, 5rem);
-    font-weight: 400;
-    line-height: 1.02;
-    color: var(--white);
-    max-width: 20ch;
-    margin: 0 auto 1.75rem;
-    position: relative;
-  }
-  .cta-title em { font-style: italic; color: var(--terra-2); }
-  .cta-body {
-    font-size: 0.95rem;
-    font-weight: 300;
-    line-height: 1.95;
-    color: rgba(255,255,255,0.62);
-    max-width: 46ch;
-    margin: 0 auto 3rem;
-    position: relative;
-  }
+  .cta { background: var(--teal); padding: 9rem 3.5rem; text-align: center; position: relative; overflow: hidden; }
+  .cta::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at 50% 120%, rgba(185,115,90,0.28), transparent 60%); pointer-events: none; }
+  .cta-label { color: var(--terra-2); margin-bottom: 2rem; position: relative; }
+  .cta-title { font-size: clamp(2.2rem, 4.6vw, 4.4rem); font-weight: 200; line-height: 1.06; color: var(--white); max-width: 20ch; margin: 0 auto 1.75rem; position: relative; letter-spacing: -0.02em; }
+  .cta-title strong { font-weight: 500; color: var(--terra-2); }
+  .cta-body { font-size: 1rem; font-weight: 300; line-height: 1.95; color: rgba(255,255,255,0.66); max-width: 46ch; margin: 0 auto 3rem; position: relative; }
   .btn-white {
-    font-size: 0.74rem;
-    font-weight: 400;
-    letter-spacing: 0.04em;
-    text-decoration: none;
-    color: var(--teal);
-    background: var(--white);
-    padding: 1rem 2.4rem;
-    border-radius: 999px;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.6rem;
-    position: relative;
-    transition: transform 0.25s var(--ease), background 0.25s;
+    font-size: 0.76rem; font-weight: 500; letter-spacing: 0.04em; text-decoration: none;
+    color: var(--teal); background: var(--white); padding: 1.05rem 2.5rem; border-radius: 999px;
+    display: inline-flex; align-items: center; gap: 0.6rem; position: relative;
+    transition: transform 0.25s var(--ease), background 0.25s, color 0.25s;
   }
-  .btn-white:hover { transform: translateY(-2px); background: var(--terra-2); }
+  .btn-white:hover { transform: translateY(-2px); background: var(--terra); color: var(--white); }
 
   /* ── FOOTER ──────────────────────────────── */
-  footer {
-    background: var(--ink);
-    padding: 2.5rem 3.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1.5rem;
-    flex-wrap: wrap;
-  }
+  footer { background: var(--ink); padding: 2.5rem 3.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; flex-wrap: wrap; }
   .footer-logo { height: 16px; opacity: 0.55; }
   .footer-links { display: flex; gap: 2.5rem; list-style: none; }
-  .footer-links a {
-    font-size: 0.72rem;
-    font-weight: 300;
-    color: rgba(255,255,255,0.4);
-    text-decoration: none;
-    transition: color 0.2s;
-  }
+  .footer-links a { font-size: 0.72rem; font-weight: 300; color: rgba(255,255,255,0.4); text-decoration: none; transition: color 0.2s; }
   .footer-links a:hover { color: var(--terra-2); }
-  .footer-copy {
-    font-family: var(--mono);
-    font-size: 0.6rem;
-    letter-spacing: 0.14em;
-    color: rgba(255,255,255,0.28);
-    text-transform: uppercase;
-  }
+  .footer-copy { font-size: 0.64rem; letter-spacing: 0.1em; color: rgba(255,255,255,0.3); text-transform: uppercase; }
 
   /* ── ANIMACIONES ─────────────────────────── */
-  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
-  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-  .reveal {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.9s var(--ease), transform 0.9s var(--ease);
-  }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+  .reveal { opacity: 0; transform: translateY(22px); transition: opacity 0.9s var(--ease), transform 0.9s var(--ease); }
   .reveal.visible { opacity: 1; transform: none; }
-  .d1 { transition-delay: 0.08s; }
-  .d2 { transition-delay: 0.16s; }
-  .d3 { transition-delay: 0.24s; }
-  .d4 { transition-delay: 0.32s; }
+  .d1 { transition-delay: 0.08s; } .d2 { transition-delay: 0.16s; } .d3 { transition-delay: 0.24s; } .d4 { transition-delay: 0.32s; }
 
   @media (prefers-reduced-motion: reduce) {
     * { animation: none !important; transition: none !important; }
     .reveal { opacity: 1; transform: none; }
+    .hero-bg { transform: none; }
   }
 
   /* ── RESPONSIVE ──────────────────────────── */
   @media (max-width: 960px) {
     #nav { padding: 0 1.4rem; }
-    .nav-links { gap: 1.4rem; }
+    .nav-links { gap: 1.2rem; }
     .nav-links li:not(:last-child) { display: none; }
 
-    .hero { grid-template-columns: 1fr; }
-    .hero-visual { min-height: 52vw; order: -1; }
-    .hero-seal { left: 1.5rem; }
-    .hero-text { padding: 3.5rem 1.5rem 4rem; }
+    .hero-inner { padding: 0 1.5rem 4.5rem; }
+    .hero-scroll { display: none; }
 
     .intro { padding: 5rem 1.5rem; }
     .intro-inner { grid-template-columns: 1fr; gap: 2.5rem; }
 
     .pillars { padding: 4.5rem 1.5rem; }
     .pillars-grid { grid-template-columns: 1fr 1fr; }
-    .pillar { padding: 2rem 1.25rem 2rem 0; }
+    .pillar { padding: 2rem 1.25rem 0 0; }
 
     .method { padding: 5rem 1.5rem; }
     .steps { grid-template-columns: 1fr 1fr; }
@@ -612,11 +340,9 @@
     .exp-grid { grid-template-columns: 1fr; }
 
     .cta { padding: 6rem 1.5rem; }
-
     footer { padding: 2rem 1.5rem; flex-direction: column; text-align: center; }
     .footer-links { flex-wrap: wrap; justify-content: center; gap: 1.25rem; }
   }
-
   @media (max-width: 560px) {
     .pillars-grid { grid-template-columns: 1fr; }
     .steps { grid-template-columns: 1fr; }
@@ -629,7 +355,8 @@
 <!-- ── NAV ──────────────────────────────────── -->
 <nav id="nav">
   <a href="/" class="nav-logo">
-    <img src="logos-4meaning/blk-logo.png" alt="4 Meaning">
+    <img class="logo-light" src="logos-4meaning/wht-logo.png" alt="4 Meaning">
+    <img class="logo-dark"  src="logos-4meaning/blk-logo.png" alt="4 Meaning">
   </a>
   <ul class="nav-links">
     <li><a href="#proposito">Propósito</a></li>
@@ -641,18 +368,11 @@
 
 <!-- ── HERO ─────────────────────────────────── -->
 <section class="hero">
-  <div class="hero-visual">
-    <img src="logos-4meaning/wht-icon.png" class="hero-icon" alt="4 Meaning">
-    <span class="hero-seal">Una experiencia de 4 Meaning</span>
-  </div>
-
-  <div class="hero-text">
+  <div class="hero-bg"></div>
+  <div class="hero-scrim"></div>
+  <div class="hero-inner">
     <p class="eyebrow hero-eyebrow">Experiencias con propósito y sentido</p>
-    <h1 class="hero-h1">
-      Para que<br>
-      la vida<br>
-      tenga <em>sentido.</em>
-    </h1>
+    <h1 class="hero-h1">Para que la vida tenga <strong>sentido.</strong></h1>
     <p class="hero-body">
       Diseñamos experiencias para ir al fondo de las preguntas que más importan:
       quiénes somos, para qué estamos aquí y qué dejamos a quienes vienen después.
@@ -665,6 +385,7 @@
       <a href="#proposito" class="btn-ghost">Qué es 4 Meaning</a>
     </div>
   </div>
+  <span class="hero-scroll">Desplazar</span>
 </section>
 
 <!-- ── PROPÓSITO ─────────────────────────────── -->
@@ -673,18 +394,15 @@
     <div>
       <span class="eyebrow section-label reveal">El arqueólogo del sentido</span>
       <h2 class="intro-heading reveal d1">
-        Excavar la<br>
-        historia que<br>
-        <em>ya te sostiene.</em>
+        Excavar la historia que <strong>ya te sostiene.</strong>
       </h2>
     </div>
-
     <div class="intro-right">
       <p class="intro-body reveal d1">
         4 Meaning ayuda a personas, familias y organizaciones a examinar sus
-        <strong>huellas</strong> con conciencia, excavar la historia que las
-        sostiene, descubrir los <strong>tesoros</strong> que ya existen y
-        transformarlos en <strong>legado</strong> vivo para otros.
+        <b>huellas</b> con conciencia, excavar la historia que las sostiene,
+        descubrir los <b>tesoros</b> que ya existen y transformarlos en
+        <b>legado</b> vivo para otros.
         <span class="sub">
           No son cursos ni conferencias. Son experiencias que se viven para
           profundizar en los temas que de verdad importan y construir valores
@@ -692,7 +410,7 @@
         </span>
       </p>
       <div class="intro-divider reveal d2"></div>
-      <p class="intro-body reveal d2" style="font-size:0.92rem; color:var(--gray);">
+      <p class="intro-body reveal d2" style="font-size:0.95rem; color:var(--gray);">
         Enraizadas en una tradición filosófica sólida, no en tendencias pasajeras.
         Diseñadas para ser vividas, no solo escuchadas. Un conocimiento que mueve
         algo adentro y responde preguntas reales: familia, legado, propósito, comunidad.
@@ -707,7 +425,7 @@
     <div>
       <span class="eyebrow reveal">Cuatro territorios</span>
       <h2 class="reveal d1" style="margin-top:1.5rem;">
-        Cada experiencia<br>habita una dimensión<br>de la vida humana.
+        Cada experiencia habita<br>una dimensión de la vida humana.
       </h2>
     </div>
     <p class="reveal d2">
@@ -715,28 +433,11 @@
       prisa y acompañar el descubrimiento de lo que ya existe dentro.
     </p>
   </div>
-
   <div class="pillars-grid">
-    <div class="pillar reveal d1">
-      <span class="pillar-n">01</span>
-      <h3>Conocerme</h3>
-      <p>Identidad, memoria y autoconocimiento. Volver a las huellas propias para leerlas con claridad.</p>
-    </div>
-    <div class="pillar reveal d2">
-      <span class="pillar-n">02</span>
-      <h3>Crecer</h3>
-      <p>Desarrollo humano intencional. Convertir lo aprendido en una forma más plena de estar en el mundo.</p>
-    </div>
-    <div class="pillar reveal d3">
-      <span class="pillar-n">03</span>
-      <h3>Conectar</h3>
-      <p>Vínculos, comunidad y encuentro. El sentido también se descubre en la relación con los demás.</p>
-    </div>
-    <div class="pillar reveal d4">
-      <span class="pillar-n">04</span>
-      <h3>Trascender</h3>
-      <p>Propósito, sentido y legado. Decidir qué preservar y entregarlo vivo hacia adelante.</p>
-    </div>
+    <div class="pillar reveal d1"><span class="pillar-n">01</span><h3>Conocerme</h3><p>Identidad, memoria y autoconocimiento. Volver a las huellas propias para leerlas con claridad.</p></div>
+    <div class="pillar reveal d2"><span class="pillar-n">02</span><h3>Crecer</h3><p>Desarrollo humano intencional. Convertir lo aprendido en una forma más plena de estar en el mundo.</p></div>
+    <div class="pillar reveal d3"><span class="pillar-n">03</span><h3>Conectar</h3><p>Vínculos, comunidad y encuentro. El sentido también se descubre en la relación con los demás.</p></div>
+    <div class="pillar reveal d4"><span class="pillar-n">04</span><h3>Trascender</h3><p>Propósito, sentido y legado. Decidir qué preservar y entregarlo vivo hacia adelante.</p></div>
   </div>
 </section>
 
@@ -748,26 +449,10 @@
       <h2 class="reveal d1">De la huella al legado, en cuatro movimientos.</h2>
     </div>
     <div class="steps">
-      <div class="step reveal d1">
-        <span class="step-n">01 · Huellas</span>
-        <h3>Huellas</h3>
-        <p>Reconocer lo que ya vamos dejando, muchas veces sin darnos cuenta.</p>
-      </div>
-      <div class="step reveal d2">
-        <span class="step-n">02 · Excavaciones</span>
-        <h3>Excavaciones</h3>
-        <p>Buscar con conciencia en la historia que nos sostiene y nos explica.</p>
-      </div>
-      <div class="step reveal d3">
-        <span class="step-n">03 · Tesoros</span>
-        <h3>Tesoros</h3>
-        <p>Descubrir los hallazgos valiosos que aparecen al examinar con intención.</p>
-      </div>
-      <div class="step reveal d4">
-        <span class="step-n">04 · Legado</span>
-        <h3>Legado</h3>
-        <p>Preservar lo que importa y transformarlo en herencia viva para otros.</p>
-      </div>
+      <div class="step reveal d1"><span class="step-n">01</span><h3>Huellas</h3><p>Reconocer lo que ya vamos dejando, muchas veces sin darnos cuenta.</p></div>
+      <div class="step reveal d2"><span class="step-n">02</span><h3>Excavaciones</h3><p>Buscar con conciencia en la historia que nos sostiene y nos explica.</p></div>
+      <div class="step reveal d3"><span class="step-n">03</span><h3>Tesoros</h3><p>Descubrir los hallazgos valiosos que aparecen al examinar con intención.</p></div>
+      <div class="step reveal d4"><span class="step-n">04</span><h3>Legado</h3><p>Preservar lo que importa y transformarlo en herencia viva para otros.</p></div>
     </div>
   </div>
 </section>
@@ -781,7 +466,6 @@
       distinta de la vida humana.
     </p>
   </div>
-
   <div class="exp-grid">
     <!-- Trascendencia -->
     <a href="https://www.latrascendencia.com/" class="card card-wine reveal d1" target="_blank" rel="noopener">
@@ -799,11 +483,10 @@
         <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
       </span>
     </a>
-
     <!-- PersonaLab -->
     <a href="/personalab/" class="card card-teal reveal d2" target="_blank" rel="noopener">
       <p class="card-num">Línea 02 · Propósito personal</p>
-      <img src="logos/personalab-marcas.png" class="card-logo" alt="PersonaLab">
+      <img src="logos/personalab-marcas.png" class="card-logo invert" alt="PersonaLab">
       <p class="card-tag">El propósito personal, desde adentro.</p>
       <div class="card-rule"></div>
       <p class="card-desc">
@@ -823,8 +506,7 @@
 <section class="cta" id="contacto">
   <p class="eyebrow cta-label reveal">El primer paso</p>
   <h2 class="cta-title reveal d1">
-    Encuentra las respuestas<br>
-    <em>del sentido</em> de tu vida.
+    Encuentra las respuestas <strong>del sentido</strong> de tu vida.
   </h2>
   <p class="cta-body reveal d2">
     Cuéntanos en qué momento de vida estás y te decimos qué experiencia de
@@ -849,11 +531,16 @@
 </footer>
 
 <script>
+  // Nav sólido al hacer scroll
+  const nav = document.getElementById('nav');
+  const onScroll = () => nav.classList.toggle('scrolled', window.scrollY > 40);
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  // Scroll reveal
   const reveals = document.querySelectorAll('.reveal');
   const ro = new IntersectionObserver(
-    entries => entries.forEach(e => {
-      if (e.isIntersecting) { e.target.classList.add('visible'); ro.unobserve(e.target); }
-    }),
+    entries => entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); ro.unobserve(e.target); } }),
     { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
   );
   reveals.forEach(el => ro.observe(el));
