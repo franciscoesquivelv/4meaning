@@ -275,8 +275,16 @@
   .card-teal { background: var(--teal); }
 
   .card-num { font-size: 0.62rem; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 2.5rem; color: var(--terra-2); font-weight: 500; }
-  /* Logos normalizados a blanco sobre tarjetas oscuras */
-  .card-logo { display: block; height: 26px; width: auto; max-width: 74%; margin-bottom: 1.5rem; }
+  /* Logos normalizados a blanco sobre tarjetas oscuras.
+     Ancho explícito + height:auto = proporción garantizada (evita el estirón
+     que provoca align-items:stretch del flex sobre width:auto). */
+  .card-logo {
+    display: block; align-self: flex-start;
+    height: auto; max-width: 78%;
+    object-fit: contain; margin-bottom: 1.75rem;
+  }
+  .card-wine .card-logo { width: 250px; }   /* Trascendencia (proporción ~8.6:1) */
+  .card-teal .card-logo { width: 208px; }   /* PersonaLab (proporción ~7.2:1) */
   .card-logo.invert { filter: brightness(0) invert(1); }        /* logo negro → blanco */
   .card-tag { font-size: 1.15rem; font-weight: 300; line-height: 1.35; margin-bottom: 2rem; color: rgba(255,255,255,0.94); letter-spacing: -0.01em; }
   .card-rule { width: 2.5rem; height: 2px; background: var(--terra); margin-bottom: 2rem; }
