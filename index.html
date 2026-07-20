@@ -108,61 +108,70 @@
   #nav.scrolled .nav-cta { color: var(--teal) !important; border-color: var(--teal); }
   #nav.scrolled .nav-cta:hover { background: var(--teal) !important; color: var(--white) !important; }
 
-  /* ── HERO — foto cinematográfica full-screen ── */
+  /* ── HERO — gradiente teal profundo ──────── */
   .hero {
     position: relative;
     min-height: 100vh;
     min-height: 100svh;
     display: flex;
-    align-items: flex-end;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
     overflow: hidden;
+    padding: 120px 1.5rem 6rem;
   }
+  /* Gradiente rector: teal profundo con luz superior */
   .hero-bg {
-    position: absolute;
-    inset: 0;
-    background: #06232B url("assets/hero-silueta.webp") center 30% / cover no-repeat;
-    transform: scale(1.05);
-    animation: heroZoom 14s ease-out forwards;
-  }
-  @keyframes heroZoom { to { transform: scale(1); } }
-  /* Degradado teal para legibilidad y marca */
-  .hero-scrim {
     position: absolute; inset: 0;
+    background: radial-gradient(135% 105% at 50% -20%, #0C424D 0%, #00323D 40%, #001A21 100%);
+  }
+  /* Brillo terracota (acento humano) + profundidad */
+  .hero-glow {
+    position: absolute; inset: 0; pointer-events: none;
     background:
-      linear-gradient(180deg, rgba(0,30,38,0.45) 0%, rgba(0,30,38,0) 30%, rgba(0,30,38,0.15) 55%, rgba(0,25,33,0.92) 100%),
-      linear-gradient(90deg, rgba(0,30,38,0.6) 0%, rgba(0,30,38,0.05) 55%, transparent 100%);
+      radial-gradient(46% 42% at 50% 116%, rgba(185,115,90,0.32), transparent 70%),
+      radial-gradient(42% 42% at 84% 8%, rgba(10,59,69,0.55), transparent 70%);
+  }
+  /* Símbolo infinito como marca de agua sutil */
+  .hero-watermark {
+    position: absolute; top: 50%; left: 50%;
+    width: min(118vw, 1500px); height: auto;
+    transform: translate(-50%, -50%);
+    opacity: 0.045; pointer-events: none;
+    filter: brightness(0) invert(1);
   }
 
-  .hero-inner {
-    position: relative;
-    width: 100%;
-    max-width: 1240px;
-    margin: 0 auto;
-    padding: 0 3.5rem 6rem;
+  .hero-inner { position: relative; max-width: 920px; }
+
+  /* Logo 4 Meaning presente en el hero */
+  .hero-logo {
+    height: 42px; width: auto; display: block; margin: 0 auto 2.25rem;
+    opacity: 0; animation: fadeUp 1s 0.2s forwards;
   }
   .hero-eyebrow { color: var(--terra-2); margin-bottom: 1.75rem; opacity: 0; animation: fadeUp 0.9s 0.4s forwards; }
   .hero-h1 {
-    font-size: clamp(3rem, 8vw, 8rem);
+    font-size: clamp(2.7rem, 6.6vw, 6.4rem);
     font-weight: 200;
-    line-height: 0.98;
+    line-height: 1.0;
     letter-spacing: -0.02em;
     color: var(--white);
-    max-width: 15ch;
-    margin-bottom: 2rem;
-    text-shadow: 0 2px 40px rgba(0,20,26,0.5);
+    max-width: 16ch;
+    margin: 0 auto 1.75rem;
+    text-shadow: 0 2px 50px rgba(0,15,20,0.45);
     opacity: 0; animation: fadeUp 1s 0.55s forwards;
   }
-  .hero-h1 strong { font-weight: 500; color: var(--terra-2); }
-  .hero-body {
-    font-size: 1rem;
+  .hero-h1 strong { font-weight: 300; color: var(--terra-2); }
+  .hero-lead {
+    font-size: clamp(1.05rem, 1.9vw, 1.45rem);
     font-weight: 300;
-    line-height: 1.9;
-    color: rgba(255,255,255,0.82);
-    max-width: 46ch;
-    margin-bottom: 2.75rem;
+    line-height: 1.5;
+    color: rgba(255,255,255,0.8);
+    max-width: 34ch;
+    margin: 0 auto 2.75rem;
     opacity: 0; animation: fadeUp 1s 0.75s forwards;
   }
-  .hero-actions { display: flex; gap: 1.5rem; align-items: center; flex-wrap: wrap; opacity: 0; animation: fadeUp 1s 0.95s forwards; }
+  .hero-actions { display: flex; gap: 1.4rem; align-items: center; justify-content: center; flex-wrap: wrap; opacity: 0; animation: fadeUp 1s 0.95s forwards; }
 
   .btn-fill {
     font-size: 0.74rem; font-weight: 500; letter-spacing: 0.04em;
@@ -183,10 +192,10 @@
   .btn-ghost:hover { color: var(--white); border-color: var(--terra); }
 
   .hero-scroll {
-    position: absolute; bottom: 2rem; right: 3.5rem;
+    position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
     font-size: 0.58rem; font-weight: 500; letter-spacing: 0.24em; text-transform: uppercase;
-    color: rgba(255,255,255,0.55);
-    writing-mode: vertical-rl; display: flex; align-items: center; gap: 0.9rem;
+    color: rgba(255,255,255,0.5);
+    display: flex; flex-direction: column; align-items: center; gap: 0.9rem;
   }
   .hero-scroll::after { content: ''; width: 1px; height: 44px; background: linear-gradient(rgba(255,255,255,0.5), transparent); }
 
@@ -369,13 +378,14 @@
 <!-- ── HERO ─────────────────────────────────── -->
 <section class="hero">
   <div class="hero-bg"></div>
-  <div class="hero-scrim"></div>
+  <div class="hero-glow"></div>
+  <img src="logos-4meaning/wht-icon.png" class="hero-watermark" alt="" aria-hidden="true">
   <div class="hero-inner">
+    <img src="logos-4meaning/wht-logo.png" class="hero-logo" alt="4 Meaning">
     <p class="eyebrow hero-eyebrow">Experiencias con propósito y sentido</p>
-    <h1 class="hero-h1">Para que la vida tenga <strong>sentido.</strong></h1>
-    <p class="hero-body">
-      Diseñamos experiencias para ir al fondo de las preguntas que más importan:
-      quiénes somos, para qué estamos aquí y qué dejamos a quienes vienen después.
+    <h1 class="hero-h1">Toda vida deja <strong>huellas.</strong></h1>
+    <p class="hero-lead">
+      4 Meaning ayuda a descubrir cuáles queremos que permanezcan.
     </p>
     <div class="hero-actions">
       <a href="#experiencias" class="btn-fill">
@@ -392,16 +402,16 @@
 <section class="intro" id="proposito">
   <div class="intro-inner">
     <div>
-      <span class="eyebrow section-label reveal">El arqueólogo del sentido</span>
+      <span class="eyebrow section-label reveal">La Arqueóloga del Sentido</span>
       <h2 class="intro-heading reveal d1">
         Excavar la historia que <strong>ya te sostiene.</strong>
       </h2>
     </div>
     <div class="intro-right">
       <p class="intro-body reveal d1">
-        4 Meaning ayuda a personas, familias y organizaciones a examinar sus
-        <b>huellas</b> con conciencia, excavar la historia que las sostiene,
-        descubrir los <b>tesoros</b> que ya existen y transformarlos en
+        4 Meaning acompaña a personas, familias y organizaciones a mirar sus
+        <b>huellas</b> con conciencia, excavar en la historia que las sostiene,
+        descubrir los <b>tesoros</b> que ya existen y convertirlos en
         <b>legado</b> vivo para otros.
         <span class="sub">
           No son cursos ni conferencias. Son experiencias que se viven para
