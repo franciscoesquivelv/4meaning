@@ -4,7 +4,15 @@
 #  Abre las presentaciones en el navegador SIN NECESIDAD DE INTERNET.
 #  Doble clic en este archivo. Deja la ventana abierta mientras presentas.
 # ─────────────────────────────────────────────────────────────
-cd "$(dirname "$0")" || exit 1
+# Resolver la ruta REAL de este script, aunque se invoque desde un acceso
+# directo (symlink) en el Escritorio. Sin esto, serviria la carpeta equivocada.
+SRC="${BASH_SOURCE[0]:-$0}"
+while [ -L "$SRC" ]; do
+  LDIR="$(cd -P "$(dirname "$SRC")" && pwd)"
+  SRC="$(readlink "$SRC")"
+  case "$SRC" in /*) ;; *) SRC="$LDIR/$SRC" ;; esac
+done
+cd "$(cd -P "$(dirname "$SRC")" && pwd)" || exit 1
 
 # Buscar Python: primero el del PATH, luego rutas absolutas conocidas
 # (Finder puede lanzar el script sin el PATH de Homebrew cargado).

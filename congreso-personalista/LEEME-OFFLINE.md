@@ -9,7 +9,9 @@ Hay dos formas de abrirlas. La primera es la recomendada.
 
 ## Opción 1 (recomendada) · Doble clic al lanzador
 
-1. Doble clic en **`ABRIR-PRESENTACIONES.command`** (está en esta misma carpeta).
+1. Doble clic en **`PRESENTACIONES MADRID`**, el acceso directo que está en el
+   **Escritorio**. (También sirve el original: `ABRIR-PRESENTACIONES.command`,
+   en esta misma carpeta.)
 2. Se abre una ventana negra (Terminal) y, en un segundo, tu navegador con **3 pestañas**:
    - **Ponencia (sin notas)** → la que proyectas al público.
    - **Ponencia (con notas)** → tu guion en pantalla + cronómetro. Tecla **G** oculta/muestra las notas, tecla **R** reinicia el tiempo.
