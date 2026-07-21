@@ -1563,25 +1563,31 @@
        y controlable. align-items:flex-start (no center) para que cabinet y
        panel compartan techo, en vez de flotar centrados con aire asimetrico
        arriba/abajo (auditoria Julian). */
-    [data-device="s25"] .s25-stage { position: absolute; inset: 0; display: flex; align-items: flex-start; justify-content: flex-start; padding: 9vh 0 0 7vw; gap: 2vw; }
-    [data-device="s25"] .s25-cabinet { width: 48vw; flex: none; display: flex; flex-direction: column; gap: 1.7vh; position: relative; z-index: 3; }
-    [data-device="s25"] .s25-drawer { border-left: 3px solid rgba(168,133,90,0.22); padding: 1vh 0 1vh 2rem; }
+    /* Maqueta en px del LIENZO (1512x1080), no en vw/vh: vw/vh se calculan contra
+       la ventana real del navegador, no contra el lienzo que reveal escala, asi que
+       las cajas encogian mientras el texto en rem no, y el nombre se salia de su
+       columna hasta chocar con el panel. Presupuesto horizontal: 100 + 640 + 40 + 660 = 1440 (<1512). */
+    [data-device="s25"] .s25-stage { position: absolute; inset: 0; display: flex; align-items: flex-start; justify-content: flex-start; padding: 97px 0 0 100px; gap: 40px; }
+    [data-device="s25"] .s25-cabinet { width: 640px; flex: none; display: flex; flex-direction: column; gap: 18px; position: relative; z-index: 3; min-width: 0; }
+    [data-device="s25"] .s25-drawer { border-left: 3px solid rgba(168,133,90,0.22); padding: 11px 0 11px 2rem; min-width: 0; }
     [data-device="s25"] .s25-drawer.open { border-left-color: #B9735A; }
-    [data-device="s25"] .s25-head { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 1.2rem; row-gap: 0.4rem; }
+    [data-device="s25"] .s25-head { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 1.2rem; row-gap: 0.4rem; min-width: 0; }
     [data-device="s25"] .s25-i { font-size: 1.5rem; font-weight: 200; color: #B9735A; min-width: 2.7rem; }
     /* SIN white-space:nowrap: el nombre envuelve a una 2a linea si el texto
        real (a cualquier tamaño de viewport) no cabe en el ancho disponible,
        en vez de desbordar sobre el panel. Robusto sin numeros magicos
        (auditoria Leo: overlap real medido en viewport 1512px). */
-    [data-device="s25"] .s25-name { font-size: 2.5rem; font-weight: 500; letter-spacing: -0.012em; line-height: 1.08; color: var(--dark); margin: 0; max-width: 40ch; transition: font-size 0.5s cubic-bezier(.4, 0, .2, 1); }
+    /* max-width:100% + min-width:0 obligan al nombre a quedarse DENTRO de la columna
+       y envolver a dos lineas si al crecer no cabe, en vez de invadir el panel. */
+    [data-device="s25"] .s25-name { font-size: 2.5rem; font-weight: 500; letter-spacing: -0.012em; line-height: 1.08; color: var(--dark); margin: 0; max-width: 100%; min-width: 0; overflow-wrap: break-word; transition: font-size 0.5s cubic-bezier(.4, 0, .2, 1); }
     [data-device="s25"] .s25-drawer.open .s25-name { font-size: 3.5rem; }
     [data-device="s25"] .s25-tag { order: -1; flex-basis: 100%; padding-left: 4.2rem; font-size: 1.05rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted-2); white-space: nowrap; }
     /* Panel de detalle (derecha, maroon, emerge con fade + slide-in) */
-    [data-device="s25"] .s25-detail-panel { position: relative; width: 46vw; height: 78vh; flex: none; background: #4C0F18; border-radius: 5px; transform: translateX(46px); opacity: 0; transition: opacity .6s var(--ease), transform .6s var(--ease); z-index: 4; overflow: hidden; box-shadow: 0 40px 100px -46px rgba(0,0,0,0.55); }
+    [data-device="s25"] .s25-detail-panel { position: relative; width: 660px; height: 842px; flex: none; background: #4C0F18; border-radius: 5px; transform: translateX(46px); opacity: 0; transition: opacity .6s var(--ease), transform .6s var(--ease); z-index: 4; overflow: hidden; box-shadow: 0 40px 100px -46px rgba(0,0,0,0.55); }
     [data-device="s25"] .s25-detail-panel.on { transform: translateX(0); opacity: 1; }
-    [data-device="s25"] .s25-detail { position: absolute; inset: 4.2vh 3.2vw; display: flex; flex-direction: column; opacity: 0; transition: opacity .5s var(--ease); pointer-events: none; }
+    [data-device="s25"] .s25-detail { position: absolute; inset: 45px 48px; display: flex; flex-direction: column; opacity: 0; transition: opacity .5s var(--ease); pointer-events: none; }
     [data-device="s25"] .s25-detail.active { opacity: 1; }
-    [data-device="s25"] .s25-media { width: 100%; height: 54%; flex: none; border: 1.5px dashed rgba(213,196,168,0.42); border-radius: 3px; background: rgba(213,196,168,0.05); display: flex; align-items: center; justify-content: center; margin-bottom: 3.2vh; overflow: hidden; }
+    [data-device="s25"] .s25-media { width: 100%; height: 54%; flex: none; border: 1.5px dashed rgba(213,196,168,0.42); border-radius: 3px; background: rgba(213,196,168,0.05); display: flex; align-items: center; justify-content: center; margin-bottom: 35px; overflow: hidden; }
     [data-device="s25"] .s25-media img, [data-device="s25"] .s25-media video { width: 100%; height: 100%; object-fit: cover; }
     [data-device="s25"] .s25-media-label { font-size: 1rem; letter-spacing: 0.22em; text-transform: uppercase; color: #D5C4A8; opacity: 0.55; font-weight: 600; }
     [data-device="s25"] .s25-detail-eyebrow { font-size: 1rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: #D08C74; margin: 0 0 1rem; }
