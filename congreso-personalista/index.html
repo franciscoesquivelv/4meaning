@@ -1638,7 +1638,7 @@
     ════════════════════════════════════════════════════ -->
 
     <!-- 01. PORTADA -->
-    <section data-background-color="#002B34" data-transition="fade" data-logo="light">
+    <section data-background-color="#002B34" data-transition="fade" data-logo="light" data-warmth="0.3">
       <div class="cover">
         <div class="cover-left">
           <canvas class="cover-canvas" data-particles></canvas>
@@ -1655,14 +1655,14 @@
     </section>
 
     <!-- 02. SILENCIO INICIAL · recurso: RELOJ DE ARENA casi detenido (s02) -->
-    <section data-background-color="#002B34" class="bg-black" data-transition="fade" data-device="s02">
+    <section data-background-color="#002B34" class="bg-black" data-transition="fade" data-device="s02" data-warmth="0.16">
       <div class="silencio">
         <div class="word">Antes de empezar</div>
       </div>
     </section>
 
     <!-- 03. PREGUNTA UNO -->
-    <section data-background-color="#002B34" class="bg-black" data-transition="fade">
+    <section data-background-color="#002B34" class="bg-black" data-transition="fade" data-warmth="0.16">
       <div class="q-aper">
         <div class="grain"></div>
         <div class="q-aper-monument">01</div>
@@ -1671,7 +1671,7 @@
     </section>
 
     <!-- 04. PREGUNTA DOS -->
-    <section data-background-color="#002B34" class="bg-black" data-transition="fade">
+    <section data-background-color="#002B34" class="bg-black" data-transition="fade" data-warmth="0.14">
       <div class="q-aper">
         <div class="grain"></div>
         <div class="q-aper-monument">02</div>
@@ -1680,7 +1680,7 @@
     </section>
 
     <!-- 05. PREGUNTA TRES -->
-    <section data-background-color="#002B34" class="bg-black" data-transition="fade">
+    <section data-background-color="#002B34" class="bg-black" data-transition="fade" data-warmth="0.12">
       <div class="q-aper">
         <div class="grain"></div>
         <div class="q-aper-monument">03</div>
@@ -1695,7 +1695,7 @@
     <!-- 06. EL TEMA · composicion F monumental tipo cinematografico
          Solo dos palabras en pantalla. SplitText mask por lineas.
          Lo demas se dice de viva voz. -->
-    <section data-background-color="#F5F0E8" class="bg-white" data-transition="fade">
+    <section data-background-color="#F5F0E8" class="bg-white" data-transition="fade" data-warmth="0.34">
       <div class="atmos-bg light pos-tl" aria-hidden="true">
         <div class="orb"></div>
         <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
@@ -1709,7 +1709,7 @@
     </section>
 
     <!-- 07. TRES CAPAS · composicion v2 con icosaedro central -->
-    <section data-background-color="#F5F0E8" class="bg-white" data-transition="fade">
+    <section data-background-color="#F5F0E8" class="bg-white" data-transition="fade" data-warmth="0.34">
       <div class="layers-v2">
         <canvas class="icosa-canvas" data-icosa></canvas>
         <div class="layers-v2-head stagger d1">
@@ -1739,40 +1739,12 @@
       </div>
     </section>
 
-    <!-- ════════════════════════════════════════════════════
-         BLOQUE 3 · PROBLEMA actual (4 slides)
-    ════════════════════════════════════════════════════ -->
-
-    <!-- 08. SATURADOS DE PROPÓSITO · composicion I capas tipograficas
-         Palabra grande de fondo + frase principal partida en dos bloques.
-         El segundo bloque indentado a la derecha genera tension visual
-         entre lo que la cultura hizo y lo que la cultura impidio. -->
-    <section data-background-color="#4C0F18" class="bg-black bg-maroon" data-transition="fade">
-      <div class="atmos-bg light pos-bl" aria-hidden="true">
-        <div class="orb"></div>
-        <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
-      </div>
-      <div class="depth-layers">
-        <span class="depth-bg-word stagger d1">propósito</span>
-        <h2 class="depth-h">
-          <span class="depth-block depth-block-a">
-            <span class="line"><span class="line-inner">La cultura contemporánea</span></span>
-            <span class="line"><span class="line-inner">no eliminó la pregunta.</span></span>
-          </span>
-          <span class="depth-block depth-block-b">
-            <span class="line"><span class="line-inner">Nos dejó sin</span></span>
-            <span class="line"><span class="line-inner">cómo responderla.</span></span>
-          </span>
-        </h2>
-      </div>
-    </section>
-
     <!-- 09. ARQUETIPOS · composicion K constelacion tipografica acumulativa
          Tres arquetipos aparecen en posiciones distintas. Cuando aparece
          uno nuevo, los anteriores no desaparecen: se atenuan. Al final
          los tres en pantalla simultaneos, visualizando la saturacion.
          Cada arquetipo respira con pulso de opacidad propio (factor vivo). -->
-    <section data-background-color="#4C0F18" class="bg-black bg-maroon" data-transition="fade">
+    <section data-background-color="#4C0F18" class="bg-black bg-maroon" data-transition="fade" data-warmth="0.22">
       <div class="constellation">
         <!-- Blob oscuro granulado, controlado por --blob-x / --blob-y -->
         <div class="constellation-blob"></div>
@@ -1820,7 +1792,7 @@
          Tres frases del ensayo se escriben una por click, como si
          las estuvieran tecleando. Las anteriores quedan visibles.
          Slide arranca vacia. -->
-    <section data-background-color="#002B34" class="bg-black" data-transition="fade">
+    <section data-background-color="#002B34" class="bg-black" data-transition="fade" data-warmth="0.22">
       <div class="typewriter-stage">
         <div class="atmos-bg dark pos-br" aria-hidden="true">
           <div class="orb"></div>
@@ -1833,7 +1805,7 @@
     </section>
 
     <!-- 11. VACÍO EXISTENCIAL · recurso: FOTO de soledad en la luz (s11) -->
-    <section data-background-color="#002B34" class="bg-black" data-transition="fade" data-device="s11">
+    <section data-background-color="#002B34" class="bg-black" data-transition="fade" data-device="s11" data-warmth="0.24">
       <div class="s11-photo" aria-hidden="true"><img src="imagenes/solitude-in-light-stockcake.jpg" alt=""/></div>
       <div class="s11-veil" aria-hidden="true"></div>
       <div class="s11-text">
@@ -1843,53 +1815,11 @@
     </section>
 
     <!-- ════════════════════════════════════════════════════
-         BLOQUE 4 · PROBLEMA DUAL DE 4MEANING (3 slides)
-    ════════════════════════════════════════════════════ -->
-
-    <!-- 12. UN EXCESO Y UNA ESCASEZ (antes 'Un problema dual') · enmarca el diagnostico (s12) -->
-    <section data-background-color="#F5F0E8" class="bg-white" data-transition="fade" data-device="s12">
-      <div class="atmos-bg light pos-tr" aria-hidden="true">
-        <div class="orb"></div>
-        <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
-      </div>
-      <canvas class="s12-spheres" data-spheres aria-hidden="true"></canvas>
-      <div class="s12-stage">
-        <h2 class="s12-title">Un exceso y una escasez.</h2>
-      </div>
-    </section>
-
-    <!-- 13. UN MERCADO QUE CARECE DE SENTIDO (el exceso, primero) · (s14) -->
-    <section data-background-color="#4C0F18" class="bg-black bg-maroon" data-transition="fade" data-device="s14">
-      <div class="atmos-bg dark pos-br" aria-hidden="true">
-        <div class="orb"></div>
-        <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
-      </div>
-      <div class="s14-ghost" aria-hidden="true">sentido</div>
-      <div class="s14-text">
-        <h2 class="s14-title">Un mercado que carece de sentido.</h2>
-        <p class="s14-body">La necesidad existe y el mercado la reconoció. Pero las soluciones que ofrece miden a la persona por lo que produce, no por quién es.</p>
-      </div>
-    </section>
-
-    <!-- 14. LA BRECHA (la carencia/escasez, despues) · FOTO biblioteca (s13) -->
-    <section data-background-color="#F5F0E8" class="bg-white" data-transition="fade" data-device="s13">
-      <div class="s13-bg" aria-hidden="true">
-        <img class="s13-bg-img" src="imagenes/this-library-web.jpg" alt=""/>
-        <div class="s13-bg-veil"></div>
-      </div>
-      <canvas class="s13-particles" aria-hidden="true"></canvas>
-      <div class="s13-text">
-        <h2 class="s13-title">La brecha entre la filosofía y la práctica.</h2>
-        <p class="s13-body">El personalismo tiene la profundidad. Hacen falta más personas que lo traduzcan al lenguaje de la vida cotidiana.</p>
-      </div>
-    </section>
-
-    <!-- ════════════════════════════════════════════════════
          BLOQUE 5 · FUNDAMENTOS FILOSÓFICOS (2 slides)
     ════════════════════════════════════════════════════ -->
 
     <!-- 15. WOJTYŁA · recurso: SELLO DE LACRE que imprime el nombre (s15) -->
-    <section data-background-color="#F5F0E8" class="bg-white" data-transition="fade">
+    <section data-background-color="#F5F0E8" class="bg-white" data-transition="fade" data-warmth="0.4">
       <div class="atmos-bg light pos-tl" aria-hidden="true">
         <div class="orb"></div>
         <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
@@ -1902,7 +1832,7 @@
     </section>
 
     <!-- 16. BURGOS QUÉ/QUIÉN · composicion J author-spread espejo -->
-    <section data-background-color="#F5F0E8" class="bg-white" data-transition="fade">
+    <section data-background-color="#F5F0E8" class="bg-white" data-transition="fade" data-warmth="0.42">
       <div class="atmos-bg light pos-br" aria-hidden="true">
         <div class="orb"></div>
         <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
@@ -1914,26 +1844,8 @@
       </div>
     </section>
 
-    <!-- ════════════════════════════════════════════════════
-         BLOQUE 6 · DOS EJES (3 slides)
-    ════════════════════════════════════════════════════ -->
-
-    <!-- 17. APERTURA DOS EJES · F monumental -->
-    <section data-background-color="#002B34" class="bg-black" data-transition="fade" data-gesture="axes">
-      <div class="atmos-bg light pos-bl" aria-hidden="true">
-        <div class="orb"></div>
-        <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
-      </div>
-      <div class="monumental">
-        <h2 class="monumental-h">
-          <span class="line"><span class="line-inner">Dos</span></span>
-          <span class="line"><span class="line-inner">ejes.</span></span>
-        </h2>
-      </div>
-    </section>
-
     <!-- 18. EJE HORIZONTAL · imagen full-bleed con caption -->
-    <section data-background-color="#002B34" data-transition="fade" data-device="s18">
+    <section data-background-color="#002B34" data-transition="fade" data-device="s18" data-warmth="0.55">
       <div class="image-bleed">
         <img src="imagenes/married-couple-hugging.avif" alt="" class="image-bleed-img"/>
         <div class="image-bleed-overlay dark"></div>
@@ -1945,7 +1857,7 @@
     </section>
 
     <!-- 19. EJE VERTICAL · imagen full-bleed (cielo sobre nubes) con caption · diptico con la 18 -->
-    <section data-background-color="#002B34" data-transition="fade" data-device="s19">
+    <section data-background-color="#002B34" data-transition="fade" data-device="s19" data-warmth="0.46">
       <div class="image-bleed">
         <img src="imagenes/glowing-sunset-sky-clouds-web.jpg" alt="" class="image-bleed-img"/>
         <div class="image-bleed-overlay dark"></div>
@@ -1957,66 +1869,11 @@
     </section>
 
     <!-- ════════════════════════════════════════════════════
-         BLOQUE 7 · FRANKL + CONVERGENCIA (3 slides)
-    ════════════════════════════════════════════════════ -->
-
-    <!-- 20. FRANKL PERSONALISTA SIN SABERLO · author-spread -->
-    <section data-background-color="#F5F0E8" class="bg-white" data-transition="fade">
-      <div class="atmos-bg light pos-bl" aria-hidden="true">
-        <div class="orb"></div>
-        <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
-      </div>
-      <div class="author-spread">
-        <p class="author-name stagger d1">Frankl,</p>
-        <h2 class="author-claim stagger d2">personalista sin saberlo.</h2>
-        <p class="author-body stagger d3">Lo digo medio en broma, medio en serio. La literatura reciente ya lo reconoce como personalista de pleno derecho. Llega al mismo sujeto que Wojtyła describe, solo que entrando por otra puerta: la clínica del sentido.</p>
-      </div>
-    </section>
-
-    <!-- 21. DOS RUTAS INDEPENDIENTES · L typewriter de tres convergencias -->
-    <section data-background-color="#F5F0E8" class="bg-white" data-transition="fade">
-      <div class="atmos-bg light pos-br" aria-hidden="true">
-        <div class="orb"></div>
-        <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
-      </div>
-      <div class="typewriter-stage" style="background:transparent;">
-        <div class="typewriter-line fragment" data-text="Wojtyła llega al quién desde la fenomenología del acto." style="color:var(--dark);"><span class="text"></span><span class="cursor"></span></div>
-        <div class="typewriter-line fragment" data-text="Frankl llega al mismo quién desde la clínica del sentido." style="color:var(--dark);"><span class="text"></span><span class="cursor"></span></div>
-        <!-- 3a linea: se teclea hasta 'exactamente' y REMATA 'lo mismo.' de golpe
-             (mask rapido). El tecleo CARGA, la resolucion REMATA: acelera el pulso
-             hacia el climax en vez de desinflarlo tecleando lo que el publico ya intuye. -->
-        <div class="typewriter-line fragment" data-text="Sin influencia mutua, ponen en el centro exactamente " style="color:var(--dark); font-weight: 800;"><span class="text"></span><span class="text-snap">lo mismo.</span><span class="cursor"></span></div>
-      </div>
-      <p style="position:absolute; bottom:6vh; left:0; right:0; text-align:center; font-size:1.05rem; letter-spacing:0.04em; color:var(--muted-2); z-index:3; margin:0;">Wojtyła, <em>Persona y acción</em> (1969) &nbsp;&middot;&nbsp; Frankl, <em>El hombre en busca de sentido</em> (1946)</p>
-    </section>
-
-    <!-- 22. CLÍMAX · Constatar, no creer · monumental oscuro: beat de silencio + ambar que aflora + subtitulo separado (OLA 1); convergencia de dos icosaedros enteros pendiente (OLA 2) -->
-    <section data-background-color="#002B34" class="bg-black" data-transition="fade" data-gesture="climax">
-      <div class="atmos-bg dark pos-br" aria-hidden="true">
-        <div class="orb"></div>
-        <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
-      </div>
-      <!-- Ambar que AFLORA bajo el negro durante el beat de silencio (OLA 1):
-           el unico momento en que el ambar pleno emerge como protagonista. -->
-      <div class="climax-amber" aria-hidden="true"></div>
-      <!-- OLA 2: dos icosaedros ENTEROS que convergen (convergencia paralela
-           hecha geometria). NO dos mitades que encajan (linea roja). -->
-      <canvas class="icosa-canvas" data-icosa-converge></canvas>
-      <div class="monumental">
-        <h2 class="monumental-h" style="color:var(--pure); position:relative; z-index:3;">
-          <span class="line"><span class="line-inner">Constatar,</span></span>
-          <span class="line"><span class="line-inner">no asumir.</span></span>
-        </h2>
-        <p class="climax-sub" style="font-size:1.9rem; font-weight:300; line-height:1.5; max-width:56ch; color:var(--muted-d); margin-top:3rem; position:relative; z-index:2;">Cuando dos métodos llegan a la misma conclusión por caminos que no se cruzan, la conclusión deja de depender de los presupuestos de un solo método. El personalismo, así confirmado, deja de ser una postura para volverse una descripción.</p>
-      </div>
-    </section>
-
-    <!-- ════════════════════════════════════════════════════
          BLOQUE 8 · COMPOSICIÓN (2 slides)
     ════════════════════════════════════════════════════ -->
 
     <!-- 23. CINCO PLANOS · F monumental -->
-    <section data-background-color="#F5F0E8" class="bg-white" data-transition="fade" data-gesture="slow">
+    <section data-background-color="#F5F0E8" class="bg-white" data-transition="fade" data-gesture="slow" data-warmth="0.42">
       <div class="atmos-bg light pos-tl" aria-hidden="true">
         <div class="orb"></div>
         <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
@@ -2030,7 +1887,7 @@
     </section>
 
     <!-- 24. LOS CINCO PLANOS · recurso: COLUMNA con veta de luz que se llena (s24) -->
-    <section data-background-color="#F5F0E8" class="bg-white" data-transition="fade" data-device="s24">
+    <section data-background-color="#F5F0E8" class="bg-white" data-transition="fade" data-device="s24" data-warmth="0.42">
       <div class="atmos-bg light pos-br" aria-hidden="true">
         <div class="orb"></div>
         <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
@@ -2054,7 +1911,7 @@
     ════════════════════════════════════════════════════ -->
 
     <!-- 25. LAS CINCO DINÁMICAS · recurso: CAJONERA (acordeon) que se abre una a una (s25) -->
-    <section data-background-color="#F5F0E8" class="bg-white" data-transition="fade" data-device="s25">
+    <section data-background-color="#F5F0E8" class="bg-white" data-transition="fade" data-device="s25" data-warmth="0.46">
       <div class="atmos-bg light pos-tl" aria-hidden="true">
         <div class="orb"></div>
         <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
@@ -2062,7 +1919,7 @@
       <div class="s25-stage">
         <div class="s25-cabinet">
           <article class="s25-drawer fragment">
-            <header class="s25-head"><span class="s25-i">01</span><h3 class="s25-name">Arqueología en el yo</h3><span class="s25-tag">Intersubjetividad</span></header>
+            <header class="s25-head"><span class="s25-i">01</span><h3 class="s25-name">Arqueología del yo</h3><span class="s25-tag">Intersubjetividad</span></header>
           </article>
           <article class="s25-drawer fragment">
             <header class="s25-head"><span class="s25-i">02</span><h3 class="s25-name">Las tres valijas</h3><span class="s25-tag">Genealógico</span></header>
@@ -2112,7 +1969,7 @@
     ════════════════════════════════════════════════════ -->
 
     <!-- 26. FOTOLOGOS · la técnica que materializa: la filosofía hecha legado entregable (imagen-bleed) -->
-    <section data-background-color="#002B34" data-transition="fade" data-device="s26fl">
+    <section data-background-color="#002B34" data-transition="fade" data-device="s26fl" data-warmth="0.5" data-brasa="down">
       <div class="image-bleed">
         <img src="imagenes/holding-hands-married-couple.avif" alt="" class="image-bleed-img"/>
         <div class="image-bleed-overlay dark"></div>
@@ -2124,7 +1981,7 @@
     </section>
 
     <!-- 27. TESTIMONIOS · video con sonido, reproduccion MANUAL (boton play). Video pendiente. -->
-    <section data-background-color="#002B34" class="bg-black" data-transition="fade" data-device="stesti">
+    <section data-background-color="#002B34" class="bg-black" data-transition="fade" data-device="stesti" data-warmth="0.55" data-brasa="down">
       <div class="atmos-bg dark pos-br" aria-hidden="true">
         <div class="orb"></div>
         <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
@@ -2144,7 +2001,7 @@
     </section>
 
     <!-- 28. UNA MADRE · D quote-bleed con fotos de familia de fondo -->
-    <section data-background-color="#002B34" data-transition="fade">
+    <section data-background-color="#002B34" data-transition="fade" data-warmth="0.66" data-brasa="down">
       <div class="quote-bleed">
         <img src="imagenes/family-pictures-web.jpg" alt="" class="quote-bleed-img"/>
         <div class="quote-bleed-overlay"></div>
@@ -2156,7 +2013,7 @@
     </section>
 
     <!-- 28. NO LO POSPONGAN · F monumental cierre -->
-    <section data-background-color="#002B34" class="bg-black" data-transition="fade">
+    <section data-background-color="#002B34" class="bg-black" data-transition="fade" data-warmth="0.22" data-brasa="down">
       <div class="atmos-bg dark pos-tr" aria-hidden="true">
         <div class="orb"></div>
         <svg class="grain" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><rect width="100%" height="100%" filter="url(#grain-filter-shared)"/></svg>
@@ -3278,22 +3135,11 @@
       if (!slide) return;
       const dark = slide.classList.contains('bg-black');
       brasa.setDensity(dark ? 0.11 : 0.05);
-      const h = Reveal.getIndices(slide).h;
-      brasa.setDirection(h >= 25 ? 1 : -1);  /* cierre (FotoLogos + madre + 'no la pospongan', indices 25-27): el polvo desciende como legado */
-      /* ARCO TERMICO (intencion de El Candil via la brasa): la luz sigue la
-         doble onda emocional. Indices 0-base. Apertura austera (NO consolar),
-         picos calidos en el climax (21) y la madre (25), cierre como ascua. */
-      const WARMTH = {
-        0: 0.30, 1: 0.16, 2: 0.16, 3: 0.14, 4: 0.12,   /* portada + 3 preguntas: penumbra que no consuela */
-        5: 0.34, 6: 0.34,                               /* el tema + tres capas: amanecer */
-        7: 0.30, 8: 0.22, 9: 0.22, 10: 0.24,            /* problema: recaida */
-        11: 0.34, 12: 0.34, 13: 0.34, 14: 0.40, 15: 0.42, /* premisas y ejes: ascenso */
-        16: 0.46, 17: 0.55, 18: 0.46, 19: 0.46, 20: 0.50,
-        21: 1.0,                                         /* CLIMAX 22: el ambar a su maximo */
-        22: 0.42, 23: 0.42, 24: 0.46,                   /* descenso calido */
-        25: 0.50, 26: 0.55, 27: 0.66, 28: 0.22,         /* FotoLogos, testimonios, la madre (pathos) y el cierre como ascua */
-      };
-      const w = (h in WARMTH) ? WARMTH[h] : 0.35;
+      /* Arco termico y direccion del polvo: se leen de data-warmth / data-brasa
+         estampados en cada <section>, NO de indices numericos. Asi el arco no se
+         desalinea al cortar o reordenar slides (antes era un mapa 0-28 fragil). */
+      brasa.setDirection(slide.dataset.brasa === 'down' ? 1 : -1);
+      const w = slide.dataset.warmth ? parseFloat(slide.dataset.warmth) : 0.35;
       brasa.setWarmth(w);
     }
     updateBrasa(Reveal.getCurrentSlide());
