@@ -949,8 +949,10 @@
        Reutilizables, no plantilladas. Cada slide elige una.
     ═══════════════════════════════════════════════════════════════ */
 
-    /* J · AUTHOR SPREAD: nombre del autor monumental hairline +
-       frase central debajo en peso medio. Slides 15 Wojtyła, 16 Burgos. */
+    /* J · AUTHOR SPREAD: el CONCEPTO es el heroe monumental; el nombre del autor
+       queda como atribucion discreta arriba (kicker). Antes era al reves (nombre
+       en 9rem): la nueva orientacion muestra el proceso, no el name-drop; el
+       autor se reconoce sin dominar la lamina. Slides Wojtyla y Burgos. */
     .author-spread {
       width: 100%; height: 100%;
       padding: 10vh 6vw;
@@ -963,24 +965,24 @@
     }
     .author-spread.right { align-items: flex-end; }
     .author-spread .author-name {
-      font-size: 9rem;
-      font-weight: 200;
-      letter-spacing: -0.05em;
-      line-height: 0.92;
-      color: var(--dark);
-      margin: 0 0 1.2rem 0;
-      text-transform: none;
+      font-size: 1.2rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      line-height: 1;
+      color: #B9735A;
+      margin: 0 0 1.8rem 0;
+      text-transform: uppercase;
       white-space: nowrap;
     }
     .author-spread .author-claim {
-      font-size: 3.9rem;
+      font-size: 6rem;
       font-weight: 800;
       letter-spacing: -0.035em;
       line-height: 1.0;
       color: var(--dark);
       text-transform: uppercase;
-      max-width: 22ch;
-      margin: 0 0 2rem 0;
+      max-width: 18ch;
+      margin: 0 0 2.4rem 0;
     }
     .author-spread.right .author-claim { text-align: right; }
     .author-spread .author-body {
