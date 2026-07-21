@@ -6,7 +6,17 @@
 # ─────────────────────────────────────────────────────────────
 cd "$(dirname "$0")" || exit 1
 
-PY="$(command -v python3 || command -v python)"
+# Buscar Python: primero el del PATH, luego rutas absolutas conocidas
+# (Finder puede lanzar el script sin el PATH de Homebrew cargado).
+PY=""
+for CAND in "$(command -v python3 2>/dev/null)" \
+            /opt/homebrew/bin/python3 \
+            /usr/local/bin/python3 \
+            /usr/bin/python3 \
+            "$(command -v python 2>/dev/null)"; do
+  if [ -n "$CAND" ] && [ -x "$CAND" ]; then PY="$CAND"; break; fi
+done
+
 if [ -z "$PY" ]; then
   echo ""
   echo "  No encontré Python en esta computadora."
