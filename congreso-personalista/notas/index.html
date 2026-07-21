@@ -2137,6 +2137,28 @@
     });
   });
 
+  /* ═══════════ LAMINA DE TESTIMONIOS: OPCIONAL Y FACIL DE QUITAR ═══════════
+     Si NO vas a poner el video, no tienes que hacer nada: la lamina se oculta
+     sola y el deck pasa de FotoLogos directo a la madre.
+     Si SI vas a ponerlo: agrega el src al <video> (busca "testimonios.mp4"
+     mas arriba en este archivo) y la lamina aparece sola.
+     Interruptor manual (cambia solo esta palabra):
+       'auto' = se muestra solo si el video tiene src; si no, se oculta. (por defecto)
+       'no'   = ocultar SIEMPRE (usa esto si decides quitarla, tengas video o no).
+       'si'   = mostrar SIEMPRE (aunque el video no cargue, para narrarla). */
+  const TESTIMONIOS = 'auto';
+  Reveal.on('ready', () => {
+    const sec = document.querySelector('[data-device="stesti"]');
+    if (!sec) return;
+    const v = sec.querySelector('.testi-video');
+    const tieneVideo = !!(v && (v.getAttribute('src') || v.currentSrc || v.querySelector('source')));
+    const mostrar = TESTIMONIOS === 'si' || (TESTIMONIOS === 'auto' && tieneVideo);
+    if (!mostrar && sec.parentNode) {   /* sacarla de la navegacion por completo */
+      sec.parentNode.removeChild(sec);
+      if (Reveal.sync) Reveal.sync();
+    }
+  });
+
   /* Barras de letterbox al COLOR de la slide: en cualquier pantalla que no sea
      16:9 (mas alargada, 4:3, ultrawide) reveal centra el lienzo y deja barras.
      Pintarlas del color del fondo de la slide hace que se vea a sangre, sin
