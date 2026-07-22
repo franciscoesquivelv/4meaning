@@ -769,6 +769,9 @@
     .archetypes-overlay .archetype-line {
       color: #F5F0E8;
     }
+    .archetypes-overlay .archetype-cliche {
+      color: #C98E76;
+    }
     .archetype {
       position: absolute;
       max-width: 34vw;
@@ -831,11 +834,12 @@
     .archetype.lit::before { opacity: 1; animation: nodeBreath 6.5s ease-in-out infinite; }
     @keyframes nodeBreath { 0%, 100% { opacity: 0.88; } 50% { opacity: 1; } }
 
-    .archetype .archetype-name, .archetype .archetype-line { transition: color 1s ease; }
+    .archetype .archetype-name, .archetype .archetype-line, .archetype .archetype-cliche { transition: color 1s ease; }
     /* halo oscuro: garantiza legibilidad del texto crema aunque caiga en un
        borde del pozo. Es la red de seguridad de contraste. */
     .reveal .slides section .archetype.lit .archetype-name,
     .reveal .slides section .archetype.lit .archetype-line { color: #F5F0E8; text-shadow: 0 2px 16px rgba(14,8,4,0.95), 0 0 38px rgba(14,8,4,0.9), 0 0 74px rgba(14,8,4,0.66); }
+    .reveal .slides section .archetype.lit .archetype-cliche { color: #C98E76; text-shadow: 0 2px 14px rgba(14,8,4,0.92), 0 0 30px rgba(14,8,4,0.8); }
     .reveal .slides section .archetype.lit .archetype-num { color: rgba(251, 233, 196, 0.13); }
 
     /* Campo ORDENADO y CALIDO de 24/25 (vector invertido respecto a 09):
@@ -1274,6 +1278,18 @@
       line-height: 1.35;
       color: var(--dark);
       margin: 0;
+    }
+    /* La frase-cliche del mercado: jerarquia menor que la descripcion,
+       italica, en terracota (la voz seductora y vacia). */
+    .archetype-cliche {
+      position: relative;
+      z-index: 2;
+      font-size: 1.2rem;
+      font-weight: 300;
+      font-style: italic;
+      line-height: 1.35;
+      color: var(--dark);
+      margin: 0.75rem 0 0;
     }
     /* Posiciones tendiendo al centro para que el blob radial pueda
        cubrirlos sin extremos. */
@@ -1756,16 +1772,19 @@
           <span class="archetype-num">01</span>
           <div class="archetype-name">Gurú</div>
           <p class="archetype-line">Promete una versión mejorada del yo, sin tocar al <strong>quién</strong>.</p>
+          <p class="archetype-cliche">«Sana las heridas de tu pasado y reconecta con tu yo interior.»</p>
         </div>
         <div class="archetype pos-cr fragment constellation-step" data-blob-x="76" data-blob-y="50">
           <span class="archetype-num">02</span>
           <div class="archetype-name">Coach</div>
           <p class="archetype-line">Mide la biografía por los resultados que entrega.</p>
+          <p class="archetype-cliche">«Aumenta tus ingresos en ocho semanas con mi curso online.»</p>
         </div>
         <div class="archetype pos-bc fragment constellation-step" data-blob-x="50" data-blob-y="76">
           <span class="archetype-num">03</span>
           <div class="archetype-name">Ley de atracción</div>
           <p class="archetype-line">Cosifica al sujeto: lo convierte en imán de cosas.</p>
+          <p class="archetype-cliche">«Manifiesta la abundancia repitiendo esta frase todos los días.»</p>
         </div>
 
         <!-- Overlay con copia del texto en color crema, masked al blob.
@@ -1776,16 +1795,19 @@
             <span class="archetype-num">01</span>
             <div class="archetype-name">Gurú</div>
             <p class="archetype-line">Promete una versión mejorada del yo, sin tocar al <strong>quién</strong>.</p>
+            <p class="archetype-cliche">«Sana las heridas de tu pasado y reconecta con tu yo interior.»</p>
           </div>
           <div class="archetype pos-cr">
             <span class="archetype-num">02</span>
             <div class="archetype-name">Coach</div>
             <p class="archetype-line">Mide la biografía por los resultados que entrega.</p>
+            <p class="archetype-cliche">«Aumenta tus ingresos en ocho semanas con mi curso online.»</p>
           </div>
           <div class="archetype pos-bc">
             <span class="archetype-num">03</span>
             <div class="archetype-name">Ley de atracción</div>
             <p class="archetype-line">Cosifica al sujeto: lo convierte en imán de cosas.</p>
+            <p class="archetype-cliche">«Manifiesta la abundancia repitiendo esta frase todos los días.»</p>
           </div>
         </div>
       </div>
