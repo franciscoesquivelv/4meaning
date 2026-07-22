@@ -1868,30 +1868,6 @@
       </div>
     </section>
 
-    <!-- 18. EJE HORIZONTAL · imagen full-bleed con caption -->
-    <section data-background-color="#002B34" data-transition="fade" data-device="s18" data-warmth="0.55">
-      <div class="image-bleed">
-        <img src="imagenes/married-couple-hugging.avif" alt="" class="image-bleed-img"/>
-        <div class="image-bleed-overlay dark"></div>
-        <div class="image-bleed-caption dark">
-          <h2 class="stagger d2">Horizontal.</h2>
-          <p class="stagger d3">Wojtyła lo llama participación: la madurez personal acontece en el encuentro real con otro quién igualmente irrepetible. La persona termina por hacerse, sobre todo, saliendo y entregándose.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- 19. EJE VERTICAL · imagen full-bleed (cielo sobre nubes) con caption · diptico con la 18 -->
-    <section data-background-color="#002B34" data-transition="fade" data-device="s19" data-warmth="0.46">
-      <div class="image-bleed">
-        <img src="imagenes/glowing-sunset-sky-clouds-web.jpg" alt="" class="image-bleed-img"/>
-        <div class="image-bleed-overlay dark"></div>
-        <div class="image-bleed-caption dark">
-          <h2 class="stagger d2">Vertical.</h2>
-          <p class="stagger d3"><strong>Habitar la propia condición a su altura.</strong> Encontramos el sentido de la vida únicamente cuando la medimos frente a algo más alto que nosotros. Trascender no es dejar atrás lo que somos, sino vivirlo a su altura.</p>
-        </div>
-      </div>
-    </section>
-
     <!-- ════════════════════════════════════════════════════
          BLOQUE 8 · COMPOSICIÓN (2 slides)
     ════════════════════════════════════════════════════ -->
@@ -3063,31 +3039,6 @@
         .to(die, { y: 0, duration: 0.55, ease: 'expo.inOut' }, 0.5)
         .to(die, { y: -300, opacity: 0, duration: 0.85, ease: 'power4.out' }, 1.25);  /* se levanta Y se desvanece: deja el nombre limpio */
       if (name) tl.to(name, { opacity: 1, scale: 1, duration: 0.5, ease: 'power4.out' }, 1.15);
-    },
-  };
-
-  /* s18→s19 · TRANSICIÓN DE EJES (horizontal → vertical): seamless y cinematográfica.
-     Al dejar la 18 la foto se ELEVA y se desvanece; al entrar la 19 el cielo SUBE a
-     su sitio y sigue un ken-burns lento. El gesto encarna la verticalidad: asciende.
-     (La imagen siempre escala >1 para que el desplazamiento no revele bordes.) */
-  DEVICES.s18 = {
-    enter(section) {
-      const img = section.querySelector('.image-bleed-img');
-      if (img) { gsap.killTweensOf(img); gsap.fromTo(img, { scale: 1.08, yPercent: 0 }, { scale: 1.15, yPercent: -2, duration: 22, ease: 'expo.inOut' }); }
-    },
-    leave(section) {
-      const img = section.querySelector('.image-bleed-img');
-      if (img) gsap.to(img, { yPercent: -8, scale: 1.2, duration: 1.3, ease: 'power4.out', overwrite: 'auto' });
-    },
-  };
-  DEVICES.s19 = {
-    enter(section) {
-      const img = section.querySelector('.image-bleed-img');
-      if (img) {
-        gsap.killTweensOf(img);
-        gsap.fromTo(img, { yPercent: 8, scale: 1.2 }, { yPercent: 0, scale: 1.13, duration: 1.8, ease: 'power4.out' });
-        gsap.to(img, { scale: 1.21, duration: 26, ease: 'expo.inOut', delay: 1.8 });
-      }
     },
   };
 
