@@ -70,8 +70,25 @@ Tintes de apoyo (derivados, para ritmo y jerarquía — no son colores nuevos):
 | `--line-dk` | `rgba(255,255,255,.12)` | Filete sobre oscuro |
 
 **Reglas de color.** Fondos profundos con tipografía clara. Terracota como
-acento humano, nunca como fondo dominante. Vino reservado para el territorio de
-legado/Trascendencia.
+acento humano, nunca como fondo dominante.
+
+### Dominancia por marca (casa de marca)
+
+Las tres marcas usan **la misma combinación** (teal + vino + terracota). Lo que
+cambia es **cuál domina**:
+
+| Marca | Color dominante | Secundario | Acento |
+|-------|-----------------|-----------|--------|
+| **Trascendencia** | Vino `#4C0F18` | Teal `#002B34` | Terracota |
+| **PersonaLab** | Teal `#002B34` | Vino `#4C0F18` | Terracota |
+| **4 Meaning** (madre) | Balance vino + teal | — | Terracota |
+
+- **4 Meaning** equilibra ambos colores y **muestra los dos logos** de sus
+  líneas (Trascendencia + PersonaLab), siempre **proporcionales y sin
+  distorsión** (ancho explícito + `height:auto`, nunca `width:auto` dentro de un
+  flex, que provoca estirado).
+- El color dominante manda en hero, fondos de sección y acentos de esa marca;
+  el secundario aparece como respiro/contrapunto.
 
 ---
 
