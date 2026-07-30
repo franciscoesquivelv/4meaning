@@ -14,12 +14,61 @@
 <link rel="icon" href="/logos/wht-icon.png" media="(prefers-color-scheme: dark)">
 <link rel="stylesheet" href="/assets/brand.css">
 <style>
-  /* Trascendencia — vino DOMINANTE, teal secundario */
+  /* Trascendencia — vino DOMINANTE, teal secundario (ver /BRAND.md) */
   :root{
     --dom:var(--wine); --dom-deep:var(--wine-deep); --sec:var(--teal);
     --blob1:#6E1A26; --blob2:var(--terra); --blob3:#0E5866; --blob4:var(--gold);
     --blob2-op:.5; --blob3-op:.3; --blob4-op:.24;
   }
+
+  /* ── LA EXPERIENCIA · split intro ── */
+  .intro-grid{display:grid;grid-template-columns:5fr 7fr;gap:clamp(2.5rem,6vw,6rem);align-items:start}
+  .intro-body{font-size:1.05rem;font-weight:300;line-height:1.95;color:var(--ink);margin-bottom:1.6rem}
+  .intro-body b{font-weight:500;color:var(--dom)}
+  .intro-body .sub{display:block;margin-top:1.6rem;font-size:.92rem;color:var(--gray)}
+  .intro-divider{width:2.5rem;height:2px;background:var(--terra);margin:2rem 0}
+  @media(max-width:860px){.intro-grid{grid-template-columns:1fr}}
+
+  /* ── LAS TRES PREGUNTAS · sobre dominante ── */
+  .questions{background:var(--dom);color:#fff;padding:clamp(4.5rem,10vw,7.5rem) clamp(1.25rem,4vw,3.5rem)}
+  .questions-head{max-width:1180px;margin:0 auto clamp(2.5rem,5vw,4rem)}
+  .questions-head .eyebrow{color:var(--terra-lo)}
+  .questions-head h2{margin-top:1.5rem;font-size:clamp(1.9rem,3.2vw,2.9rem);font-weight:200;line-height:1.1;letter-spacing:-.02em;max-width:24ch;text-wrap:balance}
+  .q-grid{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr)}
+  .q{padding:2.5rem 2rem 0 0;border-top:1px solid rgba(255,255,255,.14)}
+  .q-n{font-size:.66rem;letter-spacing:.2em;color:var(--terra-lo);display:block;margin-bottom:1.5rem;font-weight:500}
+  .q h3{font-size:1.7rem;font-weight:300;margin-bottom:1rem;letter-spacing:-.01em}
+  .q p{font-size:.88rem;font-weight:300;line-height:1.8;color:rgba(255,255,255,.62)}
+  @media(max-width:860px){.q-grid{grid-template-columns:1fr}.q{padding-top:2rem}}
+
+  /* ── CÓMO SE VIVE · 3 modalidades con foto ── */
+  .modes-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+  .mode-card{position:relative;min-height:380px;border-radius:10px;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;isolation:isolate;color:#fff}
+  .mode-card .bg{position:absolute;inset:0;background:#222 center/cover no-repeat;z-index:-2}
+  .mode-card::after{content:'';position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,transparent 30%,rgba(43,8,14,.6) 62%,rgba(30,6,10,.94) 100%)}
+  .mode-body{padding:2rem}
+  .mode-n{font-size:.62rem;letter-spacing:.2em;color:var(--terra-lo);display:block;margin-bottom:1.1rem;font-weight:600;text-transform:uppercase}
+  .mode-card h3{font-size:1.35rem;font-weight:400;margin-bottom:.3rem;letter-spacing:-.01em}
+  .mode-place{font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:.9rem;display:block}
+  .mode-card p{font-size:.85rem;font-weight:300;line-height:1.75;color:rgba(255,255,255,.75)}
+  @media(max-width:860px){.modes-grid{grid-template-columns:1fr}}
+
+  /* ── EL LEGADO · split con foto + stats ── */
+  .legacy{background:var(--dom);color:#fff;padding:clamp(4.5rem,10vw,9rem) clamp(1.25rem,4vw,3.5rem);position:relative;overflow:hidden}
+  .legacy::before{content:'';position:absolute;inset:0;background:radial-gradient(60% 60% at 82% 12%,rgba(185,115,90,.22),transparent 60%);pointer-events:none}
+  .legacy-grid{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:5fr 4fr 3fr;gap:clamp(2rem,5vw,4rem);align-items:center;position:relative}
+  .legacy .eyebrow{color:var(--terra-lo);margin-bottom:1.9rem;display:block}
+  .legacy h2{font-size:clamp(1.9rem,3.4vw,2.9rem);font-weight:200;line-height:1.1;letter-spacing:-.02em;margin-bottom:1.5rem}
+  .legacy h2 em{font-style:normal;color:var(--terra-lo)}
+  .legacy p{font-size:.98rem;font-weight:300;line-height:1.9;color:rgba(255,255,255,.78)}
+  .legacy-photo{position:relative;border-radius:10px;overflow:hidden;min-height:320px}
+  .legacy-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .legacy-stats{border-left:1px solid rgba(255,255,255,.16);padding-left:2.25rem}
+  .legacy-stats .stat{margin-bottom:2.25rem}
+  .legacy-stats .stat:last-child{margin-bottom:0}
+  .legacy-stats .num{font-size:2.6rem;font-weight:200;letter-spacing:-.02em;display:block;line-height:1;margin-bottom:.5rem;font-variant-numeric:tabular-nums}
+  .legacy-stats .lbl{font-size:.8rem;font-weight:300;line-height:1.6;color:rgba(255,255,255,.6)}
+  @media(max-width:960px){.legacy-grid{grid-template-columns:1fr}.legacy-stats{border-left:0;padding-left:0;border-top:1px solid rgba(255,255,255,.16);padding-top:2rem;display:flex;gap:2rem;flex-wrap:wrap}.legacy-stats .stat{margin-bottom:0}}
 </style>
 </head>
 <body>
@@ -34,14 +83,18 @@
   </ul>
 </nav>
 
-<!-- HERO · vino dominante -->
+<!-- HERO -->
 <section class="hero" id="top">
   <div class="aurora"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span><span class="blob b4"></span></div>
   <div class="grain"></div>
   <div class="hero-inner">
     <img class="hero-logo" src="/logos/trascendencia-marcas.png" alt="Trascendencia">
     <p class="eyebrow hero-eyebrow">Legado familiar · una experiencia de 4 Meaning</p>
-    <h1>El legado familiar como <em>proyecto de vida.</em></h1>
+    <h1 style="max-width:18ch">
+      <span style="display:block">¿Quién soy?</span>
+      <span style="display:block">¿De dónde vengo?</span>
+      <span style="display:block"><em>¿Hacia dónde voy?</em></span>
+    </h1>
     <p class="lead">Trascendencia acompaña a las parejas a responder las preguntas que dan sentido a una familia — y a convertir su historia en legado vivo para sus hijos.</p>
     <div class="hero-actions">
       <a href="#contacto" class="btn-fill">Vivir la experiencia
@@ -52,54 +105,74 @@
   <span class="scroll-cue">Desplazar</span>
 </section>
 
-<!-- MANIFIESTO -->
-<section class="manifesto" id="experiencia">
-  <div class="bg" data-parallax="0.18" style="background-image:url('/img/pareja.avif')"></div>
-  <div class="scrim"></div>
-  <div class="inner reveal">
-    <span class="eyebrow">La experiencia</span>
-    <h2>Mirar la historia con conciencia — y convertirla en <em>legado.</em></h2>
+<!-- LA EXPERIENCIA -->
+<section class="sec" id="experiencia">
+  <div class="wrap intro-grid">
+    <div>
+      <span class="eyebrow reveal" style="display:block;margin-bottom:2rem">La experiencia</span>
+      <h2 class="reveal d1" style="font-size:clamp(2rem,3.8vw,3.2rem);font-weight:200;line-height:1.08;letter-spacing:-.02em;color:var(--dom)">El legado familiar como <em style="font-style:normal;color:var(--terra)">proyecto de vida.</em></h2>
+    </div>
+    <div>
+      <p class="intro-body reveal d1">
+        Trascendencia es una experiencia para parejas que quieren mirar su historia con conciencia, reconocer las <b>huellas</b> que ya han dejado y decidir, con intención, qué valores quieren transmitir a sus hijos.
+        <span class="sub">No es un curso ni una terapia. Es un espacio para excavar en la propia historia, descubrir los tesoros que ya existen en ella y convertirlos en un legado que permanezca.</span>
+      </p>
+      <div class="intro-divider reveal d2"></div>
+      <p class="intro-body reveal d2" style="font-size:.92rem;color:var(--gray)">Más de una década acompañando familias a poner en palabras lo que de verdad importa: de dónde vienen, quiénes son y qué quieren dejar.</p>
+    </div>
   </div>
 </section>
 
 <!-- LAS TRES PREGUNTAS -->
-<section class="sec" id="preguntas">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <span class="eyebrow">El corazón de la experiencia</span>
-      <h2>Tres preguntas que ordenan <em>una vida entera.</em></h2>
-    </div>
-    <div class="pillars">
-      <div class="pillar reveal"><span class="pn">01</span><h3>¿Quién soy?</h3><p>Reconocer la identidad y los valores que ya nos habitan, y la voz con la que queremos ser recordados.</p></div>
-      <div class="pillar reveal d1"><span class="pn">02</span><h3>¿De dónde vengo?</h3><p>Excavar en la historia familiar: sus raíces, sus tradiciones y las huellas que nos sostienen.</p></div>
-      <div class="pillar reveal d2"><span class="pn">03</span><h3>¿Hacia dónde voy?</h3><p>Decidir con intención el legado que queremos entregar a quienes vienen después.</p></div>
-    </div>
+<section class="questions" id="preguntas">
+  <div class="questions-head">
+    <span class="eyebrow reveal">El corazón de la experiencia</span>
+    <h2 class="reveal d1">Tres preguntas que ordenan una vida entera.</h2>
+  </div>
+  <div class="q-grid">
+    <div class="q reveal d1"><span class="q-n">01</span><h3>¿Quién soy?</h3><p>Reconocer la propia identidad, los valores que ya nos habitan y la voz con la que queremos ser recordados.</p></div>
+    <div class="q reveal d2"><span class="q-n">02</span><h3>¿De dónde vengo?</h3><p>Excavar en la historia familiar — sus raíces, sus tradiciones y las huellas que nos sostienen sin darnos cuenta.</p></div>
+    <div class="q reveal d3"><span class="q-n">03</span><h3>¿Hacia dónde voy?</h3><p>Decidir con intención el legado que queremos construir y entregar a quienes vienen después de nosotros.</p></div>
   </div>
 </section>
 
-<!-- CÓMO SE VIVE · 3 modalidades -->
+<!-- CÓMO SE VIVE -->
 <section class="sec alt" id="modalidades">
   <div class="wrap">
     <div class="sec-head reveal">
       <span class="eyebrow">Cómo se vive</span>
       <h2>Tres formas de vivir la misma experiencia.</h2>
     </div>
-    <div class="cards tri">
-      <div class="card-i tint-wine reveal"><span class="bg" style="background-image:url('/img/evento.jpg')"></span><div class="body">
-        <span class="k">Modalidad 01</span>
-        <h3>Experiencia completa</h3>
-        <p>Presencial e inmersiva, un fin de semana en Antigua, Guatemala.</p>
+    <div class="modes-grid">
+      <div class="mode-card reveal d1"><span class="bg" style="background-image:url('/img/evento.jpg')"></span><div class="mode-body">
+        <span class="mode-n">Modalidad 01</span><h3>Experiencia completa</h3><span class="mode-place">Antigua, Guatemala · fin de semana</span>
+        <p>La experiencia original, presencial e inmersiva. Un fin de semana dedicado a excavar la historia familiar y dar forma al legado.</p>
       </div></div>
-      <div class="card-i tint-wine reveal d1"><span class="bg" style="background-image:url('/img/venue.avif')"></span><div class="body">
-        <span class="k">Modalidad 02</span>
-        <h3>In Situ</h3>
-        <p>Llevamos la experiencia a tu país, para tu grupo o comunidad.</p>
+      <div class="mode-card reveal d2"><span class="bg" style="background-image:url('/img/venue.avif')"></span><div class="mode-body">
+        <span class="mode-n">Modalidad 02</span><h3>In Situ</h3><span class="mode-place">En tu país · presencial</span>
+        <p>Llevamos la experiencia a donde estás. La misma profundidad y acompañamiento, en tu propia ciudad para tu grupo o comunidad.</p>
       </div></div>
-      <div class="card-i tint-wine reveal d2"><span class="bg" style="background-image:url('/img/familia.webp')"></span><div class="body">
-        <span class="k">Modalidad 03</span>
-        <h3>eTrascendencia</h3>
-        <p>La versión virtual, para recorrer el proceso desde casa y a tu ritmo.</p>
+      <div class="mode-card reveal d3"><span class="bg" style="background-image:url('/img/familia.webp')"></span><div class="mode-body">
+        <span class="mode-n">Modalidad 03</span><h3>eTrascendencia</h3><span class="mode-place">Virtual · a tu ritmo</span>
+        <p>La versión a distancia, para recorrer el proceso desde casa y a tu propio paso, sin renunciar a la guía ni al sentido.</p>
       </div></div>
+    </div>
+  </div>
+</section>
+
+<!-- EL LEGADO -->
+<section class="legacy">
+  <div class="legacy-grid">
+    <div class="reveal">
+      <span class="eyebrow">El legado</span>
+      <h2>Lo que queda cuando la historia se pone <em>en palabras.</em></h2>
+      <p>Cada experiencia culmina en un legado tangible: la historia de la familia narrada por sus propios protagonistas, sus valores y sus recuerdos convertidos en algo que los hijos podrán volver a mirar toda la vida.</p>
+    </div>
+    <div class="legacy-photo reveal d1"><img src="/img/equipo.avif" alt="Equipo de Trascendencia"></div>
+    <div class="legacy-stats reveal d2">
+      <div class="stat"><span class="num">+15</span><span class="lbl">años acompañando a familias a construir su legado.</span></div>
+      <div class="stat"><span class="num">3</span><span class="lbl">preguntas que estructuran todo el recorrido.</span></div>
+      <div class="stat"><span class="num">1</span><span class="lbl">legado familiar, narrado por sus protagonistas.</span></div>
     </div>
   </div>
 </section>
