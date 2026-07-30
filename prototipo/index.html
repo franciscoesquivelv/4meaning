@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>4 Meaning · Para que la vida tenga sentido</title>
+<meta name="description" content="Toda vida deja huellas. 4 Meaning acompaña a personas, familias y organizaciones a descubrir cuáles queremos que permanezcan — y a convertirlas en legado vivo.">
+<meta name="robots" content="noindex, nofollow"><!-- prototipo de dirección · no indexar -->
+<link rel="icon" href="../logos/blk-icon.png" media="(prefers-color-scheme: light)">
+<link rel="icon" href="../logos/wht-icon.png" media="(prefers-color-scheme: dark)">
+<style>
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --teal:#002B34; --teal-deep:#001A21; --teal-2:#0A3B45;
+    --wine:#4C0F18; --terra:#B9735A; --terra-lo:#D8AC96; --gold:#C99E63;
+    --ink:#171310; --gray:#7A736B; --paper:#F6EEE3; --paper-2:#EFE4D5;
+    --line:#E2D5C4; --line-dk:rgba(255,255,255,.14);
+    --sans:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    --ease:cubic-bezier(.16,1,.3,1);
+  }
+  html{scroll-behavior:smooth}
+  body{font-family:var(--sans);background:var(--paper);color:var(--ink);font-weight:300;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  .eyebrow{font-size:.66rem;font-weight:600;letter-spacing:.34em;text-transform:uppercase;color:var(--terra)}
+
+  /* ── NAV ── */
+  #nav{position:fixed;inset:0 0 auto 0;height:78px;z-index:60;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(1.25rem,4vw,3.5rem);transition:background .4s var(--ease),border-color .4s;border-bottom:1px solid transparent}
+  #nav.scrolled{background:rgba(246,238,227,.86);backdrop-filter:saturate(160%) blur(14px);border-bottom-color:var(--line)}
+  .nav-logo img{height:24px;display:block}
+  .nav-logo .lite{display:block}.nav-logo .dark{display:none}
+  #nav.scrolled .nav-logo .lite{display:none}#nav.scrolled .nav-logo .dark{display:block}
+  .nav-links{display:flex;gap:2.5rem;list-style:none;align-items:center}
+  .nav-links a{font-size:.74rem;letter-spacing:.03em;text-decoration:none;color:rgba(255,255,255,.85);transition:color .2s}
+  .nav-links a:hover{color:#fff}
+  #nav.scrolled .nav-links a{color:var(--gray)}#nav.scrolled .nav-links a:hover{color:var(--teal)}
+  .nav-cta{border:1px solid rgba(255,255,255,.5);padding:.6rem 1.4rem;border-radius:999px;color:#fff!important}
+  .nav-cta:hover{background:#fff;color:var(--teal)!important}
+  #nav.scrolled .nav-cta{border-color:var(--teal);color:var(--teal)!important}
+  #nav.scrolled .nav-cta:hover{background:var(--teal);color:#fff!important}
+
+  /* ── HERO · degradado vivo + figuras que derivan ── */
+  .hero{position:relative;min-height:100vh;min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 1.5rem 7rem;overflow:hidden;background:var(--teal-deep)}
+  .aurora{position:absolute;inset:-20%;z-index:0;filter:blur(70px) saturate(120%)}
+  .blob{position:absolute;border-radius:50%;opacity:.85;mix-blend-mode:screen;will-change:transform}
+  .b1{width:52vw;height:52vw;background:radial-gradient(circle,#0E5866,transparent 70%);top:-6%;left:-8%;animation:drift1 26s var(--ease) infinite alternate}
+  .b2{width:46vw;height:46vw;background:radial-gradient(circle,var(--terra),transparent 68%);bottom:-14%;right:-6%;opacity:.55;animation:drift2 32s var(--ease) infinite alternate}
+  .b3{width:40vw;height:40vw;background:radial-gradient(circle,var(--wine),transparent 70%);bottom:-18%;left:14%;opacity:.7;animation:drift3 30s var(--ease) infinite alternate}
+  .b4{width:30vw;height:30vw;background:radial-gradient(circle,var(--gold),transparent 72%);top:6%;right:10%;opacity:.28;animation:drift1 38s var(--ease) infinite alternate-reverse}
+  @keyframes drift1{to{transform:translate(8vw,6vh) scale(1.15)}}
+  @keyframes drift2{to{transform:translate(-7vw,-5vh) scale(1.2)}}
+  @keyframes drift3{to{transform:translate(6vw,-7vh) scale(1.1)}}
+  .grain{position:absolute;inset:0;z-index:1;opacity:.05;pointer-events:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>")}
+  .hero-inner{position:relative;z-index:2;max-width:940px}
+  .hero-logo{height:40px;margin:0 auto 2.25rem;display:block;opacity:0;animation:up 1s .2s forwards}
+  .hero-eyebrow{color:var(--terra-lo);margin-bottom:1.9rem;opacity:0;animation:up .9s .4s forwards}
+  .hero h1{font-size:clamp(2.8rem,7.2vw,7rem);font-weight:200;line-height:.98;letter-spacing:-.03em;color:#fff;margin:0 auto 1.9rem;text-wrap:balance;text-shadow:0 2px 60px rgba(0,10,14,.4);opacity:0;animation:up 1s .55s forwards}
+  .hero h1 em{font-style:normal;color:var(--terra-lo)}
+  .hero .lead{font-size:clamp(1.05rem,1.9vw,1.4rem);color:rgba(255,255,255,.82);max-width:40ch;margin:0 auto 2.75rem;line-height:1.55;opacity:0;animation:up 1s .75s forwards}
+  .hero-actions{display:flex;gap:1.3rem;justify-content:center;align-items:center;flex-wrap:wrap;opacity:0;animation:up 1s .95s forwards}
+  .btn-fill{font-size:.75rem;font-weight:500;letter-spacing:.03em;text-decoration:none;color:var(--teal);background:#fff;padding:1rem 2rem;border-radius:999px;display:inline-flex;gap:.6rem;align-items:center;border:1px solid #fff;transition:transform .25s var(--ease),background .25s,color .25s}
+  .btn-fill:hover{transform:translateY(-2px);background:var(--terra);border-color:var(--terra);color:#fff}
+  .btn-ghost{font-size:.75rem;letter-spacing:.03em;text-decoration:none;color:rgba(255,255,255,.9);border-bottom:1px solid rgba(255,255,255,.4);padding-bottom:3px;transition:color .2s,border-color .2s}
+  .btn-ghost:hover{color:#fff;border-color:var(--terra)}
+  .scroll-cue{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);z-index:2;font-size:.58rem;letter-spacing:.24em;text-transform:uppercase;color:rgba(255,255,255,.5);display:flex;flex-direction:column;align-items:center;gap:.85rem}
+  .scroll-cue::after{content:'';width:1px;height:42px;background:linear-gradient(rgba(255,255,255,.55),transparent);animation:pulse 2.4s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}
+
+  /* ── MANIFIESTO (imagen a sangre + parallax) ── */
+  .manifesto{position:relative;min-height:88vh;display:flex;align-items:flex-end;overflow:hidden}
+  .manifesto .bg{position:absolute;inset:-12% 0;background:#1a1a1a center/cover no-repeat;z-index:0;will-change:transform}
+  .manifesto .m-mano{background-image:url("img/manos.avif")}
+  .manifesto .scrim{position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(10,20,24,.35) 0%,transparent 35%,rgba(8,16,20,.9) 100%),linear-gradient(90deg,rgba(8,16,20,.55),transparent 60%)}
+  .manifesto .inner{position:relative;z-index:2;max-width:1180px;margin:0 auto;width:100%;padding:0 clamp(1.25rem,4vw,3.5rem) clamp(3rem,7vw,6rem)}
+  .manifesto .eyebrow{color:var(--terra-lo);margin-bottom:1.5rem;display:block}
+  .manifesto h2{font-size:clamp(1.9rem,4.4vw,3.8rem);font-weight:200;line-height:1.08;letter-spacing:-.02em;color:#fff;max-width:20ch;text-wrap:balance}
+  .manifesto h2 em{font-style:normal;color:var(--terra-lo)}
+
+  /* ── SECCIÓN CLARA base ── */
+  .sec{padding:clamp(4.5rem,10vw,9rem) clamp(1.25rem,4vw,3.5rem);background:var(--paper)}
+  .wrap{max-width:1180px;margin:0 auto}
+  .sec-head{max-width:44ch;margin-bottom:clamp(2.5rem,5vw,4.5rem)}
+  .sec-head .eyebrow{display:block;margin-bottom:1.6rem}
+  .sec-head h2{font-size:clamp(1.9rem,3.6vw,3.1rem);font-weight:200;line-height:1.1;letter-spacing:-.02em;color:var(--teal);text-wrap:balance}
+  .sec-head h2 em{font-style:normal;color:var(--terra)}
+
+  /* PILARES — lista editorial asimétrica */
+  .pillars{display:grid;gap:0}
+  .pillar{display:grid;grid-template-columns:5rem 1fr auto;gap:2rem;align-items:baseline;padding:2rem 0;border-top:1px solid var(--line);transition:padding-left .3s var(--ease)}
+  .pillar:hover{padding-left:1rem}
+  .pillar .pn{font-size:.72rem;font-weight:600;letter-spacing:.14em;color:var(--terra)}
+  .pillar h3{font-size:clamp(1.6rem,3vw,2.4rem);font-weight:200;letter-spacing:-.02em;color:var(--teal)}
+  .pillar p{max-width:40ch;color:var(--gray);font-size:.92rem;line-height:1.75;justify-self:end}
+  @media(max-width:760px){.pillar{grid-template-columns:3rem 1fr;gap:1rem}.pillar p{grid-column:1/-1;justify-self:start;margin-top:.5rem}}
+
+  /* EXPERIENCIAS — dos piezas con imagen */
+  .exps{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+  .exp{position:relative;min-height:440px;border-radius:10px;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;text-decoration:none;color:#fff;isolation:isolate}
+  .exp .bg{position:absolute;inset:0;background:#222 center/cover no-repeat;z-index:-2;transition:transform .8s var(--ease)}
+  .exp:hover .bg{transform:scale(1.06)}
+  .exp::after{content:'';position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,transparent 30%,rgba(20,8,10,.55) 65%,rgba(15,6,8,.92) 100%)}
+  .exp.tras .bg{background-image:url("img/pareja.avif")}
+  .exp.pl .bg{background-image:url("img/evento.jpg")}
+  .exp .body{padding:2.5rem 2.25rem}
+  .exp .k{font-size:.62rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--terra-lo);margin-bottom:1rem;display:block}
+  .exp h3{font-size:1.9rem;font-weight:300;letter-spacing:-.01em;margin-bottom:.6rem}
+  .exp p{font-size:.9rem;line-height:1.7;color:rgba(255,255,255,.75);max-width:34ch;margin-bottom:1.4rem}
+  .exp .go{font-size:.72rem;font-weight:500;letter-spacing:.03em;display:inline-flex;gap:.5rem;align-items:center;border-bottom:1px solid var(--terra);padding-bottom:3px;width:fit-content;transition:gap .25s}
+  .exp:hover .go{gap:.95rem}
+  @media(max-width:760px){.exps{grid-template-columns:1fr}}
+
+  /* MOMENTO — memoria a sangre + cita */
+  .moment{position:relative;min-height:92vh;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden}
+  .moment .bg{position:absolute;inset:-12% 0;background:#1a1a1a url("img/memoria.jpg") center/cover no-repeat;z-index:0;will-change:transform}
+  .moment .scrim{position:absolute;inset:0;z-index:1;background:radial-gradient(115% 85% at 50% 44%,rgba(10,16,20,.30),rgba(8,13,17,.72) 90%)}
+  .moment .inner{position:relative;z-index:2;max-width:960px;padding:0 1.5rem}
+  .moment blockquote{font-size:clamp(1.7rem,4vw,3.3rem);font-weight:200;line-height:1.22;letter-spacing:-.02em;color:#fff;text-wrap:balance}
+  .moment blockquote em{font-style:normal;color:var(--terra-lo)}
+  .moment cite{display:block;margin-top:2rem;font-style:normal;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.6)}
+
+  /* CTA — degradado vivo cálido */
+  .cta{position:relative;padding:clamp(5rem,10vw,9rem) 1.5rem;text-align:center;overflow:hidden;background:var(--teal-deep)}
+  .cta .aurora{filter:blur(80px)}
+  .cta .c1{width:50vw;height:50vw;background:radial-gradient(circle,var(--terra),transparent 70%);top:-10%;left:10%;opacity:.4;animation:drift2 34s var(--ease) infinite alternate}
+  .cta .c2{width:44vw;height:44vw;background:radial-gradient(circle,var(--wine),transparent 70%);bottom:-16%;right:6%;opacity:.7;animation:drift3 30s var(--ease) infinite alternate}
+  .cta .inner{position:relative;z-index:2;max-width:760px;margin:0 auto}
+  .cta .eyebrow{color:var(--terra-lo);margin-bottom:1.9rem}
+  .cta h2{font-size:clamp(2.2rem,5vw,4.4rem);font-weight:200;line-height:1.04;letter-spacing:-.02em;color:#fff;margin:0 auto 1.6rem;text-wrap:balance}
+  .cta h2 em{font-style:normal;color:var(--terra-lo)}
+  .cta p{color:rgba(255,255,255,.72);max-width:42ch;margin:0 auto 2.75rem;line-height:1.7}
+  .btn-white{font-size:.78rem;font-weight:500;letter-spacing:.03em;text-decoration:none;color:var(--teal);background:#fff;padding:1.05rem 2.6rem;border-radius:999px;display:inline-flex;gap:.6rem;align-items:center;transition:transform .25s var(--ease),background .25s,color .25s}
+  .btn-white:hover{transform:translateY(-2px);background:var(--terra);color:#fff}
+
+  footer{background:var(--ink);color:#fff;padding:2.75rem clamp(1.25rem,4vw,3.5rem);display:flex;align-items:center;justify-content:space-between;gap:1.5rem;flex-wrap:wrap}
+  footer img{height:15px;opacity:.6}
+  .fl{display:flex;gap:2.25rem;list-style:none}
+  .fl a{font-size:.72rem;color:rgba(255,255,255,.42);text-decoration:none}.fl a:hover{color:var(--terra-lo)}
+
+  @keyframes up{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+  .reveal{opacity:0;transform:translateY(26px);transition:opacity 1s var(--ease),transform 1s var(--ease)}
+  .reveal.vis{opacity:1;transform:none}
+  .d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}.d4{transition-delay:.4s}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}.blob{display:none}}
+  @media(max-width:860px){.nav-links li:not(:last-child){display:none}}
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <a href="#top" class="nav-logo"><img class="lite" src="../logos-4meaning/wht-logo.png" alt="4 Meaning"><img class="dark" src="../logos-4meaning/blk-logo.png" alt="4 Meaning"></a>
+  <ul class="nav-links">
+    <li><a href="#proposito">Propósito</a></li>
+    <li><a href="#pilares">Pilares</a></li>
+    <li><a href="#experiencias">Experiencias</a></li>
+    <li><a href="#contacto" class="nav-cta">Hablar con el equipo</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="aurora"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span><span class="blob b4"></span></div>
+  <div class="grain"></div>
+  <div class="hero-inner">
+    <img class="hero-logo" src="../logos-4meaning/wht-logo.png" alt="4 Meaning">
+    <p class="eyebrow hero-eyebrow">Experiencias con propósito y sentido</p>
+    <h1>Toda vida deja <em>huellas.</em></h1>
+    <p class="lead">4 Meaning ayuda a descubrir cuáles queremos que permanezcan.</p>
+    <div class="hero-actions">
+      <a href="#experiencias" class="btn-fill">Ver experiencias
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+      <a href="#proposito" class="btn-ghost">Qué es 4 Meaning</a>
+    </div>
+  </div>
+  <span class="scroll-cue">Desplazar</span>
+</section>
+
+<!-- MANIFIESTO -->
+<section class="manifesto" id="proposito">
+  <div class="bg m-mano" data-parallax="0.18"></div>
+  <div class="scrim"></div>
+  <div class="inner reveal">
+    <span class="eyebrow">La arqueóloga del sentido</span>
+    <h2>Mirar la propia historia con conciencia — y <em>excavar</em> lo que ya te sostiene.</h2>
+  </div>
+</section>
+
+<!-- PILARES -->
+<section class="sec" id="pilares">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Cuatro territorios</span>
+      <h2>Cada experiencia habita una dimensión de <em>la vida humana.</em></h2>
+    </div>
+    <div class="pillars">
+      <div class="pillar reveal"><span class="pn">01</span><h3>Conocerme</h3><p>Identidad, memoria y autoconocimiento. Volver a las huellas propias para leerlas con claridad.</p></div>
+      <div class="pillar reveal d1"><span class="pn">02</span><h3>Crecer</h3><p>Desarrollo humano con intención. Convertir lo aprendido en una forma más plena de estar en el mundo.</p></div>
+      <div class="pillar reveal d2"><span class="pn">03</span><h3>Conectar</h3><p>Vínculos, comunidad y encuentro. El sentido también se descubre en la relación con los demás.</p></div>
+      <div class="pillar reveal d3"><span class="pn">04</span><h3>Trascender</h3><p>Propósito, sentido y legado. Decidir qué preservar y entregarlo vivo hacia adelante.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCIAS -->
+<section class="sec" id="experiencias" style="background:var(--paper-2)">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Las experiencias</span>
+      <h2>Dos líneas de la misma casa de marca.</h2>
+    </div>
+    <div class="exps">
+      <a class="exp tras reveal" href="/trascendencia/"><span class="bg"></span><div class="body">
+        <span class="k">Línea 01 · Legado familiar</span>
+        <h3>Trascendencia</h3>
+        <p>El legado familiar como proyecto de vida, para parejas y familias.</p>
+        <span class="go">Conocer Trascendencia
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+      </div></a>
+      <a class="exp pl reveal d1" href="/personalab/"><span class="bg"></span><div class="body">
+        <span class="k">Línea 02 · Propósito personal</span>
+        <h3>PersonaLab</h3>
+        <p>El sentido de la vida desde adentro, para grupos, foros y equipos.</p>
+        <span class="go">Conocer PersonaLab
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+      </div></a>
+    </div>
+  </div>
+</section>
+
+<!-- MOMENTO -->
+<section class="moment">
+  <div class="bg" data-parallax="0.15"></div>
+  <div class="scrim"></div>
+  <div class="inner reveal">
+    <blockquote>Toda vida deja huellas. La pregunta es <em>cuáles queremos que permanezcan.</em></blockquote>
+    <cite>El punto de partida de 4 Meaning</cite>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta" id="contacto">
+  <div class="aurora"><span class="blob c1"></span><span class="blob c2"></span></div>
+  <div class="inner reveal">
+    <p class="eyebrow">El primer paso</p>
+    <h2>Encuentra las respuestas <em>del sentido</em> de tu vida.</h2>
+    <p>Cuéntanos en qué momento de vida estás y te decimos qué experiencia de 4 Meaning fue diseñada para ti.</p>
+    <a class="btn-white" href="https://wa.me/">Escribir por WhatsApp
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg></a>
+  </div>
+</section>
+
+<footer>
+  <img src="../logos-4meaning/wht-logo.png" alt="4 Meaning">
+  <ul class="fl">
+    <li><a href="#proposito">Propósito</a></li>
+    <li><a href="/trascendencia/">Trascendencia</a></li>
+    <li><a href="/personalab/">PersonaLab</a></li>
+  </ul>
+</footer>
+
+<script>
+  var nav=document.getElementById('nav');
+  function onScroll(){nav.classList.toggle('scrolled',window.scrollY>40);}
+  onScroll();window.addEventListener('scroll',onScroll,{passive:true});
+
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('vis');io.unobserve(e.target);}})},{threshold:.14,rootMargin:'0px 0px -50px 0px'});
+  document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+
+  // Parallax sutil (respeta reduce-motion)
+  var reduce=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  var px=[].slice.call(document.querySelectorAll('[data-parallax]'));
+  if(!reduce&&px.length){
+    var ticking=false;
+    function frame(){
+      px.forEach(function(el){
+        var r=el.parentElement.getBoundingClientRect();
+        var speed=parseFloat(el.getAttribute('data-parallax'));
+        var off=(r.top+r.height/2-window.innerHeight/2)*-speed;
+        el.style.transform='translate3d(0,'+off.toFixed(1)+'px,0)';
+      });
+      ticking=false;
+    }
+    window.addEventListener('scroll',function(){if(!ticking){requestAnimationFrame(frame);ticking=true;}},{passive:true});
+    frame();
+  }
+</script>
+</body>
+</html>
