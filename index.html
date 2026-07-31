@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>4 Meaning · Para que la vida tenga sentido</title>
-<meta name="description" content="Toda vida deja huellas. 4 Meaning acompaña a personas, familias y organizaciones a descubrir cuáles queremos que permanezcan — y a convertirlas en legado vivo para otros.">
+<meta name="description" content="Toda vida deja huellas. 4 Meaning acompaña a personas, familias y organizaciones a descubrir cuáles queremos que permanezcan, y a convertirlas en legado vivo para otros.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://4meaning.life/">
 <meta property="og:title" content="4 Meaning · Para que la vida tenga sentido">
@@ -13,6 +13,12 @@
 <link rel="icon" href="/logos/blk-icon.png" media="(prefers-color-scheme: light)">
 <link rel="icon" href="/logos/wht-icon.png" media="(prefers-color-scheme: dark)">
 <link rel="stylesheet" href="/assets/brand.css">
+<style>
+  /* Huella dactilar formándose en el fondo del hero — muy sutil, solo 4 Meaning */
+  .hero-fingerprint{position:absolute;inset:0;z-index:1;pointer-events:none;width:100%;height:100%;display:block}
+  @keyframes fpBreathe{0%,100%{opacity:.82}50%{opacity:1}}
+  .hero-fingerprint.formed{animation:fpBreathe 9s ease-in-out infinite}
+</style>
 </head>
 <body>
 
@@ -29,6 +35,7 @@
 <!-- HERO · balance teal + vino -->
 <section class="hero" id="top">
   <div class="aurora"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span><span class="blob b4"></span></div>
+  <canvas id="fingerprint" class="hero-fingerprint" aria-hidden="true"></canvas>
   <div class="grain"></div>
   <div class="hero-inner">
     <img class="hero-logo" src="/logos-4meaning/wht-logo.png" alt="4 Meaning">
@@ -50,7 +57,7 @@
   <div class="scrim"></div>
   <div class="inner reveal">
     <span class="eyebrow">La arqueóloga del sentido</span>
-    <h2>Mirar la propia historia con conciencia — y <em>excavar</em> lo que ya te sostiene.</h2>
+    <h2>Mirar la propia historia con conciencia y <em>excavar</em> lo que ya te sostiene.</h2>
   </div>
 </section>
 
@@ -75,7 +82,7 @@
   <div class="wrap">
     <div class="sec-head reveal">
       <span class="eyebrow">Las experiencias</span>
-      <h2>Dos líneas de la misma casa de marca.</h2>
+      <h2>Dos tipos de experiencias.</h2>
     </div>
     <div class="cards">
       <a class="card-i tint-wine reveal" href="/trascendencia/"><span class="bg" style="background-image:url('/img/pareja.avif')"></span><div class="body">
@@ -102,7 +109,6 @@
   <div class="scrim"></div>
   <div class="inner reveal">
     <blockquote>Toda vida deja huellas. La pregunta es <em>cuáles queremos que permanezcan.</em></blockquote>
-    <cite>El punto de partida de 4 Meaning</cite>
   </div>
 </section>
 
@@ -129,6 +135,111 @@
   </ul>
 </footer>
 
+<script>
+/* Huella dactilar del hero: anillos de cresta concéntricos que se
+   "trazan" progresivamente, como una huella formándose. Muy sutil
+   (alfa bajo) para que quede detrás del texto sin competir con él. */
+(function () {
+  var canvas = document.getElementById('fingerprint');
+  if (!canvas || !canvas.getContext) return;
+  var ctx = canvas.getContext('2d');
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var dpr = Math.min(window.devicePixelRatio || 1, 2);
+  var w = 0, h = 0;
+  var RINGS = 26;
+  var DURATION = 5200;
+  var startTime = null;
+  var raf = null;
+
+  function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+
+  function resize() {
+    var rect = canvas.parentElement.getBoundingClientRect();
+    w = rect.width; h = rect.height;
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  var FLOW_ANGLE = (100 * Math.PI) / 180; // dirección hacia la que "abre"/fluye la huella
+
+  function draw(progress) {
+    ctx.clearRect(0, 0, w, h);
+    var cx0 = w * 0.5, cy0 = h * 0.44;
+    var maxR = Math.min(w, h) * 0.5;
+    ctx.lineCap = 'round';
+    for (var i = 0; i < RINGS; i++) {
+      var t = i / (RINGS - 1);
+      var ringStart = t * 0.6;
+      var rp = clamp((progress - ringStart) / 0.4, 0, 1);
+      if (rp <= 0) continue;
+
+      // El centro deriva ligeramente anillo a anillo — rompe la concentricidad
+      // perfecta de un "radar" y da la asimetría orgánica de una huella real.
+      var driftAmp = maxR * 0.05;
+      var cx = cx0 + driftAmp * Math.cos(i * 0.9);
+      var cy = cy0 + driftAmp * 0.6 * Math.sin(i * 0.9 + 0.4);
+
+      var r = (10 + t * maxR) * (1 + 0.025 * Math.sin(i * 1.7));
+      var isCore = t < 0.22;
+      var gapHalfDeg = isCore ? 3 : 10 + (t - 0.22) * 82;
+      var startDeg = 90 + gapHalfDeg;
+      var sweepDeg = (360 - 2 * gapHalfDeg) * rp;
+      var steps = Math.max(24, Math.floor(sweepDeg / 3));
+      ctx.beginPath();
+      for (var s = 0; s <= steps; s++) {
+        var deg = startDeg + (sweepDeg * s) / steps;
+        var rad = (deg * Math.PI) / 180;
+        // Forma ovalada/asimétrica (no un círculo) + ruido de varias
+        // frecuencias para que las crestas se sientan trazadas a mano.
+        var eccentric = 1 + 0.11 * Math.cos(rad - FLOW_ANGLE);
+        var wobble = 1
+          + 0.05 * Math.sin(rad * 2.3 + i * 0.6)
+          + 0.028 * Math.sin(rad * 5.1 - i * 1.1)
+          + 0.014 * Math.sin(rad * 8.7 + i * 2.2);
+        var rr = r * eccentric * wobble;
+        var x = cx + Math.cos(rad) * rr;
+        var y = cy + Math.sin(rad) * rr * 0.9;
+        if (s === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      var alpha = (0.13 - t * 0.07) * rp;
+      ctx.strokeStyle = 'rgba(255,241,232,' + alpha.toFixed(3) + ')';
+      ctx.lineWidth = 1.2;
+      ctx.stroke();
+    }
+  }
+
+  function loop(ts) {
+    if (startTime === null) startTime = ts;
+    var progress = clamp((ts - startTime) / DURATION, 0, 1);
+    draw(progress);
+    if (progress < 1) {
+      raf = requestAnimationFrame(loop);
+    } else {
+      canvas.classList.add('formed');
+    }
+  }
+
+  function start() {
+    resize();
+    if (reduceMotion) { draw(1); canvas.classList.add('formed'); return; }
+    draw(0);
+    raf = requestAnimationFrame(loop);
+  }
+
+  var resizeTimer;
+  window.addEventListener('resize', function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function () {
+      resize();
+      var atEnd = reduceMotion || startTime === null || (performance.now() - startTime) >= DURATION;
+      draw(atEnd ? 1 : clamp((performance.now() - startTime) / DURATION, 0, 1));
+    }, 150);
+  });
+
+  start();
+})();
+</script>
 <script src="/assets/brand.js"></script>
 </body>
 </html>

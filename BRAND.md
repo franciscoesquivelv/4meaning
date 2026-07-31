@@ -12,7 +12,7 @@
 sus **huellas** con conciencia, **excavar** la historia que las sostiene,
 descubrir los **tesoros** que ya existen y transformarlos en **legado** vivo para otros.
 
-**Personalidad — "El arqueólogo del sentido".** Una guía que mira con
+**Personalidad: "El arqueólogo del sentido".** Una guía que mira con
 profundidad, hace preguntas, ilumina y acompaña el descubrimiento de lo que ya
 existe dentro de cada historia.
 
@@ -39,10 +39,10 @@ El recorrido de toda experiencia sigue esta secuencia narrativa:
 
 **Huellas** → **Excavaciones** → **Tesoros** → **Legado**
 
-- **Huellas** — lo que ya vamos dejando.
-- **Excavaciones** — la búsqueda consciente en la historia que nos sostiene.
-- **Tesoros** — los hallazgos valiosos cuando se examina la historia con intención.
-- **Legado** — lo que decidimos preservar y entregar hacia adelante.
+- **Huellas**: lo que ya vamos dejando.
+- **Excavaciones**: la búsqueda consciente en la historia que nos sostiene.
+- **Tesoros**: los hallazgos valiosos cuando se examina la historia con intención.
+- **Legado**: lo que decidimos preservar y entregar hacia adelante.
 
 ---
 
@@ -59,7 +59,7 @@ Paleta oficial. El **Verde Petróleo es el color rector**; todo lo demás lo aco
 | `--gray`  | Gris Criterio  | `#6F7777` | Texto secundario |
 | `--white` | Blanco         | `#FFFFFF` | Espacio y lectura |
 
-Tintes de apoyo (derivados, para ritmo y jerarquía — no son colores nuevos):
+Tintes de apoyo (derivados, para ritmo y jerarquía: no son colores nuevos):
 
 | Token | Hex | Uso |
 |-------|-----|-----|
@@ -94,7 +94,7 @@ cambia es **cuál domina**:
 
 ## 5. Tipografía
 
-La jerarquía se construye con **escala, aire, ritmo y composición — no con
+La jerarquía se construye con **escala, aire, ritmo y composición: no con
 negritas**. Se evita el uso de pesos 800/900 y las mayúsculas apretadas.
 
 **Decisión de la web (por preferencia del cliente): tipografía 100% sans serif.**
@@ -133,9 +133,9 @@ Assets en el repo: `logos-4meaning/` (blk/wht · logo/icon) y `logos/`
 
 ## 7. Casa de marca
 
-- **Marca madre:** 4 Meaning — filosofía, visión, identidad, criterio central.
-- **Línea 1 · PersonaLab** — identidad, liderazgo, cultura, crecimiento personal.
-- **Línea 2 · Trascendencia** — historia familiar, propósito, memoria, legado.
+- **Marca madre:** 4 Meaning: filosofía, visión, identidad, criterio central.
+- **Línea 1 · PersonaLab**: identidad, liderazgo, cultura, crecimiento personal.
+- **Línea 2 · Trascendencia**: historia familiar, propósito, memoria, legado.
 
 Toda sub-marca queda avalada por y enraizada en 4 Meaning.
 
