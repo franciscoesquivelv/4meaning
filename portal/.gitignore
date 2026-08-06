@@ -1,1 +1,4 @@
 .vercel
+
+# Se reescribe en cada build
+*.tsbuildinfo
