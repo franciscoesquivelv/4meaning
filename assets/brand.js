@@ -4,6 +4,18 @@
   if(nav){
     var onScroll=function(){nav.classList.toggle('scrolled',window.scrollY>40);};
     onScroll();window.addEventListener('scroll',onScroll,{passive:true});
+
+    var toggle=nav.querySelector('.nav-toggle');
+    var panel=document.querySelector('.nav-mobile-panel');
+    if(toggle&&panel){
+      var closeMenu=function(){nav.classList.remove('menu-open');toggle.setAttribute('aria-expanded','false');document.body.style.overflow='';};
+      var openMenu=function(){nav.classList.add('menu-open');toggle.setAttribute('aria-expanded','true');document.body.style.overflow='hidden';};
+      toggle.addEventListener('click',function(){
+        if(nav.classList.contains('menu-open')) closeMenu(); else openMenu();
+      });
+      panel.querySelectorAll('a').forEach(function(a){a.addEventListener('click',closeMenu);});
+      window.addEventListener('resize',function(){if(window.innerWidth>860) closeMenu();});
+    }
   }
 
   var io=new IntersectionObserver(function(es){

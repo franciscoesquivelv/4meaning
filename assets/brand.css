@@ -47,6 +47,21 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);font-weigh
 #nav.scrolled .nav-cta{border-color:var(--dom);color:var(--dom)!important}
 #nav.scrolled .nav-cta:hover{background:var(--dom);color:#fff!important}
 
+/* Botón hamburguesa — solo visible en móvil */
+.nav-toggle{display:none;width:2.5rem;height:2.5rem;border:0;background:none;padding:0;cursor:pointer;align-items:center;justify-content:center;flex-shrink:0}
+.nav-toggle span,.nav-toggle span::before,.nav-toggle span::after{content:'';display:block;width:20px;height:1.5px;background:#fff;transition:transform .25s var(--ease),opacity .2s}
+.nav-toggle span{position:relative}
+.nav-toggle span::before{position:absolute;top:-6px}
+.nav-toggle span::after{position:absolute;top:6px}
+#nav.scrolled .nav-toggle span,#nav.scrolled .nav-toggle span::before,#nav.scrolled .nav-toggle span::after{background:var(--ink)}
+#nav.menu-open .nav-toggle span{background:transparent}
+#nav.menu-open .nav-toggle span::before{top:0;transform:rotate(45deg)}
+#nav.menu-open .nav-toggle span::after{top:0;transform:rotate(-45deg)}
+#nav.menu-open.scrolled .nav-toggle span::before,#nav.menu-open.scrolled .nav-toggle span::after{background:var(--ink)}
+
+/* Panel de menú móvil — desplegable bajo el nav */
+.nav-mobile-panel{display:none}
+
 /* ── HERO · degradado vivo + figuras que derivan ── */
 .hero{position:relative;min-height:100vh;min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 1.5rem 7rem;overflow:hidden;background:var(--dom-deep)}
 .aurora{position:absolute;inset:-20%;z-index:0;filter:blur(70px) saturate(120%)}
@@ -85,7 +100,7 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);font-weigh
 
 .moment{position:relative;min-height:92vh;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden}
 .moment .bg{position:absolute;inset:-12% 0;background:#1a1a1a center/cover no-repeat;z-index:0;will-change:transform}
-.moment .scrim{position:absolute;inset:0;z-index:1;background:radial-gradient(115% 85% at 50% 44%,rgba(6,10,13,.58),rgba(5,9,11,.88) 90%)}
+.moment .scrim{position:absolute;inset:0;z-index:1;background:radial-gradient(115% 85% at 50% 44%,rgba(6,10,13,.46),rgba(5,9,11,.82) 90%)}
 .moment .inner{position:relative;z-index:2;max-width:960px;padding:0 1.5rem}
 .moment blockquote{font-size:clamp(1.7rem,4vw,3.3rem);font-weight:200;line-height:1.22;letter-spacing:-.02em;color:#fff;text-wrap:balance;text-shadow:0 2px 24px rgba(0,0,0,.55)}
 .moment blockquote em{font-style:normal;color:var(--terra-lo)}
@@ -160,4 +175,30 @@ footer .footer-logo{height:15px;width:auto;opacity:.6}
 .reveal.vis{opacity:1;transform:none}
 .d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}.d4{transition-delay:.4s}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}.blob{display:none}}
-@media(max-width:860px){.nav-links li.hide-m{display:none}.footer-brand{flex-direction:column;gap:.75rem}.footer-seal{border-left:0;padding-left:0}.fl{flex-wrap:wrap;justify-content:center;gap:1.25rem}footer{flex-direction:column;text-align:center}}
+@media(max-width:860px){
+  .nav-toggle{display:flex;order:-1;margin-right:.5rem}
+  #nav{gap:.25rem}
+  #nav.menu-open{background:var(--paper);border-bottom-color:var(--line)}
+  #nav.menu-open .nav-logo .lite{display:none}#nav.menu-open .nav-logo .dark{display:block}
+  #nav.menu-open .nav-logo .flip-wht{filter:brightness(0)}
+  #nav.menu-open .nav-logo .flip-blk{filter:none}
+  /* En móvil el header solo muestra logo + hamburguesa; todo (incluido el CTA)
+     vive en el panel desplegable, con espacio de sobra para no envolver texto. */
+  .nav-links li.hide-m{display:none}
+  .nav-mobile-panel{
+    display:block;position:fixed;top:78px;left:0;right:0;bottom:0;z-index:59;
+    background:var(--paper);padding:1rem clamp(1.25rem,4vw,3.5rem) 2.5rem;
+    transform:translateY(-8px);opacity:0;pointer-events:none;
+    transition:opacity .25s var(--ease),transform .25s var(--ease);
+    overflow-y:auto;
+  }
+  #nav.menu-open + .nav-mobile-panel{opacity:1;transform:none;pointer-events:auto}
+  .nav-mobile-panel ul{list-style:none;display:flex;flex-direction:column}
+  .nav-mobile-panel a{display:block;padding:1.1rem 0;border-top:1px solid var(--line);font-size:1.05rem;color:var(--ink);text-decoration:none}
+  .nav-mobile-panel li:first-child a{border-top:0}
+  .nav-mobile-panel .nav-cta{display:inline-flex;align-items:center;margin-top:1.5rem;border:1px solid var(--dom);color:var(--dom)!important;padding:.85rem 1.6rem}
+
+  .footer-brand{flex-direction:column;gap:.75rem}.footer-seal{border-left:0;padding-left:0}
+  .fl{flex-wrap:wrap;justify-content:center;gap:1.5rem}footer{flex-direction:column;text-align:center}
+  .fl a{padding:.6rem .3rem;margin:-.6rem -.3rem;font-size:.78rem}
+}

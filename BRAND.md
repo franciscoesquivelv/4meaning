@@ -50,27 +50,48 @@ El recorrido de toda experiencia sigue esta secuencia narrativa:
 
 Paleta oficial. El **Verde Petróleo es el color rector**; todo lo demás lo acompaña.
 
+> **Fuente única de verdad: `/assets/brand.css`.** Los valores de esta tabla
+> son los que realmente están en producción (auditados en vivo). Son una
+> versión ligeramente más cálida que la primera pasada de este documento,
+> ajuste deliberado para servir el valor de marca "Cálido" — si alguna vez
+> `brand.css` cambia, este documento se actualiza a partir de ahí, nunca al revés.
+
 | Token CSS | Nombre | Hex | Uso |
 |-----------|--------|-----|-----|
-| `--teal`  | Verde Petróleo | `#002B34` | Color rector · fondos profundos |
+| `--teal`  | Verde Petróleo | `#002B34` | Color rector · acentos, texto sobre claro |
 | `--wine`  | Vino Profundo  | `#4C0F18` | Legado y profundidad · Trascendencia |
 | `--terra` | Terracota      | `#B9735A` | Acento humano · calidez |
-| `--ink`   | Tinta          | `#14181B` | Texto base |
-| `--gray`  | Gris Criterio  | `#6F7777` | Texto secundario |
+| `--ink`   | Tinta          | `#171310` | Texto base (negro-marrón cálido) |
+| `--gray`  | Gris Criterio  | `#7A736B` | Texto secundario (gris cálido) |
 | `--white` | Blanco         | `#FFFFFF` | Espacio y lectura |
+
+**Variantes "deep" — para fondos inmersivos a pantalla completa.** El color
+rector tiene una versión más profunda, reservada para heroes/CTA a sangre;
+`--teal`/`--wine` puros se usan como acento (texto, iconos, bordes), no como
+fondo de página completa:
+
+| Token | Hex | Uso |
+|-------|-----|-----|
+| `--teal-deep` | `#001A21` | Fondo de hero/CTA · dominancia teal (4 Meaning, PersonaLab) |
+| `--wine-deep` | `#2B080E` | Fondo de hero/CTA · dominancia vino (Trascendencia) |
 
 Tintes de apoyo (derivados, para ritmo y jerarquía: no son colores nuevos):
 
 | Token | Hex | Uso |
 |-------|-----|-----|
-| `--teal-2`  | `#0A3B45` | Superficie teal elevada |
-| `--terra-2` | `#CFA48F` | Terracota clara sobre oscuro |
-| `--paper`   | `#FAF8F4` | Blanco cálido para grandes lienzos claros |
-| `--line`    | `#E7E1D8` | Filete sobre claro |
-| `--line-dk` | `rgba(255,255,255,.12)` | Filete sobre oscuro |
+| `--teal-2`  | `#0E5866` | Superficie teal elevada, blob de degradado vivo |
+| `--wine-2`  | `#6E1A26` | Superficie vino elevada, blob de degradado vivo |
+| `--terra-lo`| `#D8AC96` | Terracota clara sobre oscuro (antes `--terra-2`) |
+| `--gold`    | `#C99E63` | Cuarto acento del degradado vivo (dorado, dosis mínima) |
+| `--paper`   | `#F6EEE3` | Blanco cálido para grandes lienzos claros |
+| `--paper-2` | `#EFE4D5` | Paper un tono más oscuro, para alternar secciones consecutivas |
+| `--line`    | `#E2D5C4` | Filete sobre claro |
+| `--line-dk` | `rgba(255,255,255,.14)` | Filete sobre oscuro |
 
 **Reglas de color.** Fondos profundos con tipografía clara. Terracota como
-acento humano, nunca como fondo dominante.
+acento humano, nunca como fondo dominante. El blanco puro (`#FFFFFF`) y
+tonos fríos ajenos a esta tabla no se usan en fondos de sección: toda
+superficie clara es `--paper` o `--paper-2`, nunca blanco liso.
 
 ### Dominancia por marca (casa de marca)
 
@@ -141,7 +162,20 @@ Toda sub-marca queda avalada por y enraizada en 4 Meaning.
 
 ---
 
-## 8. Estilo visual
+## 8. Radios de esquina (border-radius)
+
+Solo dos valores en todo el sitio, sin excepciones:
+
+| Uso | Valor |
+|-----|-------|
+| Botones, píldoras, chips, tags | `999px` (píldora completa) |
+| Tarjetas y contenedores de foto | `10px` |
+
+Cero radio (esquinas rectas) solo en cuadrículas tipo tabla con hairlines
+entre celdas (ej. `.pillars`, `.steps` del home): ahí la línea recta es
+intencional, forma parte del patrón de grid editorial, no un descuido.
+
+## 9. Estilo visual
 
 Amplio, sereno, con espacio para respirar. Se evitan composiciones saturadas o
 condensadas. Énfasis en aire, escala y composición editorial. Fondos profundos

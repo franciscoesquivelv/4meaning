@@ -6,21 +6,21 @@
 <title>Sobre Nosotros | PersonaLab</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="/assets/brand.css">
 <style>
   :root {
-    --primary:       #002B34;
-    --primary-light: #0A3B45;
+    --primary:       var(--teal);
+    --primary-light: var(--teal-2);
     --primary-mid:   #2A6470;
-    --primary-sage:  #B9735A;
+    --primary-sage:  var(--terra);
     --primary-mist:  #A9C7C6;
     --primary-frost: #DCE9E7;
-    --primary-faint: #EEF4F3;
-    --ink:           #14181B;
+    --primary-faint: var(--paper-2);
     --ink-soft:      #2A3438;
-    --muted:         #6F7777;
-    --warm-white:    #FAF8F4;
+    --muted:         var(--gray);
+    --warm-white:    var(--paper);
     --white:         #ffffff;
-    --border:        #E7E1D8;
+    --border:        var(--line);
   }
 
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -60,7 +60,7 @@
     display: flex;
     align-items: center;
   }
-  .nav-logo-img {
+  .nav-logo .nav-logo-img {
     height: 30px;
     width: auto;
     display: none;
@@ -191,7 +191,7 @@
     margin-bottom: 24px;
   }
   .hero-headline em {
-    font-style: italic;
+    font-style: normal;
     color: var(--primary-sage);
   }
 
@@ -231,7 +231,7 @@
     line-height: 1.2;
     letter-spacing: -0.015em;
   }
-  .section-title em { font-style: italic; font-weight: 400; color: var(--primary); }
+  .section-title em { font-style: normal; font-weight: 400; color: var(--primary); }
 
   /* MISIÓN */
   #mision {
@@ -257,7 +257,7 @@
     border-left: 3px solid var(--primary);
     padding-left: 32px;
     margin: 32px 0 40px;
-    font-style: italic;
+    font-style: normal;
   }
 
   .mision-body {
@@ -293,7 +293,7 @@
   .caption-text {
     font-size: 13px;
     font-weight: 300;
-    font-style: italic;
+    font-style: normal;
     color: rgba(255,255,255,0.85);
     line-height: 1.5;
   }
@@ -507,7 +507,7 @@
 
   .numero-val {
     font-size: clamp(40px, 4.5vw, 60px);
-    font-weight: 800;
+    font-weight: 200;
     color: white;
     letter-spacing: -0.03em;
     line-height: 1;
@@ -660,31 +660,14 @@
   .cta-sub {
     font-size: 17px;
     font-weight: 300;
-    font-style: italic;
+    font-style: normal;
     color: var(--primary-frost);
     margin-bottom: 44px;
     line-height: 1.6;
   }
 
-  .btn-primary {
-    display: inline-flex;
-    align-items: center;
-    gap: 14px;
-    background: white;
-    color: var(--ink);
-    padding: 16px 32px;
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    text-decoration: none;
-    transition: all 0.3s;
-  }
-  .btn-primary:hover {
-    background: var(--primary-sage);
-    color: white;
-    gap: 20px;
-  }
+  .btn-primary { display: inline-flex; align-items: center; gap: 10px; background: var(--primary); color: white; padding: 1rem 2rem; border-radius: 999px; font-size: 13px; font-weight: 500; letter-spacing: 0.03em; text-decoration: none; border: 1px solid var(--primary); transition: all 0.3s; }
+  .btn-primary:hover { background: var(--primary-sage); border-color: var(--primary-sage); gap: 14px; }
   .btn-primary .arrow { transition: transform 0.3s; }
   .btn-primary:hover .arrow { transform: translateX(4px); }
 
@@ -720,8 +703,8 @@
   .footer-tagline {
     font-size: 13px;
     font-weight: 300;
-    font-style: italic;
-    color: rgba(255,255,255,0.28);
+    font-style: normal;
+    color: rgba(255,255,255,0.48);
   }
 
   .footer-nav {
@@ -1028,6 +1011,8 @@
     <a href="../#medida">A la medida</a>
     <a href="../sobrenosotros/">Sobre nosotros</a>
     <a href="../#cierre">Contacto</a>
+    <a href="/">4 Meaning</a>
+    <a href="/trascendencia/">Trascendencia</a>
   </nav>
 </footer>
 
