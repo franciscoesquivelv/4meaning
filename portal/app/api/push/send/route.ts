@@ -2,13 +2,29 @@ import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
 import webpush from 'web-push'
 
-webpush.setVapidDetails(
-  'mailto:' + (process.env.VAPID_EMAIL ?? 'admin@trascendencia.com'),
-  process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY ?? '',
-  process.env.VAPID_PRIVATE_KEY ?? ''
-)
+// Se configura dentro del handler, no al importar el modulo: web-push lanza
+// excepcion si la clave viene vacia, y hacerlo arriba tumbaba el build entero
+// en cualquier entorno sin las variables VAPID (todos menos produccion).
+function configurarVapid(): boolean {
+  const publica = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
+  const privada = process.env.VAPID_PRIVATE_KEY
+  if (!publica || !privada) return false
+  webpush.setVapidDetails(
+    'mailto:' + (process.env.VAPID_EMAIL ?? 'admin@trascendencia.com'),
+    publica,
+    privada
+  )
+  return true
+}
 
 export async function POST(req: NextRequest) {
+  if (!configurarVapid()) {
+    return NextResponse.json(
+      { error: 'Las notificaciones no están configuradas en este entorno.' },
+      { status: 503 }
+    )
+  }
+
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
