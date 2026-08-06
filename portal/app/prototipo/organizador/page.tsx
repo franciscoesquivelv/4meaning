@@ -10,8 +10,9 @@ import SelectorPersona from '../SelectorPersona'
 
 function PanelMarca({ marca }: { marca: Marca }) {
   const m = MARCAS[marca]
-  // Trascendencia ya tiene su workspace construido en el portal real.
-  const destino = marca === 'personalab' ? '/prototipo/personalab' : '#'
+  // Trascendencia entra al portal REAL, el que ya esta en produccion.
+  // PersonaLab entra al workspace nuevo. Esa es la conexion del ecosistema.
+  const destino = marca === 'personalab' ? '/prototipo/personalab' : '/dashboard'
   return (
     <a
       href={destino}
@@ -31,12 +32,17 @@ function PanelMarca({ marca }: { marca: Marca }) {
           fontSize: '1.45rem',
           fontWeight: 200,
           letterSpacing: '-.01em',
-          margin: '0 0 18px',
+          margin: '0 0 4px',
           color: m.dominante,
         }}
       >
         {m.nombre}
       </h2>
+      <div style={{ fontSize: 11.5, color: '#6F7777', marginBottom: 18 }}>
+        {marca === 'trascendencia'
+          ? 'Portal en producción · 17 secciones por evento'
+          : 'Workspace nuevo · 9 secciones'}
+      </div>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px 18px' }}>
         {RESUMEN_MARCA[marca].map(x => (
           <div key={x.k}>
