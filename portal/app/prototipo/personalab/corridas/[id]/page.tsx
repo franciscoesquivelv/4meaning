@@ -161,7 +161,15 @@ export default function CorridaPage({ params }: { params: { id: string } }) {
         <div className="flex flex-col gap-5">
           <div className={`${TARJETA} p-5`}>
             <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-3">Acciones</div>
-            <button className={`${BTN_PRIMARIO} w-full mb-2`}>Modo sala</button>
+            <Link href={`/prototipo/lector/${c.id}`} className={`${BTN_PRIMARIO} w-full block text-center mb-2`}>
+              Ver como participante
+            </Link>
+            <Link
+              href={`/prototipo/lector/${c.id}?lente=moderador`}
+              className={`${BTN_SECUNDARIO} w-full block text-left mb-2`}
+            >
+              Ver como moderador
+            </Link>
             <div className="flex flex-col gap-2">
               {ACCIONES.map(a => (
                 <button key={a} className={`${BTN_SECUNDARIO} w-full text-left`}>{a}</button>
