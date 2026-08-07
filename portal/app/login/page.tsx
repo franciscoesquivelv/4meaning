@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { createBrowserClient } from '@supabase/ssr'
 import Link from 'next/link'
+import CompletarSesion from '@/components/CompletarSesion'
 
 export default function LoginPage() {
   const [error, setError] = useState('')
@@ -44,6 +45,11 @@ export default function LoginPage() {
           Portal Trascendencia
         </p>
       </div>
+
+      {/* Recoge la sesion cuando se llega desde un enlace de correo.
+          Sin esto, los tokens del fragmento se perdian y el magic link
+          rebotaba de vuelta a esta misma pantalla. */}
+      <CompletarSesion />
 
       {/* Card */}
       <div className="w-full max-w-sm bg-[#1A1A1A] border border-white/10 rounded-2xl p-8">
