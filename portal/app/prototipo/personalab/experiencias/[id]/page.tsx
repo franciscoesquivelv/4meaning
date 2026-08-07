@@ -66,8 +66,10 @@ export default function ExperienciaPage({ params }: { params: { id: string } }) 
           {e.narrativa && <p className="text-base text-slate-700 italic mt-3">{e.narrativa}</p>}
         </div>
         <div className="flex gap-2 flex-shrink-0">
-          <button className={BTN_SECUNDARIO}>Editar</button>
-          <button className={BTN_PRIMARIO}>Abrir editor</button>
+          <button className={BTN_SECUNDARIO}>Editar ficha</button>
+          <Link href={`/prototipo/personalab/experiencias/${e.id}/editor`} className={BTN_PRIMARIO}>
+            Abrir editor
+          </Link>
         </div>
       </div>
 
