@@ -25,7 +25,20 @@ export async function updateSession(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
 
   const { pathname } = request.nextUrl
-  const isPublic = pathname.startsWith('/login') || pathname.startsWith('/auth/') || pathname.startsWith('/api/')
+
+  // Rutas que por definicion se visitan SIN sesion. Faltaban tres y las tres
+  // estaban rotas en produccion: no se podia pedir recuperacion de contrasena,
+  // el correo de recuperacion aterrizaba en el login, y el enlace de firma
+  // publica rebotaba a un login que el firmante no tiene.
+  const PUBLICAS = [
+    '/login',
+    '/auth/',
+    '/api/',
+    '/recuperar-contrasena',
+    '/nueva-contrasena',
+    '/firmar/',
+  ]
+  const isPublic = PUBLICAS.some(p => pathname.startsWith(p))
 
   if (!user && !isPublic) {
     const url = request.nextUrl.clone()
