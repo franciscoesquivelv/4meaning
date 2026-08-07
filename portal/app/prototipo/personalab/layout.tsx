@@ -1,12 +1,14 @@
-import WorkspaceNav from './WorkspaceNav'
+import PersonaLabNav from './PersonaLabNav'
+import { PAGINA } from './tokens'
+
+// Calcado de app/(admin)/layout.tsx:22-31: barra superior mas main sobre
+// slate-50. Sin barra lateral, que era el error de forma del prototipo.
 
 export default function PersonaLabLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'stretch', minHeight: '100vh' }}>
-      <WorkspaceNav />
-      <main style={{ flex: 1, minWidth: 0, padding: '34px 32px 90px', maxWidth: 1180 }}>
-        {children}
-      </main>
+    <div className={PAGINA}>
+      <PersonaLabNav />
+      <main className="max-w-[1200px] mx-auto px-6 py-8">{children}</main>
     </div>
   )
 }
