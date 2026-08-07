@@ -34,9 +34,20 @@ export default function AdminTopNav({ userEmail }: AdminTopNavProps) {
 
   return (
     <header className="fixed top-0 left-0 right-0 w-full h-14 bg-white border-b border-[#E5E7EB] z-50 flex items-center justify-between px-6">
-      {/* Left: Logo */}
-      <Link href="/dashboard" className="flex items-center">
+      {/* Left: la casa. Lleva al selector de workspace, no al dashboard de
+          Trascendencia: 4 Meaning es la capa de arriba, no una sub-marca. */}
+      <Link
+        href="/workspaces"
+        className="flex items-center gap-2 group"
+        title="Cambiar de workspace"
+      >
         <span className="text-sm font-semibold tracking-tight text-slate-900">4Meaning</span>
+        <svg
+          className="w-3 h-3 text-slate-300 group-hover:text-slate-500 transition-colors"
+          fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M8 9l4-4 4 4M16 15l-4 4-4-4" />
+        </svg>
       </Link>
 
       {/* Center: Nav links */}
