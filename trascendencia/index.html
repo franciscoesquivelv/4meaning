@@ -69,6 +69,20 @@
   .legacy-stats .num{font-size:2.6rem;font-weight:200;letter-spacing:-.02em;display:block;line-height:1;margin-bottom:.5rem;font-variant-numeric:tabular-nums}
   .legacy-stats .lbl{font-size:.8rem;font-weight:300;line-height:1.6;color:rgba(255,255,255,.6)}
   @media(max-width:960px){.legacy-grid{grid-template-columns:1fr}.legacy-stats{border-left:0;padding-left:0;border-top:1px solid rgba(255,255,255,.16);padding-top:2rem;display:flex;gap:2rem;flex-wrap:wrap}.legacy-stats .stat{margin-bottom:0}}
+
+  /* ── MÁS HISTORIAS · testimonios en tarjeta ── */
+  .testi-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+  .testi-card{background:var(--card,#fff);border:1px solid var(--line);border-radius:10px;padding:2.25rem}
+  .testi-card blockquote{font-size:1.05rem;font-weight:300;line-height:1.75;color:var(--ink);margin-bottom:1.5rem}
+  .testi-card cite{display:block;font-style:normal;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--dom)}
+  @media(max-width:760px){.testi-grid{grid-template-columns:1fr}}
+
+  /* ── PREGUNTAS FRECUENTES ── */
+  .faq{display:flex;flex-direction:column;max-width:860px}
+  .faq-item{padding:2rem 0;border-top:1px solid var(--line)}
+  .faq-item:first-child{border-top:0}
+  .faq-item h3{font-size:1.15rem;font-weight:400;color:var(--dom);margin-bottom:.75rem;letter-spacing:-.01em}
+  .faq-item p{font-size:.92rem;font-weight:300;line-height:1.8;color:var(--gray)}
 </style>
 </head>
 <body>
@@ -78,8 +92,8 @@
   <button class="nav-toggle" aria-label="Abrir menú" aria-expanded="false"><span></span></button>
   <ul class="nav-links">
     <li class="hide-m"><a href="#experiencia">La experiencia</a></li>
-    <li class="hide-m"><a href="#preguntas">Las preguntas</a></li>
     <li class="hide-m"><a href="#modalidades">Cómo se vive</a></li>
+    <li class="hide-m"><a href="#testimonios">Testimonios</a></li>
     <li class="hide-m"><a href="#contacto" class="nav-cta">Vivir la experiencia</a></li>
   </ul>
 </nav>
@@ -88,6 +102,9 @@
     <li><a href="#experiencia">La experiencia</a></li>
     <li><a href="#preguntas">Las preguntas</a></li>
     <li><a href="#modalidades">Cómo se vive</a></li>
+    <li><a href="#incluye">Qué incluye</a></li>
+    <li><a href="#testimonios">Testimonios</a></li>
+    <li><a href="#faq">Preguntas frecuentes</a></li>
     <li><a href="#contacto" class="nav-cta">Vivir la experiencia</a></li>
   </ul>
 </div>
@@ -162,9 +179,25 @@
         <p>Llevamos la experiencia a donde estás. La misma profundidad y acompañamiento, en tu propia ciudad para tu grupo o comunidad.</p>
       </div></div>
       <div class="mode-card reveal d3"><span class="bg" style="background-image:url('/img/familia.webp')"></span><div class="mode-body">
-        <span class="mode-n">Modalidad 03</span><h3>eTrascendencia</h3><span class="mode-place">Virtual · a tu ritmo</span>
-        <p>La versión a distancia, para recorrer el proceso desde casa y a tu propio paso, sin renunciar a la guía ni al sentido.</p>
+        <span class="mode-n">Modalidad 03</span><h3>Trascendencia con Familias</h3><span class="mode-place">Ascendencia &amp; descendencia</span>
+        <p>La misma experiencia de pareja, con la mirada puesta en varias generaciones: se estudian las raíces familiares y el legado se entrega, al final, a los hijos.</p>
       </div></div>
+    </div>
+  </div>
+</section>
+
+<!-- QUÉ INCLUYE -->
+<section class="sec" id="incluye">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Qué incluye</span>
+      <h2>Cuatro momentos, un solo recorrido.</h2>
+    </div>
+    <div class="pillars">
+      <div class="pillar reveal"><span class="pn">01</span><h3>Foros y conferencias</h3><p>La comprensión de los conceptos, y la seguridad y apertura para abordar quién soy, de dónde vengo y hacia dónde voy.</p></div>
+      <div class="pillar reveal d1"><span class="pn">02</span><h3>Talleres y actividades</h3><p>El espacio para plasmar el legado más significativo: la historia familiar, los valores que la definen, las tradiciones.</p></div>
+      <div class="pillar reveal d2"><span class="pn">03</span><h3>Documentación de la historia</h3><p>La historia de pareja, documentada desde las raíces, con los valores familiares como eje central.</p></div>
+      <div class="pillar reveal d3"><span class="pn">04</span><h3>Video familiar</h3><p>El desenlace: una recopilación de la historia familiar, narrada por los propios padres, para que sus hijos la vean toda la vida.</p></div>
     </div>
   </div>
 </section>
@@ -191,8 +224,60 @@
   <div class="bg" data-parallax="0.15" style="background-image:url('/img/memoria.jpg')"></div>
   <div class="scrim"></div>
   <div class="inner reveal">
-    <blockquote>Nunca me había detenido a preguntarme de dónde venía. Trascendencia nos dio las palabras para contarle a nuestros hijos <em>quiénes somos.</em></blockquote>
-    <cite>Una pareja participante</cite>
+    <blockquote>Me ha llevado a recordar mis raíces... toda esa buscadera de fotos. ¡Deshice los álbumes de mi casa! Hemos crecido como pareja, y estoy segura que <em>como familia va a ser espectacular.</em></blockquote>
+    <cite>Nicolás González y Vanessa Revilla</cite>
+  </div>
+</section>
+
+<!-- MÁS HISTORIAS -->
+<section class="sec alt" id="testimonios">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Más historias</span>
+      <h2>Lo que dicen las parejas que ya vivieron la experiencia.</h2>
+    </div>
+    <div class="testi-grid">
+      <div class="testi-card reveal">
+        <blockquote>"Nos vamos con el corazón lleno, felices, satisfechos y agradecidos, con la gran tarea de ser mejores seres humanos y a través de eso hacer que nuestros hijos lo sean igual."</blockquote>
+        <cite>Gerardo Ríos y Bonnie Bru</cite>
+      </div>
+      <div class="testi-card reveal d1">
+        <blockquote>"Estos 3 días han sido de los momentos más especiales de nuestra vida. Este evento de Trascendencia se lo recomendamos con los ojos cerrados a cualquier persona."</blockquote>
+        <cite>Jean Pierre Leignadier y Michelle Canavaggio</cite>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PREGUNTAS FRECUENTES -->
+<section class="sec" id="faq">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <span class="eyebrow">Antes de escribirnos</span>
+      <h2>Preguntas frecuentes.</h2>
+    </div>
+    <div class="faq reveal d1">
+      <div class="faq-item">
+        <h3>¿Es solo para nosotros como pareja, o puede vivirla toda la familia?</h3>
+        <p>Trascendencia se vive en pareja: son ustedes quienes hacen el trabajo de excavar la historia y construir el legado. Pero lo que documentan y el video final están hechos para toda la familia, especialmente para que sus hijos lo reciban y lo guarden toda la vida.</p>
+      </div>
+      <div class="faq-item">
+        <h3>¿Necesitamos experiencia previa con estos temas?</h3>
+        <p>No. Está diseñada para cualquier pareja dispuesta a mirar su historia con honestidad, sin importar si es la primera vez que exploran estos temas juntos.</p>
+      </div>
+      <div class="faq-item">
+        <h3>¿Qué nos llevamos al final de la experiencia?</h3>
+        <p>Un Storybook y un Video Familiar: la historia de su familia, narrada por ustedes mismos, lista para que sus hijos la puedan volver a ver el resto de su vida.</p>
+      </div>
+      <div class="faq-item">
+        <h3>¿Hay un momento correcto en la relación para vivirla?</h3>
+        <p>No. Hemos acompañado a parejas recién casadas y a matrimonios de más de veinte años, incluyendo segundas uniones. Cada historia tiene su propio momento.</p>
+      </div>
+      <div class="faq-item">
+        <h3>¿Cuál modalidad es la correcta para nosotros?</h3>
+        <p>Depende de dónde estén y cuánto tiempo tengan. Escríbenos y les ayudamos a elegir entre la Experiencia Completa, In Situ o Trascendencia con Familias.</p>
+      </div>
+    </div>
   </div>
 </section>
 
