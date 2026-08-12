@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
-  <title>Materiales por Familia — Trascendencia</title>
+  <title>Materiales por Familia · Trascendencia</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -272,11 +272,11 @@
       </div>
       <div class="fields-row">
         <div class="field">
-          <label for="persona1">Nombre — persona 1<span class="req">*</span></label>
+          <label for="persona1">Nombre · persona 1<span class="req">*</span></label>
           <input type="text" id="persona1" placeholder="">
         </div>
         <div class="field">
-          <label for="persona2">Nombre — persona 2<span class="req">*</span></label>
+          <label for="persona2">Nombre · persona 2<span class="req">*</span></label>
           <input type="text" id="persona2" placeholder="">
         </div>
       </div>
@@ -530,7 +530,7 @@ async function buildGafetes(d) {
     doc.setTextColor(...C_MUTED);
     doc.text(d.evento.toUpperCase(), W / 2, gy + 32, { align: 'center', charSpace: 1.2 });
 
-    // Name — large, bold, centered
+    // Name · large, bold, centered
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(28);
     doc.setTextColor(...C_BLACK);
@@ -595,7 +595,7 @@ async function buildCheques(d) {
 
     if (logo) {
       const lw = 16, lh = lw / 8.646;
-      // Rotated text on strip — draw logo vertically using rotate
+      // Rotated text on strip · draw logo vertically using rotate
       doc.saveGraphicsState();
       doc.addImage(logo, 'PNG',
         CHQ_X + (22 - lh) / 2,
@@ -633,7 +633,7 @@ async function buildCheques(d) {
     doc.setTextColor(...C_MUTED);
     doc.text('Páguese a nombre de:', CHQ_X + 28, cy + 25);
 
-    // Family name — large
+    // Family name · large
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(16);
     doc.setTextColor(...C_TEXT);
@@ -696,7 +696,7 @@ async function buildAlbum(d) {
   doc.setTextColor(...C_MUTED);
   doc.text('HISTORIA FAMILIAR', W / 2, H / 2 - 28, { align: 'center', charSpace: 2.2 });
 
-  // Family name — hero
+  // Family name · hero
   const apellido = `Familia ${d.apellido}`;
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(32);

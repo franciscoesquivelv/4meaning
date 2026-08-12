@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
-  <title>Acuerdos — Trascendencia</title>
+  <title>Acuerdos · Trascendencia</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -487,7 +487,7 @@ const TYPES = {
       title: 'Datos del Prestador',
       fields: [
         { id: 'empresa',     label: 'Empresa / Responsable',  type: 'text', req: true, placeholder: 'Ej: Maleta Films' },
-        { id: 'evento',      label: 'Evento',                 type: 'text', req: true, placeholder: 'Ej: YPO México Norte — Marzo 2025' },
+        { id: 'evento',      label: 'Evento',                 type: 'text', req: true, placeholder: 'Ej: YPO México Norte · Marzo 2025' },
         { id: 'fecha_firma', label: 'Fecha de este acuerdo',  type: 'date', req: true },
       ]
     }]
@@ -499,7 +499,7 @@ const TYPES = {
       fields: [
         { id: 'familia',      label: 'Familia',               type: 'text',   req: true,  placeholder: 'Ej: Familia Rodríguez Sánchez' },
         { id: 'disenadora',   label: 'Coordinadora de diseño',type: 'text',   req: true,  placeholder: 'Nombre completo' },
-        { id: 'evento',       label: 'Evento de referencia',  type: 'text',   req: true,  placeholder: 'Ej: YPO México Norte — Marzo 2025' },
+        { id: 'evento',       label: 'Evento de referencia',  type: 'text',   req: true,  placeholder: 'Ej: YPO México Norte · Marzo 2025' },
         { id: 'n_libros',     label: 'Número de libros',      type: 'number', req: true,  min: 1, max: 10, placeholder: '1' },
         { id: 'copias_extra', label: 'Copias adicionales',    type: 'number', req: false, min: 0, max: 20, placeholder: '0',
           hint: 'Cada copia adicional: $70 USD' },
@@ -514,7 +514,7 @@ const TYPES = {
       fields: [
         { id: 'nombre',      label: 'Nombre completo',            type: 'text', req: true, placeholder: '' },
         { id: 'rol',         label: 'Rol en el evento',           type: 'text', req: true, placeholder: 'Ej: Coordinadora de Logística' },
-        { id: 'evento',      label: 'Evento',                     type: 'text', req: true, placeholder: 'Ej: YPO México Norte — Marzo 2025' },
+        { id: 'evento',      label: 'Evento',                     type: 'text', req: true, placeholder: 'Ej: YPO México Norte · Marzo 2025' },
         { id: 'fecha_firma', label: 'Fecha de este acuerdo',      type: 'date', req: true },
       ]
     }]
@@ -524,9 +524,9 @@ const TYPES = {
     sections: [{
       title: 'Datos de la Pareja',
       fields: [
-        { id: 'nombre1',     label: 'Nombre — persona 1',    type: 'text', req: true,  placeholder: '' },
-        { id: 'nombre2',     label: 'Nombre — persona 2',    type: 'text', req: false, placeholder: '(opcional si asiste solo/a)' },
-        { id: 'evento',      label: 'Evento',                type: 'text', req: true,  placeholder: 'Ej: YPO México Norte — Marzo 2025' },
+        { id: 'nombre1',     label: 'Nombre · persona 1',    type: 'text', req: true,  placeholder: '' },
+        { id: 'nombre2',     label: 'Nombre · persona 2',    type: 'text', req: false, placeholder: '(opcional si asiste solo/a)' },
+        { id: 'evento',      label: 'Evento',                type: 'text', req: true,  placeholder: 'Ej: YPO México Norte · Marzo 2025' },
         { id: 'fecha_firma', label: 'Fecha de este acuerdo', type: 'date', req: true },
       ]
     }]
@@ -537,7 +537,7 @@ const TYPES = {
       title: 'Datos del Fotógrafo',
       fields: [
         { id: 'nombre',      label: 'Fotógrafo / Empresa',   type: 'text', req: true, placeholder: '' },
-        { id: 'evento',      label: 'Evento',                type: 'text', req: true, placeholder: 'Ej: YPO México Norte — Marzo 2025' },
+        { id: 'evento',      label: 'Evento',                type: 'text', req: true, placeholder: 'Ej: YPO México Norte · Marzo 2025' },
         { id: 'fecha_firma', label: 'Fecha de este acuerdo', type: 'date', req: true },
       ]
     }]
@@ -547,7 +547,7 @@ const TYPES = {
 let currentType = 'evento';
 
 // ─────────────────────────────────────────────
-// DOCUMENT BUILDERS — full legal text
+// DOCUMENT BUILDERS · full legal text
 // ─────────────────────────────────────────────
 const DOCS = {
   evento: {
@@ -828,7 +828,7 @@ function renderForm(type) {
       const preview = document.createElement('div');
       preview.className = 'cost-preview';
       preview.id = 'cost-preview';
-      preview.innerHTML = `<span class="cost-preview-label">Costo por pareja</span><span class="cost-preview-value" id="cost-value">—</span>`;
+      preview.innerHTML = `<span class="cost-preview-label">Costo por pareja</span><span class="cost-preview-value" id="cost-value">·</span>`;
       fieldsEl.appendChild(preview);
     }
 
@@ -846,7 +846,7 @@ function updateEventoPreview() {
   const n = parseInt(document.getElementById('n_parejas')?.value) || 0;
   const cost = n <= 12 ? 4000 : n <= 16 ? 4200 : n <= 20 ? 4500 : 4700;
   const el = document.getElementById('cost-value');
-  if (el) el.textContent = n >= 8 ? `$${cost.toLocaleString()} USD por pareja` : '—';
+  if (el) el.textContent = n >= 8 ? `$${cost.toLocaleString()} USD por pareja` : '·';
 }
 
 function updateStorybookPreview() {
@@ -1100,7 +1100,7 @@ function fileName(type) {
 }
 
 // ─────────────────────────────────────────────
-// PDF BUILDER — reads from contenteditable DOM
+// PDF BUILDER · reads from contenteditable DOM
 // ─────────────────────────────────────────────
 async function generatePDFFromDoc(type) {
   const { jsPDF } = window.jspdf;
@@ -1224,7 +1224,7 @@ document.addEventListener('DOMContentLoaded', () => {
     renderForm(currentType);
   });
 
-  // "Ver Documento" — validate → render preview → show step 2
+  // "Ver Documento" · validate → render preview → show step 2
   document.getElementById('btn-preview').addEventListener('click', () => {
     const data = collectData();
     if (!data) { showToast('Completa los campos requeridos', 'error'); return; }
@@ -1235,14 +1235,14 @@ document.addEventListener('DOMContentLoaded', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 
-  // "← Editar datos" — back to form
+  // "← Editar datos" · back to form
   document.getElementById('btn-back').addEventListener('click', () => {
     document.getElementById('step-preview').classList.add('hidden');
     document.getElementById('step-form').classList.remove('hidden');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 
-  // "Generar PDF" — build from DOM
+  // "Generar PDF" · build from DOM
   document.getElementById('btn-pdf').addEventListener('click', async () => {
     const btn = document.getElementById('btn-pdf');
     btn.disabled = true;
