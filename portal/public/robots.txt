@@ -1,0 +1,12 @@
+# Portal 4 Meaning
+#
+# /prototipo es una maqueta interna con datos simulados. No debe rastrearse
+# ni aparecer en buscadores: contiene el lexico vinculante, el modelo de
+# dominio de las dos marcas y decisiones de producto todavia no publicas.
+#
+# Esta linea impide el RASTREO. El noindex de app/prototipo/layout.tsx
+# impide ademas la INDEXACION, que es un problema distinto: una pagina
+# enlazada desde fuera puede entrar al indice sin que el robot la lea.
+
+User-agent: *
+Disallow: /prototipo
