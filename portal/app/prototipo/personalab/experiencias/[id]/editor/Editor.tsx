@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import BloqueLector from '../../../Bloques'
 import SubirArchivo from '../../../SubirArchivo'
+import { useFuente } from '../../../useFuente'
 import {
   CATALOGO, NIVEL,
   type Bloque, type TipoBloque, type Audiencia,
@@ -48,6 +49,7 @@ export default function Editor({ experiencia }: { experiencia: Experiencia }) {
   const [conBorrador, setConBorrador] = useState(false)
   const montado = useRef(false)
   const temporizador = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const fuente = useFuente()
 
   useEffect(() => {
     setBloques(cargar())
@@ -140,6 +142,36 @@ export default function Editor({ experiencia }: { experiencia: Experiencia }) {
     setPorBorrar(null)
   }
 
+  if (fuente.modo === 'cargando') {
+    return <div className="px-6 py-10 text-sm text-slate-400">Comprobando sesión…</div>
+  }
+
+  // El adaptador remoto está encendido pero no hay sesión. No es un error:
+  // el prototipo vive fuera del gate a propósito, y la RLS exige sesión.
+  if (fuente.modo === 'sin-sesion') {
+    return (
+      <div className="max-w-[560px] mt-8">
+        <div className={`${TARJETA} p-6`}>
+          <h1 className="text-lg font-semibold text-slate-900">Entra para editar con datos reales</h1>
+          <p className="text-sm text-slate-600 mt-2 leading-relaxed">
+            Este editor está conectado a la base de verdad, y la base solo responde a cuentas del
+            equipo. Sin sesión no vería ni un bloque, así que prefiero decírtelo en vez de mostrarte
+            una pantalla vacía.
+          </p>
+          <div className="flex gap-2 mt-5">
+            <Link href="/login" className={BTN_PRIMARIO}>Iniciar sesión</Link>
+            <Link
+              href={`/prototipo/personalab/experiencias/${experiencia.id}`}
+              className={BTN_SECUNDARIO}
+            >
+              Volver
+            </Link>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   if (!montado.current && bloques.length === 0) {
     return <div className="px-6 py-10 text-sm text-slate-400">Cargando…</div>
   }
@@ -158,6 +190,22 @@ export default function Editor({ experiencia }: { experiencia: Experiencia }) {
             </Link>
             <span className="text-sm font-semibold text-slate-900 truncate">Editor</span>
             <span className={`text-xs ${CHIP[estado].clase} whitespace-nowrap`}>{CHIP[estado].texto}</span>
+            {/* De dónde salen los datos. Sin esto, una captura del editor
+                no dice si lo que se ve es real o simulado. */}
+            <span
+              className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full whitespace-nowrap ${
+                fuente.modo === 'remoto'
+                  ? 'bg-emerald-100 text-emerald-700'
+                  : 'bg-amber-100 text-amber-700'
+              }`}
+              title={
+                fuente.modo === 'remoto'
+                  ? `Conectado a la base como ${fuente.email}`
+                  : 'Los cambios se guardan solo en este navegador y no se comparten'
+              }
+            >
+              {fuente.modo === 'remoto' ? 'Base real' : 'Solo este navegador'}
+            </span>
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
             {conBorrador && (
