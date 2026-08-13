@@ -2,18 +2,18 @@
 -- VERIFICACIÓN DE RLS · PersonaLab
 -- ============================================================
 --
--- Todas las pruebas vuelven en UNA SOLA TABLA al final. El editor de
--- Supabase solo muestra el resultado de la última consulta.
+-- Para el SQL Editor de Supabase. Todo vuelve en UNA SOLA TABLA al final.
 --
 -- POR QUÉ HACE FALTA: en el editor corres como superusuario y la RLS NO se
 -- aplica. Si consultas una tabla y ves filas, eso no prueba nada. Hay que
 -- suplantar a un usuario autenticado.
 --
--- Las pruebas de catálogo, acceso nulo, léxico y constraints corren SIN
+-- Las pruebas de catálogo, acceso nulo, constraints y estructura corren SIN
 -- cuentas de prueba. Las de moderador y miembro de foro se omiten solas si
--- los correos no existen, y lo dicen.
+-- los correos no existen, y lo dicen en vez de devolver ceros engañosos.
 --
--- No modifica datos.
+-- No queda ningún cambio en la base: la única prueba que escribe se deshace
+-- lanzando una excepción, porque PL/pgSQL no admite SAVEPOINT.
 
 create temp table if not exists pruebas_pl (
   n int, prueba text, resultado text, esperado text, veredicto text
@@ -51,7 +51,7 @@ begin
          then '✅' else '⚠️' end);
 
   -- ── B · Sin ningún acceso no se ve nada ───────────────────
-  savepoint sin_acceso;
+  -- Solo lee: no hay nada que deshacer.
   perform set_config('request.jwt.claims',
     json_build_object('sub', gen_random_uuid())::text, true);
   execute 'set local role authenticated';
@@ -61,7 +61,6 @@ begin
   select count(*) into c_run from public.runs;
 
   execute 'reset role';
-  rollback to savepoint sin_acceso;
 
   insert into pruebas_pl values (6, 'Experiencias visibles sin acceso',
     c_exp::text, '0', case when c_exp = 0 then '✅' else '❌' end);
@@ -73,11 +72,9 @@ begin
   -- ── C · Miembro de foro: lo que MÁS importa ───────────────
   select id into id_mie from public.profiles where email = correo_miembro;
   if id_mie is null then
-    insert into pruebas_pl values (9,
-      'Miembro de foro no recibe notas de moderador',
+    insert into pruebas_pl values (9, 'Notas de moderador que ve el foro',
       'sin cuenta', 'crear ' || correo_miembro, 'ℹ️ omitida');
   else
-    savepoint miembro;
     perform set_config('request.jwt.claims',
       json_build_object('sub', id_mie)::text, true);
     execute 'set local role authenticated';
@@ -88,7 +85,6 @@ begin
     select count(*) into c_bor  from public.experience_versions where estado='borrador';
 
     execute 'reset role';
-    rollback to savepoint miembro;
 
     insert into pruebas_pl values (9,  'Notas de moderador que ve el foro',
       c_nota::text, '0', case when c_nota=0 then '✅' else '❌ LA RLS ESTÁ MAL' end);
@@ -103,11 +99,9 @@ begin
   -- ── D · Moderador: SÍ ve notas y kit ──────────────────────
   select id into id_mod from public.profiles where email = correo_moderador;
   if id_mod is null then
-    insert into pruebas_pl values (13,
-      'Moderador ve las notas de sala',
+    insert into pruebas_pl values (13, 'Notas de sala que ve el moderador',
       'sin cuenta', 'crear ' || correo_moderador, 'ℹ️ omitida');
   else
-    savepoint moderador;
     perform set_config('request.jwt.claims',
       json_build_object('sub', id_mod)::text, true);
     execute 'set local role authenticated';
@@ -117,7 +111,6 @@ begin
     select count(*) into c_bor  from public.experience_versions where estado='borrador';
 
     execute 'reset role';
-    rollback to savepoint moderador;
 
     insert into pruebas_pl values (13, 'Notas de sala que ve el moderador',
       c_nota::text, 'más de 0', case when c_nota>0 then '✅' else '⚠️ ¿tiene grant?' end);
@@ -135,29 +128,33 @@ begin
     insert into pruebas_pl values (16, 'Constraints de bloques',
       'sin datos', 'sembrar primero', 'ℹ️ omitida');
   else
-    savepoint constraints;
-
+    -- Nota pública
     ok := false;
     begin
       insert into public.blocks (version_id, hinge_id, orden, tipo, audiencia, contenido)
       values (v, h, 999, 'nota', 'todos', '{"texto":"prueba"}'::jsonb);
-    exception when check_violation then ok := true;
+      raise exception using errcode = 'P0001', message = '__deshacer__';
+    exception
+      when check_violation then ok := true;      -- lo rechazó, bien
+      when sqlstate 'P0001' then ok := false;    -- lo aceptó, mal
     end;
     insert into pruebas_pl values (16, 'Rechaza una nota marcada como pública',
       case when ok then 'rechazada' else 'ACEPTADA' end, 'rechazada',
       case when ok then '✅' else '❌' end);
 
+    -- Texto vacío
     ok := false;
     begin
       insert into public.blocks (version_id, hinge_id, orden, tipo, audiencia, contenido)
       values (v, h, 998, 'texto', 'todos', '{}'::jsonb);
-    exception when check_violation then ok := true;
+      raise exception using errcode = 'P0001', message = '__deshacer__';
+    exception
+      when check_violation then ok := true;
+      when sqlstate 'P0001' then ok := false;
     end;
     insert into pruebas_pl values (17, 'Rechaza un bloque de texto vacío',
       case when ok then 'rechazado' else 'ACEPTADO' end, 'rechazado',
       case when ok then '✅' else '❌' end);
-
-    rollback to savepoint constraints;
   end if;
 end $$;
 
@@ -193,8 +190,9 @@ where schemaname='public' and rowsecurity = true
     'kit_pieces','chapters','chapter_moderators','moderator_training','runs',
     'run_checklist','grants','returns','testimonies');
 
+-- Limpieza por si algún constraint hubiera fallado y dejado basura.
+delete from public.blocks where orden in (998, 999);
+
 -- ── EL RESULTADO ────────────────────────────────────────────
 
-select n, prueba, resultado, esperado, veredicto
-from pruebas_pl
-order by n;
+select n, prueba, resultado, esperado, veredicto from pruebas_pl order by n;
