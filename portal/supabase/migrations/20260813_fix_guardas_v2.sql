@@ -187,11 +187,29 @@ begin
 end;
 $chk$;
 
--- Confirmación visible, para no depender de los avisos.
+-- Confirmación visible. Cada función se comprueba contra LO SUYO: las dos
+-- de equipo tienen que llamar a pl_es_equipo, y la de descarga tiene que
+-- envolver pl_puede_ver_medio en un coalesce, porque su guarda es de acceso
+-- a un archivo y no de pertenencia al equipo. Buscar la misma cadena en las
+-- cuatro daba un falso negativo.
 select
-  p.proname                                                as funcion,
-  case when pg_get_functiondef(p.oid) like '%pl_es_equipo%'
-       then '✅ guarda nueva' else '❌ guarda vieja' end   as estado
+  p.proname as funcion,
+  case p.proname
+    when 'pl_es_equipo'          then 'coalesce'
+    when 'pl_abrir_borrador'     then 'pl_es_equipo'
+    when 'pl_publicar_version'   then 'pl_es_equipo'
+    when 'pl_registrar_descarga' then 'coalesce'
+  end as debe_contener,
+  case
+    when p.proname = 'pl_registrar_descarga'
+      then case when pg_get_functiondef(p.oid) like '%coalesce(public.pl_puede_ver_medio%'
+                then '✅ falla cerrado' else '❌ guarda vieja' end
+    when p.proname = 'pl_es_equipo'
+      then case when pg_get_functiondef(p.oid) like '%coalesce%'
+                then '✅ falla cerrado' else '❌ guarda vieja' end
+    else case when pg_get_functiondef(p.oid) like '%pl_es_equipo%'
+              then '✅ falla cerrado' else '❌ guarda vieja' end
+  end as estado
 from pg_proc p
 join pg_namespace ns on ns.oid = p.pronamespace
 where ns.nspname = 'public'
