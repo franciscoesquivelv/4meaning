@@ -5,9 +5,9 @@
 -- ANTES DE CORRER ESTO, crea tres usuarios en el dashboard:
 --   Authentication → Users → Add user  (marca "Auto Confirm User")
 --
---   participante@prueba.4meaning.life
---   moderador@prueba.4meaning.life
---   miembro@prueba.4meaning.life
+--   participante@prueba.com
+--   moderador@prueba.com
+--   miembro@prueba.com
 --
 -- La contraseña da igual, no se va a usar: las pruebas suplantan por id, no
 -- por login. No se crean desde SQL a propósito: insertar en auth.users a
@@ -21,15 +21,36 @@ do $$
 declare
   id_part uuid; id_mod uuid; id_mie uuid;
   id_cap uuid; id_exp uuid; id_ver uuid; id_run uuid;
+  n_auth int; correos_existentes text;
 begin
-  select id into id_part from public.profiles where email = 'participante@prueba.4meaning.life';
-  select id into id_mod  from public.profiles where email = 'moderador@prueba.4meaning.life';
-  select id into id_mie  from public.profiles where email = 'miembro@prueba.4meaning.life';
+  select id into id_part from public.profiles where email = 'participante@prueba.com';
+  select id into id_mod  from public.profiles where email = 'moderador@prueba.com';
+  select id into id_mie  from public.profiles where email = 'miembro@prueba.com';
 
   if id_part is null or id_mod is null or id_mie is null then
-    raise exception
-      'Faltan cuentas. Créalas primero en Authentication → Users. participante:% moderador:% miembro:%',
-      coalesce(id_part::text,'FALTA'), coalesce(id_mod::text,'FALTA'), coalesce(id_mie::text,'FALTA');
+    -- Distinguir dos fallas que se ven igual: que la cuenta no exista, o
+    -- que exista en auth pero sin perfil. Lo segundo pasa porque el trigger
+    -- handle_new_user se traga sus propios errores con `when others then
+    -- return new`, asi que un alta puede quedar a medias en silencio.
+    select count(*) into n_auth
+    from auth.users where email in
+      ('participante@prueba.com','moderador@prueba.com','miembro@prueba.com');
+
+    select string_agg(email, ', ' order by email) into correos_existentes
+    from public.profiles;
+
+    raise exception E'Faltan perfiles.\n'
+      '  En auth.users hay % de 3 cuentas de prueba.\n'
+      '  Perfiles que existen hoy: %\n'
+      '  %',
+      n_auth,
+      coalesce(correos_existentes, 'ninguno'),
+      case
+        when n_auth = 3 then
+          'Las tres cuentas SI existen en auth pero no tienen perfil. El trigger handle_new_user fallo en silencio. Corre el bloque de reparacion que esta al final de este archivo.'
+        else
+          'Crealas en Authentication → Users con Auto Confirm User, y revisa que el correo coincida exactamente.'
+      end;
   end if;
 
   -- Los tres arrancan como participant, que es lo que hace útil al primero.
@@ -95,7 +116,7 @@ select
 from public.profiles p
 left join public.grants g on g.profile_id = p.id and g.revocado_at is null
 left join public.moderator_training mt on mt.profile_id = p.id
-where p.email like '%@prueba.4meaning.life'
+where p.email like '%@prueba.com'
 order by p.email;
 
 -- ============================================================
@@ -105,13 +126,29 @@ order by p.email;
 -- borran desde el dashboard.
 --
 -- delete from public.grants
---   where profile_id in (select id from public.profiles where email like '%@prueba.4meaning.life');
+--   where profile_id in (select id from public.profiles where email like '%@prueba.com');
 -- delete from public.run_checklist
 --   where run_id in (select id from public.runs where moderador_id in
---     (select id from public.profiles where email like '%@prueba.4meaning.life'));
+--     (select id from public.profiles where email like '%@prueba.com'));
 -- delete from public.runs
---   where moderador_id in (select id from public.profiles where email like '%@prueba.4meaning.life');
+--   where moderador_id in (select id from public.profiles where email like '%@prueba.com');
 -- delete from public.moderator_training
---   where profile_id in (select id from public.profiles where email like '%@prueba.4meaning.life');
+--   where profile_id in (select id from public.profiles where email like '%@prueba.com');
 -- delete from public.chapter_moderators
---   where profile_id in (select id from public.profiles where email like '%@prueba.4meaning.life');
+--   where profile_id in (select id from public.profiles where email like '%@prueba.com');
+
+-- ============================================================
+-- REPARACIÓN · solo si las cuentas existen en auth pero sin perfil
+-- ============================================================
+-- El trigger handle_new_user se traga sus errores, así que un alta puede
+-- quedar a medias. Esto crea los perfiles que falten, sin tocar los que ya
+-- estén bien.
+
+insert into public.profiles (id, email, full_name, role)
+select u.id, u.email, split_part(u.email, '@', 1), 'participant'
+from auth.users u
+where u.email like '%@prueba.com'
+  and not exists (select 1 from public.profiles p where p.id = u.id)
+on conflict (id) do nothing;
+
+select email, role from public.profiles where email like '%@prueba.com' order by email;

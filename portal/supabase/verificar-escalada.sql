@@ -23,7 +23,7 @@ truncate pruebas;
 
 do $$
 declare
-  correo_participante text := 'participante@prueba.4meaning.life';   -- ⬅ CAMBIA ESTE
+  correo_participante text := 'participante@prueba.com';   -- ⬅ CAMBIA ESTE
   id_participante uuid;
   id_super uuid;
   rol_actual text;
