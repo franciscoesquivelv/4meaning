@@ -27,6 +27,12 @@ declare
   rechazo boolean;
   v_bool boolean;
 begin
+  -- Los ids se resuelven ANTES de cualquier prueba: la 10 los necesita y
+  -- corre primero.
+  select e.id into id_exp   from public.experiences e where e.slug = 'presente-regalo';
+  select h.id into id_h     from public.hinges h where h.experience_id = id_exp limit 1;
+  select p.id into id_super from public.profiles p where p.role = 'super_admin' limit 1;
+
   -- ── Buckets ───────────────────────────────────────────────
   return query
   select 1, 'Bucket personalab-medios existe y es PRIVADO'::text,
@@ -103,11 +109,36 @@ begin
       case when rev_despues = rev_antes + 1 then '✅' else '❌' end::text;
   end if;
 
-  -- ── 9 · La compuerta de publicación rechaza ───────────────
-  select e.id into id_exp from public.experiences e where e.slug = 'presente-regalo';
-  select h.id into id_h  from public.hinges h where h.experience_id = id_exp limit 1;
-  select p.id into id_super from public.profiles p where p.role = 'super_admin' limit 1;
+  -- ── 10 y 11 · La guarda sin sesión ────────────────────────
+  -- VAN PRIMERO a propósito. my_role(), is_staff() y pl_es_equipo() son
+  -- STABLE, y Postgres puede cachear una función estable dentro de una
+  -- misma sentencia. Todo esto corre como UNA sentencia, así que si antes
+  -- se suplanta a un super admin, ese valor puede seguir vigente aquí y la
+  -- prueba reportaría un falso fallo. Sin identidad previa, no hay nada que
+  -- cachear.
+  -- ── 10 · La guarda de permisos falla CERRADO ──────────────
+  -- El defecto real que encontró la prueba 9: is_staff() devuelve NULL sin
+  -- sesión, y `if not NULL` no entra en la rama.
+  perform set_config('request.jwt.claims', '', true);
+  rechazo := false;
+  begin
+    perform public.pl_abrir_borrador(id_exp);
+    rechazo := false;
+    raise exception using errcode = 'ZZ999', message = '__deshacer__';
+  exception
+    when sqlstate 'ZZ999' then null;
+    when others then rechazo := true;
+  end;
+  return query select 10, 'Sin sesión, abrir borrador se rechaza'::text,
+    case when rechazo then 'rechazado' else 'LO DEJÓ PASAR' end::text, 'rechazado'::text,
+    case when rechazo then '✅' else '❌ la guarda falla abierta' end::text;
 
+  -- ── 11 · pl_es_equipo nunca es NULL ───────────────────────
+  select public.pl_es_equipo() into v_bool;
+  return query select 11, 'pl_es_equipo nunca devuelve NULL'::text,
+    coalesce(v_bool::text, 'NULL')::text, 'false'::text,
+    case when v_bool is not null then '✅' else '❌' end::text;
+  -- ── 9 · La compuerta de publicación rechaza ───────────────
   if id_exp is null or id_super is null then
     return query select 9, 'Rechaza publicar una bisagra en blanco'::text,
       'faltan datos'::text, 'sembrar y tener super admin'::text, 'ℹ️ omitida'::text;
@@ -136,28 +167,6 @@ begin
       case when rechazo then '✅' else '❌' end::text;
   end if;
 
-  -- ── 10 · La guarda de permisos falla CERRADO ──────────────
-  -- El defecto real que encontró la prueba 9: is_staff() devuelve NULL sin
-  -- sesión, y `if not NULL` no entra en la rama.
-  perform set_config('request.jwt.claims', '', true);
-  rechazo := false;
-  begin
-    perform public.pl_abrir_borrador(id_exp);
-    rechazo := false;
-    raise exception using errcode = 'ZZ999', message = '__deshacer__';
-  exception
-    when sqlstate 'ZZ999' then null;
-    when others then rechazo := true;
-  end;
-  return query select 10, 'Sin sesión, abrir borrador se rechaza'::text,
-    case when rechazo then 'rechazado' else 'LO DEJÓ PASAR' end::text, 'rechazado'::text,
-    case when rechazo then '✅' else '❌ la guarda falla abierta' end::text;
-
-  -- ── 11 · pl_es_equipo nunca es NULL ───────────────────────
-  select public.pl_es_equipo() into v_bool;
-  return query select 11, 'pl_es_equipo nunca devuelve NULL'::text,
-    coalesce(v_bool::text, 'NULL')::text, 'false'::text,
-    case when v_bool is not null then '✅' else '❌' end::text;
 end;
 $$;
 
