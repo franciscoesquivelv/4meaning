@@ -2,198 +2,196 @@
 -- PRUEBA DE LA ESCALADA DE PRIVILEGIOS
 -- ============================================================
 --
--- Para el SQL Editor de Supabase. Sin comandos de psql: aquí no existen.
+-- Para el SQL Editor de Supabase.
 --
--- ANTES del arreglo: la prueba 1 SUCEDE. Eso es el agujero.
--- DESPUÉS: la prueba 1 FALLA. Eso es el cierre.
+-- Todas las pruebas vuelven en UNA SOLA TABLA al final. El editor solo
+-- muestra el resultado de la última consulta, así que si cada prueba fuera
+-- su propio SELECT, solo verías la última.
 --
--- Todo va en transacciones que se revierten. No cambia datos.
+-- No modifica datos: cada prueba se revierte con un savepoint.
 --
--- ⚠️  UNA COSA ANTES DE CORRER
+-- ⚠️  ANTES DE CORRER
 -- Reemplaza participante@ejemplo.mx por una cuenta REAL de rol
--- `participant`. Aparece 5 veces: usa buscar y reemplazar.
--- Si no tienes ninguna, córrela con tu propio correo y ten en cuenta que
--- siendo super_admin las pruebas 1 y 4 van a dar distinto a propósito.
+-- `participant`. Aparece 1 sola vez, en la línea de abajo.
+-- Para ver qué cuentas tienes, corre primero solo esto:
+--     select email, role from public.profiles order by role;
 
--- ============================================================
--- PRUEBA 0 · Qué cuentas hay para usar
--- ============================================================
-select email, role, created_at
-from public.profiles
-order by role, created_at;
+create temp table if not exists pruebas (
+  n int, prueba text, resultado text, esperado text, veredicto text
+);
+truncate pruebas;
 
--- ============================================================
--- PRUEBA 1 · Un participante intenta ponerse super_admin
--- ============================================================
--- El ataque literal. No necesita la interfaz de admin: basta la sesión del
--- navegador y la anon key, que es pública por diseño.
+do $$
+declare
+  correo_participante text := 'participante@ejemplo.mx';   -- ⬅ CAMBIA ESTE
+  id_participante uuid;
+  id_super uuid;
+  n_filas int;
+  paso boolean;
+begin
+  select id into id_participante from public.profiles where email = correo_participante;
+  select id into id_super from public.profiles where role = 'super_admin' limit 1;
 
-begin;
-  select set_config(
-    'request.jwt.claims',
-    json_build_object('sub',
-      (select id from public.profiles where email = 'participante@ejemplo.mx')
-    )::text,
-    true
-  );
-  set local role authenticated;
+  if id_participante is null then
+    insert into pruebas values
+      (0, 'Cuenta de prueba', correo_participante, 'que exista',
+       '⚠️ No existe. Cambia el correo arriba.');
+    return;
+  end if;
 
-  do $$
+  -- ── 1 · El ataque literal ───────────────────────────────
+  savepoint p1;
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', id_participante)::text, true);
+  execute 'set local role authenticated';
+
+  paso := false;
   begin
-    update public.profiles set role = 'super_admin' where id = auth.uid();
+    update public.profiles set role = 'super_admin' where id = id_participante;
+    paso := found;             -- true = la escalada FUNCIONÓ
+  exception when others then
+    paso := false;             -- la base la rechazó
+  end;
 
-    if found then
-      raise warning '❌ FALLO DE SEGURIDAD: la escalada FUNCIONÓ. El agujero sigue abierto.';
-    else
-      raise notice '✅ CORRECTO: no se actualizó ninguna fila. La política lo bloqueó.';
-    end if;
+  execute 'reset role';
+  rollback to savepoint p1;
 
-  exception
-    when insufficient_privilege then
-      raise notice '✅ CORRECTO: la base rechazó la escalada (privilegio insuficiente).';
-    when others then
-      raise notice '✅ CORRECTO: rechazada. Motivo: %', sqlerrm;
-  end $$;
-rollback;
+  insert into pruebas values (1,
+    'Un participante intenta ponerse super_admin',
+    case when paso then 'LO LOGRÓ' else 'rechazado' end,
+    'rechazado',
+    case when paso then '❌ EL AGUJERO SIGUE ABIERTO' else '✅' end);
 
--- ============================================================
--- PRUEBA 2 · Borrar la propia fila y reinsertarla con otro rol
--- ============================================================
--- El segundo camino que abría el `for all`.
+  -- ── 2 · Borrar la propia fila ───────────────────────────
+  savepoint p2;
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', id_participante)::text, true);
+  execute 'set local role authenticated';
 
-begin;
-  select set_config(
-    'request.jwt.claims',
-    json_build_object('sub',
-      (select id from public.profiles where email = 'participante@ejemplo.mx')
-    )::text,
-    true
-  );
-  set local role authenticated;
+  begin
+    delete from public.profiles where id = id_participante;
+    get diagnostics n_filas = row_count;
+  exception when others then
+    n_filas := 0;
+  end;
 
-  with borradas as (
-    delete from public.profiles where id = auth.uid() returning 1
-  )
-  select
-    'Filas que el participante logró borrar de su perfil' as prueba,
-    count(*)                                             as resultado,
-    0                                                    as esperado,
-    case when count(*) = 0 then '✅' else '❌' end        as veredicto
-  from borradas;
-rollback;
+  execute 'reset role';
+  rollback to savepoint p2;
 
--- ============================================================
--- PRUEBA 3 · Editar su propio nombre SÍ debe seguir funcionando
--- ============================================================
--- El arreglo no puede romper lo legítimo.
+  insert into pruebas values (2,
+    'Puede borrar su propio perfil para reinsertarlo con otro rol',
+    n_filas::text, '0',
+    case when n_filas = 0 then '✅' else '❌' end);
 
-begin;
-  select set_config(
-    'request.jwt.claims',
-    json_build_object('sub',
-      (select id from public.profiles where email = 'participante@ejemplo.mx')
-    )::text,
-    true
-  );
-  set local role authenticated;
+  -- ── 3 · Editar el nombre propio SÍ debe funcionar ───────
+  savepoint p3;
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', id_participante)::text, true);
+  execute 'set local role authenticated';
 
-  with tocadas as (
-    update public.profiles
-      set full_name = 'Nombre de prueba'
-      where id = auth.uid()
-      returning 1
-  )
-  select
-    'Filas actualizadas al cambiar su propio nombre' as prueba,
-    count(*)                                        as resultado,
-    1                                               as esperado,
-    case when count(*) = 1 then '✅' else '❌' end   as veredicto
-  from tocadas;
-rollback;
+  begin
+    update public.profiles set full_name = 'Nombre de prueba' where id = id_participante;
+    get diagnostics n_filas = row_count;
+  exception when others then
+    n_filas := 0;
+  end;
 
--- ============================================================
--- PRUEBA 4 · Un participante no debe ver perfiles ajenos
--- ============================================================
+  execute 'reset role';
+  rollback to savepoint p3;
 
-begin;
-  select set_config(
-    'request.jwt.claims',
-    json_build_object('sub',
-      (select id from public.profiles where email = 'participante@ejemplo.mx')
-    )::text,
-    true
-  );
-  set local role authenticated;
+  insert into pruebas values (3,
+    'Puede cambiar su propio nombre (lo legítimo no se rompió)',
+    n_filas::text, '1',
+    case when n_filas = 1 then '✅' else '❌ SE ROMPIÓ ALGO LEGÍTIMO' end);
 
-  select
-    'Perfiles ajenos visibles para un participante' as prueba,
-    count(*)                                        as resultado,
-    0                                               as esperado,
-    case when count(*) = 0 then '✅' else '❌' end   as veredicto
-  from public.profiles
-  where id <> auth.uid();
-rollback;
+  -- ── 4 · No ve perfiles ajenos ───────────────────────────
+  savepoint p4;
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', id_participante)::text, true);
+  execute 'set local role authenticated';
 
--- ============================================================
--- PRUEBA 5 · Un super admin SÍ puede cambiar roles ajenos
--- ============================================================
--- Antes del arreglo esto tampoco funcionaba: no existía política que lo
--- permitiera, así que la pantalla de usuarios estaba rota.
+  select count(*) into n_filas from public.profiles where id <> id_participante;
 
-begin;
-  select set_config(
-    'request.jwt.claims',
-    json_build_object('sub',
-      (select id from public.profiles where role = 'super_admin' limit 1)
-    )::text,
-    true
-  );
-  set local role authenticated;
+  execute 'reset role';
+  rollback to savepoint p4;
 
-  with tocadas as (
-    update public.profiles
-      set role = 'staff'
-      where email = 'participante@ejemplo.mx'
-      returning 1
-  )
-  select
-    'Filas que el super admin logró cambiar' as prueba,
-    count(*)                                 as resultado,
-    1                                        as esperado,
-    case when count(*) = 1 then '✅' else '❌' end as veredicto
-  from tocadas;
-rollback;
+  insert into pruebas values (4,
+    'Perfiles ajenos que ve un participante',
+    n_filas::text, '0',
+    case when n_filas = 0 then '✅' else '❌' end);
 
--- ============================================================
--- ESTADO FINAL DE LAS POLÍTICAS
--- ============================================================
+  -- ── 5 · Un super admin SÍ puede cambiar roles ───────────
+  if id_super is not null then
+    savepoint p5;
+    perform set_config('request.jwt.claims',
+      json_build_object('sub', id_super)::text, true);
+    execute 'set local role authenticated';
 
-select
-  policyname,
-  cmd,
-  qual       is not null as tiene_using,
-  with_check is not null as tiene_with_check
+    begin
+      update public.profiles set role = 'staff' where id = id_participante;
+      get diagnostics n_filas = row_count;
+    exception when others then
+      n_filas := 0;
+    end;
+
+    execute 'reset role';
+    rollback to savepoint p5;
+
+    insert into pruebas values (5,
+      'Un super admin puede cambiar el rol de otra persona',
+      n_filas::text, '1',
+      case when n_filas = 1 then '✅' else '❌ la gestión de roles sigue rota' end);
+  end if;
+end $$;
+
+-- ── Estado estructural ──────────────────────────────────────
+
+insert into pruebas
+select 6,
+  'La política vieja "Perfil propio" (for all) ya no existe',
+  count(*)::text, '0',
+  case when count(*) = 0 then '✅' else '❌' end
 from pg_policies
-where schemaname = 'public' and tablename = 'profiles'
-order by policyname;
+where schemaname='public' and tablename='profiles' and policyname='Perfil propio';
 
--- Esperado después del arreglo:
---   Perfil propio edicion          UPDATE   using sí   with_check SÍ
---   Perfil propio lectura          SELECT   using sí   with_check no
---   Staff ve todos                 SELECT   using sí   with_check no
---   Super admin gestiona perfiles  ALL      using sí   with_check SÍ
---
--- Y NINGUNA llamada "Perfil propio" con cmd = ALL. Esa era el agujero.
+insert into pruebas
+select 7,
+  'La política de edición tiene with check explícito',
+  count(*)::text, '1',
+  case when count(*) = 1 then '✅' else '❌' end
+from pg_policies
+where schemaname='public' and tablename='profiles'
+  and policyname='Perfil propio edicion' and with_check is not null;
 
--- ============================================================
--- EL TRIGGER QUEDÓ INSTALADO
--- ============================================================
+insert into pruebas
+select 8,
+  'Existe política de super admin sobre perfiles',
+  count(*)::text, '1',
+  case when count(*) = 1 then '✅' else '❌' end
+from pg_policies
+where schemaname='public' and tablename='profiles'
+  and policyname='Super admin gestiona perfiles';
 
-select
-  'Trigger proteger_rol instalado' as prueba,
-  count(*)                         as resultado,
-  1                                as esperado,
-  case when count(*) = 1 then '✅' else '❌' end as veredicto
+insert into pruebas
+select 9,
+  'El trigger proteger_rol está instalado',
+  count(*)::text, '1',
+  case when count(*) = 1 then '✅' else '❌' end
 from pg_trigger
-where tgname = 'proteger_rol'
-  and tgrelid = 'public.profiles'::regclass;
+where tgname='proteger_rol' and tgrelid='public.profiles'::regclass;
+
+insert into pruebas
+select 10,
+  'No hay política de INSERT ni de DELETE para usuarios',
+  count(*)::text, '0',
+  case when count(*) = 0 then '✅' else '❌' end
+from pg_policies
+where schemaname='public' and tablename='profiles'
+  and cmd in ('INSERT','DELETE')
+  and policyname <> 'Super admin gestiona perfiles';
+
+-- ── EL RESULTADO ────────────────────────────────────────────
+
+select n, prueba, resultado, esperado, veredicto
+from pruebas
+order by n;
