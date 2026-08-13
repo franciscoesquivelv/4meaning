@@ -22,8 +22,8 @@ truncate pruebas_pl;
 
 do $$
 declare
-  correo_moderador text := 'moderador@ejemplo.mx';   -- ⬅ CAMBIA SI EXISTE
-  correo_miembro   text := 'miembro@ejemplo.mx';     -- ⬅ CAMBIA SI EXISTE
+  correo_moderador text := 'moderador@prueba.4meaning.life';   -- ⬅ CAMBIA SI EXISTE
+  correo_miembro   text := 'miembro@prueba.4meaning.life';     -- ⬅ CAMBIA SI EXISTE
   id_mod uuid; id_mie uuid;
   c_exp int; c_blo int; c_nota int; c_kit int; c_chk int; c_bor int; c_run int;
   v uuid; h uuid; ok boolean;
