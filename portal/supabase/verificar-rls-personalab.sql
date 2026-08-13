@@ -133,10 +133,10 @@ begin
     begin
       insert into public.blocks (version_id, hinge_id, orden, tipo, audiencia, contenido)
       values (v, h, 999, 'nota', 'todos', '{"texto":"prueba"}'::jsonb);
-      raise exception using errcode = 'P0001', message = '__deshacer__';
+      raise exception using errcode = 'ZZ999', message = '__deshacer__';
     exception
       when check_violation then ok := true;      -- lo rechazó, bien
-      when sqlstate 'P0001' then ok := false;    -- lo aceptó, mal
+      when sqlstate 'ZZ999' then ok := false;    -- lo aceptó, mal
     end;
     insert into pruebas_pl values (16, 'Rechaza una nota marcada como pública',
       case when ok then 'rechazada' else 'ACEPTADA' end, 'rechazada',
@@ -147,10 +147,10 @@ begin
     begin
       insert into public.blocks (version_id, hinge_id, orden, tipo, audiencia, contenido)
       values (v, h, 998, 'texto', 'todos', '{}'::jsonb);
-      raise exception using errcode = 'P0001', message = '__deshacer__';
+      raise exception using errcode = 'ZZ999', message = '__deshacer__';
     exception
       when check_violation then ok := true;
-      when sqlstate 'P0001' then ok := false;
+      when sqlstate 'ZZ999' then ok := false;
     end;
     insert into pruebas_pl values (17, 'Rechaza un bloque de texto vacío',
       case when ok then 'rechazado' else 'ACEPTADO' end, 'rechazado',

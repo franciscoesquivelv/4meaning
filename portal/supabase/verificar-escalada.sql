@@ -7,7 +7,9 @@
 -- CÓMO DESHACE LOS CAMBIOS: PL/pgSQL no admite SAVEPOINT. Lo que sí tiene
 -- es que un bloque `begin ... exception ... end` revierte lo suyo cuando
 -- salta una excepción. Así que cada prueba que escribe termina lanzando una
--- excepción a propósito, con el código P0001, para deshacerse. Las
+-- excepción a propósito, con un código propio ZZ999, para deshacerse.
+-- NO se usa P0001: ese es el que PL/pgSQL asigna por defecto a
+-- `raise exception 'texto'`, y confundiría un rechazo real con el deshacer. Las
 -- variables NO se revierten, así que el resultado sobrevive al deshacer.
 --
 -- No queda ningún cambio en la base.
@@ -56,9 +58,9 @@ begin
     update public.profiles set role = 'super_admin' where id = id_participante;
     escalo := found;                         -- true = la escalada FUNCIONÓ
 
-    raise exception using errcode = 'P0001', message = '__deshacer__';
+    raise exception using errcode = 'ZZ999', message = '__deshacer__';
   exception
-    when sqlstate 'P0001' then null;         -- deshecho a propósito
+    when sqlstate 'ZZ999' then null;         -- deshecho a propósito
     when others then escalo := false;        -- la base lo rechazó
   end;
   execute 'reset role';
@@ -79,9 +81,9 @@ begin
     delete from public.profiles where id = id_participante;
     get diagnostics n_filas = row_count;
 
-    raise exception using errcode = 'P0001', message = '__deshacer__';
+    raise exception using errcode = 'ZZ999', message = '__deshacer__';
   exception
-    when sqlstate 'P0001' then null;
+    when sqlstate 'ZZ999' then null;
     when others then n_filas := 0;
   end;
   execute 'reset role';
@@ -101,9 +103,9 @@ begin
     update public.profiles set full_name = 'Nombre de prueba' where id = id_participante;
     get diagnostics n_filas = row_count;
 
-    raise exception using errcode = 'P0001', message = '__deshacer__';
+    raise exception using errcode = 'ZZ999', message = '__deshacer__';
   exception
-    when sqlstate 'P0001' then null;
+    when sqlstate 'ZZ999' then null;
     when others then n_filas := 0;
   end;
   execute 'reset role';
@@ -139,9 +141,9 @@ begin
       update public.profiles set role = 'staff' where id = id_participante;
       get diagnostics n_filas = row_count;
 
-      raise exception using errcode = 'P0001', message = '__deshacer__';
+      raise exception using errcode = 'ZZ999', message = '__deshacer__';
     exception
-      when sqlstate 'P0001' then null;
+      when sqlstate 'ZZ999' then null;
       when others then n_filas := 0;
     end;
     execute 'reset role';

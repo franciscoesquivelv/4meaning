@@ -87,9 +87,9 @@ begin
   begin
     update public.blocks set orden = orden where id = id_b;
     select rev into rev_despues from public.blocks where id = id_b;
-    raise exception using errcode = 'P0001', message = '__deshacer__';
+    raise exception using errcode = 'ZZ999', message = '__deshacer__';
   exception
-    when sqlstate 'P0001' then null;
+    when sqlstate 'ZZ999' then null;
     when others then rev_despues := rev_antes;
   end;
 
@@ -107,10 +107,16 @@ end $$;
 
 do $$
 declare
-  id_exp uuid; id_ver uuid; id_h uuid; rechazo boolean := false;
+  id_exp uuid; id_ver uuid; id_h uuid; id_super uuid; rechazo boolean := false;
 begin
   select id into id_exp from public.experiences where slug = 'presente-regalo';
   select id into id_h from public.hinges where experience_id = id_exp limit 1;
+  select id into id_super from public.profiles where role = 'super_admin' limit 1;
+
+  -- Suplantar a un super admin: si no, la funcion rechaza por PERMISOS y no
+  -- estariamos probando la compuerta de la bisagra vacia, que es el punto.
+  perform set_config('request.jwt.claims',
+    json_build_object('sub', id_super)::text, true);
 
   begin
     -- Un borrador con una bisagra donde todo es solo de moderador.
@@ -122,9 +128,9 @@ begin
 
     perform public.pl_publicar_version(id_ver);
     rechazo := false;                    -- lo dejó publicar: mal
-    raise exception using errcode = 'P0001', message = '__deshacer__';
+    raise exception using errcode = 'ZZ999', message = '__deshacer__';
   exception
-    when sqlstate 'P0001' then null;
+    when sqlstate 'ZZ999' then null;
     when others then rechazo := true;    -- lo rechazó: bien
   end;
 
@@ -133,6 +139,38 @@ begin
     case when rechazo then 'rechazada' else 'PUBLICADA' end,
     'rechazada',
     case when rechazo then '✅' else '❌' end);
+end $$;
+
+-- ── La guarda de permisos falla CERRADO ─────────────────────
+-- El defecto que encontro la prueba 9: is_staff() devuelve NULL sin sesion,
+-- y `if not NULL` no entra en la rama. La guarda se saltaba entera.
+
+do $$
+declare rechazo boolean := false; id_exp uuid;
+begin
+  select id into id_exp from public.experiences where slug = 'presente-regalo';
+
+  -- Sin claims: nadie. pl_abrir_borrador debe negarse.
+  perform set_config('request.jwt.claims', '', true);
+  begin
+    perform public.pl_abrir_borrador(id_exp);
+    rechazo := false;
+    raise exception using errcode = 'ZZ999', message = '__deshacer__';
+  exception
+    when sqlstate 'ZZ999' then null;
+    when others then rechazo := true;
+  end;
+
+  insert into pruebas_alm values (10,
+    'Sin sesión, abrir borrador se rechaza (la guarda falla cerrado)',
+    case when rechazo then 'rechazado' else 'LO DEJÓ PASAR' end,
+    'rechazado',
+    case when rechazo then '✅' else '❌ la guarda falla abierta' end);
+
+  insert into pruebas_alm values (11,
+    'pl_es_equipo nunca devuelve NULL',
+    coalesce(public.pl_es_equipo()::text, 'NULL'), 'false',
+    case when public.pl_es_equipo() is not null then '✅' else '❌' end);
 end $$;
 
 -- Limpieza por si algo sobrevivió al deshacer.
