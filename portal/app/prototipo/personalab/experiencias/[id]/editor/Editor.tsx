@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import BloqueLector from '../../../Bloques'
+import SubirArchivo from '../../../SubirArchivo'
 import {
   CATALOGO, NIVEL,
   type Bloque, type TipoBloque, type Audiencia,
@@ -18,10 +19,13 @@ import { BTN_PRIMARIO, BTN_SECUNDARIO, BTN_FILA, TARJETA } from '../../../tokens
 
 const TIEMPOS: Tiempo[] = ['vispera', 'ignicion', 'retorno']
 
-// Los seis tipos que se editan con texto. Archivo, imagen y video llegan en
-// el paso 5, cuando toque la subida; ponerlos ahora sin subida real solo
-// produce controles muertos.
-const TIPOS_EDITABLES: TipoBloque[] = ['texto', 'cita', 'consigna', 'aviso', 'gesto', 'objeto', 'nota', 'pausa']
+// El catalogo completo. Los tres ultimos llevan subida simulada: el archivo
+// no sale del navegador y la pantalla lo dice.
+const TIPOS_EDITABLES: TipoBloque[] = [
+  'texto', 'cita', 'consigna', 'aviso', 'gesto', 'objeto', 'nota', 'pausa',
+  'archivo', 'imagen', 'video',
+]
+const CON_SUBIDA: TipoBloque[] = ['archivo', 'imagen', 'video']
 
 const CHIP: Record<EstadoGuardado, { texto: string; clase: string }> = {
   limpio:    { texto: 'Sin cambios',  clase: 'text-slate-400' },
@@ -170,7 +174,12 @@ export default function Editor({ experiencia }: { experiencia: Experiencia }) {
               </button>
             )}
             <button onClick={guardarYa} className={BTN_SECUNDARIO}>Guardar</button>
-            <button className={BTN_PRIMARIO}>Publicar</button>
+            <Link
+              href={`/prototipo/personalab/experiencias/${experiencia.id}/publicar`}
+              className={BTN_PRIMARIO}
+            >
+              Revisar y publicar
+            </Link>
           </div>
         </div>
       </div>
@@ -267,7 +276,8 @@ export default function Editor({ experiencia }: { experiencia: Experiencia }) {
               ))}
             </div>
             <p className="text-[11px] text-slate-400 mt-3 leading-relaxed">
-              Archivo, imagen y video llegan con la subida real. Ponerlos ahora sería un control muerto.
+              Archivo, imagen y video ya se pueden agregar. La subida está simulada: el archivo no sale
+              de tu navegador.
             </p>
           </div>
         </div>
@@ -390,6 +400,50 @@ function TarjetaBloque({
       <div className="p-4">
         {b.tipo === 'pausa' ? (
           <p className="text-sm text-slate-400">Un respiro. No lleva contenido.</p>
+        ) : CON_SUBIDA.includes(b.tipo) ? (
+          <>
+            <label className={ETIQUETA_INPUT}>
+              {b.tipo === 'archivo' ? 'PDF' : b.tipo === 'video' ? 'Video' : 'Imagen'}
+            </label>
+            <SubirArchivo
+              tipo={b.tipo}
+              nombre={b.nombreArchivo}
+              url={b.url}
+              onListo={d => onCambio({ nombreArchivo: d.nombreArchivo, peso: d.peso, url: d.url })}
+              onQuitar={() => onCambio({ nombreArchivo: '', peso: undefined, url: undefined })}
+            />
+
+            <div className="mt-3">
+              <label className={ETIQUETA_INPUT}>
+                {b.tipo === 'archivo' ? 'Qué es este documento' : 'Pie'}
+              </label>
+              <input
+                value={b.pie ?? ''}
+                onChange={e => onCambio({ pie: e.target.value })}
+                placeholder={
+                  b.tipo === 'archivo'
+                    ? 'Guion de sala, versión 1.2'
+                    : 'Una frase. Se lee debajo.'
+                }
+                className={INPUT}
+              />
+            </div>
+
+            {b.tipo === 'archivo' && (
+              <label className="flex items-center gap-2 mt-3 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={b.descargable ?? false}
+                  onChange={e => onCambio({ descargable: e.target.checked })}
+                  className="w-4 h-4 rounded border-slate-300 accent-slate-900"
+                />
+                <span className="text-xs text-slate-600">Se puede descargar</span>
+                <span className="text-xs text-slate-400">
+                  Los guiones de sala suelen ser solo para el moderador.
+                </span>
+              </label>
+            )}
+          </>
         ) : (
           <>
             <label className={ETIQUETA_INPUT}>

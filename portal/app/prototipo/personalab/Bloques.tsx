@@ -127,9 +127,14 @@ export default function BloqueLector({ b }: { b: Bloque }) {
     case 'imagen':
       return (
         <figure className={mt}>
-          <div className="rounded-xl bg-[#EFE9E0] aspect-[3/2] flex items-center justify-center">
-            <span className="text-[12px] text-[#A69C90]">{b.url ?? 'imagen'}</span>
-          </div>
+          {b.url ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={b.url} alt={b.pie ?? ''} className="rounded-xl w-full object-cover" />
+          ) : (
+            <div className="rounded-xl bg-[#EFE9E0] aspect-[3/2] flex items-center justify-center">
+              <span className="text-[12px] text-[#A69C90]">sin imagen</span>
+            </div>
+          )}
           {b.pie && (
             <figcaption className="mt-2.5 text-[12.5px] leading-[1.6] font-light text-[#676E6E]">
               {b.pie}
@@ -141,18 +146,22 @@ export default function BloqueLector({ b }: { b: Bloque }) {
     case 'video':
       return (
         <figure className={mt}>
-          <div className="rounded-xl bg-[#1A2426] aspect-video flex items-center justify-center relative">
-            <span className="w-12 h-12 rounded-full bg-white/15 flex items-center justify-center">
-              <svg className="w-4 h-4 text-white ml-0.5" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M8 5v14l11-7z" />
-              </svg>
-            </span>
-            {b.duracion && (
-              <span className="absolute bottom-2 right-2 text-[10px] font-medium text-white bg-black/70 px-1.5 py-0.5 rounded tabular-nums">
-                {b.duracion}
+          {b.url ? (
+            <video src={b.url} controls className="rounded-xl w-full bg-[#1A2426]" />
+          ) : (
+            <div className="rounded-xl bg-[#1A2426] aspect-video flex items-center justify-center relative">
+              <span className="w-12 h-12 rounded-full bg-white/15 flex items-center justify-center">
+                <svg className="w-4 h-4 text-white ml-0.5" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
               </span>
-            )}
-          </div>
+              {b.duracion && (
+                <span className="absolute bottom-2 right-2 text-[10px] font-medium text-white bg-black/70 px-1.5 py-0.5 rounded tabular-nums">
+                  {b.duracion}
+                </span>
+              )}
+            </div>
+          )}
           {b.pie && (
             <figcaption className="mt-2.5 text-[12.5px] leading-[1.6] font-light text-[#676E6E]">
               {b.pie}
