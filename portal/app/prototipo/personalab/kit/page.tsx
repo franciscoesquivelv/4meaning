@@ -49,7 +49,7 @@ export default function KitPage() {
                 {exp.nombre}
               </Link>
             </td>
-            <td className={`${TD} text-slate-500`}>{p.porPersona ? 'Sí' : '—'}</td>
+            <td className={`${TD} text-slate-500`}>{p.porPersona ? 'Sí' : ''}</td>
             <td className={TD}>
               <span className={`text-xs font-medium ${p.disponible ? 'text-emerald-700' : 'text-amber-700'}`}>
                 {p.disponible ? 'Listo' : 'Falta'}

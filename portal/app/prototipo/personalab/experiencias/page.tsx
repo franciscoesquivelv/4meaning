@@ -1,14 +1,14 @@
 import Link from 'next/link'
 import { EXPERIENCIAS, MADURACION, CORRIDAS } from '../dominio'
-import { Badge, Titulo, Tabla, Explicativo } from '../ui'
-import { TD, BTN_PRIMARIO, COLOR_MADURACION } from '../tokens'
+import { Badge, Titulo, Tabla, Explicativo, BotonPronto } from '../ui'
+import { TD, COLOR_MADURACION } from '../tokens'
 
 export default function ExperienciasPage() {
   return (
     <>
       <Titulo
         sub="La biblioteca. Cada experiencia es un diseño, no un contenedor de lecciones: vive en tres tiempos y se sostiene en bisagras."
-        accion={<button className={BTN_PRIMARIO}>+ Nueva experiencia</button>}
+        accion={<BotonPronto>+ Nueva experiencia</BotonPronto>}
       >
         Experiencias
       </Titulo>

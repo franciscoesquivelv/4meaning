@@ -11,9 +11,23 @@ import { BLOQUES, type Bloque, type TipoBloque, type Audiencia } from './conteni
 // BORRADOR es donde se trabaja. Publicar copia borrador sobre publicado.
 // Sin eso, editar seria editar en vivo encima de gente leyendo.
 
-const LLAVE_BORRADOR = 'personalab.borrador.v1'
-const LLAVE_PUBLICADO = 'personalab.publicado.v1'
-const LLAVE_HISTORIAL = 'personalab.historial.v1'
+// LA LLAVE LLEVA LA EXPERIENCIA. Antes no: habia una sola llave global para
+// todo el catalogo, asi que abrir el editor de Metamorfosis cargaba los
+// bloques de El Presente como Regalo, cuyas bisagras son otras. Las diez
+// bisagras de Metamorfosis salian "vacias" y publicar desde ahi publicaba el
+// contenido de la otra experiencia encima. Ninguna pantalla lo advertia.
+//
+// La v2 en la llave es a proposito: las llaves v1 que quedaron en los
+// navegadores tienen contenido de una experiencia guardado como si fuera de
+// todas, y no hay forma de saber de cual. Se abandonan en vez de migrarse.
+const llaveBorrador = (exp: string) => `personalab.${exp}.borrador.v2`
+const llavePublicado = (exp: string) => `personalab.${exp}.publicado.v2`
+const llaveHistorial = (exp: string) => `personalab.${exp}.historial.v2`
+
+// Los bloques sembrados son todos de El Presente como Regalo: sus bisagras
+// son p1 a p5. Las demas experiencias arrancan en blanco, que es la verdad,
+// en vez de arrancar con contenido ajeno que no calza con sus bisagras.
+const EXPERIENCIA_SEMBRADA = 'presente-regalo'
 
 export type EstadoGuardado = 'limpio' | 'pendiente' | 'guardando' | 'guardado' | 'error'
 
@@ -37,59 +51,65 @@ function leer(llave: string): Bloque[] | null {
 
 // ── Publicado ───────────────────────────────────────────────────
 
-export function cargarPublicado(): Bloque[] {
-  return leer(LLAVE_PUBLICADO) ?? BLOQUES
+export function cargarPublicado(exp: string): Bloque[] {
+  const guardado = leer(llavePublicado(exp))
+  if (guardado) return guardado
+  return exp === EXPERIENCIA_SEMBRADA ? BLOQUES : []
 }
 
-export function historial(): Publicacion[] {
+export function historial(exp: string): Publicacion[] {
   if (typeof window === 'undefined') return []
   try {
-    const crudo = window.localStorage.getItem(LLAVE_HISTORIAL)
-    if (!crudo) return [{ numero: 2, fecha: '2026-07-30', bloques: BLOQUES.length }]
+    const crudo = window.localStorage.getItem(llaveHistorial(exp))
+    if (!crudo) {
+      return exp === EXPERIENCIA_SEMBRADA
+        ? [{ numero: 2, fecha: '2026-07-30', bloques: BLOQUES.length }]
+        : []
+    }
     return JSON.parse(crudo) as Publicacion[]
   } catch {
     return []
   }
 }
 
-export function publicar(bloques: Bloque[], fechaISO: string): Publicacion {
-  const previo = historial()
+export function publicar(exp: string, bloques: Bloque[], fechaISO: string): Publicacion {
+  const previo = historial(exp)
   const numero = (previo[0]?.numero ?? 0) + 1
   const entrada: Publicacion = { numero, fecha: fechaISO, bloques: bloques.length }
   if (typeof window !== 'undefined') {
-    window.localStorage.setItem(LLAVE_PUBLICADO, JSON.stringify(bloques))
-    window.localStorage.setItem(LLAVE_HISTORIAL, JSON.stringify([entrada, ...previo]))
+    window.localStorage.setItem(llavePublicado(exp), JSON.stringify(bloques))
+    window.localStorage.setItem(llaveHistorial(exp), JSON.stringify([entrada, ...previo]))
     // Publicar cierra el borrador: lo que sigue es lo publicado.
-    window.localStorage.removeItem(LLAVE_BORRADOR)
+    window.localStorage.removeItem(llaveBorrador(exp))
   }
   return entrada
 }
 
 // ── Borrador ────────────────────────────────────────────────────
 
-export function cargar(): Bloque[] {
-  return leer(LLAVE_BORRADOR) ?? cargarPublicado()
+export function cargar(exp: string): Bloque[] {
+  return leer(llaveBorrador(exp)) ?? cargarPublicado(exp)
 }
 
-export function guardar(bloques: Bloque[]): void {
+export function guardar(exp: string, bloques: Bloque[]): void {
   if (typeof window === 'undefined') return
-  window.localStorage.setItem(LLAVE_BORRADOR, JSON.stringify(bloques))
+  window.localStorage.setItem(llaveBorrador(exp), JSON.stringify(bloques))
 }
 
-export function descartarBorrador(): void {
+export function descartarBorrador(exp: string): void {
   if (typeof window === 'undefined') return
-  window.localStorage.removeItem(LLAVE_BORRADOR)
+  window.localStorage.removeItem(llaveBorrador(exp))
 }
 
-export function hayBorrador(): boolean {
+export function hayBorrador(exp: string): boolean {
   if (typeof window === 'undefined') return false
-  return window.localStorage.getItem(LLAVE_BORRADOR) !== null
+  return window.localStorage.getItem(llaveBorrador(exp)) !== null
 }
 
 // Cuantos bloques difieren entre borrador y publicado.
-export function diferencias(): { nuevos: number; editados: number; quitados: number } {
-  const b = cargar()
-  const p = cargarPublicado()
+export function diferencias(exp: string): { nuevos: number; editados: number; quitados: number } {
+  const b = cargar(exp)
+  const p = cargarPublicado(exp)
   const porId = new Map(p.map(x => [x.id, x]))
   let nuevos = 0
   let editados = 0

@@ -5,7 +5,7 @@ import {
   ETIQUETA_TIEMPO, PAPEL_SOFTWARE, SOPORTE_NOTA, COLUMNA_KIT, ESTADO_CORRIDA,
   type Tiempo, type ColumnaKit, type Bisagra,
 } from '../../dominio'
-import { Badge, Panel, Etiqueta, Vacio, TarjetaLista, Fila } from '../../ui'
+import { Badge, Panel, Etiqueta, Vacio, TarjetaLista, Fila, BotonPronto } from '../../ui'
 import {
   TARJETA, BTN_PRIMARIO, BTN_SECUNDARIO, PASTILLA,
   COLOR_MADURACION, COLOR_ESTADO, COLOR_SOPORTE, AVISO,
@@ -66,7 +66,7 @@ export default function ExperienciaPage({ params }: { params: { id: string } }) 
           {e.narrativa && <p className="text-base text-slate-700 italic mt-3">{e.narrativa}</p>}
         </div>
         <div className="flex gap-2 flex-shrink-0">
-          <button className={BTN_SECUNDARIO}>Editar ficha</button>
+          <BotonPronto>Editar ficha</BotonPronto>
           <Link href={`/prototipo/personalab/experiencias/${e.id}/editor`} className={BTN_PRIMARIO}>
             Abrir editor
           </Link>
@@ -91,7 +91,16 @@ export default function ExperienciaPage({ params }: { params: { id: string } }) 
         <div className="flex flex-col gap-5">
           <Etiqueta>El diseño</Etiqueta>
           {e.bisagras.length === 0 ? (
-            <Vacio>
+            <Vacio
+              accion={
+                <Link
+                  href={`/prototipo/personalab/experiencias/${e.id}/editor`}
+                  className={BTN_SECUNDARIO}
+                >
+                  Abrir editor
+                </Link>
+              }
+            >
               Esta experiencia no tiene ninguna bisagra definida. No es que falte capturarla: es que no
               está diseñada. Mientras siga así, no se puede correr ni licenciar a un capítulo.
             </Vacio>

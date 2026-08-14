@@ -4,37 +4,67 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { cargar, publicar, diferencias, historial, type Publicacion } from '../../../almacen'
 import { revisar, type Hallazgo } from '../../../revision'
+import { CORRIDAS } from '../../../dominio'
 import type { Experiencia } from '../../../dominio'
 import { TARJETA, BTN_PRIMARIO, BTN_SECUNDARIO } from '../../../tokens'
+import { Boton, Girador } from '../../../ui'
 import type { Bloque } from '../../../contenido'
+
+// Piso perceptible, igual que en el editor: sin esto el botón termina antes
+// de que el ojo registre que empezó, y parece no haber respondido.
+const MINIMO_PERCEPTIBLE = 400
 
 export default function Publicar({ experiencia }: { experiencia: Experiencia }) {
   const [bloques, setBloques] = useState<Bloque[] | null>(null)
   const [confirmando, setConfirmando] = useState(false)
+  const [publicando, setPublicando] = useState(false)
+  const [fallo, setFallo] = useState(false)
   const [publicado, setPublicado] = useState<Publicacion | null>(null)
   const [previo, setPrevio] = useState<Publicacion[]>([])
   const [dif, setDif] = useState({ nuevos: 0, editados: 0, quitados: 0 })
 
   useEffect(() => {
-    setBloques(cargar())
-    setPrevio(historial())
-    setDif(diferencias())
-  }, [])
+    setBloques(cargar(experiencia.id))
+    setPrevio(historial(experiencia.id))
+    setDif(diferencias(experiencia.id))
+  }, [experiencia.id])
 
   if (!bloques) {
-    return <div className="text-sm text-slate-400">Revisando…</div>
+    return (
+      <div className="text-sm text-slate-400 flex items-center gap-2">
+        <Girador />
+        Revisando lo que escribiste
+      </div>
+    )
   }
 
   const r = revisar(experiencia, bloques)
   const impedimentos = r.hallazgos.filter(h => h.severidad === 'impide')
   const advertencias = r.hallazgos.filter(h => h.severidad === 'advierte')
+  // La primera corrida de esta experiencia. Antes este enlace apuntaba a c2
+  // fijo en el código: publicaras lo que publicaras, te llevaba a esa.
+  const corrida = CORRIDAS.find(c => c.experienciaId === experiencia.id)
 
-  function hacerlo() {
-    const hoy = new Date().toISOString().slice(0, 10)
-    const entrada = publicar(bloques!, hoy)
-    setPublicado(entrada)
-    setConfirmando(false)
-    setPrevio(historial())
+  // Sin este try/catch, si el guardado fallaba (cuota llena, ventana
+  // privada) el botón no hacía absolutamente nada visible y el autor lo
+  // presionaba otra vez, y otra.
+  async function hacerlo() {
+    setPublicando(true)
+    setFallo(false)
+    const inicio = Date.now()
+    try {
+      const hoy = new Date().toISOString().slice(0, 10)
+      const entrada = publicar(experiencia.id, bloques!, hoy)
+      const resto = MINIMO_PERCEPTIBLE - (Date.now() - inicio)
+      if (resto > 0) await new Promise(res => setTimeout(res, resto))
+      setPublicado(entrada)
+      setConfirmando(false)
+      setPrevio(historial(experiencia.id))
+    } catch {
+      setFallo(true)
+    } finally {
+      setPublicando(false)
+    }
   }
 
   if (publicado) {
@@ -42,16 +72,18 @@ export default function Publicar({ experiencia }: { experiencia: Experiencia }) 
       <div className="max-w-[620px]">
         <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-6 py-6">
           <h1 className="text-xl font-semibold text-emerald-900">
-            Publicada la versión {publicado.numero}
+            Versión {publicado.numero} publicada
           </h1>
           <p className="text-sm text-emerald-800 mt-2 leading-relaxed">
-            Desde este momento, quien entre a leer ve esto. El borrador quedó cerrado; si vuelves al
-            editor, empiezas uno nuevo sobre lo que acabas de publicar.
+            Desde ahora, quien entre a leer ve esto. El borrador quedó cerrado. Si vuelves al editor
+            empiezas uno nuevo, encima de lo que acabas de publicar.
           </p>
           <div className="flex gap-2 mt-5">
-            <Link href={`/prototipo/lector/c2`} className={BTN_PRIMARIO}>
-              Ver como participante
-            </Link>
+            {corrida && (
+              <Link href={`/prototipo/lector/${corrida.id}`} className={BTN_PRIMARIO}>
+                Ver como participante
+              </Link>
+            )}
             <Link
               href={`/prototipo/personalab/experiencias/${experiencia.id}`}
               className={BTN_SECUNDARIO}
@@ -128,48 +160,87 @@ export default function Publicar({ experiencia }: { experiencia: Experiencia }) 
               <Dato k="Solo el moderador" v={String(r.resumen.soloModerador)} />
             </dl>
 
-            {(dif.nuevos > 0 || dif.editados > 0 || dif.quitados > 0) && (
-              <div className="mt-4 pt-4 border-t border-slate-100">
-                <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-2">
-                  Cambios sobre lo publicado
-                </div>
+            {/* Esta caja se ocultaba entera cuando no había diferencias, así
+                que publicar algo idéntico a lo publicado se veía igual que
+                publicar veinte cambios. El silencio se lee como confirmación. */}
+            <div className="mt-4 pt-4 border-t border-slate-100">
+              <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-2">
+                Cambios sobre lo publicado
+              </div>
+              {dif.nuevos === 0 && dif.editados === 0 && dif.quitados === 0 ? (
+                <p className="text-sm text-slate-400">
+                  Ninguno. Esto es idéntico a lo que ya está publicado.
+                </p>
+              ) : (
                 <div className="text-sm text-slate-600 space-y-1">
                   {dif.nuevos > 0 && <div>{dif.nuevos} bloque{dif.nuevos > 1 ? 's' : ''} nuevo{dif.nuevos > 1 ? 's' : ''}</div>}
                   {dif.editados > 0 && <div>{dif.editados} editado{dif.editados > 1 ? 's' : ''}</div>}
                   {dif.quitados > 0 && <div>{dif.quitados} quitado{dif.quitados > 1 ? 's' : ''}</div>}
                 </div>
-              </div>
-            )}
+              )}
+            </div>
 
             <div className="mt-5 pt-5 border-t border-slate-100">
-              {!r.puedePublicar ? (
+              {fallo ? (
                 <>
-                  <button disabled className={`${BTN_PRIMARIO} w-full opacity-40 cursor-not-allowed`}>
-                    Publicar
-                  </button>
+                  <p className="text-sm font-semibold text-red-700">No se pudo publicar</p>
+                  <p className="text-sm text-slate-600 mt-1 leading-relaxed">
+                    Tu borrador está intacto y nadie ha visto los cambios. Vuelve a intentar; si falla
+                    otra vez, avisa antes de seguir editando.
+                  </p>
+                  <div className="flex gap-2 mt-3">
+                    <Boton
+                      variante="primario"
+                      onClick={hacerlo}
+                      cargando={publicando}
+                      textoCargando="Publicando"
+                      className="flex-1"
+                    >
+                      Reintentar
+                    </Boton>
+                    <Link
+                      href={`/prototipo/personalab/experiencias/${experiencia.id}/editor`}
+                      className={BTN_SECUNDARIO}
+                    >
+                      Volver al editor
+                    </Link>
+                  </div>
+                </>
+              ) : !r.puedePublicar ? (
+                <>
+                  <Boton variante="primario" disabled className="w-full">Publicar</Boton>
                   <p className="text-xs text-slate-400 mt-2 leading-relaxed">
-                    Corrige lo de la franja roja primero.
+                    Resuelve primero {impedimentos.length === 1 ? 'la cosa' : `las ${impedimentos.length} cosas`} de
+                    arriba. Cada una dejaría una pantalla rota o en blanco para el participante.
                   </p>
                 </>
               ) : confirmando ? (
                 <>
                   <p className="text-sm text-slate-700 leading-relaxed mb-3">
-                    Al publicar, {r.resumen.visiblesAlParticipante} bloques quedan visibles para quien
-                    entre a leer. ¿Seguimos?
+                    Al publicar, {r.resumen.visiblesAlParticipante} bloques quedan visibles para el foro
+                    y {r.resumen.soloModerador} solo para el moderador. Reemplaza
+                    {previo[0] ? ` la versión ${previo[0].numero}` : ' lo que hay publicado'} desde este
+                    momento.
                   </p>
                   <div className="flex gap-2">
-                    <button onClick={hacerlo} className={`${BTN_PRIMARIO} flex-1`}>
+                    <Boton
+                      variante="primario"
+                      onClick={hacerlo}
+                      cargando={publicando}
+                      textoCargando="Publicando"
+                      className="flex-1"
+                    >
                       Sí, publicar
-                    </button>
-                    <button onClick={() => setConfirmando(false)} className={BTN_SECUNDARIO}>
+                    </Boton>
+                    <Boton variante="secundario" onClick={() => setConfirmando(false)} disabled={publicando}>
                       Cancelar
-                    </button>
+                    </Boton>
                   </div>
                 </>
               ) : (
-                <button onClick={() => setConfirmando(true)} className={`${BTN_PRIMARIO} w-full`}>
+                <Boton variante="primario" onClick={() => setConfirmando(true)} className="w-full">
                   Publicar
-                </button>
+                </Boton>
               )}
             </div>
           </div>
@@ -230,11 +301,14 @@ function Franja({
                 <p className="text-sm text-slate-900">{h.que}</p>
                 <p className="text-xs text-slate-500 mt-0.5">{h.comoSeArregla}</p>
               </div>
+              {/* El enlace lleva a LA bisagra del hallazgo, no al editor
+                  genérico. Antes el autor aterrizaba en la primera y tenía
+                  que buscar a mano lo que el sistema acababa de señalarle. */}
               <Link
-                href={`/prototipo/personalab/experiencias/${experienciaId}/editor`}
+                href={`/prototipo/personalab/experiencias/${experienciaId}/editor?bisagra=${h.bisagraId}`}
                 className="text-xs text-slate-500 hover:text-slate-900 whitespace-nowrap flex-shrink-0 underline underline-offset-2"
               >
-                {h.bisagra}
+                Ir a {h.bisagra}
               </Link>
             </div>
           </div>

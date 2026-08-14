@@ -81,8 +81,8 @@ export function revisar(experiencia: Experiencia, bloques: Bloque[]): Revision {
               severidad: 'impide',
               bisagraId: bi.id,
               bisagra: nombre,
-              que: `Hay un bloque de ${b.tipo} sin texto.`,
-              comoSeArregla: 'Escríbelo o quítalo.',
+              que: `Un bloque de ${b.tipo} quedó sin texto.`,
+              comoSeArregla: 'Escríbelo, o quítalo si ya no hace falta.',
             })
           }
           break
@@ -93,8 +93,8 @@ export function revisar(experiencia: Experiencia, bloques: Bloque[]): Revision {
               severidad: 'impide',
               bisagraId: bi.id,
               bisagra: nombre,
-              que: 'Hay una cita sin texto.',
-              comoSeArregla: 'Escríbela o quítala.',
+              que: 'Una cita quedó sin texto.',
+              comoSeArregla: 'Escríbela, o quítala si ya no hace falta.',
             })
           } else if (vacio(b.autor)) {
             hallazgos.push({
@@ -113,7 +113,7 @@ export function revisar(experiencia: Experiencia, bloques: Bloque[]): Revision {
               severidad: 'impide',
               bisagraId: bi.id,
               bisagra: nombre,
-              que: 'Hay un objeto sin nombre.',
+              que: 'Un objeto quedó sin nombre.',
               comoSeArregla: 'Di qué se tiene en la mano.',
             })
           } else if (vacio(b.pie)) {
@@ -133,8 +133,8 @@ export function revisar(experiencia: Experiencia, bloques: Bloque[]): Revision {
               severidad: 'impide',
               bisagraId: bi.id,
               bisagra: nombre,
-              que: 'Hay un archivo sin subir.',
-              comoSeArregla: 'Súbelo o quita el bloque.',
+              que: 'Un archivo quedó sin subir.',
+              comoSeArregla: 'Súbelo, o quita el bloque si ya no hace falta.',
             })
           }
           if (b.descargable && b.audiencia === 'todos') {
@@ -155,8 +155,8 @@ export function revisar(experiencia: Experiencia, bloques: Bloque[]): Revision {
               severidad: 'impide',
               bisagraId: bi.id,
               bisagra: nombre,
-              que: `Hay un bloque de ${b.tipo} sin contenido.`,
-              comoSeArregla: 'Súbelo o quita el bloque.',
+              que: `Un bloque de ${b.tipo} quedó sin contenido.`,
+              comoSeArregla: 'Súbelo, o quita el bloque si ya no hace falta.',
             })
           }
           break
@@ -170,7 +170,7 @@ export function revisar(experiencia: Experiencia, bloques: Bloque[]): Revision {
           severidad: 'advierte',
           bisagraId: bi.id,
           bisagra: nombre,
-          que: 'Hay dos pausas seguidas.',
+          que: 'Quedaron dos pausas seguidas.',
           comoSeArregla: 'Deja una. Dos seguidas se leen como un error.',
         })
         break

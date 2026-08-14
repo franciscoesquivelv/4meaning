@@ -33,10 +33,26 @@ export function useFuente(): Fuente {
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     )
 
+    // getUser() no tiene tiempo límite propio. Si Supabase no responde, el
+    // editor se queda en "Comprobando tu sesión" para siempre. Ocho segundos
+    // y se decide, en vez de dejar a alguien mirando un esqueleto.
+    let resuelto = false
+    const reloj = setTimeout(() => {
+      if (!resuelto) setFuente({ modo: 'sin-sesion' })
+    }, 8000)
+
     supabase.auth.getUser().then(({ data }) => {
+      resuelto = true
+      clearTimeout(reloj)
       if (data.user) setFuente({ modo: 'remoto', email: data.user.email ?? '' })
       else setFuente({ modo: 'sin-sesion' })
-    }).catch(() => setFuente({ modo: 'sin-sesion' }))
+    }).catch(() => {
+      resuelto = true
+      clearTimeout(reloj)
+      setFuente({ modo: 'sin-sesion' })
+    })
+
+    return () => clearTimeout(reloj)
   }, [])
 
   return fuente

@@ -1,14 +1,14 @@
 import Link from 'next/link'
 import { CAPITULOS, CORRIDAS, moderador, experiencia, fecha } from '../dominio'
-import { Titulo, Tabla } from '../ui'
-import { TD, BTN_PRIMARIO } from '../tokens'
+import { Titulo, Tabla, BotonPronto } from '../ui'
+import { TD } from '../tokens'
 
 export default function CapitulosPage() {
   return (
     <>
       <Titulo
         sub="Cada grupo que adopta y corre una experiencia con un moderador propio. Es la unidad de replicabilidad."
-        accion={<button className={BTN_PRIMARIO}>+ Nuevo capítulo</button>}
+        accion={<BotonPronto>+ Nuevo capítulo</BotonPronto>}
       >
         Capítulos
       </Titulo>

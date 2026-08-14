@@ -116,19 +116,28 @@ export default function SubirArchivo({
 
       {estado === 'vacio' && (
         <div className="border border-dashed border-slate-300 rounded-lg px-4 py-6 text-center">
+          {/* Nombrar el vacío no sirve de nada cuando el botón está justo
+              debajo. Nombrar la acción sí. */}
           <p className="text-sm text-slate-500">
-            {tipo === 'archivo' ? 'Ningún PDF todavía.' : tipo === 'video' ? 'Ningún video todavía.' : 'Ninguna imagen todavía.'}
+            {tipo === 'archivo'
+              ? 'Elige el PDF que va en este bloque.'
+              : tipo === 'video'
+                ? 'Elige el video que va en este bloque.'
+                : 'Elige la imagen que va en este bloque.'}
           </p>
           <div className="flex items-center justify-center gap-2 mt-3">
             <button onClick={() => elegir(false)} className={BTN_FILA}>
               Elegir archivo
             </button>
+            {/* Esto es andamio de diseño, no una función del producto: sirve
+                para poder ver el estado de error sin esperar a que falle de
+                verdad. Va en gris y nombrado por lo que hace. */}
             <button
               onClick={() => elegir(true)}
-              className={`${BTN_FILA} text-slate-400`}
-              title="Demostración: fuerza un fallo para poder ver ese estado"
+              className="text-xs text-slate-400 hover:text-slate-600 underline underline-offset-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900/25 focus-visible:ring-offset-2 rounded"
+              title="Solo para revisar el diseño. Fuerza un fallo de subida."
             >
-              Simular fallo
+              Ver el estado de error
             </button>
           </div>
         </div>
@@ -138,14 +147,15 @@ export default function SubirArchivo({
         <div className="border border-slate-200 rounded-lg px-4 py-3.5">
           <div className="flex items-center justify-between gap-3 mb-2">
             <span className="text-sm text-slate-700 truncate">{pendiente?.name}</span>
-            <span className="text-xs text-slate-400 tabular-nums flex-shrink-0">
-              {Math.round(avance)} %
+            {/* Un número sin verbo no dice en qué va. */}
+            <span className="text-xs text-slate-400 tabular-nums flex-shrink-0" role="status" aria-live="polite">
+              {avance < 1 ? 'Preparando' : `Subiendo, ${Math.round(avance)} %`}
             </span>
           </div>
-          <div className="h-1 bg-slate-100 rounded-full overflow-hidden">
+          <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
             <div
-              className="h-full bg-slate-800 transition-[width] duration-200"
-              style={{ width: `${avance}%` }}
+              className="h-full bg-slate-800 rounded-full transition-[width] duration-200 ease-out"
+              style={{ width: `${Math.max(avance, 4)}%` }}
             />
           </div>
         </div>
@@ -204,9 +214,15 @@ export default function SubirArchivo({
         </div>
       )}
 
-      <p className="text-[11px] text-amber-700 mt-2 leading-relaxed">
-        Prototipo: el archivo no se sube a ningún lado y se pierde al recargar.
-      </p>
+      {/* El aviso vivía bajo TODOS los estados de TODOS los bloques, y
+          repetido así se vuelve ruido y deja de leerse. Se queda solo aquí,
+          en "listo", que es el único momento donde alguien puede creer que
+          el archivo ya está guardado en algún lado. */}
+      {estado === 'listo' && (
+        <p className="text-[11px] text-amber-700 mt-2 leading-relaxed">
+          El archivo no se subió a ningún lado: se pierde al recargar.
+        </p>
+      )}
     </div>
   )
 }

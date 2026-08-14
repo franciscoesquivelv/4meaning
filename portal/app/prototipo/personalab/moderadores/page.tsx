@@ -1,14 +1,14 @@
 import Link from 'next/link'
 import { MODERADORES, EXPERIENCIAS, CORRIDAS, capitulo } from '../dominio'
-import { Titulo, Tabla, Explicativo } from '../ui'
-import { TD, BTN_PRIMARIO } from '../tokens'
+import { Titulo, Tabla, Explicativo, BotonPronto } from '../ui'
+import { TD } from '../tokens'
 
 export default function ModeradoresPage() {
   return (
     <>
       <Titulo
         sub="Quiénes tienen acceso y en qué están formados. El acceso a una experiencia se le otorga al moderador, no al foro."
-        accion={<button className={BTN_PRIMARIO}>+ Dar acceso</button>}
+        accion={<BotonPronto>+ Dar acceso</BotonPronto>}
       >
         Moderadores
       </Titulo>

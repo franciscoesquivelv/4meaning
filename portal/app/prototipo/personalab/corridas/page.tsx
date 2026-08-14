@@ -3,8 +3,8 @@ import {
   CORRIDAS, ESTADO_CORRIDA, experiencia, capitulo, moderador, fecha,
   type EstadoCorrida,
 } from '../dominio'
-import { Titulo } from '../ui'
-import { BTN_PRIMARIO, PASTILLA } from '../tokens'
+import { Titulo, BotonPronto } from '../ui'
+import { PASTILLA } from '../tokens'
 
 // Tablero por estado de pipeline, calcado del listado de eventos del admin
 // real. Antes era una tabla, que es justo lo que no se parecia.
@@ -22,7 +22,7 @@ export default function CorridasPage() {
     <>
       <Titulo
         sub="Cada vez que un moderador corre una experiencia con su foro. Es la unidad de operación de PersonaLab, el equivalente al evento en Trascendencia."
-        accion={<button className={BTN_PRIMARIO}>+ Nueva corrida</button>}
+        accion={<BotonPronto>+ Nueva corrida</BotonPronto>}
       >
         Corridas
       </Titulo>

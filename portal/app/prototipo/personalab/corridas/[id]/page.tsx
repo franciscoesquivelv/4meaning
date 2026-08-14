@@ -4,9 +4,9 @@ import {
   corrida, experiencia, capitulo, moderador, fecha,
   ESTADO_CORRIDA, SOPORTE_NOTA,
 } from '../../dominio'
-import { Badge, Etiqueta, Panel, Vacio, TarjetaLista, FilaMetricas } from '../../ui'
+import { Badge, Etiqueta, Panel, Vacio, TarjetaLista, FilaMetricas, BotonPronto } from '../../ui'
 import {
-  TARJETA, BTN_PRIMARIO, BTN_SECUNDARIO, PASTILLA,
+  TARJETA, BTN_SECUNDARIO, PASTILLA,
   COLOR_ESTADO, COLOR_SOPORTE, AVISO,
 } from '../../tokens'
 
@@ -54,8 +54,8 @@ export default function CorridaPage({ params }: { params: { id: string } }) {
           <Badge label={ESTADO_CORRIDA[c.estado].etiqueta} cls={COLOR_ESTADO[c.estado]} />
         </div>
         <div className="flex gap-2 flex-shrink-0">
-          <button className={BTN_SECUNDARIO}>Editar</button>
-          <button className={BTN_PRIMARIO}>Modo sala</button>
+          <BotonPronto>Editar</BotonPronto>
+          <BotonPronto>Modo sala</BotonPronto>
         </div>
       </div>
 
@@ -71,7 +71,7 @@ export default function CorridaPage({ params }: { params: { id: string } }) {
           { v: String(c.personasEnElForo || 0), k: 'En el foro' },
           { v: `${hechos} / ${c.preparacion.length}`, k: 'Preparación' },
           { v: String(guion.length), k: 'Bisagras de sala' },
-          { v: c.estado === 'corrida' ? `${c.mesDeRetorno} / 6` : '—', k: 'Mes de retorno' },
+          { v: c.estado === 'corrida' ? `${c.mesDeRetorno} / 6` : 'sin retorno', k: 'Mes de retorno' },
         ]}
       />
 
@@ -81,6 +81,11 @@ export default function CorridaPage({ params }: { params: { id: string } }) {
             <b className="font-semibold">{mod.nombre} no está formado en esta experiencia.</b>{' '}
             La formación es presencial y no tiene sustituto en video, así que esta corrida no puede
             confirmarse todavía.
+          </p>
+          {/* Un aviso que no dice qué hacer es un muro sin puerta. */}
+          <p className="text-xs text-red-600 mt-2 leading-relaxed">
+            Lo que sigue es agendar su formación con el equipo. Todavía no se agenda desde aquí:
+            escríbele a quien lleve la formación y vuelve a esta pantalla cuando esté hecha.
           </p>
         </div>
       )}
@@ -161,19 +166,30 @@ export default function CorridaPage({ params }: { params: { id: string } }) {
         <div className="flex flex-col gap-5">
           <div className={`${TARJETA} p-5`}>
             <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-3">Acciones</div>
-            <Link href={`/prototipo/lector/${c.id}`} className={`${BTN_PRIMARIO} w-full block text-center mb-2`}>
+            {/* Dos enlaces que sí llevan a algún lado, con el mismo peso
+                entre ellos. Antes uno era negro y competía con Modo sala. */}
+            <Link
+              href={`/prototipo/lector/${c.id}`}
+              className={`${BTN_SECUNDARIO} w-full mb-2`}
+            >
               Ver como participante
             </Link>
             <Link
               href={`/prototipo/lector/${c.id}?lente=moderador`}
-              className={`${BTN_SECUNDARIO} w-full block text-left mb-2`}
+              className={`${BTN_SECUNDARIO} w-full mb-4`}
             >
               Ver como moderador
             </Link>
-            <div className="flex flex-col gap-2">
-              {ACCIONES.map(a => (
-                <button key={a} className={`${BTN_SECUNDARIO} w-full text-left`}>{a}</button>
-              ))}
+            {/* Estas cinco no hacían nada. Cinco botones muertos con el
+                aspecto de los vivos enseñan que la interfaz no responde, y
+                esa lección se generaliza. Se dicen como lo que son. */}
+            <div className="pt-3 border-t border-slate-100">
+              <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-2">
+                Todavía no
+              </div>
+              <ul className="text-sm text-slate-400 space-y-1.5">
+                {ACCIONES.map(a => <li key={a}>{a}</li>)}
+              </ul>
             </div>
           </div>
 

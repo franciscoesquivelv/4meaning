@@ -4,7 +4,7 @@ import {
   ESTADO_CORRIDA, MADURACION, experiencia, capitulo, fecha,
 } from './dominio'
 import { Badge, Titulo, Etiqueta, FilaMetricas, TarjetaLista, Fila, Panel } from './ui'
-import { AVISO, COLOR_ESTADO, COLOR_MADURACION } from './tokens'
+import { AVISO, BTN_PRIMARIO, BTN_SECUNDARIO, COLOR_ESTADO, COLOR_MADURACION, VACIO_NEUTRO } from './tokens'
 
 export default function ResumenPage() {
   const activas = CORRIDAS.filter(c => ['confirmada', 'en_preparacion'].includes(c.estado))
@@ -54,8 +54,13 @@ export default function ResumenPage() {
       {alertas.length > 0 && (
         <div className="mb-8">
           <Etiqueta>Pendiente antes de la próxima corrida</Etiqueta>
+          {/* Esta pantalla no tenía ninguna acción destacada: cuatro
+              métricas, hasta cinco alertas y cuatro tarjetas, todo del mismo
+              peso. La acción real es la primera alerta, así que esa lleva el
+              botón oscuro y las demás se quedan en blanco. Una promovida, no
+              todas. */}
           <div className="flex flex-col gap-2">
-            {alertas.map(a => (
+            {alertas.map((a, i) => (
               <div key={a.titulo + a.sub} className={`${AVISO} flex items-center justify-between gap-4`}>
                 <div className="min-w-0">
                   <div className="text-sm font-semibold text-slate-900">{a.titulo}</div>
@@ -63,7 +68,11 @@ export default function ResumenPage() {
                 </div>
                 <Link
                   href={a.href}
-                  className="bg-white border border-slate-200 text-slate-700 text-xs px-3 py-1.5 rounded-lg hover:bg-slate-50 transition-colors whitespace-nowrap flex-shrink-0"
+                  className={
+                    i === 0
+                      ? `${BTN_PRIMARIO} text-xs px-3 py-1.5 whitespace-nowrap flex-shrink-0`
+                      : `${BTN_SECUNDARIO} text-xs px-3 py-1.5 whitespace-nowrap flex-shrink-0`
+                  }
                 >
                   {a.accion}
                 </Link>
@@ -77,7 +86,7 @@ export default function ResumenPage() {
         <div className="flex flex-col gap-5">
           <TarjetaLista titulo="Próximas corridas" verTodo={{ href: '/prototipo/personalab/corridas', label: 'Ver todas' }}>
             {proximas.length === 0 ? (
-              <div className="px-5 py-6 text-sm text-slate-500">Nada agendado.</div>
+              <div className={VACIO_NEUTRO}>Nada agendado por ahora.</div>
             ) : (
               proximas.map(c => {
                 const e = experiencia(c.experienciaId)!
@@ -142,7 +151,7 @@ export default function ResumenPage() {
 
           <TarjetaLista titulo="En retorno" verTodo={{ href: '/prototipo/personalab/retorno', label: 'Ver todo' }}>
             {enRetorno.length === 0 ? (
-              <div className="px-5 py-6 text-sm text-slate-500">Nada en retorno ahora mismo.</div>
+              <div className={VACIO_NEUTRO}>Ningún foro está en retorno ahora mismo.</div>
             ) : (
               enRetorno.map(c => (
                 <Fila
