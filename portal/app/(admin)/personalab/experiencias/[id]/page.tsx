@@ -50,7 +50,7 @@ export default function ExperienciaPage({ params }: { params: { id: string } }) 
   return (
     <>
       <Link
-        href="/prototipo/personalab/experiencias"
+        href="/personalab/experiencias"
         className="text-xs text-slate-400 hover:text-slate-600 transition-colors"
       >
         ← Experiencias
@@ -67,7 +67,7 @@ export default function ExperienciaPage({ params }: { params: { id: string } }) 
         </div>
         <div className="flex gap-2 flex-shrink-0">
           <BotonPronto>Editar ficha</BotonPronto>
-          <Link href={`/prototipo/personalab/experiencias/${e.id}/editor`} className={BTN_PRIMARIO}>
+          <Link href={`/personalab/experiencias/${e.id}/editor`} className={BTN_PRIMARIO}>
             Abrir editor
           </Link>
         </div>
@@ -94,7 +94,7 @@ export default function ExperienciaPage({ params }: { params: { id: string } }) 
             <Vacio
               accion={
                 <Link
-                  href={`/prototipo/personalab/experiencias/${e.id}/editor`}
+                  href={`/personalab/experiencias/${e.id}/editor`}
                   className={BTN_SECUNDARIO}
                 >
                   Abrir editor
@@ -177,7 +177,7 @@ export default function ExperienciaPage({ params }: { params: { id: string } }) 
               corridas.map(c => (
                 <Fila
                   key={c.id}
-                  href={`/prototipo/personalab/corridas/${c.id}`}
+                  href={`/personalab/corridas/${c.id}`}
                   titulo={capitulo(c.capituloId)!.nombre}
                   sub={`${fecha(c.fecha)} · ${c.personasEnElForo || 'sin'} personas`}
                   derecha={<Badge label={ESTADO_CORRIDA[c.estado].etiqueta} cls={COLOR_ESTADO[c.estado]} />}

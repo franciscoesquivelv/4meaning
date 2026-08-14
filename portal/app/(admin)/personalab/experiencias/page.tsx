@@ -27,7 +27,7 @@ export default function ExperienciasPage() {
             <tr key={e.id} className="hover:bg-slate-50 transition-colors">
               <td className={TD}>
                 <Link
-                  href={`/prototipo/personalab/experiencias/${e.id}`}
+                  href={`/personalab/experiencias/${e.id}`}
                   className="font-medium text-slate-900 hover:underline"
                 >
                   {e.nombre}

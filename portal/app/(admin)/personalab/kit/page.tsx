@@ -43,7 +43,7 @@ export default function KitPage() {
             <td className={`${TD} text-slate-500`}>{COLUMNA_KIT[p.columna].titulo}</td>
             <td className={TD}>
               <Link
-                href={`/prototipo/personalab/experiencias/${exp.id}`}
+                href={`/personalab/experiencias/${exp.id}`}
                 className="text-slate-900 hover:underline"
               >
                 {exp.nombre}

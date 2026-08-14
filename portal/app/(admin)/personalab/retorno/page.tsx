@@ -30,7 +30,7 @@ export default function RetornoPage() {
             <tr key={c.id} className="hover:bg-slate-50 transition-colors">
               <td className={TD}>
                 <Link
-                  href={`/prototipo/personalab/corridas/${c.id}`}
+                  href={`/personalab/corridas/${c.id}`}
                   className="font-medium text-slate-900 hover:underline"
                 >
                   {experiencia(c.experienciaId)!.nombre}

@@ -32,7 +32,7 @@ export default function CapitulosPage() {
               <td className={TD}>
                 {siguiente ? (
                   <Link
-                    href={`/prototipo/personalab/corridas/${siguiente.id}`}
+                    href={`/personalab/corridas/${siguiente.id}`}
                     className="text-slate-900 hover:underline"
                   >
                     {experiencia(siguiente.experienciaId)!.nombre}

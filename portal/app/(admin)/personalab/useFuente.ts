@@ -6,13 +6,13 @@ import { REMOTO_ACTIVO } from './almacenRemoto'
 
 // De dónde salen los datos del editor.
 //
-// El prototipo vive FUERA del gate de sesión a propósito, para poder verse
-// sin credenciales. Pero el adaptador remoto habla con Supabase, y la RLS
-// exige una sesión: sin ella, is_staff() es falso y no hay grants, así que
-// no se vería ni un bloque.
+// El workspace ya vive dentro del portal, así que el layout garantiza que
+// hay sesión y que es de alguien del equipo. El tercer modo dejó de ser el
+// estado normal de quien abrió una maqueta sin credenciales, y pasó a ser
+// lo que siempre debió ser: una sesión que venció mientras trabajabas.
 //
-// De ahí los tres modos. El tercero no es un error: es el estado normal de
-// alguien que abrió el prototipo sin haber entrado al portal.
+// Se queda porque eso sí pasa, y porque la RLS no perdona: sin sesión,
+// is_staff() es falso y el editor no vería ni un bloque.
 
 export type Fuente =
   | { modo: 'cargando' }

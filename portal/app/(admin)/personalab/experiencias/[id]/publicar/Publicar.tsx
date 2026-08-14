@@ -80,12 +80,12 @@ export default function Publicar({ experiencia }: { experiencia: Experiencia }) 
           </p>
           <div className="flex gap-2 mt-5">
             {corrida && (
-              <Link href={`/prototipo/lector/${corrida.id}`} className={BTN_PRIMARIO}>
+              <Link href={`/personalab/vista/${corrida.id}`} className={BTN_PRIMARIO}>
                 Ver como participante
               </Link>
             )}
             <Link
-              href={`/prototipo/personalab/experiencias/${experiencia.id}`}
+              href={`/personalab/experiencias/${experiencia.id}`}
               className={BTN_SECUNDARIO}
             >
               Volver a la experiencia
@@ -100,7 +100,7 @@ export default function Publicar({ experiencia }: { experiencia: Experiencia }) 
     <>
       <div className="mb-6">
         <Link
-          href={`/prototipo/personalab/experiencias/${experiencia.id}/editor`}
+          href={`/personalab/experiencias/${experiencia.id}/editor`}
           className="text-xs text-slate-400 hover:text-slate-600 transition-colors"
         >
           ← Editor
@@ -199,7 +199,7 @@ export default function Publicar({ experiencia }: { experiencia: Experiencia }) 
                       Reintentar
                     </Boton>
                     <Link
-                      href={`/prototipo/personalab/experiencias/${experiencia.id}/editor`}
+                      href={`/personalab/experiencias/${experiencia.id}/editor`}
                       className={BTN_SECUNDARIO}
                     >
                       Volver al editor
@@ -305,7 +305,7 @@ function Franja({
                   genérico. Antes el autor aterrizaba en la primera y tenía
                   que buscar a mano lo que el sistema acababa de señalarle. */}
               <Link
-                href={`/prototipo/personalab/experiencias/${experienciaId}/editor?bisagra=${h.bisagraId}`}
+                href={`/personalab/experiencias/${experienciaId}/editor?bisagra=${h.bisagraId}`}
                 className="text-xs text-slate-500 hover:text-slate-900 whitespace-nowrap flex-shrink-0 underline underline-offset-2"
               >
                 Ir a {h.bisagra}

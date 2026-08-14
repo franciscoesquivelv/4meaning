@@ -22,6 +22,8 @@ export default function AdminTopNav({ userEmail }: AdminTopNavProps) {
     router.push('/login')
   }
 
+  const enPersonaLab = pathname === '/personalab' || pathname.startsWith('/personalab/')
+
   const navLinkClass = (prefix: string) => {
     const isActive = pathname === prefix || pathname.startsWith(prefix + '/')
     return [
@@ -50,14 +52,30 @@ export default function AdminTopNav({ userEmail }: AdminTopNavProps) {
         </svg>
       </Link>
 
-      {/* Center: Nav links */}
+      {/* Center. Depende de en qué workspace estás, porque este es el nivel
+          de la casa y no el de una marca: Eventos y Usuarios son secciones
+          de Trascendencia, y dentro de PersonaLab no llevan a ningún lado
+          útil. Dentro de PersonaLab, este nivel sirve para volver. */}
       <nav className="ml-8 flex gap-1">
-        <Link href="/eventos" className={navLinkClass('/eventos')}>
-          Eventos
-        </Link>
-        <Link href="/usuarios" className={navLinkClass('/usuarios')}>
-          Usuarios
-        </Link>
+        {enPersonaLab ? (
+          <>
+            <Link href="/dashboard" className={navLinkClass('/dashboard')}>
+              Trascendencia
+            </Link>
+            <Link href="/personalab" className={navLinkClass('/personalab')}>
+              PersonaLab
+            </Link>
+          </>
+        ) : (
+          <>
+            <Link href="/eventos" className={navLinkClass('/eventos')}>
+              Eventos
+            </Link>
+            <Link href="/usuarios" className={navLinkClass('/usuarios')}>
+              Usuarios
+            </Link>
+          </>
+        )}
       </nav>
 
       {/* Right: User info + logout */}

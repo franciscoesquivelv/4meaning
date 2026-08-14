@@ -229,23 +229,21 @@ export default function Editor({ experiencia }: { experiencia: Experiencia }) {
     )
   }
 
-  // El adaptador remoto está encendido pero no hay sesión. No es un error:
-  // el prototipo vive fuera del gate a propósito, y la RLS exige sesión.
+  // Entraste con sesión, porque el layout no deja pasar sin ella. Si estamos
+  // aquí es que venció mientras trabajabas.
   if (fuente.modo === 'sin-sesion') {
     return (
       <div className="max-w-[560px] mt-8">
         <div className={`${TARJETA} p-6`}>
-          <h1 className="text-lg font-semibold text-slate-900">
-            Necesitas tu cuenta del equipo para editar
-          </h1>
+          <h1 className="text-lg font-semibold text-slate-900">Tu sesión venció</h1>
           <p className="text-sm text-slate-600 mt-2 leading-relaxed">
-            La base solo responde a cuentas del equipo. Sin sesión esta pantalla saldría vacía, y
-            prefiero decírtelo antes que mostrártela así.
+            La base solo responde a cuentas con sesión abierta, así que esta pantalla saldría vacía.
+            Vuelve a entrar y regresas justo aquí.
           </p>
           <div className="flex gap-2 mt-5">
-            <Link href="/login" className={BTN_PRIMARIO}>Iniciar sesión</Link>
+            <Link href="/login" className={BTN_PRIMARIO}>Volver a entrar</Link>
             <Link
-              href={`/prototipo/personalab/experiencias/${experiencia.id}`}
+              href={`/personalab/experiencias/${experiencia.id}`}
               className={BTN_SECUNDARIO}
             >
               Volver
@@ -267,7 +265,7 @@ export default function Editor({ experiencia }: { experiencia: Experiencia }) {
         <div className="flex items-center justify-between gap-4 flex-wrap">
           <div className="flex items-baseline gap-3 min-w-0">
             <Link
-              href={`/prototipo/personalab/experiencias/${experiencia.id}`}
+              href={`/personalab/experiencias/${experiencia.id}`}
               className="text-xs text-slate-400 hover:text-slate-600 transition-colors whitespace-nowrap"
             >
               ← {experiencia.nombre}
@@ -316,7 +314,7 @@ export default function Editor({ experiencia }: { experiencia: Experiencia }) {
               Guardar
             </Boton>
             <Link
-              href={`/prototipo/personalab/experiencias/${experiencia.id}/publicar`}
+              href={`/personalab/experiencias/${experiencia.id}/publicar`}
               className={BTN_PRIMARIO}
             >
               Revisar y publicar

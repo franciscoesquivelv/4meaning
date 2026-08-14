@@ -55,7 +55,7 @@ export default function CorridasPage() {
                     return (
                       <Link
                         key={c.id}
-                        href={`/prototipo/personalab/corridas/${c.id}`}
+                        href={`/personalab/corridas/${c.id}`}
                         className="block bg-white border border-slate-200 rounded-xl p-4 hover:border-slate-300 hover:shadow-sm transition-all"
                       >
                         <div className="text-sm font-semibold text-slate-900 leading-snug">{e.nombre}</div>

@@ -24,7 +24,7 @@ export default function ResumenPage() {
         return {
           titulo: `${n} pendiente${n > 1 ? 's' : ''} de preparación`,
           sub: `${experiencia(c.experienciaId)!.nombre} · ${capitulo(c.capituloId)!.nombre}`,
-          href: `/prototipo/personalab/corridas/${c.id}`,
+          href: `/personalab/corridas/${c.id}`,
           accion: 'Ver corrida',
         }
       }),
@@ -32,7 +32,7 @@ export default function ResumenPage() {
       ? [{
           titulo: `${faltantes.length} bisagras sin diseñar`,
           sub: 'No es captura pendiente: falta trabajo de diseño antes de poder correr',
-          href: '/prototipo/personalab/experiencias',
+          href: '/personalab/experiencias',
           accion: 'Ver experiencias',
         }]
       : []),
@@ -44,10 +44,10 @@ export default function ResumenPage() {
 
       <FilaMetricas
         items={[
-          { v: String(activas.length), k: 'Corridas por delante', href: '/prototipo/personalab/corridas' },
-          { v: String(CAPITULOS.length), k: 'Capítulos', href: '/prototipo/personalab/capitulos' },
-          { v: String(MODERADORES.length), k: 'Moderadores', href: '/prototipo/personalab/moderadores' },
-          { v: String(personasEnRetorno), k: 'Personas en retorno', href: '/prototipo/personalab/retorno' },
+          { v: String(activas.length), k: 'Corridas por delante', href: '/personalab/corridas' },
+          { v: String(CAPITULOS.length), k: 'Capítulos', href: '/personalab/capitulos' },
+          { v: String(MODERADORES.length), k: 'Moderadores', href: '/personalab/moderadores' },
+          { v: String(personasEnRetorno), k: 'Personas en retorno', href: '/personalab/retorno' },
         ]}
       />
 
@@ -84,7 +84,7 @@ export default function ResumenPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] gap-5">
         <div className="flex flex-col gap-5">
-          <TarjetaLista titulo="Próximas corridas" verTodo={{ href: '/prototipo/personalab/corridas', label: 'Ver todas' }}>
+          <TarjetaLista titulo="Próximas corridas" verTodo={{ href: '/personalab/corridas', label: 'Ver todas' }}>
             {proximas.length === 0 ? (
               <div className={VACIO_NEUTRO}>Nada agendado por ahora.</div>
             ) : (
@@ -94,7 +94,7 @@ export default function ResumenPage() {
                 return (
                   <Fila
                     key={c.id}
-                    href={`/prototipo/personalab/corridas/${c.id}`}
+                    href={`/personalab/corridas/${c.id}`}
                     titulo={e.nombre}
                     sub={`${cap.nombre} · ${fecha(c.fecha)} · ${c.personasEnElForo || 'sin'} personas`}
                     derecha={<Badge label={ESTADO_CORRIDA[c.estado].etiqueta} cls={COLOR_ESTADO[c.estado]} />}
@@ -104,11 +104,11 @@ export default function ResumenPage() {
             )}
           </TarjetaLista>
 
-          <TarjetaLista titulo="Huecos del catálogo" verTodo={{ href: '/prototipo/personalab/experiencias', label: 'Ver todas' }}>
+          <TarjetaLista titulo="Huecos del catálogo" verTodo={{ href: '/personalab/experiencias', label: 'Ver todas' }}>
             {EXPERIENCIAS.filter(e => e.bisagras.some(b => !b.listo)).map(e => (
               <Fila
                 key={e.id}
-                href={`/prototipo/personalab/experiencias/${e.id}`}
+                href={`/personalab/experiencias/${e.id}`}
                 titulo={e.nombre}
                 sub={e.bisagras.filter(b => !b.listo).map(b => b.titulo).join(' · ')}
                 derecha={
@@ -121,7 +121,7 @@ export default function ResumenPage() {
             {sinDiseño.map(e => (
               <Fila
                 key={e.id}
-                href={`/prototipo/personalab/experiencias/${e.id}`}
+                href={`/personalab/experiencias/${e.id}`}
                 titulo={e.nombre}
                 sub="Sin ninguna bisagra. La experiencia entera está por diseñar."
                 derecha={<span className="text-xs text-amber-700 whitespace-nowrap">sin diseño</span>}
@@ -131,13 +131,13 @@ export default function ResumenPage() {
         </div>
 
         <div className="flex flex-col gap-5">
-          <TarjetaLista titulo="Catálogo" verTodo={{ href: '/prototipo/personalab/experiencias', label: 'Ver todas' }}>
+          <TarjetaLista titulo="Catálogo" verTodo={{ href: '/personalab/experiencias', label: 'Ver todas' }}>
             {EXPERIENCIAS.map(e => {
               const listas = e.bisagras.filter(b => b.listo).length
               return (
                 <Fila
                   key={e.id}
-                  href={`/prototipo/personalab/experiencias/${e.id}`}
+                  href={`/personalab/experiencias/${e.id}`}
                   titulo={e.nombre}
                   sub={
                     (e.bisagras.length === 0 ? 'Sin bisagras' : `${listas} de ${e.bisagras.length} bisagras listas`) +
@@ -149,14 +149,14 @@ export default function ResumenPage() {
             })}
           </TarjetaLista>
 
-          <TarjetaLista titulo="En retorno" verTodo={{ href: '/prototipo/personalab/retorno', label: 'Ver todo' }}>
+          <TarjetaLista titulo="En retorno" verTodo={{ href: '/personalab/retorno', label: 'Ver todo' }}>
             {enRetorno.length === 0 ? (
               <div className={VACIO_NEUTRO}>Ningún foro está en retorno ahora mismo.</div>
             ) : (
               enRetorno.map(c => (
                 <Fila
                   key={c.id}
-                  href={`/prototipo/personalab/corridas/${c.id}`}
+                  href={`/personalab/corridas/${c.id}`}
                   titulo={experiencia(c.experienciaId)!.nombre}
                   sub={`${capitulo(c.capituloId)!.nombre} · ${c.personasEnElForo} personas`}
                   derecha={

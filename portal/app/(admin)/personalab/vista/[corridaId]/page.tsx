@@ -3,8 +3,8 @@ import { notFound } from 'next/navigation'
 import {
   corrida, experiencia, capitulo, moderador, fecha, ETIQUETA_TIEMPO,
   type Tiempo,
-} from '../../personalab/dominio'
-import { tieneContenido } from '../../personalab/contenido'
+} from '../../dominio'
+import { tieneContenido } from '../../contenido'
 
 const TIEMPOS: Tiempo[] = ['vispera', 'ignicion', 'retorno']
 
@@ -59,7 +59,7 @@ export default function PortadaPage({
               </div>
               <p className="mt-1.5 text-[14px] leading-[1.6] font-light text-[#14181B]">
                 Ves las notas de sala y los archivos que el foro no ve.{' '}
-                <Link href={`/prototipo/lector/${c.id}`} className="underline underline-offset-2">
+                <Link href={`/personalab/vista/${c.id}`} className="underline underline-offset-2">
                   Ver como participante
                 </Link>
               </p>
@@ -78,7 +78,7 @@ export default function PortadaPage({
                   {bs.map(b => (
                     <Link
                       key={b.id}
-                      href={`/prototipo/lector/${c.id}/${b.id}${q}`}
+                      href={`/personalab/vista/${c.id}/${b.id}${q}`}
                       className="group block py-4 border-b border-[#E7E1D8] first:border-t"
                     >
                       <div className="flex items-baseline justify-between gap-4">
@@ -107,7 +107,7 @@ export default function PortadaPage({
           {!esModerador && (
             <div className="mt-16 pt-8 border-t border-[#E7E1D8]">
               <Link
-                href={`/prototipo/lector/${c.id}?lente=moderador`}
+                href={`/personalab/vista/${c.id}?lente=moderador`}
                 className="text-[12.5px] font-light text-[#676E6E] hover:text-[#8F5341] transition-colors"
               >
                 Ver como moderador →

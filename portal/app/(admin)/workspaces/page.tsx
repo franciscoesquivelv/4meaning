@@ -40,7 +40,7 @@ const MARCAS: Marca[] = [
     nombre: 'PersonaLab',
     descripcion: 'Experiencias para foros. Catálogo, corridas, capítulos, moderadores y kit.',
     estado: 'Prototipo',
-    href: '/prototipo/personalab',
+    href: '/personalab',
     color: '#002B34',
     tinte: 'rgba(0,43,52,0.05)',
     borde: 'rgba(0,43,52,0.20)',

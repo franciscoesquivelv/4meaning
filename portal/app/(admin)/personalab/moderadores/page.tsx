@@ -39,7 +39,7 @@ export default function ModeradoresPage() {
                       return (
                         <Link
                           key={id}
-                          href={`/prototipo/personalab/experiencias/${id}`}
+                          href={`/personalab/experiencias/${id}`}
                           className="text-[11px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors whitespace-nowrap"
                         >
                           {e.nombre}

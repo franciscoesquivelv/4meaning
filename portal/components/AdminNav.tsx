@@ -64,7 +64,7 @@ export default function AdminNav({ userEmail, activeEventId, activeEventName }: 
           />
         </Link>
         <Link
-          href="/prototipo/personalab"
+          href="/personalab"
           className="text-[10px] tracking-widest uppercase text-[#6B7280] hover:text-[#B9735A] transition-colors whitespace-nowrap"
         >
           PersonaLab →

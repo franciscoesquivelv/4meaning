@@ -42,7 +42,7 @@ export default function CorridaPage({ params }: { params: { id: string } }) {
   return (
     <>
       <Link
-        href="/prototipo/personalab/corridas"
+        href="/personalab/corridas"
         className="text-xs text-slate-400 hover:text-slate-600 transition-colors"
       >
         ← Corridas
@@ -169,13 +169,13 @@ export default function CorridaPage({ params }: { params: { id: string } }) {
             {/* Dos enlaces que sí llevan a algún lado, con el mismo peso
                 entre ellos. Antes uno era negro y competía con Modo sala. */}
             <Link
-              href={`/prototipo/lector/${c.id}`}
+              href={`/personalab/vista/${c.id}`}
               className={`${BTN_SECUNDARIO} w-full mb-2`}
             >
               Ver como participante
             </Link>
             <Link
-              href={`/prototipo/lector/${c.id}?lente=moderador`}
+              href={`/personalab/vista/${c.id}?lente=moderador`}
               className={`${BTN_SECUNDARIO} w-full mb-4`}
             >
               Ver como moderador
