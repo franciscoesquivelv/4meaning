@@ -119,7 +119,7 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);font-weigh
 .pillars{display:grid;gap:0}
 .pillar{display:grid;grid-template-columns:5rem 1fr auto;gap:2rem;align-items:baseline;padding:2rem 0;border-top:1px solid var(--line);transition:padding-left .3s var(--ease)}
 .pillar:hover{padding-left:1rem}
-.pillar .pn{font-size:.72rem;font-weight:600;letter-spacing:.14em;color:var(--terra)}
+.pillar .pn{font-family:'Courier New',Courier,monospace;font-size:.72rem;font-weight:600;letter-spacing:.14em;color:var(--terra)}
 .pillar h3{font-size:clamp(1.6rem,3vw,2.4rem);font-weight:200;letter-spacing:-.02em;color:var(--dom)}
 .pillar p{max-width:40ch;color:var(--gray);font-size:.92rem;line-height:1.75;justify-self:end}
 @media(max-width:760px){.pillar{grid-template-columns:3rem 1fr;gap:1rem}.pillar p{grid-column:1/-1;justify-self:start;margin-top:.5rem}}
