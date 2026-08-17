@@ -190,17 +190,23 @@
   // la altura (la mayoria de pantallas de escritorio) los anillos exteriores se
   // dibujan fuera de la seccion y quedan cortados por overflow:hidden.
   var SHAPE_MARGIN = 1.22;
-  var EDGE_PAD = 8; // aire final en px para que ni siquiera roce el borde
+  var EDGE_PAD = 10; // aire final en px para que ni siquiera roce el borde
+  // Proporción de yema de dedo: más alta que ancha. Sin esto los anillos salen
+  // como un óvalo acostado y la figura lee como radar, no como huella.
+  var SCALE_X = 0.60;
+  var SCALE_Y = 1.06;
 
   function easeOutCubic(x) { return 1 - Math.pow(1 - x, 3); }
 
   function draw(progress) {
     ctx.clearRect(0, 0, w, h);
     var cx0 = w * 0.5, cy0 = h * CY_FRAC;
-    // Radio maximo que cabe por completo dentro del hero desde este centro,
-    // en las cuatro direcciones, ya con el margen de forma aplicado.
-    var edgeLimit = Math.min(cx0, w - cx0, cy0, h - cy0);
-    var maxR = Math.max(60, edgeLimit / SHAPE_MARGIN - EDGE_PAD);
+    // Radio maximo que cabe por completo dentro del hero desde este centro.
+    // Cada eje se limita por separado porque la figura no es un circulo:
+    // se estira en vertical y se comprime en horizontal.
+    var limX = (Math.min(cx0, w - cx0) - EDGE_PAD) / (SHAPE_MARGIN * SCALE_X);
+    var limY = (Math.min(cy0, h - cy0) - EDGE_PAD) / (SHAPE_MARGIN * SCALE_Y);
+    var maxR = Math.max(60, Math.min(limX, limY));
     ctx.lineCap = 'round';
     for (var i = 0; i < RINGS; i++) {
       var t = i / (RINGS - 1);
@@ -240,8 +246,8 @@
           + 0.028 * Math.sin(rad * 5.1 - i * 1.1)
           + 0.014 * Math.sin(rad * 8.7 + i * 2.2);
         var rr = r * eccentric * wobble;
-        var x = cx + Math.cos(rad) * rr;
-        var y = cy + Math.sin(rad) * rr * 0.9;
+        var x = cx + Math.cos(rad) * rr * SCALE_X;
+        var y = cy + Math.sin(rad) * rr * SCALE_Y;
         if (s === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
       }
       var alpha = (0.13 - t * 0.07) * rp;

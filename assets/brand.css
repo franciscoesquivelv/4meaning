@@ -29,7 +29,9 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);font-weigh
 /* ── NAV ── */
 #nav{position:fixed;inset:0 0 auto 0;height:78px;z-index:60;display:flex;align-items:center;justify-content:space-between;padding:0 clamp(1.25rem,4vw,3.5rem);transition:background .4s var(--ease),border-color .4s;border-bottom:1px solid transparent}
 #nav.scrolled{background:rgba(246,238,227,.86);backdrop-filter:saturate(160%) blur(14px);border-bottom-color:var(--line)}
-.nav-logo img{height:24px;display:block}
+/* width:auto es obligatorio: los <img> llevan atributos width/height reales
+   (para evitar CLS) y sin esto el ancho del atributo gana sobre la proporción. */
+.nav-logo img{height:24px;width:auto;display:block}
 .nav-logo .lite{display:block}.nav-logo .dark{display:none}
 #nav.scrolled .nav-logo .lite{display:none}#nav.scrolled .nav-logo .dark{display:block}
 /* Logos de un solo color, adaptados al nav (oscuro→claro) por filtro.
@@ -75,7 +77,7 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);font-weigh
 @keyframes drift3{to{transform:translate(6vw,-7vh) scale(1.1)}}
 .grain{position:absolute;inset:0;z-index:1;opacity:.05;pointer-events:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>")}
 .hero-inner{position:relative;z-index:2;max-width:940px}
-.hero-logo{height:40px;margin:0 auto 2.25rem;display:block;opacity:0;animation:up 1s .2s forwards}
+.hero-logo{height:40px;width:auto;margin:0 auto 2.25rem;display:block;opacity:0;animation:up 1s .2s forwards}
 .hero-eyebrow{color:var(--terra-lo);margin-bottom:1.9rem;opacity:0;animation:up .9s .4s forwards}
 .hero h1{font-size:clamp(2.8rem,7.2vw,7rem);font-weight:200;line-height:.98;letter-spacing:-.03em;color:#fff;margin:0 auto 1.9rem;text-wrap:balance;text-shadow:0 2px 60px rgba(0,10,14,.4);opacity:0;animation:up 1s .55s forwards}
 .hero h1 em{font-style:normal;color:var(--terra-lo)}
