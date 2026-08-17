@@ -1,0 +1,9 @@
+# El sitio es HTML estático: no usa layouts, front matter ni Liquid.
+# Jekyll solo copia los archivos tal cual.
+#
+# portal/ es la app Next.js del portal, que vive en este repo pero se despliega
+# aparte. Sus rutas dinámicas ("(admin)", "[id]") hacen fallar el build de
+# GitHub Pages, y su código fuente no debe publicarse en 4meaning.life.
+exclude:
+  - portal
+  - Matriz_Posicionamiento_4Meaning.pptx
