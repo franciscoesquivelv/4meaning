@@ -119,18 +119,31 @@
   .legacy-stats .lbl{font-size:.8rem;font-weight:300;line-height:1.6;color:rgba(255,255,255,.6)}
   @media(max-width:960px){.legacy-grid{grid-template-columns:1fr}.legacy-stats{border-left:0;padding-left:0;border-top:1px solid rgba(255,255,255,.16);padding-top:2rem;display:flex;gap:2rem;flex-wrap:wrap}.legacy-stats .stat{margin-bottom:0}}
 
-  /* ── MÁS HISTORIAS · testimonios en tarjeta ── */
-  .testi-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
-  .testi-card{background:var(--card,#fff);border:1px solid var(--line);border-radius:10px;padding:2.25rem}
-  .testi-card blockquote{font-size:1.05rem;font-weight:300;line-height:1.75;color:var(--ink);margin-bottom:1.5rem}
-  .testi-card cite{display:block;font-style:normal;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--dom)}
-  @media(max-width:760px){.testi-grid{grid-template-columns:1fr}}
+  /* ── CIERRE · historias y preguntas ──
+     Las dos secciones finales usan el mismo split 5:7 que "La experiencia",
+     para que el titular no quede solo en una franja ancha y vacía. */
+  .closing-grid{display:grid;grid-template-columns:5fr 7fr;gap:clamp(2.5rem,6vw,6rem);align-items:start}
+  .closing-grid .sec-head{margin-bottom:1.75rem}
+  .closing-aside{position:sticky;top:118px}
+  .closing-note{font-size:.9rem;font-weight:300;line-height:1.8;color:var(--gray);max-width:34ch}
+  .closing-note a{color:var(--dom);text-decoration:none;border-bottom:1px solid var(--terra);padding-bottom:2px;transition:color .2s}
+  .closing-note a:hover{color:var(--terra)}
+  @media(max-width:860px){.closing-grid{grid-template-columns:1fr}.closing-aside{position:static}}
+
+  /* Testimonios: mismo lenguaje editorial que los pilares (regla superior,
+     sin caja), no tarjetas blancas que no existen en ninguna otra sección. */
+  .testi-list{display:flex;flex-direction:column}
+  .testi{padding:2.25rem 0;border-top:1px solid var(--line)}
+  .testi:first-child{border-top:0;padding-top:0}
+  .testi blockquote{font-size:clamp(1.12rem,1.7vw,1.4rem);font-weight:300;line-height:1.68;color:var(--ink);letter-spacing:-.01em;margin-bottom:1.15rem}
+  .testi blockquote em{font-style:normal;color:var(--dom)}
+  .testi cite{display:block;font-style:normal;font-size:.68rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--terra)}
 
   /* ── PREGUNTAS FRECUENTES ── */
-  .faq{display:flex;flex-direction:column;max-width:860px}
-  .faq-item{padding:2rem 0;border-top:1px solid var(--line)}
-  .faq-item:first-child{border-top:0}
-  .faq-item h3{font-size:1.15rem;font-weight:400;color:var(--dom);margin-bottom:.75rem;letter-spacing:-.01em}
+  .faq{display:flex;flex-direction:column}
+  .faq-item{padding:1.9rem 0;border-top:1px solid var(--line)}
+  .faq-item:first-child{border-top:0;padding-top:0}
+  .faq-item h3{font-size:1.12rem;font-weight:400;color:var(--dom);margin-bottom:.7rem;letter-spacing:-.01em}
   .faq-item p{font-size:.92rem;font-weight:300;line-height:1.8;color:var(--gray)}
 </style>
 </head>
@@ -280,18 +293,21 @@
 
 <!-- MÁS HISTORIAS -->
 <section class="sec alt" id="testimonios">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <span class="eyebrow">Más historias</span>
-      <h2>Lo que dicen las parejas que ya vivieron la experiencia.</h2>
+  <div class="wrap closing-grid">
+    <div class="closing-aside reveal">
+      <div class="sec-head">
+        <span class="eyebrow">Más historias</span>
+        <h2>Lo que dicen las parejas que ya vivieron la experiencia.</h2>
+      </div>
+      <p class="closing-note">Cada pareja llega con una historia distinta y se lleva la suya documentada. Estas son algunas de las que nos han compartido.</p>
     </div>
-    <div class="testi-grid">
-      <div class="testi-card reveal">
-        <blockquote>"Nos vamos con el corazón lleno, felices, satisfechos y agradecidos, con la gran tarea de ser mejores seres humanos y a través de eso hacer que nuestros hijos lo sean igual."</blockquote>
+    <div class="testi-list">
+      <div class="testi reveal">
+        <blockquote>Nos vamos con el corazón lleno, felices, satisfechos y agradecidos, con la gran tarea de <em>ser mejores seres humanos</em> y a través de eso hacer que nuestros hijos lo sean igual.</blockquote>
         <cite>Gerardo Ríos y Bonnie Bru</cite>
       </div>
-      <div class="testi-card reveal d1">
-        <blockquote>"Estos 3 días han sido de los momentos más especiales de nuestra vida. Este evento de Trascendencia se lo recomendamos con los ojos cerrados a cualquier persona."</blockquote>
+      <div class="testi reveal d1">
+        <blockquote>Estos 3 días han sido de los momentos más especiales de nuestra vida. Este evento de Trascendencia <em>se lo recomendamos con los ojos cerrados</em> a cualquier persona.</blockquote>
         <cite>Jean Pierre Leignadier y Michelle Canavaggio</cite>
       </div>
     </div>
@@ -300,10 +316,13 @@
 
 <!-- PREGUNTAS FRECUENTES -->
 <section class="sec" id="faq">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <span class="eyebrow">Antes de escribirnos</span>
-      <h2>Preguntas frecuentes.</h2>
+  <div class="wrap closing-grid">
+    <div class="closing-aside reveal">
+      <div class="sec-head">
+        <span class="eyebrow">Antes de escribirnos</span>
+        <h2>Preguntas frecuentes.</h2>
+      </div>
+      <p class="closing-note">Si la suya no está aquí, <a href="#contacto">escríbannos</a> y la resolvemos antes de que decidan nada.</p>
     </div>
     <div class="faq reveal d1">
       <div class="faq-item">
