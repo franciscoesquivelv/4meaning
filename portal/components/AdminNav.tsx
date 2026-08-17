@@ -51,6 +51,26 @@ export default function AdminNav({ userEmail, activeEventId, activeEventName }: 
 
   return (
     <aside className="w-[240px] min-h-screen bg-[#111111] flex flex-col flex-shrink-0 border-r border-[#1F2937]">
+      {/* Capa 4 Meaning: la casa por encima de la sub-marca.
+          Permite volver al vestíbulo y cruzar al otro workspace. */}
+      <div className="px-5 py-3 border-b border-[#1F2937] flex items-center justify-between gap-2">
+        <Link href="/prototipo/organizador?u=d" className="block shrink-0">
+          <Image
+            src="/4m-logo-wht.png"
+            alt="4 Meaning"
+            width={110}
+            height={16}
+            className="h-3.5 w-auto object-contain opacity-60 hover:opacity-100 transition-opacity"
+          />
+        </Link>
+        <Link
+          href="/personalab"
+          className="text-[10px] tracking-widest uppercase text-[#6B7280] hover:text-[#B9735A] transition-colors whitespace-nowrap"
+        >
+          PersonaLab →
+        </Link>
+      </div>
+
       {/* Brand */}
       <div className="px-5 py-5 border-b border-[#1F2937]">
         <Link href="/dashboard" className="block">

@@ -26,7 +26,17 @@ export default function RecuperarContrasenaPage() {
     setLoading(false)
 
     if (authError) {
-      setError('Ocurrió un error. Intenta de nuevo.')
+      // Se muestra el motivo real. El mensaje generico anterior escondia
+      // causas accionables como el limite de frecuencia o una URL de
+      // redireccion que no esta en la lista blanca del proyecto.
+      const m = authError.message ?? ''
+      if (/only request this after|rate limit|too many/i.test(m)) {
+        setError('Ya se envió un correo hace un momento. Espera un minuto y vuelve a intentar.')
+      } else if (/redirect|not allowed|invalid/i.test(m)) {
+        setError('La dirección de retorno no está autorizada en el proyecto. Avisa al equipo.')
+      } else {
+        setError(m || 'Ocurrió un error. Intenta de nuevo.')
+      }
       return
     }
 
