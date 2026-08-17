@@ -171,11 +171,24 @@
   }
 
   var FLOW_ANGLE = (100 * Math.PI) / 180; // dirección hacia la que "abre"/fluye la huella
+  var CY_FRAC = 0.46; // centro vertical, levemente arriba del centro real del hero
+  // Margen de contención: la excentricidad (hasta 1.11x) mas el wobble de tres
+  // frecuencias (hasta ~1.09x combinado) puede empujar un punto hasta ~1.21x
+  // el radio base. Sin este margen, en cualquier viewport donde el ancho supere
+  // la altura (la mayoria de pantallas de escritorio) los anillos exteriores se
+  // dibujan fuera de la seccion y quedan cortados por overflow:hidden.
+  var SHAPE_MARGIN = 1.22;
+  var EDGE_PAD = 8; // aire final en px para que ni siquiera roce el borde
+
+  function easeOutCubic(x) { return 1 - Math.pow(1 - x, 3); }
 
   function draw(progress) {
     ctx.clearRect(0, 0, w, h);
-    var cx0 = w * 0.5, cy0 = h * 0.44;
-    var maxR = Math.min(w, h) * 0.5;
+    var cx0 = w * 0.5, cy0 = h * CY_FRAC;
+    // Radio maximo que cabe por completo dentro del hero desde este centro,
+    // en las cuatro direcciones, ya con el margen de forma aplicado.
+    var edgeLimit = Math.min(cx0, w - cx0, cy0, h - cy0);
+    var maxR = Math.max(60, edgeLimit / SHAPE_MARGIN - EDGE_PAD);
     ctx.lineCap = 'round';
     for (var i = 0; i < RINGS; i++) {
       var t = i / (RINGS - 1);
@@ -189,10 +202,18 @@
       var cx = cx0 + driftAmp * Math.cos(i * 0.9);
       var cy = cy0 + driftAmp * 0.6 * Math.sin(i * 0.9 + 0.4);
 
-      var r = (10 + t * maxR) * (1 + 0.025 * Math.sin(i * 1.7));
+      // Progresión no lineal del radio: las crestas quedan más juntas cerca
+      // del núcleo y se abren hacia afuera, como la densidad real de una
+      // huella (no una cuadrícula de radar uniformemente espaciada).
+      var tEase = Math.pow(t, 0.78);
+      var r = (10 + tEase * maxR) * (1 + 0.025 * Math.sin(i * 1.7));
       var isCore = t < 0.22;
       var gapHalfDeg = isCore ? 3 : 10 + (t - 0.22) * 82;
-      var startDeg = 90 + gapHalfDeg;
+      // La apertura del lazo rota levemente anillo a anillo, como el flujo
+      // real de las crestas (no todas abren exactamente al mismo ángulo).
+      var ringRotate = Math.sin(i * 0.37) * 4;
+      var ringFlowAngle = FLOW_ANGLE + Math.sin(i * 0.53) * 0.12;
+      var startDeg = 90 + gapHalfDeg + ringRotate;
       var sweepDeg = (360 - 2 * gapHalfDeg) * rp;
       var steps = Math.max(24, Math.floor(sweepDeg / 3));
       ctx.beginPath();
@@ -201,7 +222,7 @@
         var rad = (deg * Math.PI) / 180;
         // Forma ovalada/asimétrica (no un círculo) + ruido de varias
         // frecuencias para que las crestas se sientan trazadas a mano.
-        var eccentric = 1 + 0.11 * Math.cos(rad - FLOW_ANGLE);
+        var eccentric = 1 + 0.11 * Math.cos(rad - ringFlowAngle);
         var wobble = 1
           + 0.05 * Math.sin(rad * 2.3 + i * 0.6)
           + 0.028 * Math.sin(rad * 5.1 - i * 1.1)
@@ -220,9 +241,12 @@
 
   function loop(ts) {
     if (startTime === null) startTime = ts;
-    var progress = clamp((ts - startTime) / DURATION, 0, 1);
+    var raw = clamp((ts - startTime) / DURATION, 0, 1);
+    // Progresión con ease-out: arranca más rápido y se asienta al final,
+    // en vez de avanzar a velocidad constante como un contador mecánico.
+    var progress = easeOutCubic(raw);
     draw(progress);
-    if (progress < 1) {
+    if (raw < 1) {
       raf = requestAnimationFrame(loop);
     } else {
       canvas.classList.add('formed');
