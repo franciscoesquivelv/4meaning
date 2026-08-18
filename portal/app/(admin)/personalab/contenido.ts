@@ -335,7 +335,7 @@ export const BLOQUES: Bloque[] = [
   },
   {
     id: 'g30', bisagraId: 'ag6', orden: 5, tipo: 'nota', audiencia: 'moderador',
-    texto: 'LA SEGUNDA PARTE ES LA QUE HAY QUE VIGILAR. Que hable de la persona, no del favor. Esa instrucción es la que tiene la mejor evidencia de toda la experiencia: en trescientas setenta conversaciones grabadas, lo que hizo que el otro se sintiera visto y querido fue que lo alabaran a él, no que le describieran el beneficio recibido.\n\nY tiene un segundo efecto: hablar de la persona en vez del favor baja la sensación de deuda, que es el riesgo del cierre del día.',
+    texto: 'LA SEGUNDA PARTE ES LA QUE HAY QUE VIGILAR. Que hable de la persona, no del favor. Esa instrucción es la que tiene la mejor evidencia de toda la experiencia: en trescientas setenta conversaciones grabadas, lo que hizo que el otro se sintiera visto y querido fue que le dijeran quién era, no lo que había hecho por ellos.\n\nY tiene un segundo efecto: hablar de la persona en vez del favor baja la sensación de deuda, que es el riesgo del cierre del día.',
   },
   {
     id: 'g31', bisagraId: 'ag6', orden: 6, tipo: 'nota', audiencia: 'moderador',
