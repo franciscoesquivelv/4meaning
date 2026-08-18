@@ -59,7 +59,10 @@ body{font-family:var(--sans);background:var(--paper);color:var(--ink);font-weigh
 #nav.menu-open .nav-toggle span{background:transparent}
 #nav.menu-open .nav-toggle span::before{top:0;transform:rotate(45deg)}
 #nav.menu-open .nav-toggle span::after{top:0;transform:rotate(-45deg)}
-#nav.menu-open.scrolled .nav-toggle span::before,#nav.menu-open.scrolled .nav-toggle span::after{background:var(--ink)}
+/* La X va oscura SIEMPRE que el menú esté abierto, no solo al haber hecho
+   scroll: al abrirlo el nav ya se pone color papel, así que con las barras
+   blancas quedaba invisible justo al aterrizar en la página. */
+#nav.menu-open .nav-toggle span::before,#nav.menu-open .nav-toggle span::after{background:var(--ink)}
 
 /* Panel de menú móvil — desplegable bajo el nav */
 .nav-mobile-panel{display:none}
@@ -176,7 +179,19 @@ footer .footer-logo{height:15px;width:auto;opacity:.6}
 .reveal{opacity:0;transform:translateY(26px);transition:opacity 1s var(--ease),transform 1s var(--ease)}
 .reveal.vis{opacity:1;transform:none}
 .d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}.d4{transition-delay:.4s}
-@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}.blob{display:none}}
+/* Con "reducir movimiento" hay que devolver la opacidad a TODO lo que se
+   revela por animación, no solo a .reveal. Los cinco elementos del hero
+   arrancan en opacity:0 y dependen de "animation:up ... forwards"; al matar
+   las animaciones se quedaban invisibles para siempre y el hero de las tres
+   páginas aparecía vacío. Si se agrega otro elemento con ese patrón, hay que
+   sumarlo a esta lista. */
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  html{scroll-behavior:auto}
+  .reveal{opacity:1;transform:none}
+  .hero-logo,.hero-eyebrow,.hero h1,.hero .lead,.hero-actions{opacity:1;transform:none}
+  .blob{display:none}
+}
 @media(max-width:860px){
   .nav-toggle{display:flex;order:-1;margin-right:.5rem}
   #nav{gap:.25rem}
@@ -191,10 +206,14 @@ footer .footer-logo{height:15px;width:auto;opacity:.6}
     display:block;position:fixed;top:78px;left:0;right:0;bottom:0;z-index:59;
     background:var(--paper);padding:1rem clamp(1.25rem,4vw,3.5rem) 2.5rem;
     transform:translateY(-8px);opacity:0;pointer-events:none;
-    transition:opacity .25s var(--ease),transform .25s var(--ease);
+    /* visibility saca los 7 enlaces del orden de tabulación mientras el panel
+       está cerrado. Con solo opacity:0 seguían siendo enfocables con teclado y
+       anunciables por lector de pantalla, encima de contenido que no se ve. */
+    visibility:hidden;
+    transition:opacity .25s var(--ease),transform .25s var(--ease),visibility .25s;
     overflow-y:auto;
   }
-  #nav.menu-open + .nav-mobile-panel{opacity:1;transform:none;pointer-events:auto}
+  #nav.menu-open + .nav-mobile-panel{opacity:1;transform:none;pointer-events:auto;visibility:visible}
   .nav-mobile-panel ul{list-style:none;display:flex;flex-direction:column}
   .nav-mobile-panel a{display:block;padding:1.1rem 0;border-top:1px solid var(--line);font-size:1.05rem;color:var(--ink);text-decoration:none}
   .nav-mobile-panel li:first-child a{border-top:0}
