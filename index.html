@@ -193,7 +193,7 @@
   var EDGE_PAD = 10; // aire final en px para que ni siquiera roce el borde
   // Proporción de yema de dedo: más alta que ancha. Sin esto los anillos salen
   // como un óvalo acostado y la figura lee como radar, no como huella.
-  var SCALE_X = 0.60;
+  var SCALE_X = 0.78;
   var SCALE_Y = 1.06;
 
   function easeOutCubic(x) { return 1 - Math.pow(1 - x, 3); }
@@ -214,9 +214,9 @@
       var rp = clamp((progress - ringStart) / 0.4, 0, 1);
       if (rp <= 0) continue;
 
-      // El centro deriva ligeramente anillo a anillo — rompe la concentricidad
-      // perfecta de un "radar" y da la asimetría orgánica de una huella real.
-      var driftAmp = maxR * 0.05;
+      // El centro deriva muy levemente anillo a anillo: rompe la concentricidad
+      // perfecta de un "radar" sin llegar a cruzar crestas vecinas.
+      var driftAmp = maxR * 0.012;
       var cx = cx0 + driftAmp * Math.cos(i * 0.9);
       var cy = cy0 + driftAmp * 0.6 * Math.sin(i * 0.9 + 0.4);
 
@@ -224,13 +224,17 @@
       // del núcleo y se abren hacia afuera, como la densidad real de una
       // huella (no una cuadrícula de radar uniformemente espaciada).
       var tEase = Math.pow(t, 0.78);
-      var r = (10 + tEase * maxR) * (1 + 0.025 * Math.sin(i * 1.7));
+      var r = (10 + tEase * maxR) * (1 + 0.008 * Math.sin(i * 1.7));
       var isCore = t < 0.22;
-      var gapHalfDeg = isCore ? 3 : 10 + (t - 0.22) * 82;
-      // La apertura del lazo rota levemente anillo a anillo, como el flujo
-      // real de las crestas (no todas abren exactamente al mismo ángulo).
-      var ringRotate = Math.sin(i * 0.37) * 4;
-      var ringFlowAngle = FLOW_ANGLE + Math.sin(i * 0.53) * 0.12;
+      // La apertura del lazo vive en la base (90 grados es "abajo" en canvas).
+      // Antes crecia hasta 74 grados por lado, casi 148 de arco faltante, y
+      // dejaba una cuna triangular en la base que se leia como un corte, no
+      // como un lazo. Ahora las crestas exteriores quedan casi cerradas.
+      var gapHalfDeg = isCore ? 4 : 8 + (t - 0.22) * 16;
+      // Las terminaciones se escalonan de verdad para que los extremos de las
+      // crestas no se alineen en una V limpia, que es lo que delataba el corte.
+      var ringRotate = Math.sin(i * 0.37) * 13 + Math.sin(i * 1.9) * 5;
+      var ringFlowAngle = FLOW_ANGLE + Math.sin(i * 0.53) * 0.03;
       var startDeg = 90 + gapHalfDeg + ringRotate;
       var sweepDeg = (360 - 2 * gapHalfDeg) * rp;
       var steps = Math.max(24, Math.floor(sweepDeg / 3));
@@ -241,10 +245,19 @@
         // Forma ovalada/asimétrica (no un círculo) + ruido de varias
         // frecuencias para que las crestas se sientan trazadas a mano.
         var eccentric = 1 + 0.11 * Math.cos(rad - ringFlowAngle);
+        // Las crestas de una huella real NUNCA se cruzan: siguen un mismo campo
+        // de flujo y corren paralelas. Por eso la deformacion es COHERENTE, sin
+        // dependencia de i en la fase. Antes cada anillo llevaba su propia fase
+        // (i*0.6, i*1.1, i*2.2) con amplitudes de hasta 9% del radio, unos 18px,
+        // mientras la separacion entre anillos es de 8 a 14px: se cortaban entre
+        // si y la figura se leia como una madeja, no como una huella.
         var wobble = 1
-          + 0.05 * Math.sin(rad * 2.3 + i * 0.6)
-          + 0.028 * Math.sin(rad * 5.1 - i * 1.1)
-          + 0.014 * Math.sin(rad * 8.7 + i * 2.2);
+          + 0.055 * Math.sin(rad * 2.3 + 0.7)
+          + 0.026 * Math.sin(rad * 3.7 - 0.5)
+          + 0.012 * Math.sin(rad * 5.1 + 1.2)
+          // Unico termino que varia por anillo, deliberadamente por debajo del
+          // umbral de cruce (0.8% del radio, ~2px contra 8px de separacion).
+          + 0.008 * Math.sin(rad * 4.3 + i * 0.35);
         var rr = r * eccentric * wobble;
         var x = cx + Math.cos(rad) * rr * SCALE_X;
         var y = cy + Math.sin(rad) * rr * SCALE_Y;
