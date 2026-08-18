@@ -209,6 +209,213 @@ export const EXPERIENCIAS: Experiencia[] = [
     bisagras: [],
     kit: [],
   },
+  // ── El Agradecimiento ─────────────────────────────────────────
+  // No es una experiencia inventada para la demostracion: es el diseño que
+  // vive en Notion, con su marco teorico de tres pilares (Tomas de Aquino,
+  // personalismo mas logoterapia, neurociencia) y su arco de siete momentos.
+  //
+  // El arco se reparte en tres tractos, y los cortes son la parte diseñada:
+  // los momentos 3 y 4, la grieta y la historia, NO se separan por un
+  // descanso. La grieta abre y la historia contiene lo que se abrio. Cortar
+  // entre las dos deja al participante crudo, que es el daño a evitar.
+  //
+  // abreEspacioAlForo es true, y no por generosidad: el protocolo de retorno
+  // es individual y dura seis meses, asi que cada persona necesita su propio
+  // artefacto. Es la primera experiencia del catalogo donde el moderador no
+  // puede ser el unico con acceso.
+  {
+    id: 'agradecimiento',
+    nombre: 'El Agradecimiento',
+    subtitulo: 'Un día de siembra y seis meses de raíz',
+    narrativa:
+      'Nadie se dio a sí mismo la existencia. Este día no busca que salgas agradecido para siempre, sino que salgas con una historia tuya y con ganas de volver a ella.',
+    maduracion: 'piloto',
+    abreEspacioAlForo: true,
+    duracion: 'Un día, más seis meses de retorno',
+    corridas: 0,
+    notaDiseño:
+      'El día siembra la virtud, no la completa. Y nada se fuerza: la autenticidad es condición, no adorno. Forzar el agradecimiento en alguien que llega en su peor día hace daño en vez de bien, y por eso cada bisagra honda lleva su salida.',
+    bisagras: [
+      // ── Víspera ───────────────────────────────────────────────
+      {
+        id: 'ag1',
+        tiempo: 'vispera',
+        orden: 1,
+        titulo: 'La carta de convocatoria',
+        descripcion: 'Lo que recibe el foro dos semanas antes. Fija el tono y quita la tarea.',
+        soporte: 'pantalla',
+        listo: true,
+      },
+      {
+        id: 'ag2',
+        tiempo: 'vispera',
+        orden: 2,
+        titulo: 'La noche de antes',
+        descripcion: 'Un solo mensaje, corto, la víspera. No pide nada.',
+        soporte: 'pantalla',
+        listo: true,
+      },
+      // ── Ignición · tracto 1: entrar y recordar ────────────────
+      {
+        id: 'ag3',
+        tiempo: 'ignicion',
+        orden: 3,
+        titulo: 'Bajar el ritmo',
+        descripcion: 'Salir del modo agenda y volver a notar. Termina arriba, sin haber bajado.',
+        soporte: 'sala',
+        duracion: '40 min',
+        listo: true,
+        requiere: ['Sillas en círculo', 'Nada sobre las mesas'],
+      },
+      {
+        id: 'ag4',
+        tiempo: 'ignicion',
+        orden: 4,
+        titulo: 'Alguien te sostuvo',
+        descripcion: 'Un momento concreto, con detalle. No una idea general de gratitud.',
+        soporte: 'sala',
+        duracion: '50 min',
+        listo: true,
+        requiere: ['Libreta del ancla', 'Lápiz por persona'],
+      },
+      // ── Ignición · tracto 2: bajar y dar forma ────────────────
+      {
+        id: 'ag5',
+        tiempo: 'ignicion',
+        orden: 5,
+        titulo: 'La grieta',
+        descripcion: 'Donde puede aparecer emoción real. Lleva salida, y la salida se dice antes.',
+        soporte: 'sala',
+        duracion: '45 min',
+        listo: true,
+        requiere: ['Pañuelos, discretos', 'Agua'],
+      },
+      {
+        id: 'ag6',
+        tiempo: 'ignicion',
+        orden: 6,
+        titulo: 'Tu historia',
+        descripcion: 'Dificultad, ayuda recibida, quién soy por eso. Cierra lo que la grieta abrió.',
+        soporte: 'sala',
+        duracion: '55 min',
+        listo: true,
+        requiere: ['Libreta del ancla'],
+      },
+      // ── Ignición · tracto 3: compartir, guardar y enviar ──────
+      {
+        id: 'ag7',
+        tiempo: 'ignicion',
+        orden: 7,
+        titulo: 'Decirlo en voz alta',
+        descripcion: 'El pico. Se escucha y se es escuchado, sin que se vuelva competencia.',
+        soporte: 'sala',
+        duracion: '60 min',
+        listo: true,
+        requiere: ['Círculo cerrado', 'Reloj a la vista del moderador, no del foro'],
+      },
+      {
+        id: 'ag8',
+        tiempo: 'ignicion',
+        orden: 8,
+        titulo: 'La llave',
+        descripcion: 'Sellar el ancla, elegir el ritmo y ensayar el gesto una vez, ahí mismo.',
+        soporte: 'objeto',
+        duracion: '25 min',
+        listo: true,
+        requiere: ['Libreta del ancla', 'Los ritmos escritos donde todos los vean'],
+      },
+      {
+        id: 'ag9',
+        tiempo: 'ignicion',
+        orden: 9,
+        titulo: 'Lo que vas a devolver',
+        descripcion: 'La voluntad de retribuir, sin exigir el acto ni ponerle fecha.',
+        soporte: 'sala',
+        duracion: '20 min',
+        listo: true,
+      },
+      // ── Retorno ───────────────────────────────────────────────
+      {
+        id: 'ag10',
+        tiempo: 'retorno',
+        orden: 10,
+        titulo: 'El gesto de cada semana',
+        descripcion: 'Abrir en el ancla, quedarse quieto, escribir la rama, cerrar viendo la raíz.',
+        soporte: 'pantalla',
+        listo: true,
+      },
+      {
+        id: 'ag11',
+        tiempo: 'retorno',
+        orden: 11,
+        titulo: 'La capa del mes',
+        descripcion: 'Mismo gesto, otra función: no se añade, se contempla lo añadido.',
+        soporte: 'pantalla',
+        listo: true,
+      },
+      {
+        id: 'ag12',
+        tiempo: 'retorno',
+        orden: 12,
+        titulo: 'Recibir el libro',
+        descripcion: 'A los seis meses. No se descarga: se recibe, en persona y con una palabra.',
+        soporte: 'objeto',
+        listo: false,
+      },
+    ],
+    kit: [
+      {
+        id: 'ag-k1',
+        columna: 'objeto',
+        nombre: 'Libreta del ancla',
+        detalle:
+          'Tapa dura. La primera página va sin renglones, porque ahí se sella la historia y no se edita después. Debe estar en las manos de cada quien antes de empezar, no repartirse al cierre.',
+        porPersona: true,
+        disponible: true,
+      },
+      {
+        id: 'ag-k2',
+        columna: 'objeto',
+        nombre: 'El libro de los seis meses',
+        detalle:
+          'Encuadernado con lo que la persona escribió durante veinticuatro semanas. Se entrega en mano. Nunca por descarga y nunca por correo.',
+        porPersona: true,
+        disponible: false,
+      },
+      {
+        id: 'ag-k3',
+        columna: 'humano',
+        nombre: 'Formación para sostener la grieta',
+        detalle:
+          'Dos días presenciales. Cómo acompañar una emoción real sin volverse terapeuta, y cómo modelar el permiso de quedarse en la superficie sin que nadie sienta que se quedó corto.',
+        disponible: false,
+      },
+      {
+        id: 'ag-k4',
+        columna: 'humano',
+        nombre: 'La palabra de cierre',
+        detalle:
+          'Se transmite de moderador a moderador, nunca por escrito. La del día cero y la de los seis meses tienen que rimar, y eso no se aprende leyendo.',
+        disponible: false,
+      },
+      {
+        id: 'ag-k5',
+        columna: 'administrativo',
+        nombre: 'Guion de sala, versión congelada',
+        detalle:
+          'Cada foro corre sobre una versión que no cambia a mitad de los seis meses. Si el diseño se actualiza, el foro en curso termina con el que empezó.',
+        disponible: true,
+      },
+      {
+        id: 'ag-k6',
+        columna: 'administrativo',
+        nombre: 'Puntero de apoyo',
+        detalle:
+          'Un recurso de ayuda visible siempre dentro del artefacto, que nadie tiene que activar. Vive ahí para quien lo busque, y no es una alerta que se dispara.',
+        disponible: true,
+      },
+    ],
+  },
 ]
 
 export const CAPITULOS: Capitulo[] = [
@@ -221,7 +428,7 @@ export const CAPITULOS: Capitulo[] = [
 
 export const MODERADORES: Moderador[] = [
   { id: 'rodrigo', nombre: 'Rodrigo Lemus', email: 'rodrigo@ejemplo.mx', capituloId: 'anahuac', formadoEn: ['metamorfosis', 'presente-regalo'], desde: '2025-11' },
-  { id: 'ines', nombre: 'Inés Corral', email: 'ines@ejemplo.mx', capituloId: 'monterrey', formadoEn: ['presente-regalo'], desde: '2026-02' },
+  { id: 'ines', nombre: 'Inés Corral', email: 'ines@ejemplo.mx', capituloId: 'monterrey', formadoEn: ['presente-regalo', 'agradecimiento'], desde: '2026-02' },
   { id: 'tomas', nombre: 'Tomás Bahena', email: 'tomas@ejemplo.mx', capituloId: 'guadalajara', formadoEn: ['presente-regalo'], desde: '2026-03' },
   { id: 'claudia', nombre: 'Claudia Merino', email: 'claudia@ejemplo.sv', capituloId: 'sansalvador', formadoEn: [], desde: '2026-06' },
   { id: 'esteban', nombre: 'Esteban Ruiz', email: 'esteban@ejemplo.co', capituloId: 'bogota', formadoEn: ['presente-regalo'], desde: '2026-01' },
@@ -311,6 +518,26 @@ export const CORRIDAS: Corrida[] = [
       { titulo: 'Carta de convocatoria enviada', hecho: true, fase: 'Dos semanas antes' },
       { titulo: 'Objetos del kit en sede', hecho: true, fase: 'Semana de la corrida' },
     ],
+  },
+{
+    id: 'c6',
+    experienciaId: 'agradecimiento',
+    capituloId: 'monterrey',
+    moderadorId: 'ines',
+    fecha: '2026-09-26',
+    estado: 'en_preparacion',
+    personasEnElForo: 10,
+    sede: 'Casa de la colonia Obispado',
+    preparacion: [
+      { titulo: 'Moderador formado', hecho: true, fase: 'Antes de confirmar' },
+      { titulo: 'Acuerdo de licencia firmado', hecho: true, fase: 'Antes de confirmar' },
+      { titulo: 'Lista del foro cargada', hecho: true, fase: 'Cuatro semanas antes' },
+      { titulo: 'Carta de convocatoria enviada', hecho: true, fase: 'Dos semanas antes' },
+      { titulo: 'Libretas del ancla en sede', hecho: false, fase: 'Semana de la corrida' },
+      { titulo: 'Guion de sala impreso', hecho: false, fase: 'Semana de la corrida' },
+      { titulo: 'Sala en círculo, sin mesas', hecho: false, fase: 'Semana de la corrida' },
+    ],
+    notas: 'Primera corrida de El Agradecimiento. Es la primera experiencia donde cada participante necesita su propio acceso para los seis meses de retorno.',
   },
 ]
 

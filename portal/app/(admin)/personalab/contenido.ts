@@ -199,6 +199,258 @@ export const BLOQUES: Bloque[] = [
     id: 'b24', bisagraId: 'p5', orden: 5, tipo: 'nota', audiencia: 'moderador',
     texto: 'Entrégalas una por una, diciendo el nombre en voz alta. No las dejes en una mesa para que cada quien recoja la suya. El acto de entregar es la mitad del ejercicio.',
   },
+
+  // ══════════════════════════════════════════════════════════════
+  // EL AGRADECIMIENTO
+  // ══════════════════════════════════════════════════════════════
+  // Escrito sobre el diseño que ya vive en Notion. Las notas de sala llevan
+  // la doctrina del moderador: donde esta el riesgo, que se dice en voz y
+  // que NO se hace. Son la mitad del producto que el moderador compra.
+
+  // ── ag1 · La carta de convocatoria (vispera) ──
+  {
+    id: 'g1', bisagraId: 'ag1', orden: 1, tipo: 'texto', audiencia: 'todos',
+    texto: 'En dos semanas vamos a pasar un día juntos, y va a ser sobre el agradecimiento.\n\nNo hace falta que prepares nada. No hay lectura previa, no hay que traer una lista, y no vamos a pedirte que te pongas de pie a decir por qué estás agradecido.',
+  },
+  {
+    id: 'g2', bisagraId: 'ag1', orden: 2, tipo: 'texto', audiencia: 'todos',
+    texto: '## Lo que sí vamos a hacer\n\nVamos a buscar **un momento**. Uno solo, concreto, en el que alguien te sostuvo. No una idea general de que la vida es buena, sino una tarde, una persona, algo que pasó de verdad.\n\nDe ahí sale una historia que es tuya, y esa historia se queda contigo mucho después del día.',
+  },
+  {
+    id: 'g3', bisagraId: 'ag1', orden: 3, tipo: 'aviso', audiencia: 'todos',
+    texto: 'Si llegas en un mal momento, ven igual. No vamos a pedirte que finjas que estás bien, y en ningún ejercicio es obligatorio hablar.',
+  },
+  {
+    id: 'g4', bisagraId: 'ag1', orden: 4, tipo: 'nota', audiencia: 'moderador',
+    texto: 'Manda esta carta catorce días antes, no antes. Si se manda con un mes, se olvida; con una semana, la gente ya se comprometió a otra cosa.\n\nSi alguien te contesta preguntando qué tiene que llevar, responde solo "nada". Cualquier tarea previa arranca el día con deuda, y el día se sostiene sobre lo contrario.',
+  },
+
+  // ── ag2 · La noche de antes (vispera) ──
+  {
+    id: 'g5', bisagraId: 'ag2', orden: 1, tipo: 'texto', audiencia: 'todos',
+    texto: 'Mañana nos vemos.\n\nLlega sin prisa, y si puedes, deja libre lo que viene después. Vas a salir con algo que no vas a querer meter entre dos pendientes.',
+  },
+  {
+    id: 'g6', bisagraId: 'ag2', orden: 2, tipo: 'pausa', audiencia: 'todos',
+  },
+  {
+    id: 'g7', bisagraId: 'ag2', orden: 3, tipo: 'texto', audiencia: 'todos',
+    texto: 'Nada más. Duerme.',
+  },
+  {
+    id: 'g8', bisagraId: 'ag2', orden: 4, tipo: 'nota', audiencia: 'moderador',
+    texto: 'Este mensaje es corto a propósito y no debe crecer. La tentación de agregarle logística, hora y dirección es fuerte: mándala aparte. Este mensaje solo baja el ritmo.',
+  },
+
+  // ── ag3 · Bajar el ritmo (ignicion, tracto 1) ──
+  {
+    id: 'g9', bisagraId: 'ag3', orden: 1, tipo: 'texto', audiencia: 'todos',
+    texto: 'Llevas semanas resolviendo cosas. Eso no está mal, pero tiene un costo: cuando uno vive resolviendo, deja de notar.\n\nLo que tenemos alrededor se vuelve paisaje. Sigue ahí, y deja de verse.',
+  },
+  {
+    id: 'g10', bisagraId: 'ag3', orden: 2, tipo: 'consigna', audiencia: 'todos',
+    texto: 'Nombra tres cosas de esta semana que estuvieron bien y que no notaste mientras pasaban. Pequeñas. Que no sean logros.',
+  },
+  {
+    id: 'g11', bisagraId: 'ag3', orden: 3, tipo: 'pausa', audiencia: 'todos',
+  },
+  {
+    id: 'g12', bisagraId: 'ag3', orden: 4, tipo: 'nota', audiencia: 'moderador',
+    texto: 'Este tracto termina ARRIBA. Es cálido y no baja. Si alguien se adelanta y trae algo hondo, agradécelo y guárdalo: "eso vamos a trabajarlo en un rato, no lo sueltes". Bajar aquí desordena todo el día.\n\nInsiste en que sean cosas pequeñas. Cuando alguien dice "mi familia", pide el momento: qué día, qué pasó.',
+  },
+  {
+    id: 'g13', bisagraId: 'ag3', orden: 5, tipo: 'nota', audiencia: 'moderador',
+    texto: 'Al terminar va un descanso ligero, incluso social. Es el único del día donde está bien que la gente hable de otra cosa.',
+  },
+
+  // ── ag4 · Alguien te sostuvo (ignicion, tracto 1) ──
+  {
+    id: 'g14', bisagraId: 'ag4', orden: 1, tipo: 'texto', audiencia: 'todos',
+    texto: 'Nadie se dio a sí mismo la existencia. Todo lo que somos, empezando por estar aquí, lo recibimos de alguien.\n\nEso suena a frase. Deja de sonar a frase cuando le pones un nombre y una fecha.',
+  },
+  {
+    id: 'g15', bisagraId: 'ag4', orden: 2, tipo: 'cita', audiencia: 'todos',
+    texto: 'La comunión de las conciencias es el hecho primitivo.',
+    autor: 'Maurice Nédoncelle',
+  },
+  {
+    id: 'g16', bisagraId: 'ag4', orden: 3, tipo: 'consigna', audiencia: 'todos',
+    texto: 'Busca un momento en que alguien te sostuvo: te ayudó, te cuidó, o simplemente estuvo cuando no podías solo. Uno. Con fecha, con lugar y con cara.',
+  },
+  {
+    id: 'g17', bisagraId: 'ag4', orden: 4, tipo: 'gesto', audiencia: 'todos',
+    texto: 'Escríbelo a mano en la primera página. Todavía no la historia completa: solo el momento, tal como te llega.',
+  },
+  {
+    id: 'g18', bisagraId: 'ag4', orden: 5, tipo: 'nota', audiencia: 'moderador',
+    texto: 'Va a haber alguien que no tenga un rostro claro. Hay quien agradece a la vida, o a algo que recibió sin saber de quién. No lo corrijas y no le pidas que encuentre una persona: lo que se pide es concreción, no destinatario.\n\nLo que sí pides siempre es el detalle. Un episodio real deja huella; un concepto no.',
+  },
+
+  // ── ag5 · La grieta (ignicion, tracto 2) ──
+  {
+    id: 'g19', bisagraId: 'ag5', orden: 1, tipo: 'aviso', audiencia: 'todos',
+    texto: 'Aquí puede aparecer emoción, y puede no aparecer. Las dos cosas están bien. Si en algún momento quieres parar, paras, y no tienes que explicar por qué.',
+  },
+  {
+    id: 'g20', bisagraId: 'ag5', orden: 2, tipo: 'texto', audiencia: 'todos',
+    texto: 'Vuelve al momento que escribiste. No a lo que significa. Al momento.\n\nDónde estabas. Qué hora era. Qué te dijo esa persona, con sus palabras. Qué habrías hecho si no hubiera estado.',
+  },
+  {
+    id: 'g21', bisagraId: 'ag5', orden: 3, tipo: 'consigna', audiencia: 'todos',
+    texto: 'Quédate ahí un momento, sin escribir. Solo mirándolo.',
+  },
+  {
+    id: 'g22', bisagraId: 'ag5', orden: 4, tipo: 'pausa', audiencia: 'todos',
+  },
+  {
+    id: 'g23', bisagraId: 'ag5', orden: 5, tipo: 'nota', audiencia: 'moderador',
+    texto: 'ESTA ES LA BISAGRA DELICADA DEL DÍA. Tres reglas.\n\nUno: el permiso de parar se dice EN VOZ, antes de empezar, no se deja en letra chica. Y se dice sin dramatismo, como quien menciona dónde está la salida.\n\nDos: si alguien llora, no lo consueles ni lo señales. Sostén el silencio. Consolar rápido comunica que la emoción es un problema que hay que apagar.\n\nTres: tú no eres terapeuta y esto no es terapia. Si alguien abre algo que claramente te queda grande, no lo trabajes en la sala. Acompáñalo al descanso, y ahí le pasas el puntero de apoyo.',
+  },
+  {
+    id: 'g24', bisagraId: 'ag5', orden: 6, tipo: 'nota', audiencia: 'moderador',
+    texto: 'NO cortes aquí. La siguiente bisagra va pegada a esta, sin descanso en medio. La grieta abre y la historia contiene lo que se abrió; si mandas al foro a un café en este punto, la gente sale cruda y no vuelve igual.',
+  },
+  {
+    id: 'g25', bisagraId: 'ag5', orden: 7, tipo: 'video', audiencia: 'moderador',
+    duracion: '14 min',
+    pie: 'De la formación: cómo se sostiene un silencio de treinta segundos sin rescatar a nadie.',
+  },
+
+  // ── ag6 · Tu historia (ignicion, tracto 2) ──
+  {
+    id: 'g26', bisagraId: 'ag6', orden: 1, tipo: 'texto', audiencia: 'todos',
+    texto: 'Lo que acabas de mirar todavía no es una historia. Es un recuerdo suelto, y los recuerdos sueltos se pierden.\n\nUna historia tiene tres partes: qué era difícil, quién apareció, y quién eres tú por eso. Esa tercera es la que la vuelve tuya.',
+  },
+  {
+    id: 'g27', bisagraId: 'ag6', orden: 2, tipo: 'consigna', audiencia: 'todos',
+    texto: 'Escribe tu historia con esas tres partes. Que quepa en una página. No la hagas bonita.',
+  },
+  {
+    id: 'g28', bisagraId: 'ag6', orden: 3, tipo: 'gesto', audiencia: 'todos',
+    texto: 'A mano, en la libreta. Esta es la que se va a quedar seis meses contigo, así que escríbela como hablas.',
+  },
+  {
+    id: 'g29', bisagraId: 'ag6', orden: 4, tipo: 'nota', audiencia: 'moderador',
+    texto: 'La tercera parte, "quién soy por eso", es la que casi todos se saltan. Pásate por las mesas y pregúntala uno por uno.\n\nY vigila la tentación de la moraleja. Si alguien escribe "aprendí a valorar lo que tengo", devuélvelo al hecho: qué cambió en ti, en concreto, después de aquello.',
+  },
+  {
+    id: 'g30', bisagraId: 'ag6', orden: 5, tipo: 'nota', audiencia: 'moderador',
+    texto: 'Aquí sí va descanso, y es distinto al primero: silencio, sin prisa, sin música. No es un coffee break. Dilo antes de soltarlos, o la sala se llena de conversación y se pierde lo que se acaba de abrir.',
+  },
+
+  // ── ag7 · Decirlo en voz alta (ignicion, tracto 3) ──
+  {
+    id: 'g31', bisagraId: 'ag7', orden: 1, tipo: 'texto', audiencia: 'todos',
+    texto: 'Hasta aquí trabajaste solo, y eso no fue el calentamiento. Era la condición.\n\nUno no puede entregar lo que todavía no tiene. Ahora que la historia es tuya, se puede decir.',
+  },
+  {
+    id: 'g32', bisagraId: 'ag7', orden: 2, tipo: 'consigna', audiencia: 'todos',
+    texto: 'Lee tu historia en voz alta al grupo. Sin explicarla antes ni justificarla después.',
+  },
+  {
+    id: 'g33', bisagraId: 'ag7', orden: 3, tipo: 'aviso', audiencia: 'todos',
+    texto: 'Nadie comenta la historia de nadie. No se aplaude, no se aconseja y no se compara. Se escucha, y sigue el siguiente.',
+  },
+  {
+    id: 'g34', bisagraId: 'ag7', orden: 4, tipo: 'nota', audiencia: 'moderador',
+    texto: 'El riesgo de esta bisagra es que se vuelva competencia: quién agradece mejor, quién se quiebra más. La regla de no comentar existe para eso, y hay que sostenerla desde el primer turno. Si dejas pasar un aplauso, ya no la recuperas.\n\nEmpieza tú, con una historia tuya de verdad y corta. Si el primero es un participante, el largo de su turno fija el largo de todos.',
+  },
+  {
+    id: 'g35', bisagraId: 'ag7', orden: 5, tipo: 'nota', audiencia: 'moderador',
+    texto: 'Pasar es una opción y se dice al principio: "si no quieres leer, dices paso y seguimos". Un solo turno saltado sin drama le da permiso al resto de ser honesto.',
+  },
+
+  // ── ag8 · La llave (ignicion, tracto 3) ──
+  {
+    id: 'g36', bisagraId: 'ag8', orden: 1, tipo: 'objeto', audiencia: 'todos',
+    texto: 'Tu libreta',
+    pie: 'La primera página ya no se toca. Lo que sigue son las páginas de después.',
+  },
+  {
+    id: 'g37', bisagraId: 'ag8', orden: 2, tipo: 'texto', audiencia: 'todos',
+    texto: 'Esa página es tu ancla. Durante los próximos seis meses vas a volver a ella, y no vas a escribir encima: vas a escribir después.\n\nLa raíz no cambia. Lo que crece son las ramas.',
+  },
+  {
+    id: 'g38', bisagraId: 'ag8', orden: 3, tipo: 'consigna', audiencia: 'todos',
+    texto: 'Elige tu ritmo, ahora: una vez por semana o dos. Y elige el día. Escríbelo en la segunda página.',
+  },
+  {
+    id: 'g39', bisagraId: 'ag8', orden: 4, tipo: 'gesto', audiencia: 'todos',
+    texto: 'Ensáyalo una vez, aquí, con todos: abre en la página del ancla, quédate en silencio, ciérrala. Sin escribir nada todavía.',
+  },
+  {
+    id: 'g40', bisagraId: 'ag8', orden: 5, tipo: 'nota', audiencia: 'moderador',
+    texto: 'El ritmo se elige AQUÍ, contigo delante, no después en frío. Y el ensayo se hace de verdad, aunque se sienta raro hacer un simulacro de algo tan pequeño: es lo que convierte el gesto en reflejo.\n\nAntes de cerrar el día, confirma con los ojos que cada quien tiene su ancla sellada y su ritmo escrito. Eso se ve, no se asume.',
+  },
+  {
+    id: 'g41', bisagraId: 'ag8', orden: 6, tipo: 'archivo', audiencia: 'moderador',
+    nombreArchivo: 'guion-de-sala-agradecimiento-v1.pdf',
+    peso: '340 KB',
+    descargable: true,
+    pie: 'El guion completo del día, con los tiempos y los cortes. Imprímelo: no lo leas del teléfono en la sala.',
+  },
+
+  // ── ag9 · Lo que vas a devolver (ignicion, tracto 3) ──
+  {
+    id: 'g42', bisagraId: 'ag9', orden: 1, tipo: 'cita', audiencia: 'todos',
+    texto: 'Nadie puede dar lo que no ha recibido.',
+    autor: 'Tomás de Aquino',
+  },
+  {
+    id: 'g43', bisagraId: 'ag9', orden: 2, tipo: 'texto', audiencia: 'todos',
+    texto: 'Lo que recibiste no se devuelve necesariamente a quien te lo dio. Casi nunca se puede.\n\nSe pasa. Y no hay que hacerlo hoy.',
+  },
+  {
+    id: 'g44', bisagraId: 'ag9', orden: 3, tipo: 'consigna', audiencia: 'todos',
+    texto: 'Piensa en una persona a la que podrías sostener como te sostuvieron a ti. No te comprometas a nada, no le pongas fecha. Solo ten el nombre.',
+  },
+  {
+    id: 'g45', bisagraId: 'ag9', orden: 4, tipo: 'nota', audiencia: 'moderador',
+    texto: 'No pidas que lo digan en voz alta y no armes una ronda de compromisos. Tomás advierte que la retribución inmediata parece pago de deuda, y una deuda es exactamente lo contrario de lo que se sembró hoy.\n\nCierra con la palabra de cierre, la que se transmite en la formación. Es la que tiene que rimar con la de los seis meses.',
+  },
+
+  // ── ag10 · El gesto de cada semana (retorno) ──
+  {
+    id: 'g46', bisagraId: 'ag10', orden: 1, tipo: 'texto', audiencia: 'todos',
+    texto: 'Siempre igual, para que se vuelva reflejo.\n\nAbres en la página del ancla, nunca en blanco. Te quedas quieto un momento. Escribes la rama de esta semana. Y cierras viendo la raíz completa otra vez, no la rama sola.',
+  },
+  {
+    id: 'g47', bisagraId: 'ag10', orden: 2, tipo: 'consigna', audiencia: 'todos',
+    texto: 'Esta semana, la lente es: alguien que te sostuvo sin que se lo pidieras.',
+  },
+  {
+    id: 'g48', bisagraId: 'ag10', orden: 3, tipo: 'aviso', audiencia: 'todos',
+    texto: 'Si se pone pesado, salta directo al cierre sin terminar la rama. Eso cuenta como un retorno completo. Parar también es haber terminado.',
+  },
+
+  // ── ag11 · La capa del mes (retorno) ──
+  {
+    id: 'g49', bisagraId: 'ag11', orden: 1, tipo: 'texto', audiencia: 'todos',
+    texto: 'Este mes no vas a añadir. Vas a mirar lo que añadiste.\n\nRelee las ramas de las últimas cuatro semanas, completas, antes de escribir nada.',
+  },
+  {
+    id: 'g50', bisagraId: 'ag11', orden: 2, tipo: 'consigna', audiencia: 'todos',
+    texto: 'Escribe una sola línea sobre lo que notas al leerlas juntas. No una rama nueva: lo que se repite.',
+  },
+
+  // ── ag12 · Recibir el libro (retorno) ──
+  {
+    id: 'g51', bisagraId: 'ag12', orden: 1, tipo: 'objeto', audiencia: 'todos',
+    texto: 'Tu libro',
+    pie: 'Veinticuatro semanas encuadernadas. Se recibe en la mano.',
+  },
+  {
+    id: 'g52', bisagraId: 'ag12', orden: 2, tipo: 'texto', audiencia: 'todos',
+    texto: 'Empezó con una página y una persona que te sostuvo.\n\nEsto es lo que creció encima.',
+  },
+  {
+    id: 'g53', bisagraId: 'ag12', orden: 3, tipo: 'nota', audiencia: 'moderador',
+    texto: 'El libro no se manda y no se descarga: se entrega, uno por uno, diciendo el nombre. Convoca al foro para esto aunque hayan pasado seis meses y cueste juntarlos.\n\nLa palabra de cierre retoma la del día cero. Quien no la recuerde, que no improvise: pídesela a quien lo formó.',
+  },
+  {
+    id: 'g54', bisagraId: 'ag12', orden: 4, tipo: 'imagen', audiencia: 'moderador',
+    pie: 'El libro terminado, para que sepas qué estás prometiendo cuando lo anuncias el día cero.',
+  },
 ]
 
 // ── Consultas ───────────────────────────────────────────────────
