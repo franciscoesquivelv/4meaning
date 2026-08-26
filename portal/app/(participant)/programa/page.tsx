@@ -1,7 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import HelpButton from '@/components/HelpButton'
-import PantallaSinConvertir from '@/components/PantallaSinConvertir'
 
 type ContentBlock = {
   id: string
@@ -32,11 +31,11 @@ function formatActivadoAt(iso: string | null): string {
 
 const tipoDot: Record<string, string> = {
   sesion:     'bg-violet-400',
-  comida:     'bg-[#C9A96E]',
+  comida:     'bg-terra',
   actividad:  'bg-sky-400',
-  libre:      'bg-[#A09A8F]',
+  libre:      'bg-gray',
   traslado:   'bg-slate-400',
-  bienvenida: 'bg-emerald-400',
+  bienvenida: 'bg-bien',
   cierre:     'bg-rose-400',
 }
 
@@ -86,8 +85,8 @@ export default async function ProgramaPage() {
   if (!family) {
     return (
       <div className="px-5 pt-6">
-        <h1 className="text-xl font-bold text-[#F5F0E8] mb-4">Programa</h1>
-        <div className="bg-[#181818] border border-[#2A2A2A] rounded-xl p-5 text-[#A09A8F] text-sm">
+        <h1 className="text-xl font-bold text-ink mb-4">Programa</h1>
+        <div className="bg-white border border-line rounded-xl p-5 text-gray text-sm">
           Tu cuenta no tiene una familia asignada todavía.
         </div>
       </div>
@@ -125,12 +124,11 @@ export default async function ProgramaPage() {
   })
 
   return (
-    <PantallaSinConvertir>
     <div className="px-5 pt-6">
-      <h1 className="text-xl font-bold text-[#F5F0E8] mb-6">Programa</h1>
+      <h1 className="text-xl font-bold text-ink mb-6">Programa</h1>
 
       {!items?.length ? (
-        <div className="bg-[#181818] border border-[#2A2A2A] rounded-xl p-6 text-center text-[#A09A8F] text-sm leading-relaxed">
+        <div className="bg-white border border-line rounded-xl p-6 text-center text-gray text-sm leading-relaxed">
           El programa del retiro estará disponible aquí aproximadamente 7 días antes de la fecha de inicio. Mientras tanto, revisa la sección de Información para los detalles de llegada.
         </div>
       ) : (
@@ -146,8 +144,8 @@ export default async function ProgramaPage() {
                   className={[
                     'px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors flex-shrink-0',
                     isActive
-                      ? 'bg-[#C9A96E] text-[#0C0C0C]'
-                      : 'bg-[#181818] text-[#A09A8F] border border-[#2A2A2A] hover:border-[#3A3A3A]',
+                      ? 'bg-terra text-paper'
+                      : 'bg-white text-gray border border-line hover:border-line',
                   ].join(' ')}
                 >
                   Día {dia}
@@ -165,17 +163,17 @@ export default async function ProgramaPage() {
             return (
               <div key={dia} id={`dia-${dia}`} className="mb-8">
                 {/* Day header */}
-                <div className={`flex items-center justify-between px-3 py-2 rounded-lg mb-4 ${today ? 'bg-[#C9A96E]/10 border border-[#C9A96E]/20' : 'bg-[#181818] border border-[#2A2A2A]'}`}>
+                <div className={`flex items-center justify-between px-3 py-2 rounded-lg mb-4 ${today ? 'bg-terra/10 border border-terra/40' : 'bg-white border border-line'}`}>
                   <div>
-                    <span className={`font-bold text-sm ${today ? 'text-[#C9A96E]' : 'text-[#F5F0E8]'}`}>Día {dia}</span>
+                    <span className={`font-bold text-sm ${today ? 'text-terra' : 'text-ink'}`}>Día {dia}</span>
                     {dayDate && (
-                      <span className={`text-xs ml-2 ${today ? 'text-[#C9A96E]/70' : 'text-[#A09A8F]'}`}>
+                      <span className={`text-xs ml-2 ${today ? 'text-terra/70' : 'text-gray'}`}>
                         {formatDate(dayDate)}
                       </span>
                     )}
                   </div>
                   {today && (
-                    <span className="text-[10px] font-bold text-[#C9A96E] bg-[#C9A96E]/10 border border-[#C9A96E]/30 px-2 py-0.5 rounded-full uppercase tracking-wide">
+                    <span className="text-[10px] font-bold text-terra bg-terra/10 border border-terra/40 px-2 py-0.5 rounded-full uppercase tracking-wide">
                       HOY
                     </span>
                   )}
@@ -184,30 +182,30 @@ export default async function ProgramaPage() {
                 {/* Timeline */}
                 <div className="relative pl-16">
                   {/* Vertical line */}
-                  <div className="absolute left-[52px] top-0 bottom-0 w-px bg-[#2A2A2A]" />
+                  <div className="absolute left-[52px] top-0 bottom-0 w-px bg-paper-2" />
 
                   <div className="space-y-5">
                     {(dayItems ?? []).map(item => (
                       <div key={item.id} className="relative">
                         {/* Time */}
-                        <div className="absolute -left-16 top-0 text-xs text-[#6B7280] text-right w-12 pt-0.5 leading-tight">
+                        <div className="absolute -left-16 top-0 text-xs text-gray text-right w-12 pt-0.5 leading-tight">
                           {formatTime(item.hora_inicio)}
                         </div>
 
                         {/* Dot */}
-                        <div className={`absolute -left-[7px] top-1.5 w-2.5 h-2.5 rounded-full border-2 border-[#0C0C0C] z-10 ${tipoDot[item.tipo] ?? 'bg-[#A09A8F]'}`} />
+                        <div className={`absolute -left-[7px] top-1.5 w-2.5 h-2.5 rounded-full border-2 border-paper z-10 ${tipoDot[item.tipo] ?? 'bg-gray'}`} />
 
                         {/* Content */}
-                        <div className={`bg-[#181818] border rounded-xl p-4 ${today ? 'border-[#C9A96E]/20' : 'border-[#2A2A2A]'}`}>
-                          <div className="font-semibold text-sm text-[#F5F0E8] mb-1">{item.titulo}</div>
+                        <div className={`bg-white border rounded-xl p-4 ${today ? 'border-terra/40' : 'border-line'}`}>
+                          <div className="font-semibold text-sm text-ink mb-1">{item.titulo}</div>
                           {item.hora_fin && (
-                            <div className="text-xs text-[#6B7280] mb-1">hasta {formatTime(item.hora_fin)}</div>
+                            <div className="text-xs text-gray mb-1">hasta {formatTime(item.hora_fin)}</div>
                           )}
                           {item.ubicacion && (
-                            <div className="text-xs text-[#A09A8F]">📍 {item.ubicacion}</div>
+                            <div className="text-xs text-gray">📍 {item.ubicacion}</div>
                           )}
                           {item.descripcion && (
-                            <div className="text-xs text-[#A09A8F] mt-2 leading-relaxed">{item.descripcion}</div>
+                            <div className="text-xs text-gray mt-2 leading-relaxed">{item.descripcion}</div>
                           )}
                         </div>
                       </div>
@@ -231,11 +229,11 @@ export default async function ProgramaPage() {
 
       {/* Content blocks section */}
       <div className="mt-10 mb-6">
-        <h2 className="text-base font-semibold text-[#F5F0E8] mb-4">Contenido del retiro</h2>
+        <h2 className="text-base font-semibold text-ink mb-4">Contenido del retiro</h2>
 
         {activeBlocks.length === 0 ? (
-          <div className="bg-[#181818] border border-white/5 rounded-2xl p-5 text-center">
-            <p className="text-sm text-[#4A4540]">
+          <div className="bg-white border border-line rounded-2xl p-5 text-center">
+            <p className="text-sm text-gray">
               El equipo irá activando contenido durante el retiro
             </p>
           </div>
@@ -244,14 +242,14 @@ export default async function ProgramaPage() {
             {activeBlocks.map(block => (
               <div
                 key={block.id}
-                className="bg-[#1A1A1A] border border-white/10 rounded-2xl p-5 mb-4"
+                className="bg-white border border-line rounded-2xl p-5 mb-4"
               >
-                <div className="text-[10px] uppercase tracking-[0.15em] text-[#C9A96E] mb-2">
+                <div className="text-[10px] uppercase tracking-[0.15em] text-terra mb-2">
                   {TIPO_LABELS[block.tipo] ?? block.tipo}
                 </div>
-                <h3 className="text-lg font-semibold text-[#F5F0E8] mb-2">{block.titulo}</h3>
+                <h3 className="text-lg font-semibold text-ink mb-2">{block.titulo}</h3>
                 {block.contenido && (
-                  <p className="text-sm text-[#B0A898] leading-relaxed whitespace-pre-wrap">
+                  <p className="text-sm text-gray leading-relaxed whitespace-pre-wrap">
                     {block.contenido}
                   </p>
                 )}
@@ -266,6 +264,5 @@ export default async function ProgramaPage() {
 
       <HelpButton pageId="programa" />
     </div>
-    </PantallaSinConvertir>
   )
 }

@@ -41,6 +41,16 @@
   --line:      #E2D5C4;   /* Filete sobre claro */
   --line-dk:   rgba(255,255,255,.14);  /* Filete sobre oscuro */
 
+  /* ── Semánticos ────────────────────────────────────────── */
+  /* La marca no define color de error ni de éxito, porque el sistema es de
+     comunicación y no de interfaz. Estos dos son derivados: el rojo se
+     acerca al vino en vez de ser un rojo de alerta genérico, y el verde va
+     apagado para que no cante al lado de la terracota. No son colores
+     nuevos de la marca: son los dos únicos estados que una app necesita y
+     un folleto no. */
+  --alerta: #8C2A22;
+  --bien:   #2E6B4F;
+
   /* ── Dominancia ────────────────────────────────────────── */
   /* Las tres marcas usan la misma combinación. Lo que cambia es cuál
      manda. El layout de cada marca sobreescribe estas tres. */

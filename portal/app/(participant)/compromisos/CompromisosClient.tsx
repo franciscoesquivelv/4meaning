@@ -21,7 +21,7 @@ const CATEGORY_STYLES: Record<string, string> = {
   relacion: 'bg-rose-500/10 text-rose-300 border border-rose-500/20',
   personal: 'bg-sky-500/10 text-sky-300 border border-sky-500/20',
   familia:  'bg-amber-500/10 text-amber-300 border border-amber-500/20',
-  general:  'bg-[#3A3A3A] text-[#A09A8F]',
+  general:  'bg-paper-2 text-gray',
 }
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -36,15 +36,15 @@ const CATEGORIES = ['relacion', 'personal', 'familia', 'general'] as const
 function CheckCircle({ filled }: { filled: boolean }) {
   if (filled) {
     return (
-      <div className="w-7 h-7 rounded-full bg-[#C9A96E] flex items-center justify-center flex-shrink-0">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0C0C0C" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+      <div className="w-7 h-7 rounded-full bg-wine flex items-center justify-center flex-shrink-0">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--paper)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
           <polyline points="20 6 9 17 4 12" />
         </svg>
       </div>
     )
   }
   return (
-    <div className="w-7 h-7 rounded-full border border-[#3A3A3A] flex-shrink-0" />
+    <div className="w-7 h-7 rounded-full border border-line flex-shrink-0" />
   )
 }
 
@@ -117,7 +117,7 @@ export default function CompromisosClient({ compromisos: initial, familyId, even
       {/* Pending compromisos */}
       {pending.length > 0 && (
         <section className="mb-6">
-          <h2 className="text-[11px] font-semibold text-[#A09A8F] uppercase tracking-wider mb-3">
+          <h2 className="text-[11px] font-semibold text-gray uppercase tracking-wider mb-3">
             Por cumplir ({pending.length})
           </h2>
           <div className="space-y-2">
@@ -125,11 +125,11 @@ export default function CompromisosClient({ compromisos: initial, familyId, even
               <button
                 key={c.id}
                 onClick={() => handleToggle(c.id, c.completado)}
-                className="w-full flex items-start gap-3 p-4 bg-[#1A1A1A] border border-white/10 rounded-2xl text-left hover:border-[#C9A96E]/30 transition-colors"
+                className="w-full flex items-start gap-3 p-4 bg-white border border-line rounded-2xl text-left hover:border-wine/30 transition-colors"
               >
                 <CheckCircle filled={false} />
                 <div className="flex-1 min-w-0 pt-0.5">
-                  <p className="text-sm text-[#F5F0E8] leading-snug">{c.texto}</p>
+                  <p className="text-sm text-ink leading-snug">{c.texto}</p>
                   <span className={`inline-block mt-1.5 text-[10px] font-medium px-2 py-0.5 rounded-full ${CATEGORY_STYLES[c.categoria]}`}>
                     {CATEGORY_LABELS[c.categoria]}
                   </span>
@@ -143,7 +143,7 @@ export default function CompromisosClient({ compromisos: initial, familyId, even
       {/* Completed compromisos */}
       {done.length > 0 && (
         <section className="mb-6">
-          <h2 className="text-[11px] font-semibold text-[#A09A8F] uppercase tracking-wider mb-3">
+          <h2 className="text-[11px] font-semibold text-gray uppercase tracking-wider mb-3">
             Cumplidos ({done.length})
           </h2>
           <div className="space-y-2">
@@ -151,11 +151,11 @@ export default function CompromisosClient({ compromisos: initial, familyId, even
               <button
                 key={c.id}
                 onClick={() => handleToggle(c.id, c.completado)}
-                className="w-full flex items-start gap-3 p-4 bg-[#1A1A1A] border border-white/10 rounded-2xl text-left opacity-60 hover:opacity-80 transition-opacity"
+                className="w-full flex items-start gap-3 p-4 bg-white border border-line rounded-2xl text-left opacity-60 hover:opacity-80 transition-opacity"
               >
                 <CheckCircle filled={true} />
                 <div className="flex-1 min-w-0 pt-0.5">
-                  <p className="text-sm text-[#F5F0E8] leading-snug line-through decoration-[#C9A96E]/50">{c.texto}</p>
+                  <p className="text-sm text-ink leading-snug line-through decoration-gray/50">{c.texto}</p>
                   <span className={`inline-block mt-1.5 text-[10px] font-medium px-2 py-0.5 rounded-full ${CATEGORY_STYLES[c.categoria]}`}>
                     {CATEGORY_LABELS[c.categoria]}
                   </span>
@@ -167,14 +167,14 @@ export default function CompromisosClient({ compromisos: initial, familyId, even
       )}
 
       {compromisos.length === 0 && (
-        <div className="bg-[#1A1A1A] border border-white/10 rounded-2xl p-6 text-center text-[#A09A8F] text-sm leading-relaxed mb-6">
+        <div className="bg-white border border-line rounded-2xl p-6 text-center text-gray text-sm leading-relaxed mb-6">
           Aún no hay compromisos registrados. Agrega el primero abajo.
         </div>
       )}
 
       {/* Add new compromiso */}
-      <form onSubmit={handleAdd} className="bg-[#1A1A1A] border border-white/10 rounded-2xl p-4">
-        <p className="text-[11px] font-semibold text-[#A09A8F] uppercase tracking-wider mb-3">
+      <form onSubmit={handleAdd} className="bg-white border border-line rounded-2xl p-4">
+        <p className="text-[11px] font-semibold text-gray uppercase tracking-wider mb-3">
           Agregar compromiso
         </p>
 
@@ -188,8 +188,8 @@ export default function CompromisosClient({ compromisos: initial, familyId, even
               className={[
                 'text-[11px] font-medium px-3 py-1 rounded-full border transition-all',
                 categoria === cat
-                  ? 'bg-[#C9A96E] text-[#0C0C0C] border-[#C9A96E]'
-                  : 'bg-transparent text-[#A09A8F] border-[#3A3A3A] hover:border-[#5A5A5A]',
+                  ? 'bg-wine text-paper border-wine'
+                  : 'bg-transparent text-gray border-line hover:border-gray',
               ].join(' ')}
             >
               {CATEGORY_LABELS[cat]}
@@ -204,12 +204,12 @@ export default function CompromisosClient({ compromisos: initial, familyId, even
             value={texto}
             onChange={e => setTexto(e.target.value)}
             placeholder="Agregar un compromiso..."
-            className="flex-1 bg-[#0C0C0C] border border-[#3A3A3A] rounded-xl px-4 py-2.5 text-sm text-[#F5F0E8] placeholder-[#4A4540] focus:outline-none focus:border-[#C9A96E]/50 transition-colors"
+            className="flex-1 bg-paper border border-line rounded-xl px-4 py-2.5 text-sm text-ink placeholder-gray focus:outline-none focus:border-wine/50 transition-colors"
           />
           <button
             type="submit"
             disabled={!texto.trim() || adding}
-            className="px-4 py-2.5 bg-[#C9A96E] text-[#0C0C0C] text-sm font-semibold rounded-xl hover:bg-[#D4B87D] disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+            className="px-4 py-2.5 bg-wine text-paper text-sm font-semibold rounded-xl hover:bg-wine-2 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
           >
             {adding ? '...' : 'Agregar'}
           </button>

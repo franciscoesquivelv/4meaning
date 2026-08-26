@@ -2,7 +2,6 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect, notFound } from 'next/navigation'
 import SignAgreementButton from './SignAgreementButton'
 import HelpButton from '@/components/HelpButton'
-import PantallaSinConvertir from '@/components/PantallaSinConvertir'
 
 interface AgreementContent {
   intro?: string
@@ -34,13 +33,12 @@ export default async function AcuerdoDetailPage({ params }: { params: { id: stri
   const family = agreement.families as unknown as { nombre_familia: string } | null
 
   return (
-    <PantallaSinConvertir>
-    <div className="min-h-screen bg-[#0C0C0C] px-4 py-8">
+    <div className="min-h-screen bg-paper px-4 py-8">
       <div className="max-w-2xl mx-auto">
         {/* Back */}
         <a
           href="/acuerdos"
-          className="inline-block text-[#F5F0E8]/50 text-sm mb-6 no-underline hover:text-[#F5F0E8]/80 transition-colors"
+          className="inline-block text-ink/50 text-sm mb-6 no-underline hover:text-ink/80 transition-colors"
         >
           ← Volver a acuerdos
         </a>
@@ -111,18 +109,18 @@ export default async function AcuerdoDetailPage({ params }: { params: { id: stri
 
         {/* Status / Sign */}
         {isSigned ? (
-          <div className="bg-[#181818] border border-[#2A2A2A] rounded-xl px-5 py-4 flex gap-3 items-center">
-            <div className="w-9 h-9 rounded-full bg-[#C9A96E]/10 border border-[#C9A96E]/40 flex items-center justify-center shrink-0">
-              <svg className="w-4 h-4 text-[#C9A96E]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+          <div className="bg-white border border-line rounded-xl px-5 py-4 flex gap-3 items-center">
+            <div className="w-9 h-9 rounded-full bg-terra/10 border border-terra/40 flex items-center justify-center shrink-0">
+              <svg className="w-4 h-4 text-terra" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
               </svg>
             </div>
             <div>
-              <div className="font-semibold text-[#F5F0E8] text-sm">
+              <div className="font-semibold text-ink text-sm">
                 {agreement.status === 'approved' ? 'Acuerdo aprobado' : 'Acuerdo firmado'}
               </div>
               {agreement.signed_at && (
-                <div className="text-[#F5F0E8]/50 text-xs mt-0.5">
+                <div className="text-ink/50 text-xs mt-0.5">
                   Firmado el {formatDate(agreement.signed_at)}
                 </div>
               )}
@@ -135,6 +133,5 @@ export default async function AcuerdoDetailPage({ params }: { params: { id: stri
 
       <HelpButton pageId="acuerdos" />
     </div>
-    </PantallaSinConvertir>
   )
 }

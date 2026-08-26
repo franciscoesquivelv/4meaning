@@ -1,6 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import PantallaSinConvertir from '@/components/PantallaSinConvertir'
 
 const tipoLabels: Record<string, string> = {
   itinerario:       'Itinerario',
@@ -31,7 +30,7 @@ export default async function DocumentosPage() {
     return (
       <div style={{ padding: 24, maxWidth: 480, margin: '0 auto' }}>
         <h1 style={{ fontSize: 22, fontWeight: 700, marginBottom: 16 }}>Documentos</h1>
-        <p style={{ color: '#6b7280', fontSize: 14 }}>No tienes un evento asignado todavía.</p>
+        <p style={{ color: 'var(--gray)', fontSize: 14 }}>No tienes un evento asignado todavía.</p>
       </div>
     )
   }
@@ -44,12 +43,11 @@ export default async function DocumentosPage() {
     .order('created_at', { ascending: false })
 
   return (
-    <PantallaSinConvertir>
     <div style={{ padding: 24, maxWidth: 480, margin: '0 auto' }}>
       <h1 style={{ fontSize: 22, fontWeight: 700, marginBottom: 24 }}>Documentos</h1>
 
       {!documents?.length ? (
-        <p style={{ color: '#9ca3af', fontSize: 14 }}>No hay documentos disponibles todavía.</p>
+        <p style={{ color: 'var(--gray)', fontSize: 14 }}>No hay documentos disponibles todavía.</p>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {documents.map(doc => (
@@ -57,7 +55,7 @@ export default async function DocumentosPage() {
               key={doc.id}
               style={{
                 background: '#fff',
-                border: '1px solid #e5e7eb',
+                border: '1px solid var(--line)',
                 borderRadius: 10,
                 padding: '14px 16px',
                 display: 'flex',
@@ -67,7 +65,7 @@ export default async function DocumentosPage() {
             >
               <div>
                 <div style={{ fontWeight: 500, fontSize: 14, marginBottom: 2 }}>{doc.nombre}</div>
-                <div style={{ fontSize: 12, color: '#9ca3af' }}>
+                <div style={{ fontSize: 12, color: 'var(--gray)' }}>
                   {tipoLabels[doc.tipo] ?? doc.tipo} · {formatDate(doc.created_at)}
                 </div>
               </div>
@@ -97,6 +95,5 @@ export default async function DocumentosPage() {
         </div>
       )}
     </div>
-    </PantallaSinConvertir>
   )
 }

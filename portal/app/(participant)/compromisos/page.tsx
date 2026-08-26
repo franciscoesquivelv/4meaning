@@ -2,11 +2,10 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import CompromisosClient from './CompromisosClient'
 import HelpButton from '@/components/HelpButton'
-import PantallaSinConvertir from '@/components/PantallaSinConvertir'
 
 function LockIcon() {
   return (
-    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#C9A96E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--terra)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
       <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
       <path d="M7 11V7a5 5 0 0 1 10 0v4" />
     </svg>
@@ -28,8 +27,8 @@ export default async function CompromisosPage() {
   if (!family) {
     return (
       <div className="px-5 pt-6">
-        <h1 className="text-xl font-bold text-[#F5F0E8] mb-4">Compromisos</h1>
-        <div className="bg-[#1A1A1A] border border-white/10 rounded-2xl p-5 text-[#A09A8F] text-sm">
+        <h1 className="text-xl font-bold text-ink mb-4">Compromisos</h1>
+        <div className="bg-white border border-line rounded-2xl p-5 text-gray text-sm">
           Tu cuenta no tiene una familia asignada todavía.
         </div>
       </div>
@@ -73,32 +72,32 @@ export default async function CompromisosPage() {
   if (!isPostEvent) {
     return (
       <div className="px-5 pt-6">
-        <div className="text-[11px] font-semibold tracking-[0.15em] text-[#C9A96E] uppercase mb-3">
+        <div className="text-[11px] font-semibold tracking-[0.15em] text-terra uppercase mb-3">
           Después del retiro
         </div>
-        <h1 className="font-[family-name:var(--font-cormorant)] text-4xl font-light text-[#F5F0E8] leading-tight mb-2">
+        <h1 className="font-extralight tracking-tight text-4xl font-light text-ink leading-tight mb-2">
           Compromisos 90 días
         </h1>
-        <p className="text-sm text-[#B0A898] mb-10">
+        <p className="text-sm text-gray mb-10">
           Los acuerdos que tomaron juntos siguen vivos aquí.
         </p>
 
-        <div className="bg-[#1A1A1A] border border-white/10 rounded-2xl p-8 flex flex-col items-center text-center gap-5">
-          <div className="w-16 h-16 rounded-full bg-[#C9A96E]/10 border border-[#C9A96E]/20 flex items-center justify-center">
+        <div className="bg-white border border-line rounded-2xl p-8 flex flex-col items-center text-center gap-5">
+          <div className="w-16 h-16 rounded-full bg-terra/10 border border-terra/40 flex items-center justify-center">
             <LockIcon />
           </div>
           <div>
-            <p className="text-base font-semibold text-[#F5F0E8] mb-2">
+            <p className="text-base font-semibold text-ink mb-2">
               Disponible al terminar el retiro
             </p>
-            <p className="text-sm text-[#A09A8F] leading-relaxed max-w-xs">
+            <p className="text-sm text-gray leading-relaxed max-w-xs">
               Esta sección se desbloqueará cuando el retiro haya concluido. Aquí podrán registrar y dar seguimiento a los compromisos que hicieron juntos.
             </p>
           </div>
           {event?.fecha_fin && (
-            <div className="bg-[#0C0C0C] border border-[#2A2A2A] rounded-xl px-4 py-2 text-xs text-[#A09A8F]">
+            <div className="bg-paper border border-line rounded-xl px-4 py-2 text-xs text-gray">
               Se desbloquea el{' '}
-              <span className="text-[#C9A96E]">
+              <span className="text-terra">
                 {new Date(event.fecha_fin).toLocaleDateString('es-MX', {
                   weekday: 'long',
                   day: 'numeric',
@@ -116,34 +115,33 @@ export default async function CompromisosPage() {
 
   // Post-event full UI
   return (
-    <PantallaSinConvertir>
     <div className="px-5 pt-6">
       {/* Header */}
-      <div className="text-[11px] font-semibold tracking-[0.15em] text-[#C9A96E] uppercase mb-3">
+      <div className="text-[11px] font-semibold tracking-[0.15em] text-terra uppercase mb-3">
         Después del retiro
       </div>
-      <h1 className="font-[family-name:var(--font-cormorant)] text-4xl font-light text-[#F5F0E8] leading-tight mb-2">
+      <h1 className="font-extralight tracking-tight text-4xl font-light text-ink leading-tight mb-2">
         Compromisos 90 días
       </h1>
-      <p className="text-sm text-[#B0A898] mb-6">
+      <p className="text-sm text-gray mb-6">
         Los acuerdos que tomaron juntos siguen vivos aquí.
       </p>
 
       {/* Progress stats */}
       {total > 0 && (
-        <div className="bg-[#1A1A1A] border border-white/10 rounded-2xl p-4 mb-6">
+        <div className="bg-white border border-line rounded-2xl p-4 mb-6">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-[#F5F0E8] font-medium">
+            <span className="text-sm text-ink font-medium">
               {done} de {total} completados
             </span>
-            <span className="text-xs text-[#A09A8F]">{pct}%</span>
+            <span className="text-xs text-gray">{pct}%</span>
           </div>
-          <div className="bg-[#2A2A2A] rounded-full h-1 overflow-hidden">
+          <div className="bg-paper-2 rounded-full h-1 overflow-hidden">
             <div
               className="h-full rounded-full transition-all duration-500"
               style={{
                 width: `${pct}%`,
-                background: pct === 100 ? '#4ADE80' : '#C9A96E',
+                background: pct === 100 ? 'var(--bien)' : 'var(--terra)',
               }}
             />
           </div>
@@ -158,6 +156,5 @@ export default async function CompromisosPage() {
 
       <HelpButton pageId="compromisos" />
     </div>
-    </PantallaSinConvertir>
   )
 }

@@ -1,7 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import HelpButton from '@/components/HelpButton'
-import PantallaSinConvertir from '@/components/PantallaSinConvertir'
 
 const AVATAR_COLORS = [
   'bg-violet-900/60 text-violet-300',
@@ -40,27 +39,26 @@ export default async function EquipoPage() {
   }
 
   return (
-    <PantallaSinConvertir>
     <div className="px-5 pt-6 pb-10">
-      <h1 className="text-xl font-bold text-[#F5F0E8] mb-6">Equipo</h1>
+      <h1 className="text-xl font-bold text-ink mb-6">Equipo</h1>
       {!family && (
-        <div className="bg-[#181818] border border-[#2A2A2A] rounded-xl p-5 text-[#A09A8F] text-sm">
+        <div className="bg-white border border-line rounded-xl p-5 text-gray text-sm">
           Tu cuenta no tiene una familia asignada todavía.
         </div>
       )}
       {family && !teamMembers.length && (
-        <div className="bg-[#181818] border border-[#2A2A2A] rounded-xl p-6 text-center text-[#A09A8F] text-sm leading-relaxed">
+        <div className="bg-white border border-line rounded-xl p-6 text-center text-gray text-sm leading-relaxed">
           Conocerás a los facilitadores del retiro unos días antes del evento. Sus presentaciones y experiencias estarán disponibles aquí pronto.
         </div>
       )}
       {teamMembers.length > 0 && (
         <div className="space-y-4">
           {teamMembers.map((member, index) => (
-            <div key={member.id} className="bg-[#181818] border border-[#2A2A2A] rounded-xl p-5">
+            <div key={member.id} className="bg-white border border-line rounded-xl p-5">
               <div className="flex items-start justify-between mb-3">
                 <div>
-                  <div className="font-bold text-[#F5F0E8]">{member.nombre}</div>
-                  <div className="text-xs text-[#C9A96E] font-medium mt-0.5 uppercase tracking-wider">{member.rol}</div>
+                  <div className="font-bold text-ink">{member.nombre}</div>
+                  <div className="text-xs text-terra font-medium mt-0.5 uppercase tracking-wider">{member.rol}</div>
                 </div>
                 <div className="w-14 h-14 rounded-full overflow-hidden flex-shrink-0 flex items-center justify-center">
                   {member.foto_url ? (
@@ -77,7 +75,7 @@ export default async function EquipoPage() {
                   )}
                 </div>
               </div>
-              <p className="text-sm text-[#A09A8F] leading-relaxed">{member.bio_publica}</p>
+              <p className="text-sm text-gray leading-relaxed">{member.bio_publica}</p>
             </div>
           ))}
         </div>
@@ -85,6 +83,5 @@ export default async function EquipoPage() {
 
       <HelpButton pageId="equipo" />
     </div>
-    </PantallaSinConvertir>
   )
 }

@@ -29,6 +29,8 @@ const config: Config = {
         gray:      "var(--gray)",
         paper:     { DEFAULT: "var(--paper)", 2: "var(--paper-2)" },
         line:      "var(--line)",
+        alerta:    "var(--alerta)",
+        bien:      "var(--bien)",
 
         // Dominancia por marca
         dom:  { DEFAULT: "var(--dom)", deep: "var(--dom-deep)" },
