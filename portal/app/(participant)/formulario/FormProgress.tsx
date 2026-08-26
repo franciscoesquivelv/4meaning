@@ -24,8 +24,8 @@ export default function FormProgress({ sections }: { sections: string[] }) {
   return (
     <div className="sticky top-14 z-30 bg-paper border-b border-line px-5 py-2">
       <div className="flex items-center justify-between mb-1.5">
-        <span className="text-xs text-gray">{sections[current]}</span>
-        <span className="text-xs font-medium text-terra">{pct}%</span>
+        <span className="text-xs text-gray-ui">{sections[current]}</span>
+        <span className="text-xs font-medium text-terra-ui">{pct}%</span>
       </div>
       <div className="h-1 bg-paper-2 rounded-full overflow-hidden">
         <div

@@ -40,14 +40,14 @@ export default async function MiRetiroPage() {
           <p className="text-[22px] font-extralight tracking-tight text-ink mb-3">
             {nombre ? `Tu cuenta está lista, ${nombre}` : 'Tu cuenta está lista'}
           </p>
-          <p className="text-[14px] text-gray leading-relaxed max-w-xs mb-8">
+          <p className="text-[14px] text-gray-ui leading-relaxed max-w-xs mb-8">
             Tu coordinadora todavía no la ha vinculado al retiro. Suele hacerse dos a cuatro semanas
             antes. Si crees que es un error, escríbele directamente.
           </p>
           <form action="/auth/signout" method="POST">
             <button
               type="submit"
-              className="px-5 py-3 min-h-[44px] text-[14px] text-gray border border-line rounded-full hover:border-terra hover:text-ink transition-colors"
+              className="px-5 py-3 min-h-[44px] text-[14px] text-gray-ui border border-line rounded-full hover:border-terra hover:text-ink transition-colors"
             >
               Cerrar sesión
             </button>

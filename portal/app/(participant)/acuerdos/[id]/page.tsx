@@ -38,7 +38,7 @@ export default async function AcuerdoDetailPage({ params }: { params: { id: stri
         {/* Back */}
         <a
           href="/acuerdos"
-          className="inline-block text-ink/50 text-sm mb-6 no-underline hover:text-ink/80 transition-colors"
+          className="inline-block text-gray-ui text-sm mb-6 no-underline hover:text-ink transition-colors"
         >
           ← Volver a acuerdos
         </a>
@@ -111,7 +111,7 @@ export default async function AcuerdoDetailPage({ params }: { params: { id: stri
         {isSigned ? (
           <div className="bg-white border border-line rounded-xl px-5 py-4 flex gap-3 items-center">
             <div className="w-9 h-9 rounded-full bg-terra/10 border border-terra/40 flex items-center justify-center shrink-0">
-              <svg className="w-4 h-4 text-terra" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <svg className="w-4 h-4 text-terra-ui" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
               </svg>
             </div>
@@ -120,7 +120,7 @@ export default async function AcuerdoDetailPage({ params }: { params: { id: stri
                 {agreement.status === 'approved' ? 'Acuerdo aprobado' : 'Acuerdo firmado'}
               </div>
               {agreement.signed_at && (
-                <div className="text-ink/50 text-xs mt-0.5">
+                <div className="text-gray-ui text-xs mt-0.5">
                   Firmado el {formatDate(agreement.signed_at)}
                 </div>
               )}

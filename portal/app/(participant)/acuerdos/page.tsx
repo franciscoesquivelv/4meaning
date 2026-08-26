@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import HelpButton from '@/components/HelpButton'
+import { familiaVisible } from '@/lib/participante/familia'
 
 const statusLabels: Record<string, string> = {
   draft: 'Borrador', sent: 'Enviado', viewed: 'Visto',
@@ -21,30 +22,36 @@ function AgreementBadge({ status }: { status: string }) {
   }
   if (['pending', 'sent', 'viewed'].includes(status)) {
     return (
-      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-900/30 text-terra border border-amber-400/20">
+      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-900/30 text-terra-ui border border-amber-400/20">
         Pendiente firma
       </span>
     )
   }
   if (status === 'draft') {
     return (
-      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-paper-2 text-gray border border-line">
+      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-paper-2 text-gray-ui border border-line">
         Proximamente
       </span>
     )
   }
-  return <span className="text-xs text-gray">{statusLabels[status] ?? status}</span>
+  return <span className="text-xs text-gray-ui">{statusLabels[status] ?? status}</span>
 }
 
-export default async function AcuerdosPage() {
+export default async function AcuerdosPage({
+  searchParams,
+}: {
+  searchParams: { familia?: string }
+}) {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
+  const fam = await familiaVisible(searchParams?.familia)
+
   const { data: family } = await supabase
     .from('families')
     .select('id, nombre_familia')
-    .or(`user_id1.eq.${user.id},user_id2.eq.${user.id}`)
+    .eq('id', fam?.id ?? '00000000-0000-0000-0000-000000000000')
     .limit(1)
     .maybeSingle()
 
@@ -52,7 +59,7 @@ export default async function AcuerdosPage() {
     return (
       <div className="px-5 pt-6">
         <h1 className="text-xl font-bold text-ink mb-4">Acuerdos</h1>
-        <div className="bg-white border border-line rounded-xl p-5 text-gray text-sm">
+        <div className="bg-white border border-line rounded-xl p-5 text-gray-ui text-sm">
           No tienes una familia asignada todavía.
         </div>
       </div>
@@ -74,10 +81,10 @@ export default async function AcuerdosPage() {
   return (
     <div className="px-5 pt-6">
       <h1 className="text-xl font-bold text-ink mb-1">Acuerdos</h1>
-      <p className="text-sm text-gray mb-6">{family.nombre_familia}</p>
+      <p className="text-sm text-gray-ui mb-6">{family.nombre_familia}</p>
 
       {/* Informational note */}
-      <div className="mb-6 bg-terra/10 border border-terra/40 rounded-xl px-4 py-3 flex items-start gap-2.5 text-sm text-gray">
+      <div className="mb-6 bg-terra/10 border border-terra/40 rounded-xl px-4 py-3 flex items-start gap-2.5 text-sm text-gray-ui">
         <span className="text-base leading-none mt-0.5">ℹ️</span>
         <span>Todos los acuerdos deben estar firmados antes de tu llegada al retiro.</span>
       </div>
@@ -87,7 +94,7 @@ export default async function AcuerdosPage() {
         <div className="mb-8 bg-white border border-line rounded-xl p-4">
           <div className="flex items-center justify-between mb-3 text-sm">
             <span className="text-ink font-medium">Progreso</span>
-            <span className="text-gray">{doneCount}/{total} completados</span>
+            <span className="text-gray-ui">{doneCount}/{total} completados</span>
           </div>
           <div className="bg-paper-2 rounded-full h-2 overflow-hidden">
             <div
@@ -98,14 +105,14 @@ export default async function AcuerdosPage() {
               }}
             />
           </div>
-          <div className="text-right text-xs text-gray mt-1">{pct}%</div>
+          <div className="text-right text-xs text-gray-ui mt-1">{pct}%</div>
         </div>
       )}
 
       {/* Pending */}
       {pending.length > 0 && (
         <section className="mb-8">
-          <h2 className="text-xs font-semibold text-gray uppercase tracking-wider mb-3">
+          <h2 className="text-xs font-semibold text-gray-ui uppercase tracking-wider mb-3">
             Por completar ({pending.length})
           </h2>
           <div className="space-y-2">
@@ -117,10 +124,10 @@ export default async function AcuerdosPage() {
               >
                 <div className="flex-1 min-w-0 mr-3">
                   <div className="font-medium text-ink text-sm">{ag.nombre}</div>
-                  <div className="text-xs text-gray mt-0.5 uppercase">{ag.type}</div>
+                  <div className="text-xs text-gray-ui mt-0.5 uppercase">{ag.type}</div>
                   <div className="mt-2"><AgreementBadge status={ag.status} /></div>
                 </div>
-                <span className="text-terra text-lg flex-shrink-0">→</span>
+                <span className="text-terra-ui text-lg flex-shrink-0">→</span>
               </Link>
             ))}
           </div>
@@ -130,7 +137,7 @@ export default async function AcuerdosPage() {
       {/* Completed */}
       {completed.length > 0 && (
         <section>
-          <h2 className="text-xs font-semibold text-gray uppercase tracking-wider mb-3">
+          <h2 className="text-xs font-semibold text-gray-ui uppercase tracking-wider mb-3">
             Completados ({completed.length})
           </h2>
           <div className="space-y-2">
@@ -142,7 +149,7 @@ export default async function AcuerdosPage() {
               >
                 <div className="flex-1 min-w-0 mr-3">
                   <div className="font-medium text-ink text-sm">{ag.nombre}</div>
-                  <div className="text-xs text-gray mt-0.5 uppercase">{ag.type}</div>
+                  <div className="text-xs text-gray-ui mt-0.5 uppercase">{ag.type}</div>
                   <div className="mt-2"><AgreementBadge status={ag.status} /></div>
                 </div>
                 <span className="text-bien text-lg flex-shrink-0">✓</span>
@@ -153,7 +160,7 @@ export default async function AcuerdosPage() {
       )}
 
       {total === 0 && (
-        <div className="bg-white border border-line rounded-xl p-6 text-center text-gray text-sm leading-relaxed">
+        <div className="bg-white border border-line rounded-xl p-6 text-center text-gray-ui text-sm leading-relaxed">
           Los acuerdos de confidencialidad y participación te serán enviados próximamente. Recibirás una notificación cuando estén listos para firmar.
         </div>
       )}

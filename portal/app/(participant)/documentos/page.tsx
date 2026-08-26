@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import { familiaVisible } from '@/lib/participante/familia'
 
 const tipoLabels: Record<string, string> = {
   itinerario:       'Itinerario',
@@ -14,15 +15,21 @@ function formatDate(d: string | null) {
   return new Date(d).toLocaleDateString('es-MX', { day: '2-digit', month: 'long', year: 'numeric' })
 }
 
-export default async function DocumentosPage() {
+export default async function DocumentosPage({
+  searchParams,
+}: {
+  searchParams: { familia?: string }
+}) {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
+  const fam = await familiaVisible(searchParams?.familia)
+
   const { data: family } = await supabase
     .from('families')
     .select('id, event_id')
-    .or(`user_id1.eq.${user.id},user_id2.eq.${user.id}`)
+    .eq('id', fam?.id ?? '00000000-0000-0000-0000-000000000000')
     .limit(1)
     .maybeSingle()
 

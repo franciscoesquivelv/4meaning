@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import HelpButton from '@/components/HelpButton'
+import { familiaVisible } from '@/lib/participante/familia'
 
 type ContentBlock = {
   id: string
@@ -70,15 +71,21 @@ interface ItineraryItem {
   ubicacion: string | null
 }
 
-export default async function ProgramaPage() {
+export default async function ProgramaPage({
+  searchParams,
+}: {
+  searchParams: { familia?: string }
+}) {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
+  const fam = await familiaVisible(searchParams?.familia)
+
   const { data: family } = await supabase
     .from('families')
     .select('id, event_id')
-    .or(`user_id1.eq.${user.id},user_id2.eq.${user.id}`)
+    .eq('id', fam?.id ?? '00000000-0000-0000-0000-000000000000')
     .limit(1)
     .maybeSingle()
 
@@ -86,7 +93,7 @@ export default async function ProgramaPage() {
     return (
       <div className="px-5 pt-6">
         <h1 className="text-xl font-bold text-ink mb-4">Programa</h1>
-        <div className="bg-white border border-line rounded-xl p-5 text-gray text-sm">
+        <div className="bg-white border border-line rounded-xl p-5 text-gray-ui text-sm">
           Tu cuenta no tiene una familia asignada todavía.
         </div>
       </div>
@@ -128,7 +135,7 @@ export default async function ProgramaPage() {
       <h1 className="text-xl font-bold text-ink mb-6">Programa</h1>
 
       {!items?.length ? (
-        <div className="bg-white border border-line rounded-xl p-6 text-center text-gray text-sm leading-relaxed">
+        <div className="bg-white border border-line rounded-xl p-6 text-center text-gray-ui text-sm leading-relaxed">
           El programa del retiro estará disponible aquí aproximadamente 7 días antes de la fecha de inicio. Mientras tanto, revisa la sección de Información para los detalles de llegada.
         </div>
       ) : (
@@ -144,8 +151,8 @@ export default async function ProgramaPage() {
                   className={[
                     'px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors flex-shrink-0',
                     isActive
-                      ? 'bg-terra text-paper'
-                      : 'bg-white text-gray border border-line hover:border-line',
+                      ? 'bg-wine text-paper'
+                      : 'bg-white text-gray-ui border border-line hover:border-line',
                   ].join(' ')}
                 >
                   Día {dia}
@@ -165,15 +172,15 @@ export default async function ProgramaPage() {
                 {/* Day header */}
                 <div className={`flex items-center justify-between px-3 py-2 rounded-lg mb-4 ${today ? 'bg-terra/10 border border-terra/40' : 'bg-white border border-line'}`}>
                   <div>
-                    <span className={`font-bold text-sm ${today ? 'text-terra' : 'text-ink'}`}>Día {dia}</span>
+                    <span className={`font-bold text-sm ${today ? 'text-terra-ui' : 'text-ink'}`}>Día {dia}</span>
                     {dayDate && (
-                      <span className={`text-xs ml-2 ${today ? 'text-terra/70' : 'text-gray'}`}>
+                      <span className={`text-xs ml-2 ${today ? 'text-terra-ui' : 'text-gray-ui'}`}>
                         {formatDate(dayDate)}
                       </span>
                     )}
                   </div>
                   {today && (
-                    <span className="text-[10px] font-bold text-terra bg-terra/10 border border-terra/40 px-2 py-0.5 rounded-full uppercase tracking-wide">
+                    <span className="text-[10px] font-bold text-terra-ui bg-terra/10 border border-terra/40 px-2 py-0.5 rounded-full uppercase tracking-wide">
                       HOY
                     </span>
                   )}
@@ -188,7 +195,7 @@ export default async function ProgramaPage() {
                     {(dayItems ?? []).map(item => (
                       <div key={item.id} className="relative">
                         {/* Time */}
-                        <div className="absolute -left-16 top-0 text-xs text-gray text-right w-12 pt-0.5 leading-tight">
+                        <div className="absolute -left-16 top-0 text-xs text-gray-ui text-right w-12 pt-0.5 leading-tight">
                           {formatTime(item.hora_inicio)}
                         </div>
 
@@ -199,13 +206,13 @@ export default async function ProgramaPage() {
                         <div className={`bg-white border rounded-xl p-4 ${today ? 'border-terra/40' : 'border-line'}`}>
                           <div className="font-semibold text-sm text-ink mb-1">{item.titulo}</div>
                           {item.hora_fin && (
-                            <div className="text-xs text-gray mb-1">hasta {formatTime(item.hora_fin)}</div>
+                            <div className="text-xs text-gray-ui mb-1">hasta {formatTime(item.hora_fin)}</div>
                           )}
                           {item.ubicacion && (
-                            <div className="text-xs text-gray">📍 {item.ubicacion}</div>
+                            <div className="text-xs text-gray-ui">📍 {item.ubicacion}</div>
                           )}
                           {item.descripcion && (
-                            <div className="text-xs text-gray mt-2 leading-relaxed">{item.descripcion}</div>
+                            <div className="text-xs text-gray-ui mt-2 leading-relaxed">{item.descripcion}</div>
                           )}
                         </div>
                       </div>
@@ -233,7 +240,7 @@ export default async function ProgramaPage() {
 
         {activeBlocks.length === 0 ? (
           <div className="bg-white border border-line rounded-2xl p-5 text-center">
-            <p className="text-sm text-gray">
+            <p className="text-sm text-gray-ui">
               El equipo irá activando contenido durante el retiro
             </p>
           </div>
@@ -244,16 +251,16 @@ export default async function ProgramaPage() {
                 key={block.id}
                 className="bg-white border border-line rounded-2xl p-5 mb-4"
               >
-                <div className="text-[10px] uppercase tracking-[0.15em] text-terra mb-2">
+                <div className="text-[10px] uppercase tracking-[0.15em] text-terra-ui mb-2">
                   {TIPO_LABELS[block.tipo] ?? block.tipo}
                 </div>
                 <h3 className="text-lg font-semibold text-ink mb-2">{block.titulo}</h3>
                 {block.contenido && (
-                  <p className="text-sm text-gray leading-relaxed whitespace-pre-wrap">
+                  <p className="text-sm text-gray-ui leading-relaxed whitespace-pre-wrap">
                     {block.contenido}
                   </p>
                 )}
-                <div className="text-[10px] text-white/20 mt-3">
+                <div className="text-[10px] text-gray-ui mt-3">
                   Disponible desde {formatActivadoAt(block.activado_at)}
                 </div>
               </div>

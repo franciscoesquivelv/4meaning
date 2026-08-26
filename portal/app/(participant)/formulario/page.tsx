@@ -21,7 +21,7 @@ interface Hijo {
   edad: string
 }
 
-const INPUT = "w-full px-4 py-3 bg-white border border-line rounded-xl text-ink text-sm placeholder-gray focus:outline-none focus:border-wine transition-colors resize-y"
+const INPUT = "w-full px-4 py-3 bg-white border border-line rounded-xl text-ink text-sm placeholder-gray-ui focus:outline-none focus:border-wine transition-colors resize-y"
 const LABEL = "block text-sm font-medium text-ink mb-2"
 
 export default function FormularioPage() {
@@ -157,13 +157,13 @@ export default function FormularioPage() {
     setSubmitted(true)
   }
 
-  if (loading) return <div className="px-5 pt-6 text-gray text-sm">Cargando...</div>
+  if (loading) return <div className="px-5 pt-6 text-gray-ui text-sm">Cargando...</div>
 
   if (noFamily) {
     return (
       <div className="px-5 pt-6">
         <h1 className="text-xl font-bold text-ink mb-4">Formulario de intake</h1>
-        <div className="bg-white border border-line rounded-xl p-5 text-gray text-sm">
+        <div className="bg-white border border-line rounded-xl p-5 text-gray-ui text-sm">
           Tu cuenta no tiene una familia asignada. Contacta al equipo de Trascendencia.
         </div>
       </div>
@@ -175,7 +175,7 @@ export default function FormularioPage() {
       <div className="px-5 pt-6 text-center py-16">
         <div className="text-5xl text-bien mb-4">✓</div>
         <h1 className="text-xl font-bold text-ink mb-3">Perfil completado ✓</h1>
-        <p className="text-sm text-gray leading-relaxed max-w-xs mx-auto">
+        <p className="text-sm text-gray-ui leading-relaxed max-w-xs mx-auto">
           Gracias por completarlo. El equipo de Trascendencia lo revisará antes del retiro.
         </p>
       </div>
@@ -197,10 +197,10 @@ export default function FormularioPage() {
       <div className="px-5 pt-6 max-w-lg mx-auto">
         {/* Step indicator */}
         <div className="flex items-center gap-3 mb-6">
-          <span className="text-xs font-semibold px-3 py-1 rounded-full bg-terra/10 text-terra border border-terra/40">
+          <span className="text-xs font-semibold px-3 py-1 rounded-full bg-terra/10 text-terra-ui border border-terra/40">
             Paso {currentStep} de {TOTAL_STEPS}
           </span>
-          <span className="text-xs text-gray">{FORM_SECTIONS[currentStep - 1]}</span>
+          <span className="text-xs text-gray-ui">{FORM_SECTIONS[currentStep - 1]}</span>
         </div>
 
         {/* Step dots */}
@@ -267,7 +267,7 @@ export default function FormularioPage() {
                 min={0}
                 value={form.anos_juntos}
                 onChange={e => setForm(f => ({ ...f, anos_juntos: e.target.value }))}
-                className="px-4 py-3 bg-white border border-line rounded-xl text-ink text-sm placeholder-gray focus:outline-none focus:border-wine transition-colors w-32"
+                className="px-4 py-3 bg-white border border-line rounded-xl text-ink text-sm placeholder-gray-ui focus:outline-none focus:border-wine transition-colors w-32"
                 placeholder="Ej: 12"
               />
             </div>
@@ -278,7 +278,7 @@ export default function FormularioPage() {
         {currentStep === 2 && (
           <div>
             <label className={LABEL}>¿Cuáles son los momentos más importantes que han vivido como familia?</label>
-            <p className="text-xs text-gray mb-2">
+            <p className="text-xs text-gray-ui mb-2">
               Nacimientos, logros, crisis superadas, viajes, pérdidas, cambios de vida... Los momentos que los han moldeado.
             </p>
             <textarea
@@ -294,17 +294,17 @@ export default function FormularioPage() {
         {currentStep === 3 && (
           <div>
             <label className={LABEL}>¿Qué valores quieren transmitir a su familia?</label>
-            <p className="text-xs text-gray mb-3">
+            <p className="text-xs text-gray-ui mb-3">
               Escribe hasta 5 valores que guían su vida y quieren que sus hijos y generaciones futuras hereden.
             </p>
             <div className="space-y-2">
               {valores.map((v, i) => (
                 <div key={i} className="flex items-center gap-3">
-                  <span className="text-xs text-gray w-4 text-right flex-shrink-0">{i + 1}</span>
+                  <span className="text-xs text-gray-ui w-4 text-right flex-shrink-0">{i + 1}</span>
                   <input
                     value={v}
                     onChange={e => setValores(vals => vals.map((x, idx) => idx === i ? e.target.value : x))}
-                    className="flex-1 px-4 py-2.5 bg-white border border-line rounded-xl text-ink text-sm placeholder-gray focus:outline-none focus:border-wine transition-colors"
+                    className="flex-1 px-4 py-2.5 bg-white border border-line rounded-xl text-ink text-sm placeholder-gray-ui focus:outline-none focus:border-wine transition-colors"
                     placeholder={['Fe, familia, integridad...', 'Amor, servicio...', 'Resiliencia...', 'Gratitud...', 'Legado...'][i]}
                   />
                 </div>
@@ -328,7 +328,7 @@ export default function FormularioPage() {
                       'px-5 py-2.5 rounded-xl text-sm font-medium border transition-colors cursor-pointer',
                       form.tienen_hijos === opt.val
                         ? 'bg-terra border-wine text-paper'
-                        : 'bg-white border-line text-gray hover:border-line',
+                        : 'bg-white border-line text-gray-ui hover:border-line',
                     ].join(' ')}
                   >
                     {opt.label}
@@ -344,7 +344,7 @@ export default function FormularioPage() {
                   <button
                     type="button"
                     onClick={() => setHijos(h => [...h, { nombre: '', edad: '' }])}
-                    className="text-xs text-terra border border-terra/40 px-3 py-1.5 rounded-lg hover:bg-terra/10 transition-colors cursor-pointer bg-transparent"
+                    className="text-xs text-terra-ui border border-terra/40 px-3 py-1.5 rounded-lg hover:bg-terra/10 transition-colors cursor-pointer bg-transparent"
                   >
                     + Agregar hijo
                   </button>
@@ -355,13 +355,13 @@ export default function FormularioPage() {
                       <input
                         value={hijo.nombre}
                         onChange={e => setHijos(h => h.map((x, idx) => idx === i ? { ...x, nombre: e.target.value } : x))}
-                        className="flex-[2] px-3 py-2.5 bg-white border border-line rounded-xl text-ink text-sm placeholder-gray focus:outline-none focus:border-wine transition-colors"
+                        className="flex-[2] px-3 py-2.5 bg-white border border-line rounded-xl text-ink text-sm placeholder-gray-ui focus:outline-none focus:border-wine transition-colors"
                         placeholder="Nombre"
                       />
                       <input
                         value={hijo.edad}
                         onChange={e => setHijos(h => h.map((x, idx) => idx === i ? { ...x, edad: e.target.value } : x))}
-                        className="flex-1 px-3 py-2.5 bg-white border border-line rounded-xl text-ink text-sm placeholder-gray focus:outline-none focus:border-wine transition-colors"
+                        className="flex-1 px-3 py-2.5 bg-white border border-line rounded-xl text-ink text-sm placeholder-gray-ui focus:outline-none focus:border-wine transition-colors"
                         placeholder="Edad"
                         type="number"
                         min={0}
@@ -376,7 +376,7 @@ export default function FormularioPage() {
                     </div>
                   ))}
                   {hijos.length === 0 && (
-                    <p className="text-xs text-gray">Agrega a sus hijos para que podamos mencionarlos en sus materiales.</p>
+                    <p className="text-xs text-gray-ui">Agrega a sus hijos para que podamos mencionarlos en sus materiales.</p>
                   )}
                 </div>
               </div>
@@ -419,7 +419,7 @@ export default function FormularioPage() {
         {currentStep === 6 && (
           <div>
             <label className={LABEL}>¿Qué mensaje quieren dejarle a su familia?</label>
-            <p className="text-xs text-gray mb-2">
+            <p className="text-xs text-gray-ui mb-2">
               Este mensaje puede aparecer en su material personalizado del retiro.
             </p>
             <textarea
@@ -462,7 +462,7 @@ export default function FormularioPage() {
             <button
               type="button"
               onClick={handlePrev}
-              className="px-6 py-3 text-gray text-sm border border-line rounded-xl hover:border-line transition-colors"
+              className="px-6 py-3 text-gray-ui text-sm border border-line rounded-xl hover:border-line transition-colors"
             >
               ← Anterior
             </button>
@@ -472,7 +472,7 @@ export default function FormularioPage() {
             <button
               type="button"
               onClick={handleNext}
-              className="flex-1 py-3 bg-terra text-paper font-semibold text-sm rounded-xl hover:bg-wine-2 transition-colors disabled:opacity-50"
+              className="flex-1 py-3 bg-wine text-paper font-semibold text-sm rounded-xl hover:bg-wine/90 transition-colors disabled:opacity-50"
             >
               Siguiente →
             </button>
@@ -481,7 +481,7 @@ export default function FormularioPage() {
               type="button"
               onClick={handleSubmit}
               disabled={saving}
-              className="flex-1 py-3 bg-terra text-paper font-semibold text-sm rounded-xl hover:bg-wine-2 transition-colors disabled:opacity-50"
+              className="flex-1 py-3 bg-wine text-paper font-semibold text-sm rounded-xl hover:bg-wine/90 transition-colors disabled:opacity-50"
             >
               {saving ? 'Guardando...' : 'Guardar'}
             </button>

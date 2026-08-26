@@ -41,6 +41,21 @@
   --line:      #E2D5C4;   /* Filete sobre claro */
   --line-dk:   rgba(255,255,255,.14);  /* Filete sobre oscuro */
 
+  /* ── Legibilidad ───────────────────────────────────────── */
+  /* MEDIDO, no estimado. Los dos colores de texto secundario de la marca no
+     alcanzan el mínimo legible sobre su propio papel:
+       Gris Criterio #7A736B sobre paper  →  4.06 : 1
+       Terracota     #B9735A sobre paper  →  3.22 : 1
+     El mínimo para texto normal es 4.5. Es de esperar: la paleta se diseñó
+     para material impreso y para titulares grandes, donde eso alcanza. En
+     una app, donde el 80% del texto es chico, no.
+     Estos dos conservan el tono y bajan la luminosidad hasta 4.5 sobre
+     paper-2, que es la superficie más oscura, así que un solo valor sirve
+     en las tres. Los originales se quedan para titulares grandes, iconos y
+     bordes, que es donde la marca los pensó. */
+  --gray-ui:  #6C665F;
+  --terra-ui: #965640;
+
   /* ── Semánticos ────────────────────────────────────────── */
   /* La marca no define color de error ni de éxito, porque el sistema es de
      comunicación y no de interfaz. Estos dos son derivados: el rojo se
@@ -105,7 +120,16 @@ body {
   font-weight: 600;
   letter-spacing: .34em;
   text-transform: uppercase;
-  color: var(--terra);
+  /* La variante de interfaz, porque una cejilla es texto CHICO en
+     mayúsculas: el caso donde el contraste bajo más se siente. La
+     terracota de marca sobre papel da 3.22 a 1. */
+  color: var(--terra-ui);
+}
+
+/* Sobre fondo profundo se invierte el problema: ahí la terracota clara es
+   la que respira. Da 8.97 a 1 sobre vino profundo. */
+.cejilla-claro {
+  color: var(--terra-lo);
 }
 
 /* Jerarquía por escala y aire, no por negritas. La marca descarta los

@@ -23,10 +23,10 @@ const config: Config = {
       colors: {
         teal:      { DEFAULT: "var(--teal)", deep: "var(--teal-deep)", 2: "var(--teal-2)" },
         wine:      { DEFAULT: "var(--wine)", deep: "var(--wine-deep)", 2: "var(--wine-2)" },
-        terra:     { DEFAULT: "var(--terra)", lo: "var(--terra-lo)" },
+        terra:     { DEFAULT: "var(--terra)", lo: "var(--terra-lo)", ui: "var(--terra-ui)" },
         gold:      "var(--gold)",
         ink:       "var(--ink)",
-        gray:      "var(--gray)",
+        gray:      { DEFAULT: "var(--gray)", ui: "var(--gray-ui)" },
         paper:     { DEFAULT: "var(--paper)", 2: "var(--paper-2)" },
         line:      "var(--line)",
         alerta:    "var(--alerta)",

@@ -46,12 +46,12 @@ export default function SignAgreementButton({ agreementId }: { agreementId: stri
     return (
       <div className="bg-white border border-line rounded-xl p-6 flex flex-col items-center gap-3">
         <div className="w-12 h-12 rounded-full bg-terra/10 border border-wine/40 flex items-center justify-center">
-          <svg className="w-6 h-6 text-terra" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+          <svg className="w-6 h-6 text-terra-ui" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
           </svg>
         </div>
         <p className="text-ink font-semibold text-sm">Acuerdo firmado correctamente</p>
-        <p className="text-ink/50 text-xs text-center">Tu firma ha sido registrada.</p>
+        <p className="text-gray-ui text-xs text-center">Tu firma ha sido registrada.</p>
       </div>
     )
   }
@@ -68,9 +68,9 @@ export default function SignAgreementButton({ agreementId }: { agreementId: stri
           value={signedName}
           onChange={(e) => setSignedName(e.target.value)}
           placeholder="Nombre completo"
-          className="bg-paper border border-line rounded-lg px-4 py-2.5 text-ink text-sm placeholder:text-ink/30 focus:outline-none focus:border-wine/60 transition-colors"
+          className="bg-paper border border-line rounded-lg px-4 py-2.5 text-ink text-sm placeholder:text-gray-ui focus:outline-none focus:border-wine/60 transition-colors"
         />
-        <p className="text-ink/40 text-xs mt-1">
+        <p className="text-gray-ui text-xs mt-1">
           Al escribir tu nombre confirmas que has leído y aceptas este acuerdo.
         </p>
       </div>

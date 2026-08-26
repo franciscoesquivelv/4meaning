@@ -35,7 +35,7 @@ function Arco({ actual }: { actual: Tramo }) {
           <div key={t.id} className="flex items-center flex-1 last:flex-none">
             <div className="flex flex-col items-center gap-[7px] flex-1">
               <span className={n <= i ? 'w-[9px] h-[9px] rounded-full bg-wine' : 'w-[9px] h-[9px] rounded-full border border-gray/50'} />
-              <span className={`text-[9.5px] uppercase tracking-[.12em] ${n === i ? 'text-wine font-semibold' : n < i ? 'text-wine/60' : 'text-gray'}`}>
+              <span className={`text-[9.5px] uppercase tracking-[.12em] ${n === i ? 'text-wine font-semibold' : n < i ? 'text-wine/60' : 'text-gray-ui'}`}>
                 {t.label}
               </span>
             </div>
@@ -58,9 +58,9 @@ function FilaEntrega({ titulo, estado, url }: { titulo: string; estado: EstadoEn
           <span className="text-[13px] text-wine font-medium">{ETIQUETA_ENTREGA.entregado} ✓</span>
         )
       ) : estado === 'en_produccion' ? (
-        <span className="text-[13px] text-terra">{ETIQUETA_ENTREGA.en_produccion}</span>
+        <span className="text-[13px] text-terra-ui">{ETIQUETA_ENTREGA.en_produccion}</span>
       ) : (
-        <span className="text-[13px] text-gray">{ETIQUETA_ENTREGA.pendiente}</span>
+        <span className="text-[13px] text-gray-ui">{ETIQUETA_ENTREGA.pendiente}</span>
       )}
     </div>
   )
@@ -81,15 +81,15 @@ function Fila({
   const cuerpo = (
     <>
       <div className="flex-1 min-w-0">
-        <div className={`text-[15px] ${hecho ? 'text-gray' : 'text-ink'}`}>{titulo}</div>
-        {sub && <div className="text-[12px] text-gray mt-0.5">{sub}</div>}
+        <div className={`text-[15px] ${hecho ? 'text-gray-ui' : 'text-ink'}`}>{titulo}</div>
+        {sub && <div className="text-[12px] text-gray-ui mt-0.5">{sub}</div>}
       </div>
       {hecho ? (
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="text-wine/70 shrink-0">
           <path d="M20 6L9 17l-5-5" />
         </svg>
       ) : (
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" className="text-gray shrink-0">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" className="text-gray-ui shrink-0">
           <path d={externo ? 'M7 17L17 7M8 7h9v9' : 'M9 18l6-6-6-6'} />
         </svg>
       )}
@@ -133,7 +133,7 @@ export default function MiRetiro({ datos, previa = false }: { datos: DatosMiReti
 
         <div className="relative">
           <div className="flex items-start justify-between gap-4">
-            <span className="cejilla">{evento?.nombre ?? 'Trascendencia'}</span>
+            <span className="cejilla cejilla-claro">{evento?.nombre ?? 'Trascendencia'}</span>
             {!previa && (
               <form action="/auth/signout" method="POST">
                 <button type="submit" className="text-[11px] text-paper/45 hover:text-paper/80 transition-colors">Salir</button>
@@ -188,7 +188,7 @@ export default function MiRetiro({ datos, previa = false }: { datos: DatosMiReti
           <div className="flex items-baseline justify-between mb-3">
             <span className="cejilla">Lo que sigue</span>
             {inicio !== null && inicio > 0 && (
-              <span className="text-[12px] text-gray">{inicio === 1 ? 'Falta un día' : `Faltan ${inicio} días`}</span>
+              <span className="text-[12px] text-gray-ui">{inicio === 1 ? 'Falta un día' : `Faltan ${inicio} días`}</span>
             )}
           </div>
         )}

@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import HelpButton from '@/components/HelpButton'
+import { familiaVisible } from '@/lib/participante/familia'
 
 const AVATAR_COLORS = [
   'bg-violet-900/60 text-violet-300',
@@ -14,15 +15,21 @@ function avatarColor(name: string, index: number): string {
   return AVATAR_COLORS[index % AVATAR_COLORS.length]
 }
 
-export default async function EquipoPage() {
+export default async function EquipoPage({
+  searchParams,
+}: {
+  searchParams: { familia?: string }
+}) {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
+  const fam = await familiaVisible(searchParams?.familia)
+
   const { data: family } = await supabase
     .from('families')
     .select('id, event_id')
-    .or(`user_id1.eq.${user.id},user_id2.eq.${user.id}`)
+    .eq('id', fam?.id ?? '00000000-0000-0000-0000-000000000000')
     .limit(1)
     .maybeSingle()
 
@@ -42,12 +49,12 @@ export default async function EquipoPage() {
     <div className="px-5 pt-6 pb-10">
       <h1 className="text-xl font-bold text-ink mb-6">Equipo</h1>
       {!family && (
-        <div className="bg-white border border-line rounded-xl p-5 text-gray text-sm">
+        <div className="bg-white border border-line rounded-xl p-5 text-gray-ui text-sm">
           Tu cuenta no tiene una familia asignada todavía.
         </div>
       )}
       {family && !teamMembers.length && (
-        <div className="bg-white border border-line rounded-xl p-6 text-center text-gray text-sm leading-relaxed">
+        <div className="bg-white border border-line rounded-xl p-6 text-center text-gray-ui text-sm leading-relaxed">
           Conocerás a los facilitadores del retiro unos días antes del evento. Sus presentaciones y experiencias estarán disponibles aquí pronto.
         </div>
       )}
@@ -58,7 +65,7 @@ export default async function EquipoPage() {
               <div className="flex items-start justify-between mb-3">
                 <div>
                   <div className="font-bold text-ink">{member.nombre}</div>
-                  <div className="text-xs text-terra font-medium mt-0.5 uppercase tracking-wider">{member.rol}</div>
+                  <div className="text-xs text-terra-ui font-medium mt-0.5 uppercase tracking-wider">{member.rol}</div>
                 </div>
                 <div className="w-14 h-14 rounded-full overflow-hidden flex-shrink-0 flex items-center justify-center">
                   {member.foto_url ? (
@@ -75,7 +82,7 @@ export default async function EquipoPage() {
                   )}
                 </div>
               </div>
-              <p className="text-sm text-gray leading-relaxed">{member.bio_publica}</p>
+              <p className="text-sm text-gray-ui leading-relaxed">{member.bio_publica}</p>
             </div>
           ))}
         </div>

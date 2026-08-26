@@ -311,7 +311,7 @@ export default function FamiliasClient({
                           del equipo podía verla: el layout del participante
                           rebota a cualquiera con rol de equipo. */}
                       <Link
-                        href={`/eventos/${eventId}/familias/${f.id}/vista`}
+                        href={`/eventos/${eventId}/preview?familia=${f.id}`}
                         className="text-xs text-slate-600 border border-slate-200 px-2.5 py-1 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-colors font-medium"
                       >
                         Su app

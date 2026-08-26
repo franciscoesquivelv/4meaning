@@ -21,7 +21,7 @@ const CATEGORY_STYLES: Record<string, string> = {
   relacion: 'bg-rose-500/10 text-rose-300 border border-rose-500/20',
   personal: 'bg-sky-500/10 text-sky-300 border border-sky-500/20',
   familia:  'bg-amber-500/10 text-amber-300 border border-amber-500/20',
-  general:  'bg-paper-2 text-gray',
+  general:  'bg-paper-2 text-gray-ui',
 }
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -117,7 +117,7 @@ export default function CompromisosClient({ compromisos: initial, familyId, even
       {/* Pending compromisos */}
       {pending.length > 0 && (
         <section className="mb-6">
-          <h2 className="text-[11px] font-semibold text-gray uppercase tracking-wider mb-3">
+          <h2 className="text-[11px] font-semibold text-gray-ui uppercase tracking-wider mb-3">
             Por cumplir ({pending.length})
           </h2>
           <div className="space-y-2">
@@ -143,7 +143,7 @@ export default function CompromisosClient({ compromisos: initial, familyId, even
       {/* Completed compromisos */}
       {done.length > 0 && (
         <section className="mb-6">
-          <h2 className="text-[11px] font-semibold text-gray uppercase tracking-wider mb-3">
+          <h2 className="text-[11px] font-semibold text-gray-ui uppercase tracking-wider mb-3">
             Cumplidos ({done.length})
           </h2>
           <div className="space-y-2">
@@ -167,14 +167,14 @@ export default function CompromisosClient({ compromisos: initial, familyId, even
       )}
 
       {compromisos.length === 0 && (
-        <div className="bg-white border border-line rounded-2xl p-6 text-center text-gray text-sm leading-relaxed mb-6">
+        <div className="bg-white border border-line rounded-2xl p-6 text-center text-gray-ui text-sm leading-relaxed mb-6">
           Aún no hay compromisos registrados. Agrega el primero abajo.
         </div>
       )}
 
       {/* Add new compromiso */}
       <form onSubmit={handleAdd} className="bg-white border border-line rounded-2xl p-4">
-        <p className="text-[11px] font-semibold text-gray uppercase tracking-wider mb-3">
+        <p className="text-[11px] font-semibold text-gray-ui uppercase tracking-wider mb-3">
           Agregar compromiso
         </p>
 
@@ -189,7 +189,7 @@ export default function CompromisosClient({ compromisos: initial, familyId, even
                 'text-[11px] font-medium px-3 py-1 rounded-full border transition-all',
                 categoria === cat
                   ? 'bg-wine text-paper border-wine'
-                  : 'bg-transparent text-gray border-line hover:border-gray',
+                  : 'bg-transparent text-gray-ui border-line hover:border-gray',
               ].join(' ')}
             >
               {CATEGORY_LABELS[cat]}
@@ -204,7 +204,7 @@ export default function CompromisosClient({ compromisos: initial, familyId, even
             value={texto}
             onChange={e => setTexto(e.target.value)}
             placeholder="Agregar un compromiso..."
-            className="flex-1 bg-paper border border-line rounded-xl px-4 py-2.5 text-sm text-ink placeholder-gray focus:outline-none focus:border-wine/50 transition-colors"
+            className="flex-1 bg-paper border border-line rounded-xl px-4 py-2.5 text-sm text-ink placeholder-gray-ui focus:outline-none focus:border-wine/50 transition-colors"
           />
           <button
             type="submit"

@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import { familiaVisible } from '@/lib/participante/familia'
 
 function formatDate(d: string | null) {
   if (!d) return '—'
@@ -26,17 +27,23 @@ interface Profile {
   role: string
 }
 
-export default async function InfoPage() {
+export default async function InfoPage({
+  searchParams,
+}: {
+  searchParams: { familia?: string }
+}) {
   const supabase = createClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
+  const fam = await familiaVisible(searchParams?.familia)
+
   const { data: family } = await supabase
     .from('families')
     .select('id, event_id, habitacion')
-    .or(`user_id1.eq.${user.id},user_id2.eq.${user.id}`)
+    .eq('id', fam?.id ?? '00000000-0000-0000-0000-000000000000')
     .limit(1)
     .maybeSingle()
 
@@ -84,18 +91,18 @@ export default async function InfoPage() {
       <div className="mb-6">
         <h1 className="text-xl font-bold text-ink">Información</h1>
         {family?.habitacion ? (
-          <p className="text-xs text-terra mt-1 font-medium tracking-wide">
+          <p className="text-xs text-terra-ui mt-1 font-medium tracking-wide">
             Habitación {family.habitacion}
           </p>
         ) : family ? (
-          <p className="text-xs text-gray mt-1 tracking-wide">
+          <p className="text-xs text-gray-ui mt-1 tracking-wide">
             Habitación por confirmar
           </p>
         ) : null}
       </div>
 
       {!family && (
-        <div className="bg-white border border-line rounded-xl p-5 text-gray text-sm">
+        <div className="bg-white border border-line rounded-xl p-5 text-gray-ui text-sm">
           Tu cuenta no tiene una familia asignada todavía. Contacta al equipo de Trascendencia.
         </div>
       )}
@@ -104,7 +111,7 @@ export default async function InfoPage() {
         <>
           {/* Event card */}
           <div className="bg-white border border-line rounded-xl p-5 mb-4">
-            <div className="text-xs font-semibold text-terra uppercase tracking-widest mb-3">
+            <div className="text-xs font-semibold text-terra-ui uppercase tracking-widest mb-3">
               Evento
             </div>
             <h2 className="text-lg font-bold text-ink mb-3">{evento.nombre}</h2>
@@ -113,7 +120,7 @@ export default async function InfoPage() {
               <div className="mb-3">
                 <div className="text-sm font-medium text-ink">{evento.ubicacion}</div>
                 {(evento.ciudad || evento.pais) && (
-                  <div className="text-xs text-gray mt-0.5">
+                  <div className="text-xs text-gray-ui mt-0.5">
                     {[evento.ciudad, evento.pais].filter(Boolean).join(', ')}
                   </div>
                 )}
@@ -122,13 +129,13 @@ export default async function InfoPage() {
 
             <div className="border-t border-line pt-3 space-y-2">
               <div className="flex gap-4 text-sm">
-                <span className="text-gray w-20 flex-shrink-0">Llegada</span>
+                <span className="text-gray-ui w-20 flex-shrink-0">Llegada</span>
                 <span className="text-ink font-medium capitalize">
                   {formatDate(evento.fecha_inicio)}
                 </span>
               </div>
               <div className="flex gap-4 text-sm">
-                <span className="text-gray w-20 flex-shrink-0">Salida</span>
+                <span className="text-gray-ui w-20 flex-shrink-0">Salida</span>
                 <span className="text-ink font-medium capitalize">
                   {formatDate(evento.fecha_fin)}
                 </span>
@@ -138,7 +145,7 @@ export default async function InfoPage() {
 
           {/* No info yet */}
           {!hasInfo && (
-            <div className="bg-white border border-line rounded-xl p-5 mb-4 text-gray text-sm leading-relaxed">
+            <div className="bg-white border border-line rounded-xl p-5 mb-4 text-gray-ui text-sm leading-relaxed">
               La información detallada del retiro — logística, qué llevar y código de vestimenta — se publicará en los próximos días. Si tienes preguntas urgentes, contacta al equipo de Trascendencia.
             </div>
           )}
@@ -146,7 +153,7 @@ export default async function InfoPage() {
           {/* Logística */}
           {evento.info_logistica && (
             <div className="bg-white border border-line rounded-xl p-5 mb-4">
-              <div className="text-xs font-semibold text-terra uppercase tracking-widest mb-3">
+              <div className="text-xs font-semibold text-terra-ui uppercase tracking-widest mb-3">
                 Logística
               </div>
               <p className="text-sm text-ink leading-relaxed whitespace-pre-wrap">
@@ -158,7 +165,7 @@ export default async function InfoPage() {
           {/* Qué llevar */}
           {evento.info_que_llevar && (
             <div className="bg-white border border-line rounded-xl p-5 mb-4">
-              <div className="text-xs font-semibold text-terra uppercase tracking-widest mb-3">
+              <div className="text-xs font-semibold text-terra-ui uppercase tracking-widest mb-3">
                 Qué llevar
               </div>
               <p className="text-sm text-ink leading-relaxed whitespace-pre-wrap">
@@ -170,7 +177,7 @@ export default async function InfoPage() {
           {/* Vestimenta */}
           {evento.info_vestimenta && (
             <div className="bg-white border border-line rounded-xl p-5 mb-4">
-              <div className="text-xs font-semibold text-terra uppercase tracking-widest mb-3">
+              <div className="text-xs font-semibold text-terra-ui uppercase tracking-widest mb-3">
                 Código de vestimenta
               </div>
               <p className="text-sm text-ink leading-relaxed whitespace-pre-wrap">
@@ -182,7 +189,7 @@ export default async function InfoPage() {
           {/* Emergencias */}
           {evento.info_emergencia && (
             <div className="bg-terra/10 border border-terra/40 rounded-xl p-5 mb-4">
-              <div className="text-xs font-semibold text-terra uppercase tracking-widest mb-3">
+              <div className="text-xs font-semibold text-terra-ui uppercase tracking-widest mb-3">
                 Emergencias y contactos
               </div>
               <p className="text-sm text-ink leading-relaxed whitespace-pre-wrap">
@@ -194,7 +201,7 @@ export default async function InfoPage() {
           {/* Equipo Trascendencia */}
           {staff.length > 0 && (
             <div className="bg-white border border-line rounded-xl p-5 mb-4">
-              <div className="text-xs font-semibold text-terra uppercase tracking-widest mb-4">
+              <div className="text-xs font-semibold text-terra-ui uppercase tracking-widest mb-4">
                 Equipo Trascendencia
               </div>
               <div className="space-y-4">
@@ -204,20 +211,20 @@ export default async function InfoPage() {
                       <div className="text-sm font-medium text-ink">
                         {s.full_name ?? 'Sin nombre'}
                       </div>
-                      <div className="text-xs text-gray mt-0.5">{roleLabel(s.role)}</div>
+                      <div className="text-xs text-gray-ui mt-0.5">{roleLabel(s.role)}</div>
                     </div>
                     <div className="text-right">
                       {s.phone && (
                         <a
                           href={`tel:${s.phone}`}
-                          className="text-sm text-terra block hover:opacity-80 transition-opacity"
+                          className="text-sm text-terra-ui block hover:opacity-80 transition-opacity"
                         >
                           {s.phone}
                         </a>
                       )}
                       <a
                         href={`mailto:${s.email}`}
-                        className="text-xs text-gray hover:text-gray transition-colors"
+                        className="text-xs text-gray-ui hover:text-gray-ui transition-colors"
                       >
                         {s.email}
                       </a>

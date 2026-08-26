@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import CompromisosClient from './CompromisosClient'
 import HelpButton from '@/components/HelpButton'
+import { familiaVisible } from '@/lib/participante/familia'
 
 function LockIcon() {
   return (
@@ -12,15 +13,21 @@ function LockIcon() {
   )
 }
 
-export default async function CompromisosPage() {
+export default async function CompromisosPage({
+  searchParams,
+}: {
+  searchParams: { familia?: string }
+}) {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
+  const fam = await familiaVisible(searchParams?.familia)
+
   const { data: family } = await supabase
     .from('families')
     .select('id, event_id, nombre_familia, nombre1, nombre2')
-    .or(`user_id1.eq.${user.id},user_id2.eq.${user.id}`)
+    .eq('id', fam?.id ?? '00000000-0000-0000-0000-000000000000')
     .limit(1)
     .maybeSingle()
 
@@ -28,7 +35,7 @@ export default async function CompromisosPage() {
     return (
       <div className="px-5 pt-6">
         <h1 className="text-xl font-bold text-ink mb-4">Compromisos</h1>
-        <div className="bg-white border border-line rounded-2xl p-5 text-gray text-sm">
+        <div className="bg-white border border-line rounded-2xl p-5 text-gray-ui text-sm">
           Tu cuenta no tiene una familia asignada todavía.
         </div>
       </div>
@@ -72,13 +79,13 @@ export default async function CompromisosPage() {
   if (!isPostEvent) {
     return (
       <div className="px-5 pt-6">
-        <div className="text-[11px] font-semibold tracking-[0.15em] text-terra uppercase mb-3">
+        <div className="text-[11px] font-semibold tracking-[0.15em] text-terra-ui uppercase mb-3">
           Después del retiro
         </div>
         <h1 className="font-extralight tracking-tight text-4xl font-light text-ink leading-tight mb-2">
           Compromisos 90 días
         </h1>
-        <p className="text-sm text-gray mb-10">
+        <p className="text-sm text-gray-ui mb-10">
           Los acuerdos que tomaron juntos siguen vivos aquí.
         </p>
 
@@ -90,14 +97,14 @@ export default async function CompromisosPage() {
             <p className="text-base font-semibold text-ink mb-2">
               Disponible al terminar el retiro
             </p>
-            <p className="text-sm text-gray leading-relaxed max-w-xs">
+            <p className="text-sm text-gray-ui leading-relaxed max-w-xs">
               Esta sección se desbloqueará cuando el retiro haya concluido. Aquí podrán registrar y dar seguimiento a los compromisos que hicieron juntos.
             </p>
           </div>
           {event?.fecha_fin && (
-            <div className="bg-paper border border-line rounded-xl px-4 py-2 text-xs text-gray">
+            <div className="bg-paper border border-line rounded-xl px-4 py-2 text-xs text-gray-ui">
               Se desbloquea el{' '}
-              <span className="text-terra">
+              <span className="text-terra-ui">
                 {new Date(event.fecha_fin).toLocaleDateString('es-MX', {
                   weekday: 'long',
                   day: 'numeric',
@@ -117,13 +124,13 @@ export default async function CompromisosPage() {
   return (
     <div className="px-5 pt-6">
       {/* Header */}
-      <div className="text-[11px] font-semibold tracking-[0.15em] text-terra uppercase mb-3">
+      <div className="text-[11px] font-semibold tracking-[0.15em] text-terra-ui uppercase mb-3">
         Después del retiro
       </div>
       <h1 className="font-extralight tracking-tight text-4xl font-light text-ink leading-tight mb-2">
         Compromisos 90 días
       </h1>
-      <p className="text-sm text-gray mb-6">
+      <p className="text-sm text-gray-ui mb-6">
         Los acuerdos que tomaron juntos siguen vivos aquí.
       </p>
 
@@ -134,7 +141,7 @@ export default async function CompromisosPage() {
             <span className="text-sm text-ink font-medium">
               {done} de {total} completados
             </span>
-            <span className="text-xs text-gray">{pct}%</span>
+            <span className="text-xs text-gray-ui">{pct}%</span>
           </div>
           <div className="bg-paper-2 rounded-full h-1 overflow-hidden">
             <div

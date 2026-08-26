@@ -20,9 +20,13 @@ export default async function ParticipantLayout({ children }: { children: React.
     redirect('/login')
   }
 
-  if (['super_admin', 'admin', 'staff'].includes(profile.role)) {
-    redirect('/dashboard')
-  }
+  // El equipo YA NO se rebota al dashboard. Ese rebote era lo que hacía
+  // imposible que alguien del equipo viera la app del participante, y era
+  // redundante: la raíz (app/page.tsx) ya enruta por rol al entrar, así que
+  // nadie del equipo aterriza aquí por accidente.
+  //
+  // Quien llega aquí siendo del equipo es porque abrió la previa a
+  // propósito, con ?familia= señalando a qué pareja quiere mirar.
 
   const { data: family } = await supabase
     .from('families')

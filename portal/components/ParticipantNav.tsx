@@ -71,10 +71,10 @@ export default function ParticipantNav() {
               {isActive && (
                 <span className="absolute top-0 left-1/2 -translate-x-1/2 w-6 h-0.5 bg-wine rounded-full" />
               )}
-              <span className={isActive ? 'text-wine' : 'text-gray'}>
+              <span className={isActive ? 'text-wine' : 'text-gray-ui'}>
                 <item.icon />
               </span>
-              <span className={`text-[10px] tracking-wide ${isActive ? 'text-wine font-medium' : 'text-gray'}`}>
+              <span className={`text-[10px] tracking-wide ${isActive ? 'text-wine font-medium' : 'text-gray-ui'}`}>
                 {item.label}
               </span>
             </Link>
