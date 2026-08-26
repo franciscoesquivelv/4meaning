@@ -4,6 +4,42 @@ import Link from 'next/link'
 import dynamic from 'next/dynamic'
 import PushSubscribeButton from '@/components/PushSubscribeButton'
 import HelpButton from '@/components/HelpButton'
+import { estadoEntrega, ETIQUETA_ENTREGA, type EstadoEntrega } from '@/lib/entregas'
+
+// Una fila de entrega. Estaba duplicada palabra por palabra para el
+// Storybook y para el Video, que es parte de por qué el desajuste de
+// vocabulario pasó desapercibido: había que verlo dos veces.
+function EstadoEntregaFila({
+  titulo, estado, url,
+}: {
+  titulo: string
+  estado: EstadoEntrega
+  url: string | null
+}) {
+  return (
+    <div className="flex items-center justify-between">
+      <span className="text-sm text-[#F5F0E8]">{titulo}</span>
+      {estado === 'entregado' ? (
+        url ? (
+          <a
+            href={url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-[#C9A96E] hover:underline"
+          >
+            Ver ↗
+          </a>
+        ) : (
+          <span className="text-xs text-emerald-400">{ETIQUETA_ENTREGA.entregado} ✓</span>
+        )
+      ) : estado === 'en_produccion' ? (
+        <span className="text-xs text-amber-400">{ETIQUETA_ENTREGA.en_produccion}</span>
+      ) : (
+        <span className="text-xs text-[#6B7280]">{ETIQUETA_ENTREGA.pendiente}</span>
+      )}
+    </div>
+  )
+}
 
 const FirstTimeWelcome = dynamic(() => import('@/components/FirstTimeWelcome'), { ssr: false })
 
@@ -52,8 +88,8 @@ export default async function MiRetiroPage() {
     nube_url: string | null
   } | null) : null
 
-  const storybookStatus = (family as unknown as { storybook_status?: string } | null)?.storybook_status ?? null
-  const videoStatus = (family as unknown as { video_status?: string } | null)?.video_status ?? null
+  const storybook = estadoEntrega((family as unknown as { storybook_status?: string } | null)?.storybook_status)
+  const video = estadoEntrega((family as unknown as { video_status?: string } | null)?.video_status)
 
   let pendingCount = 0
   let totalCount = 0
@@ -170,55 +206,27 @@ export default async function MiRetiroPage() {
                 </p>
               </div>
 
-              {/* Storybook & Video delivery status */}
-              {(storybookStatus || videoStatus) && (
+              {/* Storybook y Video. Los estados vienen de lib/entregas.ts,
+                  que es la misma lista que acepta el CHECK de la base. Antes
+                  aquí se comparaba contra 'delivered' e 'in_progress', que
+                  la base nunca escribe: las dos ramas eran inalcanzables y
+                  esto decía "Pendiente" para siempre. */}
+              {(storybook || video) && (
                 <div className="bg-[#1A1A1A] border border-white/10 rounded-2xl p-5 mb-4 space-y-3">
                   <p className="text-[10px] uppercase tracking-[0.15em] text-[#C9A96E] mb-3">Tus recuerdos</p>
-                  {storybookStatus && (
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-[#F5F0E8]">Storybook</span>
-                      {storybookStatus === 'delivered' ? (
-                        evento.nube_url ? (
-                          <a
-                            href={evento.nube_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-xs text-[#C9A96E] hover:underline"
-                          >
-                            Ver ↗
-                          </a>
-                        ) : (
-                          <span className="text-xs text-emerald-400">Entregado ✓</span>
-                        )
-                      ) : storybookStatus === 'in_progress' ? (
-                        <span className="text-xs text-amber-400">En proceso…</span>
-                      ) : (
-                        <span className="text-xs text-[#6B7280]">Pendiente</span>
-                      )}
-                    </div>
+                  {storybook && (
+                    <EstadoEntregaFila
+                      titulo="Storybook"
+                      estado={storybook}
+                      url={evento.nube_url}
+                    />
                   )}
-                  {videoStatus && (
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-[#F5F0E8]">Video</span>
-                      {videoStatus === 'delivered' ? (
-                        evento.nube_url ? (
-                          <a
-                            href={evento.nube_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-xs text-[#C9A96E] hover:underline"
-                          >
-                            Ver ↗
-                          </a>
-                        ) : (
-                          <span className="text-xs text-emerald-400">Entregado ✓</span>
-                        )
-                      ) : videoStatus === 'in_progress' ? (
-                        <span className="text-xs text-amber-400">En proceso…</span>
-                      ) : (
-                        <span className="text-xs text-[#6B7280]">Pendiente</span>
-                      )}
-                    </div>
+                  {video && (
+                    <EstadoEntregaFila
+                      titulo="Video"
+                      estado={video}
+                      url={evento.nube_url}
+                    />
                   )}
                 </div>
               )}
