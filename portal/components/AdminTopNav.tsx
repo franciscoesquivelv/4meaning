@@ -53,13 +53,25 @@ export default function AdminTopNav({ userEmail }: AdminTopNavProps) {
       </Link>
 
       {/* Center. Depende de en qué workspace estás, porque este es el nivel
-          de la casa y no el de una marca: Eventos y Usuarios son secciones
-          de Trascendencia, y dentro de PersonaLab no llevan a ningún lado
-          útil. Dentro de PersonaLab, este nivel sirve para volver. */}
+          de la casa y no el de una marca: Hoy, Eventos y Usuarios son
+          secciones de Trascendencia, y dentro de PersonaLab no llevan a
+          ningún lado útil. Dentro de PersonaLab, este nivel sirve para volver.
+
+          HOY VA PRIMERO, Y ESA ES LA CORRECCION. El portal SI tenia una
+          pantalla que contesta "y ahora que": lee la fecha del retiro y
+          cambia sola entre cuatro momentos (falta poco / esta pasando /
+          acaba de terminar / no hay nada). El problema es que solo se
+          enlazaba desde aqui cuando estabas DENTRO de PersonaLab. Se
+          aterrizaba en ella al entrar y despues no se podia volver.
+
+          Todo lo demas del portal es una lista: eventos, familias,
+          acuerdos, materiales. Listas de cosas, ninguna de ellas ordenada
+          por cuando toca. Esta es la unica entrada que empieza por el
+          tiempo, asi que va primero y se ve siempre. */}
       <nav className="ml-8 flex gap-1">
         {enPersonaLab ? (
           <>
-            <Link href="/dashboard" className={navLinkClass('/dashboard')}>
+            <Link href="/hoy" className={navLinkClass('/hoy')}>
               Trascendencia
             </Link>
             <Link href="/personalab" className={navLinkClass('/personalab')}>
@@ -68,6 +80,9 @@ export default function AdminTopNav({ userEmail }: AdminTopNavProps) {
           </>
         ) : (
           <>
+            <Link href="/hoy" className={navLinkClass('/hoy')}>
+              Hoy
+            </Link>
             <Link href="/eventos" className={navLinkClass('/eventos')}>
               Eventos
             </Link>

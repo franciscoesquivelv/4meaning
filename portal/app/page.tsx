@@ -18,6 +18,6 @@ export default async function RootPage() {
   if (profile.role === 'participant') {
     redirect('/mi-retiro')
   } else {
-    redirect('/dashboard')
+    redirect('/hoy')
   }
 }

@@ -29,7 +29,7 @@ const MARCAS: Marca[] = [
     nombre: 'Trascendencia',
     descripcion: 'Retiros familiares. Eventos, familias, acuerdos, itinerario y operación del día.',
     estado: 'En producción',
-    href: '/dashboard',
+    href: '/hoy',
     color: '#4C0F18',
     tinte: 'rgba(76,15,24,0.05)',
     borde: 'rgba(76,15,24,0.22)',

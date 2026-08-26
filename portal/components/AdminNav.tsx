@@ -73,7 +73,7 @@ export default function AdminNav({ userEmail, activeEventId, activeEventName }: 
 
       {/* Brand */}
       <div className="px-5 py-5 border-b border-[#1F2937]">
-        <Link href="/dashboard" className="block">
+        <Link href="/hoy" className="block">
           <Image
             src="/logo.png"
             alt="Trascendencia"
@@ -88,7 +88,7 @@ export default function AdminNav({ userEmail, activeEventId, activeEventName }: 
 
       {/* Nav */}
       <nav className="flex-1 py-4">
-        <NavLink href="/dashboard" label="Dashboard" active={pathname === '/dashboard'} />
+        <NavLink href="/hoy" label="Hoy" active={pathname === '/hoy'} />
 
         {/* Event sections — shown when on an event */}
         {isOnEvent && currentEventId && (
