@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect, notFound } from 'next/navigation'
 import SignAgreementButton from './SignAgreementButton'
 import HelpButton from '@/components/HelpButton'
+import PantallaSinConvertir from '@/components/PantallaSinConvertir'
 
 interface AgreementContent {
   intro?: string
@@ -33,6 +34,7 @@ export default async function AcuerdoDetailPage({ params }: { params: { id: stri
   const family = agreement.families as unknown as { nombre_familia: string } | null
 
   return (
+    <PantallaSinConvertir>
     <div className="min-h-screen bg-[#0C0C0C] px-4 py-8">
       <div className="max-w-2xl mx-auto">
         {/* Back */}
@@ -133,5 +135,6 @@ export default async function AcuerdoDetailPage({ params }: { params: { id: stri
 
       <HelpButton pageId="acuerdos" />
     </div>
+    </PantallaSinConvertir>
   )
 }

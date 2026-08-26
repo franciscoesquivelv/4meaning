@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import HelpButton from '@/components/HelpButton'
+import PantallaSinConvertir from '@/components/PantallaSinConvertir'
 
 type ContentBlock = {
   id: string
@@ -124,6 +125,7 @@ export default async function ProgramaPage() {
   })
 
   return (
+    <PantallaSinConvertir>
     <div className="px-5 pt-6">
       <h1 className="text-xl font-bold text-[#F5F0E8] mb-6">Programa</h1>
 
@@ -264,5 +266,6 @@ export default async function ProgramaPage() {
 
       <HelpButton pageId="programa" />
     </div>
+    </PantallaSinConvertir>
   )
 }

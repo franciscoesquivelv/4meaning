@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import PantallaSinConvertir from '@/components/PantallaSinConvertir'
 
 function formatDate(d: string | null) {
   if (!d) return '—'
@@ -79,6 +80,7 @@ export default async function InfoPage() {
     evento?.info_emergencia
 
   return (
+    <PantallaSinConvertir>
     <div className="px-5 pt-6 pb-10 bg-[#0C0C0C] min-h-screen">
       {/* Header */}
       <div className="mb-6">
@@ -230,5 +232,6 @@ export default async function InfoPage() {
         </>
       )}
     </div>
+    </PantallaSinConvertir>
   )
 }

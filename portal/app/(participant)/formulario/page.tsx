@@ -3,6 +3,7 @@
 import { createBrowserClient } from '@supabase/ssr'
 import { useEffect, useState } from 'react'
 import HelpButton from '@/components/HelpButton'
+import PantallaSinConvertir from '@/components/PantallaSinConvertir'
 
 const FORM_SECTIONS = [
   'Su historia',
@@ -185,6 +186,7 @@ export default function FormularioPage() {
   const progressPct = ((currentStep - 1) / (TOTAL_STEPS - 1)) * 100
 
   return (
+    <PantallaSinConvertir>
     <div className="pb-10 bg-[#0C0C0C] min-h-screen">
       {/* Progress bar */}
       <div className="h-1 bg-[#2A2A2A] w-full sticky top-0 z-10">
@@ -491,5 +493,6 @@ export default function FormularioPage() {
 
       <HelpButton pageId="formulario" />
     </div>
+    </PantallaSinConvertir>
   )
 }

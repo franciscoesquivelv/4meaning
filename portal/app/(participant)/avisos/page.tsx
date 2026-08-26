@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import PantallaSinConvertir from '@/components/PantallaSinConvertir'
 
 function tipoStyle(tipo: string) {
   const map: Record<string, { bar: string; badge: string; label: string }> = {
@@ -39,6 +40,7 @@ export default async function AvisosParticipantPage() {
     : []
 
   return (
+    <PantallaSinConvertir>
     <div className="px-5 pt-6 pb-4">
       <h1 className="text-xl font-bold text-[#F5F0E8] mb-1">Avisos</h1>
       <p className="text-sm text-[#A09A8F] mb-6">Comunicados del equipo de Trascendencia</p>
@@ -85,5 +87,6 @@ export default async function AvisosParticipantPage() {
         </div>
       )}
     </div>
+    </PantallaSinConvertir>
   )
 }

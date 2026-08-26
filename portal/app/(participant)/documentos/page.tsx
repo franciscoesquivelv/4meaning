@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import PantallaSinConvertir from '@/components/PantallaSinConvertir'
 
 const tipoLabels: Record<string, string> = {
   itinerario:       'Itinerario',
@@ -43,6 +44,7 @@ export default async function DocumentosPage() {
     .order('created_at', { ascending: false })
 
   return (
+    <PantallaSinConvertir>
     <div style={{ padding: 24, maxWidth: 480, margin: '0 auto' }}>
       <h1 style={{ fontSize: 22, fontWeight: 700, marginBottom: 24 }}>Documentos</h1>
 
@@ -95,5 +97,6 @@ export default async function DocumentosPage() {
         </div>
       )}
     </div>
+    </PantallaSinConvertir>
   )
 }

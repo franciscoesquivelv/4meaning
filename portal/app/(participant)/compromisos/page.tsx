@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import CompromisosClient from './CompromisosClient'
 import HelpButton from '@/components/HelpButton'
+import PantallaSinConvertir from '@/components/PantallaSinConvertir'
 
 function LockIcon() {
   return (
@@ -115,6 +116,7 @@ export default async function CompromisosPage() {
 
   // Post-event full UI
   return (
+    <PantallaSinConvertir>
     <div className="px-5 pt-6">
       {/* Header */}
       <div className="text-[11px] font-semibold tracking-[0.15em] text-[#C9A96E] uppercase mb-3">
@@ -156,5 +158,6 @@ export default async function CompromisosPage() {
 
       <HelpButton pageId="compromisos" />
     </div>
+    </PantallaSinConvertir>
   )
 }

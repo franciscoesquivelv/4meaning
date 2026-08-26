@@ -52,7 +52,7 @@ export default function ParticipantNav() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-50 bg-[#111111] border-t border-white/10"
+      className="fixed bottom-0 left-0 right-0 z-50 bg-paper/95 backdrop-blur-sm border-t border-line"
       style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
     >
       <div className="max-w-lg mx-auto flex items-center justify-around h-16">
@@ -64,15 +64,17 @@ export default function ParticipantNav() {
             <Link
               key={item.href}
               href={item.href}
-              className="flex flex-col items-center gap-1 relative px-4 py-2"
+              // 44px de alto mínimo: es el objetivo táctil por debajo del cual
+              // un dedo empieza a fallar.
+              className="flex flex-col items-center justify-center gap-1 relative px-4 min-h-[44px] flex-1"
             >
               {isActive && (
-                <span className="absolute top-0 left-1/2 -translate-x-1/2 w-6 h-0.5 bg-[#C9A96E] rounded-full" />
+                <span className="absolute top-0 left-1/2 -translate-x-1/2 w-6 h-0.5 bg-wine rounded-full" />
               )}
-              <span className={isActive ? 'text-[#C9A96E]' : 'text-[#6B7280]'}>
+              <span className={isActive ? 'text-wine' : 'text-gray'}>
                 <item.icon />
               </span>
-              <span className={`text-[10px] tracking-wide ${isActive ? 'text-[#C9A96E]' : 'text-[#6B7280]'}`}>
+              <span className={`text-[10px] tracking-wide ${isActive ? 'text-wine font-medium' : 'text-gray'}`}>
                 {item.label}
               </span>
             </Link>

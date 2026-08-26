@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import HelpButton from '@/components/HelpButton'
+import PantallaSinConvertir from '@/components/PantallaSinConvertir'
 
 const statusLabels: Record<string, string> = {
   draft: 'Borrador', sent: 'Enviado', viewed: 'Visto',
@@ -72,6 +73,7 @@ export default async function AcuerdosPage() {
   const pct = total > 0 ? Math.round((doneCount / total) * 100) : 0
 
   return (
+    <PantallaSinConvertir>
     <div className="px-5 pt-6">
       <h1 className="text-xl font-bold text-[#F5F0E8] mb-1">Acuerdos</h1>
       <p className="text-sm text-[#A09A8F] mb-6">{family.nombre_familia}</p>
@@ -160,5 +162,6 @@ export default async function AcuerdosPage() {
 
       <HelpButton pageId="acuerdos" />
     </div>
+    </PantallaSinConvertir>
   )
 }

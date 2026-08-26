@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import HelpButton from '@/components/HelpButton'
+import PantallaSinConvertir from '@/components/PantallaSinConvertir'
 
 const AVATAR_COLORS = [
   'bg-violet-900/60 text-violet-300',
@@ -39,6 +40,7 @@ export default async function EquipoPage() {
   }
 
   return (
+    <PantallaSinConvertir>
     <div className="px-5 pt-6 pb-10">
       <h1 className="text-xl font-bold text-[#F5F0E8] mb-6">Equipo</h1>
       {!family && (
@@ -83,5 +85,6 @@ export default async function EquipoPage() {
 
       <HelpButton pageId="equipo" />
     </div>
+    </PantallaSinConvertir>
   )
 }

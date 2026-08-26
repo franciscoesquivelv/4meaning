@@ -6,6 +6,72 @@ import PushSubscribeButton from '@/components/PushSubscribeButton'
 import HelpButton from '@/components/HelpButton'
 import { estadoEntrega, ETIQUETA_ENTREGA, type EstadoEntrega } from '@/lib/entregas'
 
+const FirstTimeWelcome = dynamic(() => import('@/components/FirstTimeWelcome'), { ssr: false })
+
+function formatDate(d: string | null) {
+  if (!d) return ''
+  return new Date(d).toLocaleDateString('es-MX', { day: '2-digit', month: 'long' })
+}
+
+function getDaysUntil(dateStr: string | null): number | null {
+  if (!dateStr) return null
+  // Se interpreta la fecha a mediodía UTC para no cruzar el límite de día
+  // según la zona horaria de quien mira.
+  const target = new Date(dateStr + 'T12:00:00Z')
+  const now = new Date()
+  const todayUTC = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())
+  const targetUTC = Date.UTC(target.getUTCFullYear(), target.getUTCMonth(), target.getUTCDate())
+  return Math.ceil((targetUTC - todayUTC) / (1000 * 60 * 60 * 24))
+}
+
+// ── El arco ─────────────────────────────────────────────────────
+// Huellas, Excavaciones, Tesoros, Legado. Es la arquitectura verbal de la
+// marca, no una barra de avance: dice DÓNDE VAS, no cuánto llevas.
+//
+// Sustituye a la cuenta regresiva como elemento dominante de la pantalla.
+// Antes lo más grande de toda la fase previa era un número de 120px, así
+// que lo primero que sentía alguien antes de un retiro sobre legado
+// familiar era ansiedad medida en días. Los días siguen ahí, en una línea
+// tranquila.
+type Tramo = 'huellas' | 'excavaciones' | 'tesoros' | 'legado'
+const TRAMOS: { id: Tramo; label: string }[] = [
+  { id: 'huellas',      label: 'Huellas' },
+  { id: 'excavaciones', label: 'Excavar' },
+  { id: 'tesoros',      label: 'Tesoros' },
+  { id: 'legado',       label: 'Legado' },
+]
+
+function Arco({ actual }: { actual: Tramo }) {
+  const i = TRAMOS.findIndex(t => t.id === actual)
+  return (
+    <div className="px-6 py-5 bg-paper-2 border-b border-line">
+      <div className="flex items-center">
+        {TRAMOS.map((t, n) => (
+          <div key={t.id} className="flex items-center flex-1 last:flex-none">
+            <div className="flex flex-col items-center gap-[7px] flex-1">
+              <span
+                className={
+                  n <= i
+                    ? 'w-[9px] h-[9px] rounded-full bg-wine'
+                    : 'w-[9px] h-[9px] rounded-full border border-gray/50'
+                }
+              />
+              <span
+                className={`text-[9.5px] uppercase tracking-[.12em] ${
+                  n === i ? 'text-wine font-semibold' : n < i ? 'text-wine/60' : 'text-gray'
+                }`}
+              >
+                {t.label}
+              </span>
+            </div>
+            {n < TRAMOS.length - 1 && <span className="h-px flex-1 bg-line mb-4" />}
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 // Una fila de entrega. Estaba duplicada palabra por palabra para el
 // Storybook y para el Video, que es parte de por qué el desajuste de
 // vocabulario pasó desapercibido: había que verlo dos veces.
@@ -17,45 +83,60 @@ function EstadoEntregaFila({
   url: string | null
 }) {
   return (
-    <div className="flex items-center justify-between">
-      <span className="text-sm text-[#F5F0E8]">{titulo}</span>
+    <div className="flex items-center justify-between py-1">
+      <span className="text-[15px] text-ink">{titulo}</span>
       {estado === 'entregado' ? (
         url ? (
-          <a
-            href={url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-xs text-[#C9A96E] hover:underline"
-          >
-            Ver ↗
+          <a href={url} target="_blank" rel="noopener noreferrer" className="text-[13px] font-medium text-wine hover:underline">
+            Verlo ↗
           </a>
         ) : (
-          <span className="text-xs text-emerald-400">{ETIQUETA_ENTREGA.entregado} ✓</span>
+          <span className="text-[13px] text-wine font-medium">{ETIQUETA_ENTREGA.entregado} ✓</span>
         )
       ) : estado === 'en_produccion' ? (
-        <span className="text-xs text-amber-400">{ETIQUETA_ENTREGA.en_produccion}</span>
+        <span className="text-[13px] text-terra">{ETIQUETA_ENTREGA.en_produccion}</span>
       ) : (
-        <span className="text-xs text-[#6B7280]">{ETIQUETA_ENTREGA.pendiente}</span>
+        <span className="text-[13px] text-gray">{ETIQUETA_ENTREGA.pendiente}</span>
       )}
     </div>
   )
 }
 
-const FirstTimeWelcome = dynamic(() => import('@/components/FirstTimeWelcome'), { ssr: false })
-
-function formatDate(d: string | null) {
-  if (!d) return '—'
-  return new Date(d).toLocaleDateString('es-MX', { day: '2-digit', month: 'long', year: 'numeric' })
-}
-
-function getDaysUntil(dateStr: string | null): number | null {
-  if (!dateStr) return null
-  // Interpret date as noon UTC to avoid timezone boundary issues
-  const target = new Date(dateStr + 'T12:00:00Z')
-  const now = new Date()
-  const todayUTC = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())
-  const targetUTC = Date.UTC(target.getUTCFullYear(), target.getUTCMonth(), target.getUTCDate())
-  return Math.ceil((targetUTC - todayUTC) / (1000 * 60 * 60 * 24))
+// Fila secundaria: peso claramente menor que la tarjeta principal, para que
+// en cada pantalla haya UNA sola acción que importe.
+function Fila({
+  href, titulo, sub, hecho = false, externo = false,
+}: {
+  href: string
+  titulo: string
+  sub?: string
+  hecho?: boolean
+  externo?: boolean
+}) {
+  const cuerpo = (
+    <>
+      <div className="flex-1 min-w-0">
+        <div className={`text-[15px] ${hecho ? 'text-gray' : 'text-ink'}`}>{titulo}</div>
+        {sub && <div className="text-[12px] text-gray mt-0.5">{sub}</div>}
+      </div>
+      {hecho ? (
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="text-wine/70 shrink-0">
+          <path d="M20 6L9 17l-5-5" />
+        </svg>
+      ) : (
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" className="text-gray shrink-0">
+          <path d={externo ? 'M7 17L17 7M8 7h9v9' : 'M9 18l6-6-6-6'} />
+        </svg>
+      )}
+    </>
+  )
+  const clase =
+    'flex items-center gap-3 px-4 py-3.5 min-h-[44px] bg-white border border-line rounded-[10px] transition-colors hover:border-terra/50'
+  return externo ? (
+    <a href={href} target="_blank" rel="noopener noreferrer" className={clase}>{cuerpo}</a>
+  ) : (
+    <Link href={href} className={clase}>{cuerpo}</Link>
+  )
 }
 
 export default async function MiRetiroPage() {
@@ -69,7 +150,7 @@ export default async function MiRetiroPage() {
     .eq('id', user.id)
     .single()
 
-  const firstName = profile?.full_name?.split(' ')[0] ?? 'bienvenido'
+  const firstName = profile?.full_name?.split(' ')[0] ?? null
 
   const { data: family } = await supabase
     .from('families')
@@ -118,40 +199,40 @@ export default async function MiRetiroPage() {
   const daysUntil = getDaysUntil(evento?.fecha_inicio ?? null)
   const daysUntilEnd = getDaysUntil(evento?.fecha_fin ?? null)
   const isHappening = daysUntil !== null && daysUntilEnd !== null && daysUntil <= 0 && daysUntilEnd >= 0
+  const yaPaso = daysUntilEnd !== null && daysUntilEnd < 0
+
+  // Dónde va la familia en el arco, según el estado real, no inventado.
+  const tramo: Tramo = yaPaso
+    ? (storybook === 'entregado' && video === 'entregado' ? 'legado' : 'tesoros')
+    : isHappening
+      ? 'excavaciones'
+      : 'huellas'
 
   return (
     <div>
       <FirstTimeWelcome />
-      {/* Cerrar sesión */}
-      <div className="flex justify-end px-6 pt-4">
-        <form action="/auth/signout" method="POST">
-          <button type="submit" className="text-xs text-[#4B5563] hover:text-[#A09A8F] transition-colors">
-            Cerrar sesión
-          </button>
-        </form>
-      </div>
 
-      {/* PushSubscribeButton flotante */}
       {family?.event_id && (
         <div className="fixed top-4 right-4 z-40">
           <PushSubscribeButton eventId={family.event_id} />
         </div>
       )}
 
-      {/* No family */}
+      {/* ── Sin familia vinculada ─────────────────────────────── */}
       {!family && (
-        <div className="flex flex-col items-center justify-center text-center py-24 px-8">
-          <div className="w-2 h-2 rounded-full bg-[#C9A96E] mx-auto mb-8" />
-          <p className="font-[family-name:var(--font-cormorant)] text-2xl font-light text-[#F5F0E8] mb-3">
-            Tu cuenta está lista
+        <div className="flex flex-col items-center justify-center text-center py-24 px-8 min-h-screen">
+          <span className="w-2 h-2 rounded-full bg-terra mb-8" />
+          <p className="text-[22px] font-extralight tracking-tight text-ink mb-3">
+            {firstName ? `Tu cuenta está lista, ${firstName}` : 'Tu cuenta está lista'}
           </p>
-          <p className="text-sm text-[#6B7280] leading-relaxed max-w-xs mb-6">
-            Tu coordinadora aún no ha vinculado tu cuenta al retiro. Esto se hace normalmente 2-4 semanas antes del evento. Si crees que es un error, escríbele directamente.
+          <p className="text-[14px] text-gray leading-relaxed max-w-xs mb-8">
+            Tu coordinadora todavía no la ha vinculado al retiro. Suele hacerse dos a cuatro semanas
+            antes. Si crees que es un error, escríbele directamente.
           </p>
           <form action="/auth/signout" method="POST">
             <button
               type="submit"
-              className="px-5 py-2.5 text-sm text-[#A09A8F] border border-[#2A2A2A] rounded-xl hover:border-[#3A3A3A] transition-colors"
+              className="px-5 py-3 min-h-[44px] text-[14px] text-gray border border-line rounded-full hover:border-terra hover:text-ink transition-colors"
             >
               Cerrar sesión
             </button>
@@ -159,291 +240,185 @@ export default async function MiRetiroPage() {
         </div>
       )}
 
-      {/* Hero header — only when family exists */}
-      {family && evento && (
-        <div className="px-6 pt-12 pb-8">
-          {/* Event indicator */}
-          <div className="flex items-center gap-2 mb-6">
-            <div className="w-1.5 h-1.5 rounded-full bg-[#C9A96E]" />
-            <span className="text-[10px] uppercase tracking-[0.2em] text-[#C9A96E]">
-              {evento.nombre}
-            </span>
-          </div>
-
-          {/* Family name — serif, grande */}
-          <h1 className="font-[family-name:var(--font-cormorant)] text-5xl font-light text-[#F5F0E8] leading-tight mb-1">
-            {family.nombre_familia}
-          </h1>
-
-          {/* Location */}
-          <p className="text-sm text-[#6B7280] mt-2">
-            {[evento.ciudad, null].filter(Boolean).join(' · ') || evento.ubicacion || ''}
-          </p>
-        </div>
-      )}
-
-      {/* Family without event */}
-      {family && !evento && (
-        <div className="px-6 pt-12 pb-8">
-          <h1 className="font-[family-name:var(--font-cormorant)] text-5xl font-light text-[#F5F0E8] leading-tight">
-            {family.nombre_familia}
-          </h1>
-        </div>
-      )}
-
-      {/* Event state blocks */}
-      {evento && (
+      {family && (
         <>
-          {daysUntilEnd !== null && daysUntilEnd < 0 ? (
-            /* Post-event */
-            <div className="px-6 mb-8">
-              <div className="border-y border-white/5 py-8 text-center mb-6">
-                <p className="font-[family-name:var(--font-cormorant)] text-2xl font-light text-[#F5F0E8] mb-1">
-                  El retiro ha concluido
-                </p>
-                <p className="font-[family-name:var(--font-cormorant)] text-lg italic text-[#C9A96E]">
-                  ¡Gracias por vivir esta experiencia!
-                </p>
+          {/* ── Cabecera inmersiva ───────────────────────────────
+              La aurora de brand.css: blobs radiales sobre el fondo
+              profundo de la marca dominante, que aquí es vino. */}
+          <div className="relative overflow-hidden bg-dom-deep px-6 pt-14 pb-8">
+            <div className="absolute inset-[-30%] blur-[60px] pointer-events-none">
+              <span className="absolute w-[300px] h-[300px] rounded-full -top-[4%] -left-[12%] opacity-90"
+                    style={{ background: 'radial-gradient(circle, var(--wine-2), transparent 70%)' }} />
+              <span className="absolute w-[260px] h-[260px] rounded-full -bottom-[18%] -right-[14%] opacity-50"
+                    style={{ background: 'radial-gradient(circle, var(--terra), transparent 68%)' }} />
+              <span className="absolute w-[220px] h-[220px] rounded-full -bottom-[22%] left-[22%] opacity-45"
+                    style={{ background: 'radial-gradient(circle, var(--teal-2), transparent 70%)' }} />
+              <span className="absolute w-[160px] h-[160px] rounded-full top-[8%] right-[12%] opacity-20"
+                    style={{ background: 'radial-gradient(circle, var(--gold), transparent 72%)' }} />
+            </div>
+
+            <div className="relative">
+              <div className="flex items-start justify-between gap-4">
+                <span className="cejilla">{evento?.nombre ?? 'Trascendencia'}</span>
+                <form action="/auth/signout" method="POST">
+                  <button type="submit" className="text-[11px] text-paper/45 hover:text-paper/80 transition-colors">
+                    Salir
+                  </button>
+                </form>
               </div>
 
-              {/* Storybook y Video. Los estados vienen de lib/entregas.ts,
-                  que es la misma lista que acepta el CHECK de la base. Antes
-                  aquí se comparaba contra 'delivered' e 'in_progress', que
-                  la base nunca escribe: las dos ramas eran inalcanzables y
-                  esto decía "Pendiente" para siempre. */}
-              {(storybook || video) && (
-                <div className="bg-[#1A1A1A] border border-white/10 rounded-2xl p-5 mb-4 space-y-3">
-                  <p className="text-[10px] uppercase tracking-[0.15em] text-[#C9A96E] mb-3">Tus recuerdos</p>
-                  {storybook && (
-                    <EstadoEntregaFila
-                      titulo="Storybook"
-                      estado={storybook}
-                      url={evento.nube_url}
-                    />
+              <h1 className="display text-[34px] text-paper mt-4">{family.nombre_familia}</h1>
+
+              {evento && (
+                <div className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1 mt-5 pt-4 border-t border-white/[.14]">
+                  {(evento.ciudad || evento.ubicacion) && (
+                    <>
+                      <span className="text-[13px] text-paper/70">{evento.ciudad || evento.ubicacion}</span>
+                      <span className="text-[13px] text-paper/30">·</span>
+                    </>
                   )}
-                  {video && (
-                    <EstadoEntregaFila
-                      titulo="Video"
-                      estado={video}
-                      url={evento.nube_url}
-                    />
-                  )}
+                  <span className="text-[13px] text-paper/70">
+                    {formatDate(evento.fecha_inicio)}
+                    {evento.fecha_fin ? ` al ${formatDate(evento.fecha_fin)}` : ''}
+                  </span>
                 </div>
               )}
-
-              {/* La Nube link when delivered */}
-              {evento.nube_url && (
-                <a
-                  href={evento.nube_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-between p-5 bg-[#1A1A1A] border border-[#C9A96E]/30 rounded-2xl hover:border-[#C9A96E]/60 transition-colors"
-                >
-                  <div>
-                    <p className="text-[10px] uppercase tracking-[0.15em] text-[#C9A96E] mb-1">La Nube</p>
-                    <p className="font-[family-name:var(--font-cormorant)] text-xl font-light text-[#F5F0E8]">
-                      Álbum del retiro
-                    </p>
-                    <p className="text-sm text-[#6B7280] mt-0.5">Revive los momentos del retiro</p>
-                  </div>
-                  <span className="text-[#C9A96E] text-lg">↗</span>
-                </a>
-              )}
             </div>
-          ) : isHappening ? (
-            /* Happening now */
-            <div className="px-6 py-8 text-center mb-8">
-              <div className="w-3 h-3 rounded-full bg-emerald-400 mx-auto mb-4 animate-pulse" />
-              <p className="font-[family-name:var(--font-cormorant)] text-2xl font-light text-[#F5F0E8]">
-                Estás en el retiro
-              </p>
-              <p className="text-sm text-[#6B7280] mt-1">Vive cada momento presente</p>
-            </div>
-          ) : daysUntil !== null && daysUntil > 0 ? (
-            /* Countdown */
-            <div className="mx-6 py-8 text-center border-y border-white/5 rounded-2xl bg-white/[0.02] mb-8">
-              <div className="font-[family-name:var(--font-cormorant)] text-[96px] sm:text-[120px] font-light text-[#F5F0E8] leading-none">
-                {daysUntil}
-              </div>
-              <p className="font-[family-name:var(--font-cormorant)] text-lg italic text-[#A09A8F] mt-2">
-                días para tu retiro
-              </p>
-              <p className="text-xs text-[#6B7280] mt-3 uppercase tracking-widest">
-                {formatDate(evento.fecha_inicio)} — {formatDate(evento.fecha_fin)}
-              </p>
-            </div>
-          ) : (
-            /* Default — event exists but no countdown logic applies */
-            <div className="mx-6 py-8 text-center border-y border-white/5 rounded-2xl bg-white/[0.02] mb-8">
-              <p className="font-[family-name:var(--font-cormorant)] text-2xl font-light text-[#F5F0E8]">
-                {evento.nombre}
-              </p>
-              {(evento.ubicacion || evento.ciudad) && (
-                <p className="text-sm text-[#6B7280] mt-2">
-                  {[evento.ubicacion, evento.ciudad].filter(Boolean).join(' · ')}
-                </p>
-              )}
-              <p className="text-xs text-[#6B7280] mt-3 uppercase tracking-widest">
-                {formatDate(evento.fecha_inicio)} — {formatDate(evento.fecha_fin)}
-              </p>
-            </div>
-          )}
-        </>
-      )}
-
-      {/* Recent announcements */}
-      {recentAnnouncements.length > 0 && (
-        <div className="px-6 mb-6 space-y-2">
-          {recentAnnouncements.map(a => (
-            <Link
-              key={a.id}
-              href="/avisos"
-              className={[
-                'flex items-center gap-3 px-5 py-4 rounded-2xl border transition-colors',
-                a.tipo === 'urgente'
-                  ? 'bg-red-950/30 border-red-700/30 hover:border-red-600/50'
-                  : a.tipo === 'logistica'
-                  ? 'bg-[#C9A96E]/5 border-[#C9A96E]/20 hover:border-[#C9A96E]/40'
-                  : 'bg-[#1A1A1A] border-white/10 hover:border-white/20',
-              ].join(' ')}
-            >
-              <div className="flex-1 min-w-0">
-                <p className="text-[10px] uppercase tracking-[0.12em] text-[#6B7280] mb-0.5">
-                  {a.tipo === 'urgente' ? 'Urgente' : a.tipo === 'logistica' ? 'Logística' : 'Aviso'}
-                </p>
-                <p className="text-sm text-[#F5F0E8] leading-snug truncate">
-                  {a.titulo}
-                </p>
-              </div>
-              <span className="text-[#4B5563] text-xs shrink-0">→</span>
-            </Link>
-          ))}
-        </div>
-      )}
-
-      {/* Action items — sequential */}
-      {family && (
-        <div className="px-6 mb-6 space-y-3">
-          {/* Paso 1 — Formulario */}
-          {!intakeSubmitted ? (
-            <Link
-              href="/formulario"
-              className="flex items-start justify-between p-5 bg-[#1A1A1A] border border-[#C9A96E]/30 rounded-2xl hover:border-[#C9A96E]/60 transition-colors"
-            >
-              <div>
-                <p className="text-[10px] uppercase tracking-[0.15em] text-[#C9A96E] mb-1">Paso 1</p>
-                <p className="font-[family-name:var(--font-cormorant)] text-xl font-light text-[#F5F0E8]">
-                  Completa tu perfil
-                </p>
-                <p className="text-sm text-[#6B7280] mt-1">Cuéntanos la historia de su familia</p>
-              </div>
-              <svg className="text-[#C9A96E] mt-1 shrink-0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M5 12h14M12 5l7 7-7 7"/>
-              </svg>
-            </Link>
-          ) : (
-            <div className="flex items-center gap-3 p-5 bg-[#1A1A1A] border border-white/10 rounded-2xl opacity-50">
-              <svg className="text-emerald-400 shrink-0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="20 6 9 17 4 12"/>
-              </svg>
-              <div>
-                <p className="font-[family-name:var(--font-cormorant)] text-lg font-light text-[#F5F0E8]">Perfil completado</p>
-                <p className="text-sm text-[#6B7280]">Gracias por compartir su historia</p>
-              </div>
-            </div>
-          )}
-
-          {/* Paso 2 — Acuerdos */}
-          {totalCount > 0 && (
-            allSigned ? (
-              <div className="flex items-center gap-3 p-5 bg-[#1A1A1A] border border-white/10 rounded-2xl opacity-50">
-                <svg className="text-emerald-400 shrink-0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="20 6 9 17 4 12"/>
-                </svg>
-                <div>
-                  <p className="font-[family-name:var(--font-cormorant)] text-lg font-light text-[#F5F0E8]">Acuerdos firmados</p>
-                  <p className="text-sm text-[#6B7280]">{totalCount}/{totalCount} completados</p>
-                </div>
-              </div>
-            ) : (
-              <Link
-                href="/acuerdos"
-                className={`flex items-start justify-between p-5 bg-[#1A1A1A] rounded-2xl transition-colors ${intakeSubmitted ? 'border border-[#C9A96E]/30 hover:border-[#C9A96E]/60' : 'border border-white/10 opacity-60 pointer-events-none'}`}
-              >
-                <div>
-                  <p className={`text-[10px] uppercase tracking-[0.15em] mb-1 ${intakeSubmitted ? 'text-[#C9A96E]' : 'text-[#6B7280]'}`}>Paso 2</p>
-                  <p className="font-[family-name:var(--font-cormorant)] text-xl font-light text-[#F5F0E8]">
-                    Firma los acuerdos
-                  </p>
-                  <p className="text-sm text-[#6B7280] mt-1">
-                    {pendingCount} pendiente{pendingCount !== 1 ? 's' : ''} de {totalCount}
-                  </p>
-                </div>
-                {intakeSubmitted && (
-                  <svg className="text-[#C9A96E] mt-1 shrink-0" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M5 12h14M12 5l7 7-7 7"/>
-                  </svg>
-                )}
-              </Link>
-            )
-          )}
-
-          {/* Todo listo */}
-          {intakeSubmitted && allSigned && totalCount > 0 && (
-            <div className="flex items-center gap-3 p-5 bg-[#0A2A1A]/60 border border-emerald-400/20 rounded-2xl">
-              <div className="w-2 h-2 rounded-full bg-emerald-400 shrink-0" />
-              <div>
-                <p className="font-[family-name:var(--font-cormorant)] text-lg font-light text-[#F5F0E8]">
-                  Todo listo para el retiro
-                </p>
-                <p className="text-sm text-[#6B7280]">Perfil y acuerdos completados</p>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* La Nube CTA — only when not post-event */}
-      {family && evento?.nube_url && !(daysUntilEnd !== null && daysUntilEnd < 0) && (
-        <div className="px-6 mb-6">
-          <a
-            href={evento.nube_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-between p-5 bg-[#1A1A1A] border border-[#C9A96E]/20 rounded-2xl hover:border-[#C9A96E]/50 transition-colors"
-          >
-            <div>
-              <p className="text-[10px] uppercase tracking-[0.15em] text-[#C9A96E] mb-1">La Nube</p>
-              <p className="font-[family-name:var(--font-cormorant)] text-xl font-light text-[#F5F0E8]">
-                Álbum compartido
-              </p>
-              <p className="text-sm text-[#6B7280] mt-0.5">Sube tus fotos del retiro al álbum del grupo</p>
-            </div>
-            <span className="text-[#C9A96E] text-lg">↗</span>
-          </a>
-        </div>
-      )}
-
-      {/* Secondary links — editorial list style */}
-      {family && (
-        <div className="px-6 pb-8">
-          <div className="border-t border-white/10 pt-6 space-y-1">
-            {[
-              { href: '/info',       label: 'Información del retiro' },
-              { href: '/documentos', label: 'Documentos' },
-              { href: '/equipo',     label: 'Conoce al equipo' },
-            ].map(link => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="flex items-center justify-between py-3 text-sm text-[#A09A8F] hover:text-[#F5F0E8] transition-colors"
-              >
-                <span>{link.label}</span>
-                <span className="text-[#4B5563]">→</span>
-              </Link>
-            ))}
           </div>
-        </div>
+
+          {evento && <Arco actual={tramo} />}
+
+          <div className="px-5 pt-6">
+
+            {/* ── El estado del día ─────────────────────────────── */}
+            {isHappening && (
+              <div className="flex items-center gap-2.5 mb-5">
+                <span className="w-2 h-2 rounded-full bg-terra animate-pulse" />
+                <span className="text-[14px] text-ink">Estás en el retiro. Guarda el teléfono.</span>
+              </div>
+            )}
+
+            {/* ── Avisos ────────────────────────────────────────── */}
+            {recentAnnouncements.length > 0 && (
+              <div className="flex flex-col gap-2 mb-6">
+                {recentAnnouncements.map(a => (
+                  <Link
+                    key={a.id}
+                    href="/avisos"
+                    className={`flex items-center gap-3 px-4 py-3.5 min-h-[44px] rounded-[10px] border transition-colors ${
+                      a.tipo === 'urgente'
+                        ? 'bg-wine/[.06] border-wine/30 hover:border-wine/60'
+                        : 'bg-white border-line hover:border-terra/50'
+                    }`}
+                  >
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[10px] uppercase tracking-[.18em] text-terra mb-0.5">
+                        {a.tipo === 'urgente' ? 'Urgente' : a.tipo === 'logistica' ? 'Logística' : 'Aviso'}
+                      </p>
+                      <p className="text-[15px] text-ink leading-snug truncate">{a.titulo}</p>
+                    </div>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" className="text-gray shrink-0">
+                      <path d="M9 18l6-6-6-6" />
+                    </svg>
+                  </Link>
+                ))}
+              </div>
+            )}
+
+            {/* ── Lo que sigue ──────────────────────────────────── */}
+            {!yaPaso && (
+              <div className="flex items-baseline justify-between mb-3">
+                <span className="cejilla">Lo que sigue</span>
+                {daysUntil !== null && daysUntil > 0 && (
+                  <span className="text-[12px] text-gray">
+                    {daysUntil === 1 ? 'Falta un día' : `Faltan ${daysUntil} días`}
+                  </span>
+                )}
+              </div>
+            )}
+
+            {/* La única acción que importa, con el peso de la pantalla.
+                Si no hay ninguna pendiente, no se inventa una. */}
+            {!yaPaso && !intakeSubmitted && (
+              <Link
+                href="/formulario"
+                className="relative overflow-hidden block bg-wine rounded-[10px] p-5 mb-2.5"
+              >
+                <span className="absolute w-[190px] h-[190px] rounded-full -top-[60px] -right-[50px] pointer-events-none"
+                      style={{ background: 'radial-gradient(circle, rgba(185,115,90,.42), transparent 70%)' }} />
+                <span className="relative block">
+                  <span className="block text-[9.5px] font-semibold uppercase tracking-[.2em] text-terra-lo">
+                    Antes de llegar
+                  </span>
+                  <span className="block text-[21px] font-light tracking-tight text-paper mt-2">
+                    La historia de su familia
+                  </span>
+                  <span className="block text-[13.5px] text-paper/70 leading-relaxed mt-2">
+                    Lo que nos cuenten aquí es de donde sale su Storybook. Tómense su tiempo.
+                  </span>
+                  <span className="inline-flex items-center bg-paper text-wine text-[13.5px] font-medium px-5 py-3 rounded-full min-h-[44px] mt-4">
+                    Empezar
+                  </span>
+                </span>
+              </Link>
+            )}
+
+            {!yaPaso && intakeSubmitted && totalCount > 0 && !allSigned && (
+              <Link href="/acuerdos" className="relative overflow-hidden block bg-wine rounded-[10px] p-5 mb-2.5">
+                <span className="absolute w-[190px] h-[190px] rounded-full -top-[60px] -right-[50px] pointer-events-none"
+                      style={{ background: 'radial-gradient(circle, rgba(185,115,90,.42), transparent 70%)' }} />
+                <span className="relative block">
+                  <span className="block text-[9.5px] font-semibold uppercase tracking-[.2em] text-terra-lo">
+                    Antes de llegar
+                  </span>
+                  <span className="block text-[21px] font-light tracking-tight text-paper mt-2">
+                    {pendingCount === 1 ? 'Falta un acuerdo por firmar' : `Faltan ${pendingCount} acuerdos por firmar`}
+                  </span>
+                  <span className="inline-flex items-center bg-paper text-wine text-[13.5px] font-medium px-5 py-3 rounded-full min-h-[44px] mt-4">
+                    Firmar
+                  </span>
+                </span>
+              </Link>
+            )}
+
+            {/* ── Lo demás, en peso menor ───────────────────────── */}
+            <div className="flex flex-col gap-2">
+              {intakeSubmitted && (
+                <Fila href="/formulario" titulo="La historia de su familia" sub="Ya la compartieron" hecho />
+              )}
+              {totalCount > 0 && allSigned && (
+                <Fila href="/acuerdos" titulo="Acuerdos" sub={`${totalCount} de ${totalCount} firmados`} hecho />
+              )}
+              {totalCount > 0 && !allSigned && intakeSubmitted && null}
+
+              <Fila href="/programa" titulo="El programa" sub="Lo que va a pasar cada día" />
+              <Fila href="/info" titulo="Información del retiro" sub="Sede, habitación y qué llevar" />
+              <Fila href="/documentos" titulo="Documentos" />
+              <Fila href="/equipo" titulo="Quién los acompaña" />
+
+              {evento?.nube_url && (
+                <Fila
+                  href={evento.nube_url}
+                  titulo="Álbum del retiro"
+                  sub={yaPaso ? 'Las fotos de esos días' : 'Sus fotos, en un solo lugar'}
+                  externo
+                />
+              )}
+            </div>
+
+            {/* ── Los objetos que se llevan ─────────────────────── */}
+            {yaPaso && (storybook || video) && (
+              <div className="mt-6">
+                <div className="cejilla mb-3">Lo que se llevan</div>
+                <div className="bg-white border border-line rounded-[10px] px-4 py-3">
+                  {storybook && <EstadoEntregaFila titulo="Storybook" estado={storybook} url={evento?.nube_url ?? null} />}
+                  {video && <EstadoEntregaFila titulo="Video familiar" estado={video} url={evento?.nube_url ?? null} />}
+                </div>
+              </div>
+            )}
+
+          </div>
+        </>
       )}
 
       <HelpButton pageId="mi-retiro" />
