@@ -1,0 +1,166 @@
+/* ===========================================================
+   Trascendencia · estilos compartidos por todas sus páginas
+   Se carga SIEMPRE después de brand.css, porque redefine :root.
+   Antes vivía incrustado dentro de trascendencia/index.html; se
+   sacó aquí al pasar de un scroll único a varias páginas, para no
+   tener que corregir lo mismo en siete archivos.
+   =========================================================== */
+
+/* Vino DOMINANTE, teal secundario (ver /BRAND.md) */
+:root{
+  --dom:var(--wine); --dom-deep:var(--wine-deep); --sec:var(--teal);
+  --blob1:#6E1A26; --blob2:var(--terra); --blob3:#0E5866; --blob4:var(--gold);
+  --blob2-op:.5; --blob3-op:.3; --blob4-op:.24;
+}
+
+/* ── Split 5:7 · el patrón base de la marca ── */
+.intro-grid{display:grid;grid-template-columns:5fr 7fr;gap:clamp(2.5rem,6vw,6rem);align-items:start}
+.intro-body{font-size:1.05rem;font-weight:300;line-height:1.95;color:var(--ink);margin-bottom:1.6rem}
+.intro-body b{font-weight:500;color:var(--dom)}
+.intro-body .sub{display:block;margin-top:1.6rem;font-size:.92rem;color:var(--gray)}
+.intro-divider{width:2.5rem;height:2px;background:var(--terra);margin:2rem 0}
+@media(max-width:860px){.intro-grid{grid-template-columns:1fr}}
+
+/* ── Banda sobre color dominante ── */
+.questions{background:var(--dom);color:#fff;padding:clamp(4.5rem,10vw,7.5rem) clamp(1.25rem,4vw,3.5rem)}
+.questions-head{max-width:1180px;margin:0 auto clamp(2.5rem,5vw,4rem)}
+.questions-head .eyebrow{color:var(--terra-lo)}
+.questions-head h2{margin-top:1.5rem;font-size:clamp(1.9rem,3.2vw,2.9rem);font-weight:200;line-height:1.1;letter-spacing:-.02em;max-width:24ch;text-wrap:balance}
+.q-grid{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr)}
+.q{padding:2.5rem 2rem 0 0;border-top:1px solid rgba(255,255,255,.14)}
+.q-n{font-family:'Courier New',Courier,monospace;font-size:.66rem;letter-spacing:.2em;color:var(--terra-lo);display:block;margin-bottom:1.5rem;font-weight:500}
+.q h3{font-size:1.7rem;font-weight:300;margin-bottom:1rem;letter-spacing:-.01em}
+.q p{font-size:.88rem;font-weight:300;line-height:1.8;color:rgba(255,255,255,.62)}
+@media(max-width:860px){.q-grid{grid-template-columns:1fr}.q{padding-top:2rem}}
+
+/* ── Tarjetas con foto a sangre ── */
+.modes-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+.mode-card{position:relative;min-height:380px;border-radius:10px;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;isolation:isolate;color:#fff}
+.mode-card .bg{position:absolute;inset:0;background:#222 center/cover no-repeat;z-index:-2}
+.mode-card::after{content:'';position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,transparent 30%,rgba(43,8,14,.6) 62%,rgba(30,6,10,.94) 100%)}
+.mode-body{padding:2rem}
+.mode-n{font-family:'Courier New',Courier,monospace;font-size:.62rem;letter-spacing:.2em;color:var(--terra-lo);display:block;margin-bottom:1.1rem;font-weight:600;text-transform:uppercase}
+.mode-card h3{font-size:1.35rem;font-weight:400;margin-bottom:.3rem;letter-spacing:-.01em}
+.mode-place{font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:.9rem;display:block}
+.mode-card p{font-size:.85rem;font-weight:300;line-height:1.75;color:rgba(255,255,255,.75)}
+a.mode-card{text-decoration:none;transition:transform .3s var(--ease)}
+a.mode-card:hover{transform:translateY(-4px)}
+.mode-go{display:inline-flex;align-items:center;gap:.4rem;margin-top:1.1rem;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--terra-lo)}
+@media(max-width:860px){.modes-grid{grid-template-columns:1fr}}
+
+/* ── Banda de legado: texto + foto + cifras ── */
+.legacy{background:var(--dom);color:#fff;padding:clamp(4.5rem,10vw,9rem) clamp(1.25rem,4vw,3.5rem);position:relative;overflow:hidden}
+.legacy::before{content:'';position:absolute;inset:0;background:radial-gradient(60% 60% at 82% 12%,rgba(185,115,90,.22),transparent 60%);pointer-events:none}
+.legacy-grid{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:5fr 4fr 3fr;gap:clamp(2rem,5vw,4rem);align-items:center;position:relative}
+.legacy .eyebrow{color:var(--terra-lo);margin-bottom:1.9rem;display:block}
+.legacy h2{font-size:clamp(1.9rem,3.4vw,2.9rem);font-weight:200;line-height:1.1;letter-spacing:-.02em;margin-bottom:1.5rem}
+.legacy h2 em{font-style:normal;color:var(--terra-lo)}
+.legacy p{font-size:.98rem;font-weight:300;line-height:1.9;color:rgba(255,255,255,.78)}
+.legacy-photo{position:relative;border-radius:10px;overflow:hidden;min-height:320px}
+.legacy-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.legacy-stats{border-left:1px solid rgba(255,255,255,.16);padding-left:2.25rem}
+.legacy-stats .stat{margin-bottom:2.25rem}
+.legacy-stats .stat:last-child{margin-bottom:0}
+.legacy-stats .num{font-size:2.6rem;font-weight:200;letter-spacing:-.02em;display:block;line-height:1;margin-bottom:.5rem;font-variant-numeric:tabular-nums}
+.legacy-stats .lbl{font-size:.8rem;font-weight:300;line-height:1.6;color:rgba(255,255,255,.6)}
+@media(max-width:960px){.legacy-grid{grid-template-columns:1fr}.legacy-stats{border-left:0;padding-left:0;border-top:1px solid rgba(255,255,255,.16);padding-top:2rem;display:flex;gap:2rem;flex-wrap:wrap}.legacy-stats .stat{margin-bottom:0}}
+
+/* ── Split de cierre: titular sticky a la izquierda ── */
+.closing-grid{display:grid;grid-template-columns:5fr 7fr;gap:clamp(2.5rem,6vw,6rem);align-items:start}
+.closing-grid .sec-head{margin-bottom:1.75rem}
+.closing-aside{position:sticky;top:118px}
+.closing-note{font-size:.9rem;font-weight:300;line-height:1.8;color:var(--gray);max-width:34ch}
+.closing-note a{color:var(--dom);text-decoration:none;border-bottom:1px solid var(--terra);padding-bottom:2px;transition:color .2s}
+.closing-note a:hover{color:var(--terra)}
+@media(max-width:860px){.closing-grid{grid-template-columns:1fr}.closing-aside{position:static}}
+
+/* Testimonios: lenguaje editorial (regla superior, sin caja) */
+.testi-list{display:flex;flex-direction:column}
+.testi{padding:2.25rem 0;border-top:1px solid var(--line)}
+.testi:first-child{border-top:0;padding-top:0}
+.testi blockquote{font-size:clamp(1.12rem,1.7vw,1.4rem);font-weight:300;line-height:1.68;color:var(--ink);letter-spacing:-.01em;margin-bottom:1.15rem}
+.testi blockquote em{font-style:normal;color:var(--dom)}
+.testi cite{display:block;font-style:normal;font-size:.68rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--terra)}
+
+.equipo-foto{border-radius:10px;overflow:hidden}
+.equipo-foto img{width:100%;height:auto;display:block}
+
+.faq{display:flex;flex-direction:column}
+.faq-item{padding:1.9rem 0;border-top:1px solid var(--line)}
+.faq-item:first-child{border-top:0;padding-top:0}
+.faq-item h3{font-size:1.12rem;font-weight:400;color:var(--dom);margin-bottom:.7rem;letter-spacing:-.01em}
+.faq-item p{font-size:.92rem;font-weight:300;line-height:1.8;color:var(--gray)}
+
+/* ===========================================================
+   Piezas nuevas del sitio de varias páginas
+   =========================================================== */
+
+/* Navegación entre las páginas de Trascendencia */
+.nav-links a.actual{color:var(--dom)}
+#nav:not(.scrolled) .nav-links a.actual{color:#fff;opacity:1}
+
+/* Hero corto, para las páginas interiores (el largo queda solo en Inicio) */
+.hero-corto{position:relative;min-height:52vh;display:flex;align-items:flex-end;overflow:hidden;background:var(--dom-deep);padding:clamp(6rem,12vw,9rem) clamp(1.25rem,4vw,3.5rem) clamp(2.5rem,5vw,4rem)}
+.hero-corto .bg{position:absolute;inset:0;background:#222 center/cover no-repeat;z-index:0;opacity:.5}
+.hero-corto .scrim{position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(20,5,9,.55) 0%,rgba(20,5,9,.86) 100%)}
+.hero-corto .inner{position:relative;z-index:2;max-width:1180px;margin:0 auto;width:100%}
+.hero-corto .eyebrow{color:var(--terra-lo)}
+.hero-corto h1{margin-top:1.2rem;font-size:clamp(2.1rem,4.6vw,3.6rem);font-weight:200;line-height:1.08;letter-spacing:-.02em;color:#fff;max-width:20ch;text-wrap:balance}
+.hero-corto p{margin-top:1.3rem;font-size:clamp(1rem,1.6vw,1.15rem);font-weight:300;line-height:1.75;color:rgba(255,255,255,.8);max-width:52ch}
+
+/* El contraste que sostiene el mensaje: lo que se gana / lo que se pierde */
+.contraste{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:clamp(2rem,4vw,3rem)}
+.contraste .lado{padding:2rem;border-radius:10px;border:1px solid var(--line)}
+.contraste .lado.gana{background:color-mix(in srgb,var(--dom) 6%,transparent);border-color:color-mix(in srgb,var(--dom) 22%,transparent)}
+.contraste .tit{font-size:.66rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;display:block;margin-bottom:1.1rem}
+.contraste .gana .tit{color:var(--dom)}
+.contraste .pierde .tit{color:var(--gray)}
+.contraste ul{list-style:none;display:flex;flex-direction:column;gap:.8rem}
+.contraste li{font-size:.95rem;font-weight:300;line-height:1.7;color:var(--ink);padding-left:1.1rem;position:relative}
+.contraste .pierde li{color:var(--gray)}
+.contraste li::before{content:'';position:absolute;left:0;top:.65em;width:6px;height:1px;background:var(--terra)}
+@media(max-width:760px){.contraste{grid-template-columns:1fr}}
+
+/* Las cuatro etapas del ciclo, cada una con su pregunta */
+.etapas{display:flex;flex-direction:column}
+.etapa{display:grid;grid-template-columns:5fr 7fr;gap:clamp(2rem,5vw,4.5rem);padding:clamp(2.5rem,5vw,4rem) 0;border-top:1px solid var(--line);align-items:start}
+.etapa:first-child{border-top:0;padding-top:0}
+.etapa-n{font-family:'Courier New',Courier,monospace;font-size:.66rem;letter-spacing:.2em;color:var(--terra);display:block;margin-bottom:1rem;font-weight:600;text-transform:uppercase}
+.etapa h3{font-size:clamp(1.5rem,2.6vw,2.1rem);font-weight:300;color:var(--dom);letter-spacing:-.02em;margin-bottom:.9rem}
+.etapa .pregunta{font-size:1.02rem;font-weight:300;line-height:1.7;color:var(--ink);font-style:italic;border-left:2px solid var(--terra);padding-left:1.1rem}
+.etapa p{font-size:.95rem;font-weight:300;line-height:1.85;color:var(--gray)}
+.etapa p+p{margin-top:1rem}
+.etapa-foto{border-radius:10px;overflow:hidden;margin-top:1.5rem}
+.etapa-foto img{width:100%;height:auto;display:block}
+@media(max-width:860px){.etapa{grid-template-columns:1fr;gap:1.5rem}}
+
+/* Lo que se llevan a casa: los dos entregables */
+.entregables{display:grid;grid-template-columns:1fr 1fr;gap:clamp(1.5rem,3vw,2.5rem)}
+.entregable{display:flex;flex-direction:column}
+.entregable-foto{border-radius:10px;overflow:hidden;background:var(--paper-2);aspect-ratio:4/3;position:relative}
+.entregable-foto img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.entregable-foto .pendiente{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:2rem;font-size:.8rem;font-weight:300;line-height:1.7;color:var(--gray);border:1px dashed var(--line);border-radius:10px}
+.entregable h3{margin-top:1.5rem;font-size:1.35rem;font-weight:400;color:var(--dom);letter-spacing:-.01em}
+.entregable .que-es{font-size:.68rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--terra);display:block;margin-top:.5rem}
+.entregable p{margin-top:.9rem;font-size:.95rem;font-weight:300;line-height:1.85;color:var(--gray)}
+@media(max-width:760px){.entregables{grid-template-columns:1fr}}
+
+/* Galería del evento */
+.galeria{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.galeria figure{border-radius:10px;overflow:hidden;aspect-ratio:3/2;position:relative}
+.galeria img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .6s var(--ease)}
+.galeria figure:hover img{transform:scale(1.04)}
+.galeria .alta{grid-column:span 2;aspect-ratio:3/2}
+@media(max-width:860px){.galeria{grid-template-columns:repeat(2,1fr)}.galeria .alta{grid-column:span 2}}
+@media(max-width:520px){.galeria{grid-template-columns:1fr}.galeria .alta{grid-column:span 1}}
+
+/* Puente a la otra línea del ecosistema (lo exige la arquitectura de marca) */
+.puente{border-top:1px solid var(--line);padding:clamp(2.5rem,5vw,3.5rem) 0 0;margin-top:clamp(3rem,6vw,5rem);display:flex;flex-wrap:wrap;gap:1.5rem;align-items:baseline;justify-content:space-between}
+.puente p{font-size:.98rem;font-weight:300;color:var(--gray);max-width:46ch;line-height:1.8}
+.puente a{font-size:.78rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--dom);text-decoration:none;border-bottom:1px solid var(--terra);padding-bottom:3px}
+.puente a:hover{color:var(--terra)}
+
+/* Siguiente paso al pie de cada página interior */
+.siguiente{display:flex;flex-wrap:wrap;gap:1.5rem;align-items:center;justify-content:space-between;margin-top:clamp(2.5rem,5vw,4rem);padding-top:clamp(2rem,4vw,3rem);border-top:1px solid var(--line)}
+.siguiente .rotulo{font-size:.66rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--terra);display:block;margin-bottom:.5rem}
+.siguiente h3{font-size:1.25rem;font-weight:400;color:var(--dom);letter-spacing:-.01em}
