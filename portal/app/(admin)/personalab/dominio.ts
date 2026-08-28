@@ -307,11 +307,16 @@ export const EXPERIENCIAS: Experiencia[] = [
         tiempo: 'ignicion',
         orden: 7,
         titulo: 'Decirlo en voz alta',
-        descripcion: 'El pico. Se escucha y se es escuchado, sin que se vuelva competencia.',
+        descripcion: 'Primero de dos en dos, donde todos hablan. Después el círculo, y ahí ya es voluntario.',
         soporte: 'sala',
         duracion: '60 min',
         listo: true,
-        requiere: ['Círculo cerrado', 'Reloj a la vista del moderador, no del foro'],
+        requiere: [
+          'Parejas armadas de antemano',
+          'Espacio para separarlas, aunque sea en dos salas',
+          'Círculo cerrado para la segunda mitad',
+          'Reloj a la vista del moderador, no del foro',
+        ],
       },
       {
         id: 'ag8',

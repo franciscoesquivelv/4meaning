@@ -12,7 +12,7 @@ function PanelMarca({ marca }: { marca: Marca }) {
   const m = MARCAS[marca]
   // Trascendencia entra al portal REAL, el que ya esta en produccion.
   // PersonaLab entra al workspace nuevo. Esa es la conexion del ecosistema.
-  const destino = marca === 'personalab' ? '/personalab' : '/dashboard'
+  const destino = marca === 'personalab' ? '/personalab' : '/hoy'
   return (
     <a
       href={destino}
