@@ -172,6 +172,14 @@ a.mode-card:hover{transform:translateY(-4px)}
 .banda .pie{position:absolute;left:clamp(1.25rem,4vw,3.5rem);right:clamp(1.25rem,4vw,3.5rem);bottom:clamp(1.5rem,3vw,2.5rem);z-index:2;color:#fff;max-width:44ch}
 .banda .pie p{font-size:clamp(1.1rem,2vw,1.5rem);font-weight:300;line-height:1.5;letter-spacing:-.01em;text-shadow:0 2px 20px rgba(0,0,0,.5)}
 
+/* Enlace de texto en versalitas al pie de un bloque. Vivía como estilo en
+   línea repetido en cada página, lo que impedía darle un objetivo táctil
+   decente en móvil desde la hoja de estilos. */
+.link-mas{display:inline-block;color:var(--dom);text-decoration:none;font-size:.78rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;border-bottom:1px solid var(--terra);padding-bottom:3px}
+.link-mas:hover{color:var(--terra)}
+.link-mas.claro{color:var(--terra-lo);border-bottom-color:var(--terra-lo)}
+.link-mas.claro:hover{color:#fff}
+
 /* Siguiente paso al pie de cada página interior */
 .siguiente{display:flex;flex-wrap:wrap;gap:1.5rem;align-items:center;justify-content:space-between;margin-top:clamp(2.5rem,5vw,4rem);padding-top:clamp(2rem,4vw,3rem);border-top:1px solid var(--line)}
 .siguiente .rotulo{font-size:.66rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--terra);display:block;margin-bottom:.5rem}
@@ -227,3 +235,90 @@ a.mode-card:hover{transform:translateY(-4px)}
 /* 5 · El h1 del hero era mas grande que el de cualquier referente
    (92px contra 56-58). Se baja el techo. */
 .hero h1{font-size:clamp(2.6rem,6vw,4.6rem)}
+
+/* ===========================================================
+   MOVIL  (<=560px)
+   Continua las reglas de brand.css con lo propio de Trascendencia.
+   La medicion a 375px encontro tres defectos estructurales, no
+   cosmeticos:
+
+   1. Cuatro rejillas traen las columnas en atributo style= dentro
+      del HTML (q-grid con repeat(3,1fr) en equipo y modalidades,
+      repeat(2,1fr) en que-se-llevan). Un estilo en linea le gana a
+      cualquier media query sin !important, asi que en el telefono
+      esas paginas mostraban tres columnas dentro de 335px.
+   2. La galeria se apilaba en una sola columna: seis fotos seguidas,
+      una debajo de otra, en una pagina que ya media 11.569px de alto.
+      Aman resuelve lo mismo con un carrusel horizontal de cuadrados.
+      Es el cambio de infraestructura mas grande de este bloque y el
+      que mas altura recorta.
+   3. Los rotulos monoespaciados (q-n, mode-n, etapa-n) median 10px
+      con 0.2em de espaciado. A ese tamano el espaciado separa las
+      letras mas de lo que las agrupa.
+   =========================================================== */
+@media(max-width:560px){
+
+  /* 1 · Rejillas: una columna, pase lo que pase en el HTML */
+  .q-grid,.contraste,.entregables,.etapa,.intro-grid,.closing-grid{grid-template-columns:1fr!important}
+  .q-grid{gap:0}
+  .q{padding-top:1.75rem}
+
+  /* 2 · Galeria como carrusel horizontal a sangre.
+     El margen negativo la saca del padding de .sec para que la
+     primera foto empiece pegada al borde izquierdo y la siguiente
+     asome por la derecha: esa esquina asomada es lo que le dice al
+     dedo que hay mas. */
+  .galeria,.galeria.duo{
+    display:flex!important;gap:.7rem;overflow-x:auto;
+    scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;
+    margin:0 -1.25rem;padding:0 1.25rem 1.25rem;scrollbar-width:none;
+  }
+  .galeria::-webkit-scrollbar{display:none}
+  .galeria figure,.galeria .alta{
+    flex:0 0 76%;scroll-snap-align:center;aspect-ratio:1/1;grid-column:auto
+  }
+
+  /* 3 · Titulares interiores. Varios llevan el tamano en linea. */
+  .sec h2{font-size:1.7rem!important;line-height:1.28!important;font-weight:300!important;max-width:none!important}
+  .hero-corto h1{font-size:1.75rem;line-height:1.26;font-weight:300;max-width:none}
+  .hero-corto p{font-size:1rem;line-height:1.6}
+  .hero-corto{min-height:auto;padding:7rem 1.25rem 3rem}
+
+  /* 4 · Cuerpo a 16px en todo lo que se lee seguido */
+  .intro-body,.etapa p,.faq-item p,.contraste li,
+  .entregable p,.q p,.mode-card p,.puente p,.closing-note{
+    font-size:1rem;line-height:1.65;max-width:none
+  }
+  .banda .pie p{font-size:1.05rem;line-height:1.45}
+
+  /* 5 · Rotulos monoespaciados legibles */
+  .q-n,.mode-n,.etapa-n,.entregable .que-es,.contraste .tit,
+  .siguiente .rotulo,.testi cite{font-size:.72rem;letter-spacing:.12em}
+
+  /* 6 · Tarjetas de modalidad mas cortas: tres seguidas a 380px
+     eran 1.140px de scroll antes de llegar a nada nuevo. */
+  .mode-card{min-height:300px}
+  .mode-body{padding:1.5rem}
+  .mode-go{margin-top:1rem;padding:.7rem 0;font-size:.75rem}
+
+  /* 7 · Los bloques de dos piezas dejan de fingir que son una fila */
+  .siguiente,.puente{flex-direction:column;align-items:stretch;gap:1.25rem}
+  .siguiente .btn-fill,.puente a{align-self:flex-start}
+  .puente a{padding:.7rem 0}
+
+  /* 8 · Objetivo tactil de 44px en los enlaces de texto sueltos.
+     Median entre 18 y 20px de alto, la mitad del minimo de Apple y
+     Google. El padding vertical no mueve nada porque el enlace es
+     el unico contenido de su parrafo. */
+  .closing-note a,.link-mas,.puente a{padding-top:.95rem;padding-bottom:.95rem;border-bottom-width:0;box-shadow:0 1px 0 var(--terra)}
+  .link-mas.claro{box-shadow:0 1px 0 var(--terra-lo)}
+  .etapa .pregunta{font-size:1rem}
+
+  /* 9 · Secciones que no son .sec y por eso se quedaron con la
+     escala de escritorio */
+  .legacy h2{font-size:1.7rem;line-height:1.28;font-weight:300}
+  .legacy p{font-size:1rem;line-height:1.65}
+  .questions-head h2{font-size:1.7rem!important;line-height:1.28!important;font-weight:300!important;max-width:none!important}
+  .moment blockquote{font-size:1.25rem;line-height:1.5}
+  .intro-body[style*="font-size"]{font-size:.95rem!important}
+}
