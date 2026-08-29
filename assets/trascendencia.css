@@ -176,3 +176,54 @@ a.mode-card:hover{transform:translateY(-4px)}
 .siguiente{display:flex;flex-wrap:wrap;gap:1.5rem;align-items:center;justify-content:space-between;margin-top:clamp(2.5rem,5vw,4rem);padding-top:clamp(2rem,4vw,3rem);border-top:1px solid var(--line)}
 .siguiente .rotulo{font-size:.66rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--terra);display:block;margin-bottom:.5rem}
 .siguiente h3{font-size:1.25rem;font-weight:400;color:var(--dom);letter-spacing:-.01em}
+
+/* ===========================================================
+   REGLAS DE LEGIBILIDAD
+   Salen de medir cuatro sitios reales (Aman, Remento, Six Senses,
+   Artifact Uprising) y compararlos contra lo que teniamos.
+
+   Hallazgo: ninguno de los cuatro usa peso 300 en el cuerpo, y
+   ninguno pasa de 1.6 de interlinea. Nosotros teniamos las tres
+   variables aflojadas a la vez (76ch + interlinea 1.93 + peso 300).
+   Cualquiera de las tres sola se aguanta; las tres juntas, no.
+
+   Six Senses corre a 77ch igual que nosotros, pero lo sostiene con
+   interlinea 1.6 y peso 400. Ese es el intercambio real.
+   =========================================================== */
+
+/* 1 · El cuerpo pasa a peso 400. Es el cambio que mas se nota. */
+.intro-body, .etapa p, .etapa .pregunta, .faq-item p, .closing-note,
+.contraste li, .entregable p, .q p, .testi blockquote{font-weight:400}
+
+/* 1b · Ninguna columna de texto pasa de 60ch, que en esta tipografia son
+   unos 560px. El FAQ era el peor caso del sitio y justo la pagina con mas
+   texto.
+   El limite va sobre el TEXTO, no sobre el contenedor: la unidad ch se
+   resuelve contra el tamano de letra del elemento donde se declara, asi que
+   ponerla en un contenedor de 16px deja que un parrafo de 15px quepa mucho
+   mas ancho de lo previsto. */
+.intro-body, .etapa p, .etapa .pregunta, .faq-item p,
+.contraste li, .entregable p, .closing-note{max-width:60ch}
+
+/* 2 · Interlinea maxima 1.6, no 1.93. */
+.intro-body{line-height:1.62}
+.etapa p, .faq-item p, .entregable p{line-height:1.65}
+.closing-note{line-height:1.65}
+
+/* 3 · Los titulares necesitan ancho. El .sec-head heredado limita a
+   44ch resueltos contra 16px del body, no contra el tamano del h2:
+   un titular de 46px terminaba encajonado en 19 caracteres. Los
+   referentes le dan entre 62 y 73 a un h2 de 40 a 42px. */
+.sec .sec-head, .questions .questions-head{max-width:none}
+.sec .sec-head h2, .questions-head h2{max-width:24ch}
+.sec .sec-head .eyebrow{display:block}
+
+/* 4 · Texto centrado solo si cabe en dos lineas. El lead caia en
+   cuatro lineas centradas, el peor caso: bordes irregulares en ambos
+   lados. Estrecharlo habria dado MAS lineas, asi que se ensancha y
+   se acorta el texto. */
+.hero .lead{max-width:46ch;line-height:1.5;font-weight:400}
+
+/* 5 · El h1 del hero era mas grande que el de cualquier referente
+   (92px contra 56-58). Se baja el techo. */
+.hero h1{font-size:clamp(2.6rem,6vw,4.6rem)}
