@@ -9,7 +9,7 @@
 <meta property="og:url" content="https://4meaning.life/personalab/">
 <meta property="og:title" content="PersonaLab · Experiencias que le dan sentido a tu retiro">
 <meta property="og:description" content="Diseñadas para moderadores que quieren que su foro profundice en los temas importantes de la vida.">
-<meta property="og:image" content="https://4meaning.life/img/foro.webp">
+<meta property="og:image" content="https://4meaning.life/img/personalab/foro-real.webp">
 <link rel="canonical" href="https://4meaning.life/personalab/">
 <link rel="icon" href="/logos/blk-icon.png" media="(prefers-color-scheme: light)">
 <link rel="icon" href="/logos/wht-icon.png" media="(prefers-color-scheme: dark)">
@@ -43,7 +43,7 @@
   .dim-desc{font-size:.9rem;color:var(--gray);line-height:1.7}
   .quees-img{position:relative;overflow:hidden;min-height:280px}
   .quees-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-  @media(max-width:860px){.quees{grid-template-columns:1fr}.quees-img{order:-1;min-height:44vw}}
+  @media(max-width:860px){.quees{grid-template-columns:1fr}.quees-img{order:-1;min-height:0;aspect-ratio:4/3}}
 
   /* ── CÓMO FUNCIONA · pasos + testimonio ── */
   .como-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:clamp(2.5rem,6vw,5rem);align-items:start}
@@ -86,18 +86,45 @@
   .perfil li::before{content:'·';position:absolute;left:0;color:var(--terra-lo)}
   @media(max-width:860px){.perfiles{grid-template-columns:1fr}}
 
-  /* ── POR QUÉ · tabla comparativa ── */
-  .comp{border:1px solid var(--line);border-radius:8px;overflow:hidden}
-  .comp-row{display:grid;grid-template-columns:1fr 1fr}
-  .comp-head{background:var(--paper-2)}
-  .comp-cell{padding:1rem 1.5rem;font-size:.86rem;border-top:1px solid var(--line);display:flex;align-items:center;gap:.7rem}
-  .comp-row:first-child .comp-cell{border-top:0}
-  .comp-head .comp-cell{border-top:0;font-size:.66rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--gray)}
-  .comp-cell.us{color:var(--ink);background:color-mix(in srgb,var(--dom) 5%,transparent)}
-  .comp-cell.other{color:var(--gray)}
-  .comp-x{color:#B98F8F;flex-shrink:0}
-  .comp-chk{color:var(--dom);flex-shrink:0;font-weight:600}
-  @media(max-width:640px){.comp-cell{padding:.85rem 1rem;font-size:.8rem}}
+  /* ── DE DONDE SALE ────────────────────────────────────
+     Aqui vivia una tabla comparativa con cinco filas de equis contra
+     palomita frente a "otras ofertas". Definia el producto negando lo
+     de los demas cinco veces seguidas, no llevaba una sola imagen y
+     repetia lo que ya dicen "Que es PersonaLab" y "Cada modulo
+     incluye". La sustituye una foto y dos parrafos que afirman. */
+  .origen{display:grid;grid-template-columns:1fr;gap:clamp(2rem,5vw,3.5rem);align-items:center}
+  .origen-foto{margin:0;position:relative;aspect-ratio:4/5;border-radius:10px;overflow:hidden;background:var(--paper-2)}
+  .origen-foto img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .origen-texto h2{font-size:clamp(1.9rem,3.6vw,3.1rem);font-weight:200;line-height:1.1;letter-spacing:-.02em;color:var(--dom);text-wrap:balance;max-width:22ch;margin-bottom:clamp(1.5rem,3vw,2rem)}
+  .origen-texto h2 em{font-style:normal;color:var(--terra)}
+  .origen-texto p{font-size:1rem;font-weight:400;line-height:1.7;color:var(--ink);max-width:52ch;margin-bottom:1.2rem}
+  .origen-texto p:last-of-type{margin-bottom:0}
+  .link-mas{display:inline-block;color:var(--dom);text-decoration:none;font-size:.78rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;border-bottom:1px solid var(--terra);padding-bottom:3px}
+  .link-mas:hover{color:var(--terra)}
+  @media(min-width:861px){
+    .origen{grid-template-columns:5fr 7fr;gap:clamp(2.5rem,6vw,5rem)}
+    .origen-foto{aspect-ratio:3/4}
+  }
+  @media(max-width:560px){
+    .link-mas{padding-top:.95rem;padding-bottom:.95rem;border-bottom-width:0;box-shadow:0 1px 0 var(--terra)}
+  }
+  /* ── MOVIL (<=560px) ──────────────────────────────────
+     PersonaLab nunca recibio el paso que ya llevaban las otras dos
+     paginas. Medido a 375px: once bloques de cuerpo entre 13.76 y
+     14.4px, y dos titulares con interlinea de escritorio (1.10 y
+     1.20) y peso 200. Mismo criterio: cuerpo a 16px, titular a 300
+     con interlinea 1.26. */
+  @media(max-width:560px){
+    .dolor-card p,.paso p,.perfil li,.quees .dim-desc,
+    .origen-texto p,.includes .item{font-size:1rem;line-height:1.65}
+    .problema-head h2,.origen-texto h2{font-size:1.7rem!important;line-height:1.26!important;font-weight:300!important;max-width:none}
+    .quees-def{font-size:1.35rem;line-height:1.45}
+    .como-quote p{font-size:1rem;line-height:1.6}
+    .modulo-name{font-size:1.02rem}
+    .dolor-card h3,.paso h3{font-size:1.08rem}
+    /* El parrafo del catalogo trae el tamano en atributo style= */
+    .sec-head p[style]{font-size:1rem!important;line-height:1.65;max-width:none!important}
+  }
 </style>
 </head>
 <body>
@@ -142,7 +169,6 @@
 <section class="sec">
   <div class="wrap">
     <div class="problema-head reveal">
-      <span class="eyebrow">Este es mi problema</span>
       <h2 style="margin-top:1.5rem;font-size:clamp(1.7rem,3.2vw,2.6rem);font-weight:200;letter-spacing:-.02em;color:var(--dom);line-height:1.2">
         "Ya viene el retiro y aún no tengo <em style="font-style:normal;color:var(--terra)">material preparado.</em>"
       </h2>
@@ -159,21 +185,19 @@
 <section class="quees" id="proposito">
   <div class="quees-text">
     <div class="quees-text-inner reveal">
-      <span class="eyebrow" style="display:block;margin-bottom:1.6rem">Qué es PersonaLab</span>
       <p class="quees-def">Es un abanico de experiencias diseñadas para acompañar a cualquier moderador.</p>
       <div class="dim"><span class="dim-name">Catálogo</span><span class="dim-desc">Temas listos para facilitar. Una experiencia completa con guía, audio, video y ejercicios.</span></div>
       <div class="dim"><span class="dim-name">A la medida</span><span class="dim-desc">Si necesitas un tema específico, lo construimos. Asesoría para crear exactamente lo que necesitas.</span></div>
       <div class="dim"><span class="dim-name">Acompañamiento</span><span class="dim-desc">No te dejamos solo. Te orientamos para que llegues seguro y puedas facilitar con naturalidad.</span></div>
     </div>
   </div>
-  <div class="quees-img"><img src="/img/foro.webp" alt="Foro de PersonaLab" width="2512" height="1650" loading="lazy"></div>
+  <div class="quees-img"><img src="/img/personalab/quees.webp" alt="El equipo presenta uno de los módulos al grupo" width="1300" height="975" loading="lazy"></div>
 </section>
 
 <!-- CÓMO FUNCIONA -->
 <section class="sec alt">
   <div class="wrap">
     <div class="sec-head reveal">
-      <span class="eyebrow">Cómo funciona</span>
       <h2>Tres pasos para un retiro <em>memorable.</em></h2>
     </div>
     <div class="como-grid">
@@ -183,7 +207,7 @@
         <div class="paso reveal d2"><span class="paso-circle">3</span><div><h3>Tú facilitas, ellos profundizan</h3><p>Llegas preparado. Tu grupo vive algo que recuerda y puede valorar el resto de su vida.</p></div></div>
       </div>
       <div class="como-photo reveal d1">
-        <img src="/img/grupo.webp" alt="Facilitación de grupo" width="5472" height="3648" loading="lazy">
+        <img src="/img/personalab/foro-real.webp" alt="Un foro en sesión" width="1200" height="1200" loading="lazy">
         <div class="como-quote">
           <p>"Quería llegar con algo que de verdad mueva a mi grupo. De un equipo en el que confío."</p>
           <cite>Ayleen Mini, Moderadora YPO Guatemala</cite>
@@ -197,7 +221,7 @@
 <section class="sec" id="catalogo">
   <div class="wrap">
     <div class="sec-head reveal" style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:2rem;max-width:none;margin-bottom:3rem">
-      <div><span class="eyebrow" style="display:block;margin-bottom:1.6rem">El catálogo</span><h2 style="max-width:none">Temas para tu <em>próximo foro.</em></h2></div>
+      <div><h2 style="max-width:none">Temas para tu <em>próximo foro.</em></h2></div>
       <p style="max-width:32ch;color:var(--gray);font-size:.9rem;line-height:1.7">Cada módulo es una experiencia completa: guía, audio, video y ejercicios listos para facilitar.</p>
     </div>
     <div class="modulos reveal">
@@ -218,36 +242,32 @@
 <section class="sec alt" id="paraquien">
   <div class="wrap">
     <div class="sec-head reveal">
-      <span class="eyebrow">¿Para quién es PersonaLab?</span>
       <h2>Para el moderador que dirige foros que <em>trascienden.</em></h2>
     </div>
     <div class="perfiles">
-      <div class="perfil reveal"><span class="bg" style="background-image:url('/img/grupo.webp')"></span><div class="perfil-body">
+      <div class="perfil reveal"><span class="bg" style="background-image:url('/img/personalab/moderador.webp')"></span><div class="perfil-body">
         <span class="perfil-tag">Moderadores YPO / EO</span>
-        <ul><li>Es el moderador de este año y quiere proponer algo con profundidad.</li><li>No quiere dinámicas superficiales.</li><li>Quiere que su grupo profundice en los temas importantes de la vida.</li></ul>
+        <ul><li>Es el moderador de este año y quiere proponer algo con profundidad.</li><li>Quiere que su grupo profundice en los temas importantes de la vida.</li></ul>
       </div></div>
-      <div class="perfil reveal d1"><span class="bg" style="background-image:url('/img/foro.webp')"></span><div class="perfil-body">
+      <div class="perfil reveal d1"><span class="bg" style="background-image:url('/img/personalab/equipos.webp')"></span><div class="perfil-body">
         <span class="perfil-tag">Líderes de empresa y HR</span>
-        <ul><li>Retiro anual o jornada interna de liderazgo.</li><li>Quiere ir más allá del teambuilding de siempre.</li><li>Necesita que el equipo conecte desde lo humano, no solo lo funcional.</li></ul>
+        <ul><li>Retiro anual o jornada interna de liderazgo.</li><li>Ya hizo el teambuilding de siempre.</li><li>Necesita que el equipo hable de algo que no sea trabajo.</li></ul>
       </div></div>
     </div>
   </div>
 </section>
 
-<!-- POR QUÉ -->
-<section class="sec">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <span class="eyebrow">¿Por qué PersonaLab?</span>
-      <h2>Nuestro <em>propósito</em> es que explores el <em>propósito</em> y sentido de tu vida.</h2>
-    </div>
-    <div class="comp reveal">
-      <div class="comp-row comp-head"><div class="comp-cell">Otras ofertas</div><div class="comp-cell">La oferta de PersonaLab</div></div>
-      <div class="comp-row"><div class="comp-cell other"><span class="comp-x">✕</span>Dinámicas sueltas, sin hilo conductor</div><div class="comp-cell us"><span class="comp-chk">✓</span>Módulos diseñados con arquitectura emocional</div></div>
-      <div class="comp-row"><div class="comp-cell other"><span class="comp-x">✕</span>El moderador arma todo solo</div><div class="comp-cell us"><span class="comp-chk">✓</span>Todo en uno: guía, material audiovisual, ejercicios y dinámicas</div></div>
-      <div class="comp-row"><div class="comp-cell other"><span class="comp-x">✕</span>Contenido genérico para cualquier grupo</div><div class="comp-cell us"><span class="comp-chk">✓</span>Opción de crear contenido a la medida</div></div>
-      <div class="comp-row"><div class="comp-cell other"><span class="comp-x">✕</span>Sin profundidad conceptual</div><div class="comp-cell us"><span class="comp-chk">✓</span>Basado en psicología, espiritualidad y talleres de crecimiento humano</div></div>
-      <div class="comp-row"><div class="comp-cell other"><span class="comp-x">✕</span>Sin seguimiento</div><div class="comp-cell us"><span class="comp-chk">✓</span>Acompañamiento durante el proceso</div></div>
+<!-- DE DONDE SALE -->
+<section class="sec" id="origen">
+  <div class="wrap origen">
+    <figure class="origen-foto reveal">
+      <img src="/img/personalab/origen.webp" alt="Dos participantes durante una sesión" width="1000" height="1250" loading="lazy">
+    </figure>
+    <div class="origen-texto">
+      <h2 class="reveal">Quince años armando retiros antes de <em>empaquetar el primero.</em></h2>
+      <p class="reveal d1">Cada módulo salió de una sesión real, con un grupo real delante. Se probó, se corrigió y se volvió a probar antes de entrar al catálogo.</p>
+      <p class="reveal d2">Detrás está el mismo equipo de Trascendencia, la otra línea de 4 Meaning: el retiro de tres días que las familias viven en Antigua. El material que aquí se entrega es el que allí se usa.</p>
+      <p class="reveal d2"><a href="/trascendencia/" class="link-mas">Conocer Trascendencia</a></p>
     </div>
   </div>
 </section>
@@ -266,7 +286,6 @@
 <section class="cta" id="cierre">
   <div class="aurora"><span class="blob c1"></span><span class="blob c2"></span></div>
   <div class="inner reveal">
-    <p class="eyebrow">Empecemos</p>
     <h2>El retiro que tu grupo necesita, <em>no tienes que diseñarlo solo.</em></h2>
     <a class="btn-white" href="https://wa.me/50230179048" target="_blank" rel="noopener">Escribirnos por WhatsApp
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg></a>
