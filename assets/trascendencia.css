@@ -185,6 +185,59 @@ a.mode-card:hover{transform:translateY(-4px)}
 .siguiente .rotulo{font-size:.66rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--terra);display:block;margin-bottom:.5rem}
 .siguiente h3{font-size:1.25rem;font-weight:400;color:var(--dom);letter-spacing:-.01em}
 
+/* ── Lo que esta en juego ──────────────────────────────────
+   Antes eran dos cajas con borde y cuatro vinetas cada una: el
+   patron de comparacion de landing generica. Ahora es una foto y
+   dos parrafos con etiqueta de tiempo, separados por una regla.
+   Movil primero: la foto va arriba, en vertical, y el texto debajo. */
+.juego{display:grid;grid-template-columns:1fr;gap:clamp(2rem,5vw,3.5rem);align-items:center}
+.juego-foto{margin:0;border-radius:10px;overflow:hidden;position:relative;aspect-ratio:4/5;background:var(--paper-2)}
+.juego-foto img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.juego-texto h2{font-size:clamp(1.9rem,3.6vw,3.1rem);font-weight:200;line-height:1.1;letter-spacing:-.02em;color:var(--dom);text-wrap:balance;max-width:22ch;margin-bottom:clamp(1.5rem,3vw,2.25rem)}
+.juego-texto h2 em{font-style:normal;color:var(--terra)}
+.juego-par{padding:1.4rem 0;border-top:1px solid var(--line)}
+.juego-par .cuando{display:block;font-size:.68rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;margin-bottom:.7rem;color:var(--gray)}
+.juego-par.ahora .cuando{color:var(--terra)}
+.juego-par p{font-size:1rem;font-weight:400;line-height:1.7;max-width:48ch;color:var(--ink)}
+.juego-par.antes p{color:var(--gray)}
+@media(min-width:861px){
+  .juego{grid-template-columns:5fr 7fr;gap:clamp(2.5rem,6vw,5rem)}
+  .juego-foto{aspect-ratio:3/4}
+}
+
+/* ── Fotos que entraron en secciones que eran solo texto ── */
+.q-foto,.intro-foto,.closing-foto{margin:0 0 1.75rem;border-radius:10px;overflow:hidden;position:relative;background:var(--paper-2)}
+.q-foto img,.intro-foto img,.closing-foto img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.q-foto{aspect-ratio:4/3;margin-bottom:1.75rem}
+.intro-foto{aspect-ratio:3/4;margin:2.25rem 0 0}
+.closing-foto{aspect-ratio:4/3;margin:2rem 0 0}
+/* La tarjeta de preguntas cambia de orden: la foto va primero y la
+   regla superior pasa a la foto, no al texto. */
+.q{display:flex;flex-direction:column}
+.q .q-foto{order:-1}
+
+/* La variante clara: la misma foto de tarjeta sobre fondo de papel,
+   donde el orden natural del HTML ya la deja arriba. */
+.q-foto.clara{margin:0 0 1.5rem;aspect-ratio:4/3}
+.q-foto.clara img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+/* La etapa de modalidades gana foto; en movil va antes del texto. */
+.etapa .etapa-foto{margin:0 0 1.25rem;border-radius:10px;overflow:hidden;position:relative;aspect-ratio:4/3;background:var(--paper-2)}
+.etapa .etapa-foto img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+
+/* ── El acento que sustituye al eyebrow ───────────────────
+   Cada seccion llevaba encima una etiqueta con su propio nombre
+   ("Que incluye", "El legado", "El primer paso"). Repetir el nombre
+   de la seccion no informa de nada y es de las cosas que mas delatan
+   un texto de plantilla. Se quitaron las 34 y en su lugar queda una
+   regla corta en terracota, que sostiene el ritmo visual sin hablar. */
+.sec-head h2::before,.questions-head h2::before,.legacy h2::before,.cta h2::before{
+  content:'';display:block;width:32px;height:1px;background:var(--terra);
+  margin-bottom:clamp(1.25rem,2.5vw,1.75rem)
+}
+.cta h2::before{background:var(--terra-lo);margin-left:auto;margin-right:auto}
+.questions-head h2::before{background:var(--terra-lo)}
+.questions-head h2{margin-top:0}
+
 /* ===========================================================
    REGLAS DE LEGIBILIDAD
    Salen de medir cuatro sitios reales (Aman, Remento, Six Senses,
