@@ -185,6 +185,23 @@ a.mode-card:hover{transform:translateY(-4px)}
 .siguiente .rotulo{font-size:.66rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--terra);display:block;margin-bottom:.5rem}
 .siguiente h3{font-size:1.25rem;font-weight:400;color:var(--dom);letter-spacing:-.01em}
 
+/* La fila de fotos de la introduccion.
+   El titular y el texto son cortos, asi que la reja 5:7 dejaba 487px de
+   hueco en la columna derecha. Las fotos salen de las columnas y pasan a
+   una fila propia debajo, con el mismo ritmo 5:7: vertical bajo el
+   titular, apaisada bajo el texto. En movil se apilan. */
+.intro-fotos{display:grid;grid-template-columns:1fr;gap:1rem;margin-top:clamp(2.5rem,5vw,4rem)}
+.intro-fotos figure{margin:0;position:relative;border-radius:10px;overflow:hidden;background:var(--paper-2)}
+.intro-fotos figure:first-child{aspect-ratio:4/5}
+.intro-fotos figure:last-child{aspect-ratio:3/2}
+.intro-fotos img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.intro-fotos figcaption{position:absolute;left:1rem;bottom:.9rem;z-index:2;font-size:.66rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#fff;text-shadow:0 1px 12px rgba(0,0,0,.7)}
+@media(min-width:861px){
+  .intro-fotos{grid-template-columns:5fr 7fr;gap:clamp(1.5rem,3vw,2rem)}
+  .intro-fotos figure:first-child{aspect-ratio:3/4}
+  .intro-fotos figure:last-child{aspect-ratio:auto}
+}
+
 /* ── Lo que esta en juego ──────────────────────────────────
    Antes eran dos cajas con borde y cuatro vinetas cada una: el
    patron de comparacion de landing generica. Ahora es una foto y
