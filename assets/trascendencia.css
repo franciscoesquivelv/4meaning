@@ -241,18 +241,12 @@ a.mode-card:hover{transform:translateY(-4px)}
 .etapa .etapa-foto{margin:0 0 1.25rem;border-radius:10px;overflow:hidden;position:relative;aspect-ratio:4/3;background:var(--paper-2)}
 .etapa .etapa-foto img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 
-/* ── El acento que sustituye al eyebrow ───────────────────
-   Cada seccion llevaba encima una etiqueta con su propio nombre
-   ("Que incluye", "El legado", "El primer paso"). Repetir el nombre
-   de la seccion no informa de nada y es de las cosas que mas delatan
-   un texto de plantilla. Se quitaron las 34 y en su lugar queda una
-   regla corta en terracota, que sostiene el ritmo visual sin hablar. */
-.sec-head h2::before,.questions-head h2::before,.legacy h2::before,.cta h2::before{
-  content:'';display:block;width:32px;height:1px;background:var(--terra);
+/* El acento que sustituye al eyebrow vive en brand.css, porque ya lo
+   comparten los tres sitios. Aqui solo las secciones propias. */
+.questions-head h2::before,.legacy h2::before{
+  content:'';display:block;width:32px;height:1px;background:var(--terra-lo);
   margin-bottom:clamp(1.25rem,2.5vw,1.75rem)
 }
-.cta h2::before{background:var(--terra-lo);margin-left:auto;margin-right:auto}
-.questions-head h2::before{background:var(--terra-lo)}
 .questions-head h2{margin-top:0}
 
 /* ===========================================================

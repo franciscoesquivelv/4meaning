@@ -224,6 +224,42 @@ footer .footer-logo{height:15px;width:auto;opacity:.6}
   .fl a{padding:.6rem .3rem;margin:-.6rem -.3rem;font-size:.78rem}
 }
 
+/* ── El acento que sustituye al eyebrow ───────────────────
+   Cada seccion llevaba encima una etiqueta con su propio nombre
+   ("Las experiencias", "Cuatro territorios", "El primer paso").
+   Repetir el nombre de la seccion no informa de nada y es de las cosas
+   que mas delatan un texto de plantilla. Donde se quitaron, queda una
+   regla corta en terracota que sostiene el ritmo visual sin hablar.
+   Donde todavia hay eyebrow (PersonaLab), no se dibuja: seria una
+   raya de mas encima de la etiqueta. */
+.sec-head h2::before,.cta h2::before{
+  content:'';display:block;width:32px;height:1px;background:var(--terra);
+  margin-bottom:clamp(1.25rem,2.5vw,1.75rem)
+}
+.cta h2::before{background:var(--terra-lo);margin-left:auto;margin-right:auto}
+.sec-head .eyebrow + h2::before,.cta .eyebrow + h2::before{display:none}
+
+/* ── Pilares con foto ─────────────────────────────────────
+   La variante en fila (numero | titulo | texto) es el unico tramo de
+   la home sin una sola imagen. Con .con-foto pasa a rejilla de
+   tarjetas: foto arriba, numero, titulo y texto. En movil se apila. */
+.pillars.con-foto{grid-template-columns:1fr;gap:2.5rem}
+.pillars.con-foto .pillar{display:flex;flex-direction:column;padding:0;border-top:0;
+  /* align-items:baseline viene del .pillar en fila y en columna colapsa la
+     figura a 0 de ancho, porque su imagen va posicionada en absoluto y no
+     aporta ancho intrinseco. Sin esto las cuatro fotos no se ven. */
+  align-items:stretch}
+.pillars.con-foto .pillar:hover{padding-left:0}
+.pillar-foto{margin:0 0 1.4rem;position:relative;aspect-ratio:4/3;border-radius:10px;overflow:hidden;background:var(--paper-2)}
+.pillar-foto img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .6s var(--ease)}
+.pillars.con-foto .pillar:hover .pillar-foto img{transform:scale(1.04)}
+.pillars.con-foto .pn{display:block;margin-bottom:.8rem}
+.pillars.con-foto h3{font-size:clamp(1.4rem,2.2vw,1.9rem);margin-bottom:.7rem}
+.pillars.con-foto p{max-width:none;justify-self:auto;margin-top:0}
+@media(min-width:761px){
+  .pillars.con-foto{grid-template-columns:repeat(4,1fr);gap:clamp(1.25rem,2.5vw,2rem)}
+}
+
 /* ===========================================================
    MOVIL  (<=560px)
    Sale de medir Remento y Aman a 375px reales y compararlos
@@ -258,7 +294,13 @@ footer .footer-logo{height:15px;width:auto;opacity:.6}
   .hero h1{font-size:2rem!important;line-height:1.2!important;font-weight:300!important;letter-spacing:-.015em;margin-bottom:1.4rem}
   .sec-head h2,.questions-head h2{font-size:1.7rem!important;line-height:1.28!important;font-weight:300!important;max-width:none!important}
   .cta h2{font-size:1.85rem!important;line-height:1.24!important;font-weight:300!important}
-  .manifesto h2,.manifesto p{font-weight:300}
+  /* El h2 del manifiesto conservaba interlinea 1.08, valor de escritorio:
+     a 30px y sobre foto las lineas se pegaban. */
+  .manifesto h2{font-size:1.75rem;line-height:1.26;font-weight:300;max-width:none}
+  .manifesto p{font-weight:300}
+  /* El cuerpo de las dos tarjetas de experiencia media 14.4px. */
+  .card-i p{font-size:1rem;line-height:1.65;max-width:none}
+  .card-i .body{padding:1.85rem 1.5rem}
 
   /* 2 · Cuerpo: 16px es el piso. Debajo de eso Safari ofrece
      "traducir" y el lector de 45 anos hace zoom. */
