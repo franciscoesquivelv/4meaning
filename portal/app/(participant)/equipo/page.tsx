@@ -33,15 +33,29 @@ export default async function EquipoPage({
     .limit(1)
     .maybeSingle()
 
-  let teamMembers: { id: string; nombre: string; rol: string; bio_publica: string; foto_url: string | null }[] = []
+  let teamMembers: { id: string; nombre: string; rol: string; bio_publica: string }[] = []
+  let fallo = false
 
   if (family?.event_id) {
-    const { data } = await supabase
+    // SIN `foto_url`. Esta consulta la pedia y la columna no existe en la
+    // base, asi que fallaba SIEMPRE, en todos los eventos, desde que se
+    // escribio. Y el error se descartaba, asi que la pantalla caia en su
+    // mensaje de "todavia no" y le prometia a la pareja que sus facilitadores
+    // apareceran aqui pronto. No iban a aparecer nunca.
+    //
+    // No se agrega la columna: NINGUNA pantalla del equipo puede llenarla.
+    // El admin lee y escribe `nombre, rol, bio_publica, notas_equipo, orden`
+    // y no tiene manera de subir una foto. Una columna que nadie puede
+    // llenar solo hace que el esquema prometa algo que el producto no tiene.
+    // Si las fotos del equipo se quieren de verdad, es una pieza completa:
+    // columna, subida en el admin, y almacenamiento. Queda dicho, no hecho.
+    const { data, error } = await supabase
       .from('event_team')
-      .select('id, nombre, rol, bio_publica, foto_url')
+      .select('id, nombre, rol, bio_publica')
       .eq('event_id', family.event_id)
       .not('bio_publica', 'is', null)
       .order('orden')
+    fallo = !!error
     teamMembers = (data ?? []) as typeof teamMembers
   }
 
@@ -53,7 +67,17 @@ export default async function EquipoPage({
           Tu cuenta no tiene una familia asignada todavía.
         </div>
       )}
-      {family && !teamMembers.length && (
+      {/* La promesa solo se hace cuando el sistema la puede cumplir. Si la
+          consulta fallo, esta pantalla no sabe si hay equipo o no, y decir
+          "estaran disponibles pronto" seria comprometer a 4 Meaning con algo
+          que nadie verifico. */}
+      {family && fallo && (
+        <div className="bg-white border border-line rounded-xl p-6 text-center text-gray-ui text-sm leading-relaxed">
+          No pudimos cargar el equipo del retiro en este momento. Vuelve a
+          intentarlo en un rato.
+        </div>
+      )}
+      {family && !fallo && !teamMembers.length && (
         <div className="bg-white border border-line rounded-xl p-6 text-center text-gray-ui text-sm leading-relaxed">
           Conocerás a los facilitadores del retiro unos días antes del evento. Sus presentaciones y experiencias estarán disponibles aquí pronto.
         </div>
@@ -67,19 +91,14 @@ export default async function EquipoPage({
                   <div className="font-bold text-ink">{member.nombre}</div>
                   <div className="text-xs text-terra-ui font-medium mt-0.5 uppercase tracking-wider">{member.rol}</div>
                 </div>
+                {/* La inicial, y solo la inicial. Aqui habia una rama que
+                    pintaba `member.foto_url` cuando existiera, y no existio
+                    nunca: ni la columna en la base ni una pantalla del admin
+                    que la pudiera llenar. Codigo que no corrio jamas. */}
                 <div className="w-14 h-14 rounded-full overflow-hidden flex-shrink-0 flex items-center justify-center">
-                  {member.foto_url ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={member.foto_url}
-                      alt={member.nombre}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className={`w-full h-full flex items-center justify-center font-bold text-lg rounded-full ${avatarColor(member.nombre, index)}`}>
-                      {member.nombre.charAt(0).toUpperCase()}
-                    </div>
-                  )}
+                  <div className={`w-full h-full flex items-center justify-center font-bold text-lg rounded-full ${avatarColor(member.nombre, index)}`}>
+                    {member.nombre.charAt(0).toUpperCase()}
+                  </div>
                 </div>
               </div>
               <p className="text-sm text-gray-ui leading-relaxed">{member.bio_publica}</p>
