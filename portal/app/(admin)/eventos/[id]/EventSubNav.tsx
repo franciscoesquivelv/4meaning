@@ -134,12 +134,21 @@ export default function EventSubNav({ eventId, eventName, pipelineStatus, fechaF
       className="sticky top-14 z-40 h-12 bg-white border-b border-slate-200 flex items-center px-6 gap-3"
     >
       {/* El nombre del evento. El enlace de vuelta a Eventos salio de aqui:
-          la barra de arriba ya lo tiene, y era el mismo destino dos veces. */}
-      <span className="text-sm font-semibold text-slate-900 truncate max-w-[180px] flex-shrink-0">
+          la barra de arriba ya lo tiene, y era el mismo destino dos veces.
+
+          CEDE EL ESPACIO ANTES QUE LA NAVEGACION. Sin esto, en una ventana de
+          menos de 885px lo que se salia del borde era "Modo operacion", y como
+          esta barra ya no tiene `overflow-x-auto`, salirse significa quedar
+          INALCANZABLE, no quedar a un scroll. Medido en vivo: la barra pedia
+          885 y la ventana daba 849. Un rotulo que se acorta es barato; un
+          destino al que no se puede llegar, no. */}
+      <span className="text-sm font-semibold text-slate-900 truncate min-w-0 shrink">
         {eventName}
       </span>
 
-      <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full flex-shrink-0 ${pipeline.cls}`}>
+      {/* El estado del evento tambien esta en la pagina, debajo. Aqui es
+          repeticion, asi que es lo primero que se va cuando falta sitio. */}
+      <span className={`hidden lg:inline text-[10px] font-semibold px-2 py-0.5 rounded-full flex-shrink-0 ${pipeline.cls}`}>
         {pipeline.label}
       </span>
 

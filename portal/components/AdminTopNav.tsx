@@ -43,7 +43,10 @@ export default function AdminTopNav({ userEmail }: AdminTopNavProps) {
         className="flex items-center gap-2 group"
         title="Cambiar de workspace"
       >
-        <span className="text-sm font-semibold tracking-tight text-slate-900">4Meaning</span>
+        {/* "4 Meaning" con espacio. El login lo escribia pegado y Julian lo
+            corrigio ahi el 2026-09-06; aqui seguia pegado, asi que el mismo
+            lockup se escribia de dos maneras a dos clics de distancia. */}
+        <span className="text-sm font-semibold tracking-tight text-slate-900">4 Meaning</span>
         <svg
           className="w-3 h-3 text-slate-300 group-hover:text-slate-500 transition-colors"
           fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}
