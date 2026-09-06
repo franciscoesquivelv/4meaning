@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import EventSubNav from './EventSubNav'
+import { esEventoDePrueba } from '@/lib/ambiente'
 
 export default async function EventoLayout({
   params,
@@ -19,6 +20,8 @@ export default async function EventoLayout({
 
   if (!evento) notFound()
 
+  const esPrueba = await esEventoDePrueba(params.id)
+
   return (
     <>
       {/* `fecha_fin` va a la barra porque hay secciones que solo tienen
@@ -29,6 +32,7 @@ export default async function EventoLayout({
         eventName={evento.nombre}
         pipelineStatus={evento.pipeline_status ?? 'prospecto'}
         fechaFin={evento.fecha_fin ?? null}
+        esPrueba={esPrueba}
       />
       <div className="pt-0">{children}</div>
     </>

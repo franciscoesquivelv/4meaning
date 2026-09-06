@@ -52,9 +52,10 @@ interface Props {
   eventName: string
   pipelineStatus: string
   fechaFin: string | null
+  esPrueba?: boolean
 }
 
-export default function EventSubNav({ eventId, eventName, pipelineStatus, fechaFin }: Props) {
+export default function EventSubNav({ eventId, eventName, pipelineStatus, fechaFin, esPrueba }: Props) {
   const pathname = usePathname()
   const [abierto, setAbierto] = useState<string | null>(null)
   const barra = useRef<HTMLDivElement>(null)
@@ -145,6 +146,19 @@ export default function EventSubNav({ eventId, eventName, pipelineStatus, fechaF
       <span className="text-sm font-semibold text-slate-900 truncate min-w-0 shrink">
         {eventName}
       </span>
+
+      {/* AMBIENTE DE PRUEBAS. Va antes que el estado del evento y no se oculta
+          en ventanas chicas, al reves que el pipeline: el estado comercial es
+          repeticion de algo que ya esta en la pagina, y esto no. Nadie deberia
+          poder mirar una familia de este evento sin saber que no existe. */}
+      {esPrueba && (
+        <span
+          title="Datos ficticios. Se borran cuando se quiera con borrar_datos_de_prueba()."
+          className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full flex-shrink-0 bg-alerta/10 text-alerta border border-alerta/25"
+        >
+          Prueba
+        </span>
+      )}
 
       {/* El estado del evento tambien esta en la pagina, debajo. Aqui es
           repeticion, asi que es lo primero que se va cuando falta sitio. */}

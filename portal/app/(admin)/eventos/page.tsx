@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import { eventosDePrueba } from '@/lib/ambiente'
 
 function formatDate(d: string | null) {
   if (!d) return '-'
@@ -36,6 +37,11 @@ export default async function EventosPage() {
     .from('events')
     .select('id, nombre, ciudad, pais, fecha_inicio, fecha_fin, pipeline_status, n_parejas, families(count)')
     .order('fecha_inicio', { ascending: false })
+
+  // Va aparte del select de arriba a proposito: la columna la crea una
+  // migracion que Francisco corre a mano, y si viajara dentro de ese select,
+  // la lista entera de eventos desapareceria mientras tanto. Ver lib/ambiente.ts.
+  const dePrueba = await eventosDePrueba()
 
   const grouped = PIPELINE_COLUMNS.reduce<Record<string, Evento[]>>((acc, col) => {
     acc[col.key] = (eventos ?? []).filter(
@@ -109,6 +115,13 @@ export default async function EventosPage() {
                       <div className="font-semibold text-slate-900 text-sm leading-tight mb-1.5">
                         {ev.nombre}
                       </div>
+                      {/* Aqui es donde mas importa, porque esta es la lista
+                          desde la que se entra sin haber mirado nada todavia. */}
+                      {dePrueba.has(ev.id) && (
+                        <div className="text-[10px] font-semibold uppercase tracking-wider text-alerta mb-1.5">
+                          Ambiente de pruebas
+                        </div>
+                      )}
                       {(ev.ciudad || ev.pais) && (
                         <div className="text-xs text-slate-500 mb-1">
                           {[ev.ciudad, ev.pais].filter(Boolean).join(', ')}
