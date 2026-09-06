@@ -114,7 +114,7 @@ export default async function AvisosAdminPage({ params }: { params: { id: string
         </div>
       )}
 
-      {/* Push notifications — después de la lista */}
+      {/* Push notifications: después de la lista */}
       <SendPushButton eventId={params.id} />
     </div>
   )

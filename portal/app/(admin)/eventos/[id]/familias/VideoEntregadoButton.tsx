@@ -13,13 +13,20 @@ export default function VideoEntregadoButton({ familyId, eventId }: VideoEntrega
   const [isPending, startTransition] = useTransition()
   const { addToast } = useToast()
 
+  // `marcarVideoEntregado` DEVUELVE el error, no lo lanza, asi que el
+  // try/catch nunca lo veia: un fallo de base terminaba en un aviso verde de
+  // "entregado" sobre algo que no se guardo. Aqui se lee el retorno.
   function handleClick() {
     startTransition(async () => {
       try {
-        await marcarVideoEntregado(familyId, eventId)
+        const res = await marcarVideoEntregado(familyId, eventId)
+        if (res?.error) {
+          addToast(`No se pudo marcar el video: ${res.error}`, 'error')
+          return
+        }
         addToast('Video marcado como entregado', 'success')
       } catch {
-        addToast('Error al marcar video como entregado', 'error')
+        addToast('No se pudo marcar el video como entregado', 'error')
       }
     })
   }

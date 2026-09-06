@@ -217,10 +217,7 @@ export default function FormularioPage() {
         </div>
 
         {/* Section title */}
-        <h2
-          className="text-2xl font-bold text-ink mb-6"
-          style={{ fontFamily: 'Cormorant, Georgia, serif' }}
-        >
+        <h2 className="display text-[26px] text-ink mb-6">
           {FORM_SECTIONS[currentStep - 1]}
         </h2>
 

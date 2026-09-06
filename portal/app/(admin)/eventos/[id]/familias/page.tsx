@@ -1,10 +1,9 @@
 // Run this SQL migration before deploying:
 // alter table public.families add column if not exists checked_in_at timestamptz;
-// alter table public.families add column if not exists video_entregado boolean not null default false;
-// alter table public.families add column if not exists video_entregado_at timestamptz;
 
 import { createClient } from '@/lib/supabase/server'
 import { redirect, notFound } from 'next/navigation'
+import { estaEntregado } from '@/lib/entregas'
 import FamiliasClient, { type EnrichedFamily } from './FamiliasClient'
 
 export default async function FamiliasPage({ params }: { params: { id: string } }) {
@@ -21,7 +20,9 @@ export default async function FamiliasPage({ params }: { params: { id: string } 
 
   const { data: families } = await supabase
     .from('families')
-    .select('id, nombre_familia, nombre1, nombre2, habitacion, status, fotos_nube_recibidas, checked_in_at, video_entregado, video_entregado_at')
+    // `video_status` y no `video_entregado`: es la columna que lee la pareja,
+    // y hasta hoy esta pantalla leia la otra.
+    .select('id, nombre_familia, nombre1, nombre2, habitacion, status, fotos_nube_recibidas, checked_in_at, video_status, video_fecha')
     .eq('event_id', params.id)
     .order('nombre_familia')
 
@@ -78,7 +79,7 @@ export default async function FamiliasPage({ params }: { params: { id: string } 
   const totalAgreements = enriched.reduce((sum, f) => sum + f.agreementsTotal, 0)
   const signedAgreements = enriched.reduce((sum, f) => sum + f.agreementsSigned, 0)
   const checkInCount = enriched.filter((f) => f.isCheckedIn).length
-  const videoEntregadoCount = familyList.filter((f) => f.video_entregado).length
+  const videoEntregadoCount = familyList.filter((f) => estaEntregado(f.video_status)).length
 
   return (
     <FamiliasClient

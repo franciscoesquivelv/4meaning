@@ -126,10 +126,9 @@ export default async function FichaFamiliaPage({
         <div className="mb-8 rounded-2xl bg-slate-900 p-6 text-white">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <p
-                className="mb-1 text-xs font-semibold uppercase tracking-widest"
-                style={{ color: '#C9A96E' }}
-              >
+              {/* La cejilla del sistema. Escribia el color a mano y era el
+                  dorado que no esta en ninguna paleta de la marca. */}
+              <p className="cejilla cejilla-claro mb-1">
                 Trascendencia
               </p>
               <h1 className="text-3xl font-bold leading-tight">{familia.nombre_familia}</h1>
@@ -336,7 +335,7 @@ export default async function FichaFamiliaPage({
 
         {/* ── FOOTER ── */}
         <footer className="mt-12 border-t border-slate-200 pt-4 text-center text-xs text-slate-400">
-          Uso interno — Equipo Trascendencia
+          Uso interno · Equipo Trascendencia
           {intake?.submitted_at && (
             <span className="ml-3">
               · Formulario enviado el {formatDate(intake.submitted_at)}

@@ -3,15 +3,7 @@ import { redirect } from 'next/navigation'
 import CompromisosClient from './CompromisosClient'
 import HelpButton from '@/components/HelpButton'
 import { familiaVisible } from '@/lib/participante/familia'
-
-function LockIcon() {
-  return (
-    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--terra)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-    </svg>
-  )
-}
+import { retiroTerminado } from '@/lib/participante/tiempo'
 
 export default async function CompromisosPage({
   searchParams,
@@ -48,9 +40,13 @@ export default async function CompromisosPage({
     .eq('id', family.event_id)
     .maybeSingle()
 
-  const isPostEvent = event?.fecha_fin
-    ? new Date(event.fecha_fin) < new Date()
-    : false
+  // EL DEFECTO QUE VIVIA AQUI. Era `new Date(event.fecha_fin) < new Date()`,
+  // y `fecha_fin` es una columna `date`: "2026-03-15" se parsea como
+  // medianoche UTC, o sea las 18:00 del 14 en la sede. Esta seccion se abria
+  // la tarde del dia anterior al cierre, con la pareja todavia en la sala, y
+  // les decia que el retiro habia concluido. `retiroTerminado` cierra el dia
+  // donde de verdad se cierra.
+  const isPostEvent = retiroTerminado(event?.fecha_fin)
 
   const { data: rawCompromisos } = isPostEvent
     ? await supabase
@@ -75,7 +71,19 @@ export default async function CompromisosPage({
   const done = compromisos.filter(c => c.completado).length
   const pct = total > 0 ? Math.round((done / total) * 100) : 0
 
-  // Pre-event / during event teaser
+  // ANTES DEL RETIRO ESTA SECCION YA NO ES UNA PUERTA CERRADA.
+  //
+  // Aqui vivia un candado: un icono de cerradura dentro de un circulo, el
+  // titulo "Disponible al terminar el retiro" y un parrafo explicando que se
+  // desbloquearia. Toda esa ceremonia le contaba a la pareja lo que NO puede
+  // hacer, en una pestaña que ademas estaba en su barra inferior todo el
+  // tiempo previo. El candado se fue con la pestaña: Compromisos entra a la
+  // barra cuando el retiro termina (`components/ParticipantNav.tsx`), asi que
+  // nadie llega aqui navegando antes de tiempo.
+  //
+  // Lo que queda es una nota corta y cierta, para quien llegue por un enlace
+  // guardado o desde la previa del equipo. Dice que va a haber, no que esta
+  // prohibido.
   if (!isPostEvent) {
     return (
       <div className="px-5 pt-6">
@@ -85,35 +93,23 @@ export default async function CompromisosPage({
         <h1 className="font-extralight tracking-tight text-4xl font-light text-ink leading-tight mb-2">
           Compromisos 90 días
         </h1>
-        <p className="text-sm text-gray-ui mb-10">
-          Los acuerdos que tomaron juntos siguen vivos aquí.
-        </p>
-
-        <div className="bg-white border border-line rounded-2xl p-8 flex flex-col items-center text-center gap-5">
-          <div className="w-16 h-16 rounded-full bg-terra/10 border border-terra/40 flex items-center justify-center">
-            <LockIcon />
-          </div>
-          <div>
-            <p className="text-base font-semibold text-ink mb-2">
-              Disponible al terminar el retiro
-            </p>
-            <p className="text-sm text-gray-ui leading-relaxed max-w-xs">
-              Esta sección se desbloqueará cuando el retiro haya concluido. Aquí podrán registrar y dar seguimiento a los compromisos que hicieron juntos.
-            </p>
-          </div>
+        <p className="text-sm text-gray-ui leading-relaxed">
+          Aquí van a vivir los acuerdos que tomen juntos durante el retiro.
           {event?.fecha_fin && (
-            <div className="bg-paper border border-line rounded-xl px-4 py-2 text-xs text-gray-ui">
-              Se desbloquea el{' '}
+            <>
+              {' '}Esta sección se abre el{' '}
               <span className="text-terra-ui">
-                {new Date(event.fecha_fin).toLocaleDateString('es-MX', {
+                {new Date(event.fecha_fin + 'T12:00:00Z').toLocaleDateString('es-MX', {
                   weekday: 'long',
                   day: 'numeric',
                   month: 'long',
+                  timeZone: 'UTC',
                 })}
               </span>
-            </div>
+              , cuando termine.
+            </>
           )}
-        </div>
+        </p>
 
         <HelpButton pageId="compromisos" />
       </div>

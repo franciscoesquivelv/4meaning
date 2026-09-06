@@ -17,7 +17,7 @@ const TYPE_LABELS: Record<string, string> = {
 }
 
 function formatDate(d: string | null) {
-  if (!d) return '—'
+  if (!d) return '-'
   return new Date(d).toLocaleDateString('es-MX', {
     day: '2-digit', month: 'long', year: 'numeric',
     hour: '2-digit', minute: '2-digit',
@@ -59,7 +59,7 @@ export default async function ImprimirAcuerdoPage({
 
   return (
     <div>
-      {/* Botón imprimir — no aparece en impresión */}
+      {/* Botón imprimir: no aparece en impresión */}
       <div className="no-print" style={{
         position: 'fixed', top: 16, right: 16, zIndex: 100,
         display: 'flex', gap: 8,
@@ -97,7 +97,7 @@ export default async function ImprimirAcuerdoPage({
           )}
         </div>
 
-        {/* Sello FIRMADO — solo si está firmado */}
+        {/* Sello FIRMADO: solo si está firmado */}
         {isSigned && (
           <div style={{
             display: 'flex', alignItems: 'center', gap: 10,
@@ -182,7 +182,7 @@ export default async function ImprimirAcuerdoPage({
           </div>
         )}
 
-        {/* Metadata forense — pie de página */}
+        {/* Metadata forense: pie de página */}
         {isSigned && (
           <div style={{
             marginTop: 48, paddingTop: 16, borderTop: '1px dashed #cbd5e1',

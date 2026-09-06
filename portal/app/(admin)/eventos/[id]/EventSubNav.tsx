@@ -2,12 +2,39 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useEffect, useRef, useState } from 'react'
+import { retiroTerminado } from '@/lib/participante/tiempo'
 
-interface Props {
-  eventId: string
-  eventName: string
-  pipelineStatus: string
-}
+// ── LA BARRA DEL EVENTO ─────────────────────────────────────────
+//
+// ANTES: doce destinos en una fila plana, con DOS `overflow-x-auto` y un
+// degradado de desvanecido encima. Ese degradado es la confesion: el propio
+// codigo sabia que no cabian. Lo que se caia del borde derecho era Operacion,
+// que es justo la pantalla que se necesita con gente en la sala. Y habia dos
+// secciones vivas, Formularios y Documentos, sin una sola entrada aqui: solo
+// se llegaba a ellas desde ellas mismas.
+//
+// AHORA: cinco entradas ordenadas por el tiempo del evento, que es la unica
+// secuencia que contesta "y ahora que hago". Se lee de izquierda a derecha
+// como se vive un retiro:
+//
+//   Resumen . Parejas . Preparacion . La sala . Entregas
+//
+// Los dos MODOS no son secciones y por eso no viven dentro de ningun grupo:
+// van a la derecha, separados. "Modo operacion" es lo que se abre con la
+// gente enfrente, asi que conserva el unico control de peso alto de la barra.
+// "Ver como la pareja" es lo que ve la pareja, no lo que hace el equipo:
+// meterlo entre las secciones de trabajo era decirle al equipo que es una
+// tarea suya, y no lo es.
+//
+// La agrupacion no se invento aqui. Ya estaba escrita en el repositorio y se
+// habia tirado: `components/AdminNav.tsx` agrupaba estos mismos destinos en
+// Preparacion / Contenido / Ejecucion desde el 2026-04-29, en un componente
+// que ningun archivo importaba. Ese archivo se borro y su agrupacion revive
+// aqui, corregida: el eje ya no es el tipo de trabajo, es el momento.
+//
+// REGLA QUE ESTA BARRA NO PUEDE VOLVER A ROMPER: si necesita
+// `overflow-x-auto`, no cabe, y si no cabe hay que quitar, no hacer scroll.
 
 const PIPELINE_LABELS: Record<string, { label: string; cls: string }> = {
   prospecto:      { label: 'Prospecto',      cls: 'bg-slate-100 text-slate-600' },
@@ -17,82 +44,184 @@ const PIPELINE_LABELS: Record<string, { label: string; cls: string }> = {
   cancelado:      { label: 'Cancelado',       cls: 'bg-red-100 text-red-500' },
 }
 
-export default function EventSubNav({ eventId, eventName, pipelineStatus }: Props) {
-  const pathname = usePathname()
+type Destino = { href: string; label: string; nota: string }
+type Grupo = { id: string; label: string; destinos: Destino[] }
 
-  const NAV_LINKS = [
-    { href: `/eventos/${eventId}`,             label: 'Resumen' },
-    { href: `/eventos/${eventId}/checklist`,   label: 'Checklist' },
-    { href: `/eventos/${eventId}/contenido`,   label: 'Contenido' },
-    { href: `/eventos/${eventId}/familias`,    label: 'Familias' },
-    { href: `/eventos/${eventId}/acuerdos`,    label: 'Acuerdos' },
-    { href: `/eventos/${eventId}/materiales`,  label: 'Materiales' },
-    { href: `/eventos/${eventId}/equipo`,      label: 'Equipo' },
-    { href: `/eventos/${eventId}/itinerario`,  label: 'Itinerario' },
-    { href: `/eventos/${eventId}/avisos`,      label: 'Avisos' },
-    { href: `/eventos/${eventId}/entregas`,    label: 'Entregas' },
-    { href: `/eventos/${eventId}/operacion`,   label: 'Operación' },
-    { href: `/eventos/${eventId}/preview`,     label: 'Preview' },
+interface Props {
+  eventId: string
+  eventName: string
+  pipelineStatus: string
+  fechaFin: string | null
+}
+
+export default function EventSubNav({ eventId, eventName, pipelineStatus, fechaFin }: Props) {
+  const pathname = usePathname()
+  const [abierto, setAbierto] = useState<string | null>(null)
+  const barra = useRef<HTMLDivElement>(null)
+
+  // El menu abierto se cierra al navegar. Sin esto queda flotando sobre la
+  // pantalla nueva y tapa lo primero que la persona vino a leer.
+  useEffect(() => { setAbierto(null) }, [pathname])
+
+  useEffect(() => {
+    if (!abierto) return
+    function fuera(e: MouseEvent) {
+      if (barra.current && !barra.current.contains(e.target as Node)) setAbierto(null)
+    }
+    function escape(e: KeyboardEvent) {
+      if (e.key === 'Escape') setAbierto(null)
+    }
+    document.addEventListener('mousedown', fuera)
+    document.addEventListener('keydown', escape)
+    return () => {
+      document.removeEventListener('mousedown', fuera)
+      document.removeEventListener('keydown', escape)
+    }
+  }, [abierto])
+
+  const base = `/eventos/${eventId}`
+
+  const GRUPOS: Grupo[] = [
+    {
+      id: 'parejas',
+      label: 'Parejas',
+      destinos: [
+        { href: `${base}/familias`,    label: 'Familias',    nota: 'Quiénes vienen, con quién y en qué habitación' },
+        { href: `${base}/acuerdos`,    label: 'Acuerdos',    nota: 'Lo que cada pareja tiene que firmar' },
+        { href: `${base}/formularios`, label: 'Formularios', nota: 'La historia que cada familia nos contó' },
+      ],
+    },
+    {
+      id: 'preparacion',
+      label: 'Preparación',
+      destinos: [
+        { href: `${base}/checklist`,   label: 'Checklist',   nota: 'Lo que falta por hacer, fase por fase' },
+        { href: `${base}/equipo`,      label: 'Equipo',      nota: 'Quién acompaña este retiro' },
+        { href: `${base}/materiales`,  label: 'Materiales',  nota: 'Lo que se imprime y se lleva' },
+        { href: `${base}/documentos`,  label: 'Documentos',  nota: 'Archivos que la pareja abre desde su app' },
+      ],
+    },
+    {
+      id: 'sala',
+      label: 'La sala',
+      destinos: [
+        { href: `${base}/itinerario`,  label: 'Itinerario',  nota: 'Qué pasa cada día y a qué hora' },
+        { href: `${base}/contenido`,   label: 'Contenido',   nota: 'Los bloques que se activan durante el retiro' },
+        { href: `${base}/avisos`,      label: 'Avisos',      nota: 'Lo que se le anuncia al grupo' },
+      ],
+    },
   ]
+
+  // ENTREGAS SOLO CUANDO YA HAY ALGO QUE ENTREGAR. Antes del retiro la
+  // pantalla existe pero no tiene materia: son doce filas en "Pendiente"
+  // sobre un Storybook que nadie ha empezado. Sigue alcanzable desde el
+  // panel de Acciones del Resumen para quien necesite fijar fechas antes.
+  const yaPaso = retiroTerminado(fechaFin) || pipelineStatus === 'ejecutado'
 
   const pipeline = PIPELINE_LABELS[pipelineStatus] ?? PIPELINE_LABELS.prospecto
 
+  const esActivo = (href: string) => pathname === href || pathname.startsWith(href + '/')
+
+  const claseEntrada = (activo: boolean) =>
+    'text-xs px-3 py-1.5 rounded-md whitespace-nowrap transition-colors ' +
+    (activo
+      ? 'text-slate-900 font-semibold bg-slate-100'
+      : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100')
+
   return (
-    <div className="sticky top-14 z-40 h-12 bg-white border-b border-slate-200 flex items-center px-6 gap-3 overflow-x-auto">
-      {/* Back link */}
-      <Link
-        href="/eventos"
-        className="text-xs text-slate-400 hover:text-slate-600 transition-colors whitespace-nowrap flex-shrink-0"
-      >
-        ← Eventos
-      </Link>
-
-      {/* Separator */}
-      <span className="text-slate-200">|</span>
-
-      {/* Event name */}
+    <div
+      ref={barra}
+      className="sticky top-14 z-40 h-12 bg-white border-b border-slate-200 flex items-center px-6 gap-3"
+    >
+      {/* El nombre del evento. El enlace de vuelta a Eventos salio de aqui:
+          la barra de arriba ya lo tiene, y era el mismo destino dos veces. */}
       <span className="text-sm font-semibold text-slate-900 truncate max-w-[180px] flex-shrink-0">
         {eventName}
       </span>
 
-      {/* Pipeline badge */}
       <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full flex-shrink-0 ${pipeline.cls}`}>
         {pipeline.label}
       </span>
 
-      {/* Nav links wrapper con fade right */}
-      <div className="relative flex-1 overflow-hidden">
-        {/* Fade overlay derecho */}
-        <div className="pointer-events-none absolute right-0 top-0 h-full w-12 bg-gradient-to-l from-white to-transparent z-10" />
+      <nav className="flex items-center gap-1 ml-2">
+        <Link href={base} className={claseEntrada(pathname === base)}>
+          Resumen
+        </Link>
 
-        {/* Los links scrollables */}
-        <div className="flex items-center gap-1 overflow-x-auto scrollbar-none pr-8">
-          {NAV_LINKS.map(({ href, label }) => {
-            const isOperacion = label === 'Operación'
-            const isActive =
-              href === `/eventos/${eventId}`
-                ? pathname === href
-                : pathname === href || pathname.startsWith(href + '/')
+        {GRUPOS.map(grupo => {
+          const grupoActivo = grupo.destinos.some(d => esActivo(d.href))
+          const estaAbierto = abierto === grupo.id
+          return (
+            <div key={grupo.id} className="relative">
+              <button
+                type="button"
+                onClick={() => setAbierto(estaAbierto ? null : grupo.id)}
+                aria-haspopup="menu"
+                aria-expanded={estaAbierto}
+                className={claseEntrada(grupoActivo || estaAbierto) + ' inline-flex items-center gap-1 cursor-pointer border-none bg-transparent'}
+              >
+                {grupo.label}
+                <span className="text-[8px] opacity-50">▾</span>
+              </button>
 
-            let cls = 'text-xs px-3 py-1.5 rounded-md whitespace-nowrap flex-shrink-0 transition-colors '
+              {estaAbierto && (
+                <div
+                  role="menu"
+                  className="absolute left-0 top-full mt-1 w-72 bg-white border border-slate-200 rounded-xl shadow-lg py-1.5"
+                >
+                  {grupo.destinos.map(d => (
+                    <Link
+                      key={d.href}
+                      href={d.href}
+                      role="menuitem"
+                      className={`block px-3 py-2 rounded-lg mx-1.5 transition-colors ${
+                        esActivo(d.href) ? 'bg-slate-100' : 'hover:bg-slate-50'
+                      }`}
+                    >
+                      <span className="block text-sm text-slate-900">{d.label}</span>
+                      <span className="block text-xs text-slate-400 mt-0.5">{d.nota}</span>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+          )
+        })}
 
-            if (isOperacion) {
-              cls += isActive
-                ? 'bg-slate-900 text-white hover:bg-slate-700'
-                : 'border border-slate-200 text-slate-700 hover:bg-slate-900 hover:text-white'
-            } else {
-              cls += isActive
-                ? 'text-slate-900 font-semibold bg-slate-100'
-                : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100'
-            }
+        {yaPaso && (
+          <Link href={`${base}/entregas`} className={claseEntrada(esActivo(`${base}/entregas`))}>
+            Entregas
+          </Link>
+        )}
+      </nav>
 
-            return (
-              <Link key={href} href={href} className={cls}>
-                {label}
-              </Link>
-            )
-          })}
-        </div>
+      {/* Los dos modos. No son secciones: son maneras de mirar el mismo
+          evento, y por eso viven separados de los grupos. */}
+      <div className="ml-auto flex items-center gap-2 flex-shrink-0">
+        <Link
+          href={`${base}/preview`}
+          title="La app tal como la ve la pareja"
+          className={
+            'text-xs px-3 py-1.5 rounded-md whitespace-nowrap transition-colors ' +
+            (esActivo(`${base}/preview`)
+              ? 'text-slate-900 font-semibold bg-slate-100'
+              : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100')
+          }
+        >
+          Ver como la pareja
+        </Link>
+        <Link
+          href={`${base}/operacion`}
+          title="Panel en vivo durante el retiro"
+          className={
+            'text-xs px-3 py-1.5 rounded-md whitespace-nowrap transition-colors ' +
+            (esActivo(`${base}/operacion`)
+              ? 'bg-slate-900 text-white hover:bg-slate-700'
+              : 'border border-slate-200 text-slate-700 hover:bg-slate-900 hover:text-white')
+          }
+        >
+          Modo operación
+        </Link>
       </div>
     </div>
   )

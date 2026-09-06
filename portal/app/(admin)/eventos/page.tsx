@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 
 function formatDate(d: string | null) {
-  if (!d) return '—'
+  if (!d) return '-'
   return new Date(d + 'T12:00:00').toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' })
 }
 

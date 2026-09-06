@@ -28,7 +28,7 @@ interface Article {
 // ─── Templates ────────────────────────────────────────────────
 const TEMPLATES = {
   participante: (family: Family | null, evento: EventInfo | null) => ({
-    nombre: `Acuerdo de Participación${family ? ` — ${family.nombre_familia}` : ''}`,
+    nombre: `Acuerdo de Participación${family ? ` · ${family.nombre_familia}` : ''}`,
     intro: `Los abajo firmantes, en plena capacidad y con pleno conocimiento, acuerdan participar en ${evento?.nombre ?? 'el evento Trascendencia'} bajo las condiciones establecidas en el presente acuerdo.`,
     articles: [
       {
@@ -56,7 +56,7 @@ const TEMPLATES = {
   }),
 
   video: (family: Family | null, evento: EventInfo | null) => ({
-    nombre: `Acuerdo de Grabación y Video${family ? ` — ${family.nombre_familia}` : ''}`,
+    nombre: `Acuerdo de Grabación y Video${family ? ` · ${family.nombre_familia}` : ''}`,
     intro: `Los abajo firmantes autorizan expresamente el uso de su imagen y voz en grabaciones realizadas durante ${evento?.nombre ?? 'el evento Trascendencia'}.`,
     articles: [
       {
@@ -80,7 +80,7 @@ const TEMPLATES = {
   }),
 
   staff: (_family: Family | null, evento: EventInfo | null) => ({
-    nombre: `Acuerdo de Confidencialidad — Staff${evento ? ` ${evento.nombre}` : ''}`,
+    nombre: `Acuerdo de Confidencialidad · Staff${evento ? ` ${evento.nombre}` : ''}`,
     intro: 'El colaborador abajo firmante, en calidad de miembro del equipo Trascendencia, se compromete a respetar los términos establecidos en el presente acuerdo.',
     articles: [
       {
@@ -181,7 +181,7 @@ export default function NuevoAcuerdoPage({ params }: { params: { id: string } })
     const family = families.find(f => f.id === fId)
     // Re-apply template to refresh names
     if (selectedTemplate) applyTemplate(selectedTemplate, fId)
-    // Try to get email from family (we need email — let's fetch it)
+    // Try to get email from family (we need email: let's fetch it)
     if (fId) {
       supabase.from('families').select('email1').eq('id', fId).single().then(({ data }) => {
         if (data?.email1) setAssignedEmail(data.email1)
@@ -270,7 +270,7 @@ export default function NuevoAcuerdoPage({ params }: { params: { id: string } })
               onChange={e => handleFamilyChange(e.target.value)}
               className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 bg-white"
             >
-              <option value="">— Sin familia (evento general) —</option>
+              <option value="">Sin familia (evento general)</option>
               {families.map(f => (
                 <option key={f.id} value={f.id}>{f.nombre_familia}</option>
               ))}

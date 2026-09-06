@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import { familiaVisible } from '@/lib/participante/familia'
 
 function formatDate(d: string | null) {
-  if (!d) return '—'
+  if (!d) return '-'
   return new Date(d).toLocaleDateString('es-MX', {
     weekday: 'long',
     day: 'numeric',

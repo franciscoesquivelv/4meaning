@@ -32,7 +32,7 @@ export default async function MaterialesPage({ params }: { params: { id: string 
             Abre cada documento en una nueva pestaña → imprime o guarda como PDF.
           </p>
         </div>
-        {/* Agenda — nivel evento */}
+        {/* Agenda: nivel evento */}
         <div className="flex gap-2">
           <a
             href={`/imprimir/agenda?event_id=${params.id}&modo=participantes`}
@@ -113,7 +113,7 @@ export default async function MaterialesPage({ params }: { params: { id: string 
                     <div className="font-semibold text-slate-900">{f.nombre_familia}</div>
                   </td>
                   <td className="px-4 py-3 text-xs text-slate-500">
-                    {[f.nombre1, f.nombre2].filter(Boolean).join(' · ') || <span className="text-slate-300">—</span>}
+                    {[f.nombre1, f.nombre2].filter(Boolean).join(' · ') || <span className="text-slate-300">-</span>}
                   </td>
                   <td className="px-4 py-3 text-center">
                     <a

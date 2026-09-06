@@ -93,9 +93,18 @@ export default function NavigationProgress() {
 
   if (!visible) return null
 
+  // Esta barra cruza TODAS las pantallas del portal, asi que es el cromo mas
+  // repetido que hay. Estaba pintada con el dorado que no es de la marca, su
+  // aclarado y un halo del mismo tono: tres colores inventados en el elemento
+  // que mas veces se ve.
+  //
+  // Va en terracota, que es el acento humano del sistema y el unico que no
+  // depende de la dominancia: la misma barra sirve en Trascendencia y en
+  // PersonaLab sin cambiar de color a media navegacion. El comportamiento
+  // (cuando aparece y como avanza) no se toca: eso es de Sora.
   return (
     <>
-      {/* Top progress bar */}
+      {/* Barra superior */}
       <div className="fixed top-0 left-0 right-0 z-[9999] h-[2px] pointer-events-none">
         <div
           className="h-full"
@@ -104,29 +113,30 @@ export default function NavigationProgress() {
             transition: completing
               ? 'width 0.25s ease-out, opacity 0.15s ease-in 0.25s'
               : 'width 0.12s ease-out',
-            background: 'linear-gradient(90deg, #C9A96E 0%, #E8C98A 50%, #C9A96E 100%)',
-            boxShadow: '0 0 10px 1px rgba(201,169,110,0.7)',
+            background:
+              'linear-gradient(90deg, var(--terra) 0%, var(--terra-lo) 50%, var(--terra) 100%)',
+            boxShadow: '0 0 10px 1px color-mix(in srgb, var(--terra) 55%, transparent)',
             opacity: completing ? 0 : 1,
           }}
         />
-        {/* Shimmer at the leading edge */}
+        {/* Destello en la punta */}
         {!completing && (
           <div
             className="absolute top-0 h-full w-24 pointer-events-none"
             style={{
               left: `calc(${progress}% - 6rem)`,
               background:
-                'linear-gradient(90deg, transparent 0%, rgba(255,240,200,0.6) 50%, transparent 100%)',
+                'linear-gradient(90deg, transparent 0%, color-mix(in srgb, var(--terra-lo) 60%, transparent) 50%, transparent 100%)',
               transition: 'left 0.12s ease-out',
             }}
           />
         )}
       </div>
 
-      {/* Small spinner in top-right corner */}
+      {/* Girador en la esquina */}
       {!completing && (
         <div className="fixed top-3 right-4 z-[9999] pointer-events-none">
-          <div className="w-3.5 h-3.5 rounded-full border-2 border-[#C9A96E]/30 border-t-[#C9A96E] animate-spin" />
+          <div className="w-3.5 h-3.5 rounded-full border-2 border-terra/30 border-t-terra animate-spin" />
         </div>
       )}
     </>

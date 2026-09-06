@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { createBrowserClient } from '@supabase/ssr'
+import { CONFIRMACION, ERROR } from '@/lib/estilos/acceso'
 
 // Recoge la sesion que llega por enlace de correo y que hasta ahora se perdia.
 //
@@ -76,12 +77,15 @@ export default function CompletarSesion() {
 
   if (estado === 'inactivo') return null
 
+  // Vive dentro de la pantalla de login, que es fondo vino profundo. Por eso
+  // usa los mismos tokens que el resto del umbral y no colores propios: antes
+  // pintaba el dorado que no esta en ninguna paleta de 4 Meaning.
   return (
     <div className="w-full max-w-sm mb-4">
       {estado === 'entrando' ? (
-        <p className="text-sm text-[#C9A96E] text-center">Entrando…</p>
+        <p className={`${CONFIRMACION} text-center`}>Entrando…</p>
       ) : (
-        <p className="text-sm text-red-400 text-center">{mensaje}</p>
+        <p className={`${ERROR} text-center`}>{mensaje}</p>
       )}
     </div>
   )

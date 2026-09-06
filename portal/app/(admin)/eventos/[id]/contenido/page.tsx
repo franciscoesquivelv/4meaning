@@ -47,7 +47,7 @@ function tipoLabel(tipo: string) {
 }
 
 function formatDate(iso: string | null) {
-  if (!iso) return '—'
+  if (!iso) return '-'
   return new Date(iso).toLocaleDateString('es-MX', {
     day: 'numeric',
     month: 'short',
@@ -172,7 +172,7 @@ export default async function ContenidoAdminPage({
                       {block.contenido}
                     </p>
                   )}
-                  {/* Delete inline — small link style */}
+                  {/* Delete inline: small link style */}
                   <div className="mt-1">
                     <DeleteBlockButton blockId={block.id} eventId={params.id} />
                   </div>
@@ -189,7 +189,7 @@ export default async function ContenidoAdminPage({
                 <span className="text-xs text-slate-400 self-start mt-1">
                   {block.activo
                     ? formatDate(block.activado_at)
-                    : <span className="text-slate-300">—</span>}
+                    : <span className="text-slate-300">-</span>}
                 </span>
 
                 {/* Toggle */}

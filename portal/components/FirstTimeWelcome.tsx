@@ -13,7 +13,7 @@ const FEATURES = [
 
 function CheckCircleIcon() {
   return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C9A96E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 mt-0.5">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 mt-0.5 text-terra">
       <circle cx="12" cy="12" r="10" />
       <polyline points="9 12 11 14 15 10" />
     </svg>
@@ -30,7 +30,7 @@ export default function FirstTimeWelcome() {
         setVisible(true)
       }
     } catch {
-      // localStorage not available — don't show
+      // Sin localStorage no se muestra.
     }
   }, [])
 
@@ -45,45 +45,51 @@ export default function FirstTimeWelcome() {
 
   if (!visible) return null
 
+  // Esta hoja se abre encima de la app del participante, que desde el 26 de
+  // agosto es papel. Estaba en negro, crema y el dorado que no es de la marca,
+  // asi que la primera vez que alguien entraba a una app clara le saltaba una
+  // hoja oscura de otra marca. Ahora es la misma superficie que hay debajo.
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-start justify-center px-4 overflow-y-auto">
-      <div className="max-w-sm w-full mt-20 mb-10 bg-[#111] rounded-2xl p-8 border border-[#C9A96E]/20 shadow-2xl">
-        {/* Logo / ornament */}
+    <div className="fixed inset-0 z-50 bg-dom-deep/80 backdrop-blur-sm flex items-start justify-center px-4 overflow-y-auto">
+      <div className="max-w-sm w-full mt-20 mb-10 bg-paper rounded-2xl p-8 border border-line shadow-2xl">
+        {/* Sello */}
         <div className="flex justify-center mb-6">
-          <div className="w-12 h-12 rounded-full bg-[#C9A96E]/10 border border-[#C9A96E]/30 flex items-center justify-center">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C9A96E" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <div className="w-12 h-12 rounded-full bg-terra/10 border border-terra/40 flex items-center justify-center text-terra">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 2l2 7h7l-5.5 4 2 7L12 16l-5.5 4 2-7L3 9h7z" />
             </svg>
           </div>
         </div>
 
-        {/* Title */}
-        <h1 className="font-[family-name:var(--font-cormorant)] text-3xl font-light text-[#F5F0E8] text-center mb-3">
+        {/* Titulo. En la sans del sistema: Cormorant es la familia de las
+            citas, y el titulo de una pantalla no es una cita. La jerarquia la
+            da la escala y el aire, no el peso. */}
+        <h1 className="display text-[28px] text-ink text-center mb-3">
           Bienvenido a tu portal
         </h1>
 
-        {/* Subtitle */}
-        <p className="text-sm text-[#B0A898] text-center leading-relaxed mb-8">
+        {/* Bajada */}
+        <p className="text-sm text-gray-ui text-center leading-relaxed mb-8">
           Aquí encontrarás todo lo que necesitas para prepararte y vivir tu retiro Trascendencia.
         </p>
 
-        {/* Feature list */}
+        {/* Lo que hay dentro */}
         <ul className="space-y-4 mb-8">
           {FEATURES.map((f, i) => (
             <li key={i} className="flex items-start gap-3">
               <CheckCircleIcon />
               <div>
-                <span className="text-sm font-semibold text-[#F5F0E8]">{f.label}</span>
-                <span className="text-sm text-[#B0A898]"> — {f.description}</span>
+                <span className="text-sm font-semibold text-ink">{f.label}</span>
+                <span className="text-sm text-gray-ui">: {f.description}</span>
               </div>
             </li>
           ))}
         </ul>
 
-        {/* CTA button */}
+        {/* Accion principal: el mismo primario que el resto de la app. */}
         <button
           onClick={handleDismiss}
-          className="w-full py-4 bg-[#C9A96E] text-[#0C0C0C] font-semibold text-sm rounded-xl hover:bg-[#D4B07A] transition-colors active:scale-[0.98]"
+          className="w-full min-h-toque py-4 bg-wine text-paper font-semibold text-sm rounded-xl hover:bg-wine/90 transition-colors active:scale-[0.98]"
         >
           Entendido, comenzar →
         </button>

@@ -76,34 +76,34 @@ export default async function AgendaPage({
       <style>{`
         body { font-family: Georgia, 'Times New Roman', serif; background: white; }
         .doc { max-width: 216mm; margin: 0 auto; padding: 16mm 18mm; }
-        .header { text-align: center; margin-bottom: 10mm; border-bottom: 2px solid #C9A96E; padding-bottom: 6mm; }
-        .header-brand { font-size: 8px; letter-spacing: 0.5em; text-transform: uppercase; color: #C9A96E; margin-bottom: 3mm; }
+        .header { text-align: center; margin-bottom: 10mm; border-bottom: 2px solid var(--terra); padding-bottom: 6mm; }
+        .header-brand { font-size: 8px; letter-spacing: 0.5em; text-transform: uppercase; color: var(--terra-ui); margin-bottom: 3mm; }
         .header-evento { font-size: 22px; color: #111; font-weight: normal; margin-bottom: 2mm; }
         .header-meta { font-size: 10px; color: #888; letter-spacing: 0.08em; }
-        .header-modo { display: inline-block; margin-top: 3mm; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; padding: 2px 8px; border: 1px solid #C9A96E; color: #C9A96E; }
+        .header-modo { display: inline-block; margin-top: 3mm; font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; padding: 2px 8px; border: 1px solid var(--terra); color: var(--terra-ui); }
         .dia-header { margin: 8mm 0 3mm; }
-        .dia-label { font-size: 9px; letter-spacing: 0.35em; text-transform: uppercase; color: #C9A96E; margin-bottom: 1mm; }
-        .dia-fecha { font-size: 15px; color: #111; font-weight: normal; border-bottom: 1px solid #e5e0d8; padding-bottom: 2mm; }
-        .item { display: flex; gap: 6mm; padding: 3.5mm 0; border-bottom: 1px solid #f0ece6; }
+        .dia-label { font-size: 9px; letter-spacing: 0.35em; text-transform: uppercase; color: var(--terra-ui); margin-bottom: 1mm; }
+        .dia-fecha { font-size: 15px; color: var(--ink); font-weight: normal; border-bottom: 1px solid var(--line); padding-bottom: 2mm; }
+        .item { display: flex; gap: 6mm; padding: 3.5mm 0; border-bottom: 1px solid var(--line); }
         .item-time { min-width: 22mm; text-align: right; }
         .item-hora { font-size: 11px; color: #888; font-family: 'Courier New', monospace; }
         .item-hora-fin { font-size: 9px; color: #bbb; font-family: 'Courier New', monospace; }
         .item-content { flex: 1; }
-        .item-titulo { font-size: 12px; color: #1a1a1a; }
+        .item-titulo { font-size: 12px; color: var(--ink); }
         .item-descripcion { font-size: 10px; color: #777; margin-top: 1mm; line-height: 1.4; }
         .item-meta { display: flex; gap: 4mm; margin-top: 1mm; flex-wrap: wrap; }
         .item-tag { font-size: 8.5px; color: #aaa; letter-spacing: 0.08em; }
-        .item-notas { font-size: 9.5px; color: #666; background: #fafaf8; border-left: 2px solid #C9A96E; padding: 2mm 3mm; margin-top: 2mm; font-style: italic; }
+        .item-notas { font-size: 9.5px; color: var(--gray-ui); background: var(--paper-2); border-left: 2px solid var(--terra); padding: 2mm 3mm; margin-top: 2mm; font-style: italic; }
         .no-items { font-size: 11px; color: #aaa; text-align: center; padding: 10mm; }
         .print-bar {
           position: fixed; bottom: 0; left: 0; right: 0;
-          background: white; border-top: 1px solid #e5e7eb;
+          background: white; border-top: 1px solid var(--line);
           padding: 12px 24px; display: flex; align-items: center; justify-content: space-between;
           font-family: -apple-system, sans-serif; z-index: 100;
         }
         .print-btn { padding: 8px 20px; background: #111; color: #fff; border: none; border-radius: 6px; font-size: 13px; cursor: pointer; }
         .mode-toggle { display: flex; gap: 8px; }
-        .mode-link { font-size: 12px; color: #4b5563; text-decoration: none; border: 1px solid #e5e7eb; padding: 6px 12px; border-radius: 6px; }
+        .mode-link { font-size: 12px; color: var(--gray-ui); text-decoration: none; border: 1px solid var(--line); padding: 6px 12px; border-radius: 6px; }
         .mode-link.active { background: #111; color: #fff; border-color: #111; }
         @media print {
           .print-bar { display: none !important; }
@@ -119,7 +119,7 @@ export default async function AgendaPage({
             {[evento.capitulo, evento.ciudad, evento.pais].filter(Boolean).join('  ·  ')}
           </div>
           <div className="header-modo">
-            {esEquipo ? 'Agenda del Equipo — Detallada' : 'Agenda para Participantes'}
+            {esEquipo ? 'Agenda del Equipo · Detallada' : 'Agenda para Participantes'}
           </div>
         </div>
 
@@ -142,7 +142,7 @@ export default async function AgendaPage({
                       {item.hora_fin && <div className="item-hora-fin">{formatHora(item.hora_fin)}</div>}
                     </div>
                     <div className="item-content">
-                      <div className="item-titulo" style={{ color: tipoColor[item.tipo] ?? '#1a1a1a' }}>
+                      <div className="item-titulo" style={{ color: tipoColor[item.tipo] ?? 'var(--ink)' }}>
                         {item.titulo}
                       </div>
                       {item.descripcion && !esEquipo && (

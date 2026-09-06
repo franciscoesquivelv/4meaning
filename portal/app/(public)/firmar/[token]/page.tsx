@@ -24,7 +24,9 @@ interface AgreementRow {
 }
 
 function formatDate(d: string | null) {
-  if (!d) return '—'
+  // Marcador de nulo. Era el caracter de guion largo, que la marca no usa en
+  // texto visible.
+  if (!d) return 'Sin fecha'
   return new Date(d).toLocaleDateString('es-MX', {
     day: '2-digit',
     month: 'long',
@@ -63,13 +65,13 @@ export default async function FirmarPage({
     return (
       <div className="min-h-screen flex items-center justify-center px-4">
         <div className="max-w-md w-full text-center">
-          <div className="w-14 h-14 rounded-full bg-red-500/10 border border-red-500/30 flex items-center justify-center mx-auto mb-5">
-            <svg className="w-7 h-7 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <div className="w-14 h-14 rounded-full bg-alerta/10 border border-alerta/40 flex items-center justify-center mx-auto mb-5 text-alerta">
+            <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </div>
-          <h1 className="text-xl font-semibold text-[#F5F0E8] mb-2">Enlace no válido</h1>
-          <p className="text-[#B0A898] text-sm">
+          <h1 className="text-xl font-semibold text-ink mb-2">Enlace no válido</h1>
+          <p className="text-gray-ui text-sm">
             Este enlace no existe o ha expirado. Solicita uno nuevo a tu coordinador.
           </p>
         </div>
@@ -87,22 +89,22 @@ export default async function FirmarPage({
     return (
       <div className="min-h-screen flex items-center justify-center px-4 pt-16">
         <div className="max-w-md w-full mx-auto text-center">
-          <div className="w-16 h-16 rounded-full bg-[#C9A96E]/10 border border-[#C9A96E]/30 flex items-center justify-center mx-auto mb-5">
-            <svg className="w-8 h-8 text-[#C9A96E]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+          <div className="w-16 h-16 rounded-full bg-terra/10 border border-terra/40 flex items-center justify-center mx-auto mb-5 text-terra-ui">
+            <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h1 className="text-2xl font-semibold text-[#F5F0E8] mb-1">Acuerdo firmado</h1>
+          <h1 className="text-2xl font-semibold text-ink mb-1">Acuerdo firmado</h1>
           {agreement.signed_at && (
-            <p className="text-[#B0A898] text-sm mb-4">
+            <p className="text-gray-ui text-sm mb-4">
               Firmado el {formatDate(agreement.signed_at)}
               {agreement.signed_name ? ` por ${agreement.signed_name}` : ''}
             </p>
           )}
-          <div className="bg-[#1A1A1A] border border-white/10 rounded-xl px-5 py-4 text-left mt-4">
-            <p className="text-[#F5F0E8] font-medium text-sm">{agreement.nombre}</p>
+          <div className="bg-paper-2 border border-line rounded-xl px-5 py-4 text-left mt-4">
+            <p className="text-ink font-medium text-sm">{agreement.nombre}</p>
             {family?.nombre_familia && (
-              <p className="text-[#B0A898] text-xs mt-1">{family.nombre_familia}</p>
+              <p className="text-gray-ui text-xs mt-1">{family.nombre_familia}</p>
             )}
           </div>
         </div>
@@ -116,25 +118,25 @@ export default async function FirmarPage({
 
       {/* Marca */}
       <div className="text-center mb-8">
-        <p className="text-[10px] uppercase tracking-[0.25em] text-[#C9A96E]">Trascendencia</p>
+        <p className="cejilla">Trascendencia</p>
       </div>
 
       {/* Documento */}
       <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-8">
 
         {/* Header del documento */}
-        <div className="px-8 pt-10 pb-7 border-b border-slate-100 text-center">
-          <div className="text-[10px] uppercase tracking-[0.2em] text-slate-400 mb-2">
+        <div className="px-8 pt-10 pb-7 border-b border-line text-center">
+          <div className="cejilla mb-2">
             {TYPE_LABELS[agreement.type] ?? 'Acuerdo'}
           </div>
-          <h1 className="text-xl font-bold text-slate-900 leading-tight mb-1">
+          <h1 className="display text-[22px] text-ink mb-1">
             {agreement.nombre}
           </h1>
           {family?.nombre_familia && (
-            <p className="text-sm text-slate-500">{family.nombre_familia}</p>
+            <p className="text-sm text-gray-ui">{family.nombre_familia}</p>
           )}
           {event?.nombre && (
-            <p className="text-xs text-slate-400 mt-1">{event.nombre}</p>
+            <p className="text-xs text-gray-ui mt-1">{event.nombre}</p>
           )}
         </div>
 
@@ -143,7 +145,7 @@ export default async function FirmarPage({
 
           {/* Intro */}
           {contenido.intro && (
-            <p className="text-sm leading-relaxed text-slate-700 mb-7">
+            <p className="text-sm leading-relaxed text-ink mb-7">
               {contenido.intro}
             </p>
           )}
@@ -153,10 +155,10 @@ export default async function FirmarPage({
             <div className="space-y-5 mb-7">
               {contenido.articles.map((article, i) => (
                 <div key={i}>
-                  <h3 className="text-sm font-semibold text-slate-900 mb-1">
+                  <h3 className="text-sm font-semibold text-ink mb-1">
                     {i + 1}. {article.heading}
                   </h3>
-                  <p className="text-sm leading-relaxed text-slate-600">
+                  <p className="text-sm leading-relaxed text-gray-ui">
                     {article.body}
                   </p>
                 </div>
@@ -166,17 +168,17 @@ export default async function FirmarPage({
 
           {/* Cierre */}
           {contenido.meta && (
-            <p className="text-xs leading-relaxed text-slate-500 italic border-t border-slate-100 pt-5 mb-5">
+            <p className="text-xs leading-relaxed text-gray-ui italic border-t border-line pt-5 mb-5">
               {contenido.meta}
             </p>
           )}
 
           {/* Líneas de firma */}
           {contenido.sigs && contenido.sigs.length > 0 && (
-            <div className="flex gap-8 flex-wrap mt-6 pt-6 border-t border-slate-100">
+            <div className="flex gap-8 flex-wrap mt-6 pt-6 border-t border-line">
               {contenido.sigs.map((sig, i) => (
                 <div key={i} className="flex-1 min-w-[100px]">
-                  <div className="border-t-2 border-slate-300 pt-2 text-xs text-slate-400 text-center">
+                  <div className="border-t-2 border-line pt-2 text-xs text-gray-ui text-center">
                     {sig.label}
                   </div>
                 </div>
@@ -187,9 +189,9 @@ export default async function FirmarPage({
       </div>
 
       {/* Sección de firma electrónica */}
-      <div className="bg-[#111111] border border-white/10 rounded-2xl p-6">
-        <h2 className="text-sm font-semibold text-[#F5F0E8] mb-1">Firma electrónica</h2>
-        <p className="text-xs text-[#B0A898] mb-5 leading-relaxed">
+      <div className="bg-paper-2 border border-line border-l-4 border-l-terra rounded-2xl p-6">
+        <h2 className="text-sm font-semibold text-ink mb-1">Firma electrónica</h2>
+        <p className="text-xs text-gray-ui mb-5 leading-relaxed">
           Tu nombre y la fecha quedarán registrados como constancia de tu aceptación voluntaria de este acuerdo.
         </p>
         <PublicSignButton token={params.token} agreementId={agreement.id} />

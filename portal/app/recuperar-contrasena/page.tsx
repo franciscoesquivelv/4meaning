@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { createBrowserClient } from '@supabase/ssr'
+import { LIENZO, TARJETA, ETIQUETA, CAMPO, BOTON, ERROR, CONFIRMACION, ENLACE } from '@/lib/estilos/acceso'
 
 export default function RecuperarContrasenaPage() {
   const [email, setEmail] = useState('')
@@ -44,63 +45,65 @@ export default function RecuperarContrasenaPage() {
   }
 
   return (
-    <div className="bg-[#0C0C0C] min-h-screen flex flex-col items-center justify-center px-6">
-      {/* Branding */}
-      <p className="font-[family-name:var(--font-cormorant)] text-3xl font-light text-[#F5F0E8] tracking-wide">
-        4Meaning
-      </p>
-      <p className="text-xs uppercase tracking-[0.2em] text-[#C9A96E] mt-1 mb-10">
-        Portal de gestión
-      </p>
+    <div className={LIENZO}>
+      {/* Marca. El lockup lleva espacio y va en la sans del sistema: Cormorant
+          es la familia de las citas, nunca del chrome. */}
+      <div className="text-center mb-10">
+        <p className="display text-[30px] text-paper">4 Meaning</p>
+        <p className="cejilla cejilla-claro mt-3">
+          Portal de gestión
+        </p>
+      </div>
 
-      {/* Card */}
-      <div className="bg-[#1A1A1A] border border-white/10 rounded-2xl p-8 w-full max-w-sm">
-        <h1 className="text-lg font-semibold text-[#F5F0E8] mb-1">
+      {/* Tarjeta */}
+      <div className={TARJETA}>
+        <h1 className="text-lg font-semibold text-paper mb-1">
           Recuperar acceso
         </h1>
-        <p className="text-xs text-[#B0A898] mb-6">
+        <p className="text-xs text-paper/70 mb-6">
           Te enviaremos un link a tu correo.
         </p>
 
         {success ? (
-          <p className="text-sm text-[#C9A96E]">
+          <p className={CONFIRMACION}>
             Revisa tu correo. Si tienes una cuenta, recibirás el link en los próximos minutos.
           </p>
         ) : (
           <form onSubmit={handleSubmit}>
-            <label className="block text-xs text-[#B0A898] mb-1.5">
+            <label htmlFor="email" className={ETIQUETA}>
               Correo electrónico
             </label>
             <input
+              id="email"
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="correo@ejemplo.com"
-              className="w-full bg-[#0C0C0C] border border-white/10 rounded-xl px-4 py-3 text-sm text-[#F5F0E8] placeholder:text-white/20 focus:outline-none focus:border-[#C9A96E]/50"
+              className={CAMPO}
             />
 
             {error && (
-              <p className="text-sm text-red-400 mt-2">{error}</p>
+              <p className={`${ERROR} mt-3`}>{error}</p>
             )}
 
             <button
               type="submit"
               disabled={loading}
-              className="mt-6 w-full py-3 bg-[#C9A96E] text-[#0C0C0C] font-semibold rounded-xl hover:bg-[#B8935D] transition-colors disabled:opacity-50"
+              className={`${BOTON} mt-6`}
             >
               {loading ? 'Enviando...' : 'Enviar link'}
             </button>
           </form>
         )}
 
-        {/* Separator */}
-        <div className="mt-6 border-t border-white/10" />
+        {/* Filete */}
+        <div className="mt-6 border-t border-line-dk" />
 
-        {/* Back to login */}
+        {/* Volver */}
         <a
           href="/login"
-          className="mt-4 text-center block text-xs text-[#B0A898] hover:text-[#C9A96E] transition-colors"
+          className={`${ENLACE} mt-4`}
         >
           ← Volver al login
         </a>

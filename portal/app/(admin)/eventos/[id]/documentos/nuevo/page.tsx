@@ -113,7 +113,7 @@ export default function NuevoDocumentoPage({ params }: { params: { id: string } 
         <div>
           <label style={labelStyle}>Familia (opcional)</label>
           <select value={form.family_id} onChange={set('family_id')} style={inputStyle}>
-            <option value="">— Documento del evento (sin familia) —</option>
+            <option value="">Documento del evento (sin familia)</option>
             {families.map(f => (
               <option key={f.id} value={f.id}>{f.nombre_familia}</option>
             ))}

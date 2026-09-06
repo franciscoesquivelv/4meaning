@@ -144,7 +144,7 @@ export default function EditarFamiliaPage({ params }: { params: { id: string; fa
   }
 
   async function handleInviteAndLink(slot: '1' | '2') {
-    // Open invite page pre-filled — easiest to just redirect
+    // Open invite page pre-filled: easiest to just redirect
     const email = slot === '1' ? form.email1 : form.email2
     router.push(`/usuarios/nuevo?family_id=${params.familyId}&slot=${slot}&email=${encodeURIComponent(email)}&name=${encodeURIComponent(slot === '1' ? form.nombre1 : form.nombre2)}`)
   }

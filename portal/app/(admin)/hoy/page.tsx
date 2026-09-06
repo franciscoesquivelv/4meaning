@@ -1,14 +1,15 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import { estaEntregado } from '@/lib/entregas'
 
 function formatDate(d: string | null) {
-  if (!d) return '—'
+  if (!d) return '-'
   return new Date(d).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' })
 }
 
 function formatDateShort(d: string | null) {
-  if (!d) return '—'
+  if (!d) return '-'
   return new Date(d).toLocaleDateString('es-MX', { day: '2-digit', month: 'short' })
 }
 
@@ -256,12 +257,16 @@ export default async function DashboardPage() {
 
     const { data: families } = await supabase
       .from('families')
-      .select('id, nombre_familia, nombre1, nombre2, video_entregado, video_entregado_at')
+      // `video_status` y no `video_entregado`. Eran dos columnas distintas:
+      // esta pantalla leia una y la pareja leia la otra, asi que el panel
+      // podia decir "entregado" mientras la app de la familia decia
+      // "Pendiente". Ahora las dos leen la misma.
+      .select('id, nombre_familia, nombre1, nombre2, video_status, video_fecha')
       .eq('event_id', recentlyEnded.id)
       .order('nombre_familia')
 
     const familyList = families ?? []
-    const pendingVideo = familyList.filter((f) => !f.video_entregado)
+    const pendingVideo = familyList.filter((f) => !estaEntregado(f.video_status))
     const deliveredCount = familyList.length - pendingVideo.length
 
     return (
@@ -318,7 +323,7 @@ export default async function DashboardPage() {
               ))}
               {pendingVideo.length > 8 && (
                 <li className="px-5 py-3 text-xs text-slate-400">
-                  + {pendingVideo.length - 8} más — <Link href={`/eventos/${recentlyEnded.id}/familias`} className="underline underline-offset-2">ver todas</Link>
+                  + {pendingVideo.length - 8} más. <Link href={`/eventos/${recentlyEnded.id}/familias`} className="underline underline-offset-2">Ver todas</Link>
                 </li>
               )}
             </ul>
@@ -386,7 +391,7 @@ export default async function DashboardPage() {
             {upcoming.ciudad && <>{upcoming.ciudad}{upcoming.pais ? `, ${upcoming.pais}` : ''} · </>}
             <time dateTime={upcoming.fecha_inicio}>{formatDate(upcoming.fecha_inicio)}</time>
             {upcoming.fecha_fin && upcoming.fecha_fin !== upcoming.fecha_inicio && (
-              <> — <time dateTime={upcoming.fecha_fin}>{formatDate(upcoming.fecha_fin)}</time></>
+              <> - <time dateTime={upcoming.fecha_fin}>{formatDate(upcoming.fecha_fin)}</time></>
             )}
           </p>
         </div>

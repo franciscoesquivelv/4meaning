@@ -31,7 +31,7 @@ const TYPE_LABELS: Record<string, string> = {
 }
 
 function formatDate(d: string | null) {
-  if (!d) return '—'
+  if (!d) return '-'
   return new Date(d).toLocaleDateString('es-MX', {
     day: '2-digit', month: 'long', year: 'numeric',
     hour: '2-digit', minute: '2-digit',
@@ -202,7 +202,7 @@ export default async function ImprimirAcuerdosPage({
 
   return (
     <div>
-      {/* Controles — no imprimen */}
+      {/* Controles: no imprimen */}
       <div className="no-print" style={{
         position: 'fixed', top: 16, right: 16, zIndex: 100,
         display: 'flex', gap: 8, alignItems: 'center',

@@ -103,7 +103,7 @@ export default function ItinerarioList({ eventId, items, isAdmin }: Props) {
                         {item.hora_fin ? ` – ${fmtTime(item.hora_fin)}` : ''}
                       </div>
 
-                      {/* Expand toggle — title + tipo badge */}
+                      {/* Expand toggle: title + tipo badge */}
                       <button
                         className="flex-1 flex items-center gap-2 text-left min-w-0"
                         onClick={() => hasDetails && setExpandedId(isExpanded ? null : item.id)}
@@ -135,7 +135,7 @@ export default function ItinerarioList({ eventId, items, isAdmin }: Props) {
                         )}
                       </button>
 
-                      {/* Actions — always visible */}
+                      {/* Actions: always visible */}
                       <div className="flex items-center gap-1.5 flex-shrink-0">
                         <Link
                           href={`/eventos/${eventId}/itinerario/${item.id}/editar`}

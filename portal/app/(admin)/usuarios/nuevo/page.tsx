@@ -192,7 +192,7 @@ export default function InvitarUsuarioPage() {
           <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm space-y-4">
             <div>
               <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Asignar a familia</h2>
-              <p className="text-xs text-slate-400 mt-0.5">Opcional — puedes vincularlo después desde la familia.</p>
+              <p className="text-xs text-slate-400 mt-0.5">Opcional: puedes vincularlo después desde la familia.</p>
             </div>
 
             <div>
@@ -202,7 +202,7 @@ export default function InvitarUsuarioPage() {
                 onChange={e => setForm(f => ({ ...f, family_id: e.target.value }))}
                 className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 bg-white"
               >
-                <option value="">— Sin asignar por ahora —</option>
+                <option value="">Sin asignar por ahora</option>
                 {families.map(f => (
                   <option key={f.id} value={f.id}>
                     {f.nombre_familia}

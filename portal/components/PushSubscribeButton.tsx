@@ -73,10 +73,16 @@ export default function PushSubscribeButton({ eventId }: Props) {
 
   if (status === 'loading' || status === 'unsupported' || status === 'denied') return null
 
+  // Se ancla arriba a la derecha de Mi Retiro, que es papel. Estaba en grises
+  // de pantalla oscura y en el dorado que no es de la marca.
+  //
+  // Los dos estados se distinguen por peso, no por dos colores distintos: ya
+  // activo es un apunte gris y sin acento, activar es la invitacion y lleva la
+  // terracota, que es el acento del sistema.
   return status === 'subscribed' ? (
     <button
       onClick={unsubscribe}
-      className="flex items-center gap-2 px-3 py-1.5 text-xs text-[#6B7280] border border-[#2A2A2A] rounded-lg hover:border-[#3A3A3A] transition-colors"
+      className="flex min-h-toque items-center gap-2 px-3 py-1.5 text-xs text-gray-ui border border-line rounded-lg hover:border-gray-ui transition-colors"
     >
       <span>🔔</span>
       <span>Notificaciones activas</span>
@@ -84,7 +90,7 @@ export default function PushSubscribeButton({ eventId }: Props) {
   ) : (
     <button
       onClick={subscribe}
-      className="flex items-center gap-2 px-3 py-1.5 text-xs text-[#C9A96E] border border-[#C9A96E]/40 rounded-lg hover:border-[#C9A96E] transition-colors"
+      className="flex min-h-toque items-center gap-2 px-3 py-1.5 text-xs text-terra-ui border border-terra/40 rounded-lg hover:border-terra transition-colors"
     >
       <span>🔔</span>
       <span>Activar notificaciones</span>

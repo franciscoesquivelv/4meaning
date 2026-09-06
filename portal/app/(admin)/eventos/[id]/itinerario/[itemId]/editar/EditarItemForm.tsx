@@ -192,9 +192,9 @@ export default function EditarItemForm({ item, teamMembers }: Props) {
         <div>
           <label className={labelCls}>Responsable</label>
           <select value={form.responsable} onChange={set('responsable')} className={inputCls}>
-            <option value="">— Sin asignar —</option>
+            <option value="">Sin asignar</option>
             {teamMembers.map(m => (
-              <option key={m.id} value={m.nombre}>{m.nombre} — {m.rol}</option>
+              <option key={m.id} value={m.nombre}>{m.nombre} · {m.rol}</option>
             ))}
             <option value="__custom__">Otro (escribir)</option>
           </select>

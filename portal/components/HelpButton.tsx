@@ -48,36 +48,40 @@ export default function HelpButton({ pageId }: HelpButtonProps) {
 
   const items = FAQ[pageId] ?? FAQ['default']
 
+  // Vive sobre la app del participante, que es papel. Estaba en negro con el
+  // dorado que no es de la marca, o sea que la ayuda se veia de otra marca que
+  // la pantalla que venia a explicar.
   return (
     <>
-      {/* Floating button */}
+      {/* Boton flotante. 44px, que es el area minima de toque medida. */}
       <button
         onClick={() => setOpen(true)}
         aria-label="Ayuda"
-        className="fixed bottom-20 right-4 z-40 w-10 h-10 rounded-full bg-[#1A1A1A] border border-[#C9A96E]/40 text-[#C9A96E] text-sm font-bold flex items-center justify-center shadow-lg hover:border-[#C9A96E]/70 transition-colors"
+        className="fixed bottom-20 right-4 z-40 w-11 h-11 rounded-full bg-paper border border-terra/40 text-terra-ui text-sm font-bold flex items-center justify-center shadow-lg hover:border-terra transition-colors"
       >
         ?
       </button>
 
-      {/* Backdrop + bottom sheet */}
+      {/* Velo y hoja inferior */}
       {open && (
         <div
-          className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex flex-col justify-end"
+          className="fixed inset-0 z-50 bg-dom-deep/80 backdrop-blur-sm flex flex-col justify-end"
           onClick={() => setOpen(false)}
         >
           <div
-            className="bg-[#111] rounded-t-2xl border-t border-[#C9A96E]/20 px-5 pt-5 pb-10 max-h-[80vh] overflow-y-auto"
+            className="bg-paper rounded-t-2xl border-t border-line px-5 pt-5 pb-10 max-h-[80vh] overflow-y-auto"
             onClick={e => e.stopPropagation()}
           >
-            {/* Header */}
+            {/* Encabezado. En la sans del sistema: un titulo de seccion no es
+                una cita, y Cormorant solo va en citas. */}
             <div className="flex items-center justify-between mb-5">
-              <h2 className="font-[family-name:var(--font-cormorant)] text-2xl font-light text-[#C9A96E]">
+              <h2 className="display text-[22px] text-ink">
                 Preguntas frecuentes
               </h2>
               <button
                 onClick={() => setOpen(false)}
                 aria-label="Cerrar"
-                className="w-8 h-8 rounded-full flex items-center justify-center text-[#6B7280] hover:text-[#F5F0E8] transition-colors"
+                className="w-11 h-11 -mr-2 rounded-full flex items-center justify-center text-gray-ui hover:text-ink transition-colors"
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="18" y1="6" x2="6" y2="18" />
@@ -86,26 +90,26 @@ export default function HelpButton({ pageId }: HelpButtonProps) {
               </button>
             </div>
 
-            {/* Accordion items */}
+            {/* Preguntas */}
             <div className="space-y-2">
               {items.map((item, i) => (
                 <div
                   key={i}
-                  className="border border-white/10 rounded-xl overflow-hidden"
+                  className="border border-line rounded-xl overflow-hidden"
                 >
                   <button
                     onClick={() => setExpandedIndex(expandedIndex === i ? null : i)}
-                    className="w-full text-left px-4 py-4 flex items-center justify-between gap-3"
+                    className="w-full min-h-toque text-left px-4 py-4 flex items-center justify-between gap-3"
                   >
-                    <span className="text-sm text-[#F5F0E8] font-medium leading-snug">{item.q}</span>
-                    <span className={`text-[#C9A96E] transition-transform duration-200 shrink-0 ${expandedIndex === i ? 'rotate-180' : ''}`}>
+                    <span className="text-sm text-ink font-medium leading-snug">{item.q}</span>
+                    <span className={`text-terra-ui transition-transform duration-200 shrink-0 ${expandedIndex === i ? 'rotate-180' : ''}`}>
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <polyline points="6 9 12 15 18 9" />
                       </svg>
                     </span>
                   </button>
                   {expandedIndex === i && (
-                    <div className="px-4 pb-4 text-sm text-[#B0A898] leading-relaxed border-t border-white/5 pt-3">
+                    <div className="px-4 pb-4 text-sm text-gray-ui leading-relaxed border-t border-line pt-3">
                       {item.a}
                     </div>
                   )}

@@ -51,7 +51,7 @@ export default async function ChequesPage({
         }
         .cheque {
           flex: 1;
-          border: 1px solid #c9a96e;
+          border: 1px solid var(--terra);
           border-radius: 4px;
           padding: 7mm 9mm;
           position: relative;
@@ -62,7 +62,7 @@ export default async function ChequesPage({
           justify-content: space-between;
           align-items: flex-start;
           margin-bottom: 5mm;
-          border-bottom: 1px solid #e8e0d0;
+          border-bottom: 1px solid var(--line);
           padding-bottom: 4mm;
         }
         .cheque-brand {
@@ -72,23 +72,23 @@ export default async function ChequesPage({
           font-size: 11px;
           letter-spacing: 0.25em;
           text-transform: uppercase;
-          color: #C9A96E;
+          color: var(--terra-ui);
         }
         .cheque-familia {
           font-size: 18px;
-          color: #1a1a1a;
+          color: var(--ink);
           font-weight: normal;
           margin-top: 1mm;
         }
         .cheque-num {
           font-size: 11px;
-          color: #aaa;
+          color: var(--gray-ui);
           font-family: 'Courier New', monospace;
           text-align: right;
         }
         .cheque-fecha {
           font-size: 10px;
-          color: #888;
+          color: var(--gray-ui);
           font-family: Georgia, serif;
           text-align: right;
           margin-top: 2mm;
@@ -101,7 +101,7 @@ export default async function ChequesPage({
         }
         .cheque-label {
           font-size: 9px;
-          color: #888;
+          color: var(--gray-ui);
           letter-spacing: 0.12em;
           text-transform: uppercase;
           white-space: nowrap;
@@ -109,7 +109,7 @@ export default async function ChequesPage({
         }
         .cheque-line {
           flex: 1;
-          border-bottom: 1px solid #d4c9b8;
+          border-bottom: 1px solid var(--line);
           min-width: 0;
           height: 16px;
         }
@@ -120,13 +120,13 @@ export default async function ChequesPage({
         }
         .cheque-monto-symbol {
           font-size: 14px;
-          color: #C9A96E;
+          color: var(--terra-ui);
           font-family: Georgia, serif;
           padding-bottom: 1px;
         }
         .cheque-monto-line {
           width: 35mm;
-          border-bottom: 1px solid #d4c9b8;
+          border-bottom: 1px solid var(--line);
           height: 16px;
         }
         .cheque-footer {
@@ -135,21 +135,21 @@ export default async function ChequesPage({
           align-items: flex-end;
           margin-top: 4mm;
           padding-top: 3mm;
-          border-top: 1px solid #f0e8d8;
+          border-top: 1px solid var(--line);
         }
         .cheque-firma-area {
           text-align: center;
         }
         .cheque-firma-line {
           width: 42mm;
-          border-bottom: 1px solid #d4c9b8;
+          border-bottom: 1px solid var(--line);
           margin-bottom: 2px;
           height: 14px;
         }
         .cheque-firma-label {
           font-size: 8px;
           letter-spacing: 0.1em;
-          color: #aaa;
+          color: var(--gray-ui);
           text-transform: uppercase;
           font-family: Georgia, serif;
         }
@@ -157,14 +157,14 @@ export default async function ChequesPage({
           font-size: 7px;
           letter-spacing: 0.3em;
           text-transform: uppercase;
-          color: #C9A96E;
+          color: var(--terra-ui);
           font-family: Georgia, serif;
         }
         .print-bar {
           position: fixed;
           bottom: 0; left: 0; right: 0;
           background: white;
-          border-top: 1px solid #e5e7eb;
+          border-top: 1px solid var(--line);
           padding: 12px 24px;
           display: flex;
           align-items: center;
@@ -240,8 +240,8 @@ export default async function ChequesPage({
       </div>
 
       <div className="print-bar no-print">
-        <div style={{ fontFamily: '-apple-system, sans-serif', fontSize: 13, color: '#6b7280' }}>
-          Cheques — {familia.nombre_familia}
+        <div style={{ fontFamily: '-apple-system, sans-serif', fontSize: 13, color: 'var(--gray-ui)' }}>
+          Cheques · {familia.nombre_familia}
         </div>
         <button className="print-btn" onClick={() => window.print()}>
           Imprimir / Guardar PDF

@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { createBrowserClient } from '@supabase/ssr'
 import Link from 'next/link'
 import CompletarSesion from '@/components/CompletarSesion'
+import { LIENZO, TARJETA, ETIQUETA, CAMPO, BOTON, ERROR, ENLACE } from '@/lib/estilos/acceso'
 
 export default function LoginPage() {
   const [error, setError] = useState('')
@@ -34,14 +35,23 @@ export default function LoginPage() {
     window.location.href = '/'
   }
 
+  // El umbral es la portada, y una portada de Trascendencia es vino profundo:
+  // es el hero del sitio real, no una decision de esta pantalla. El cuerpo de
+  // la app aterriza en papel, igual que el sitio pasa del hero al texto.
+  //
+  // Antes esta pantalla era negro con crema y el dorado fantasma, tres colores
+  // que no estan en ninguna paleta de 4 Meaning, y escribia el
+  // nombre de la casa en Cormorant, que en el sistema de marca es la familia
+  // de las citas y nunca del chrome.
   return (
-    <div className="min-h-screen bg-[#0C0C0C] flex flex-col items-center justify-center px-6">
-      {/* Branding */}
+    <div className={LIENZO}>
+      {/* Marca */}
       <div className="text-center mb-10">
-        <h1 className="font-[family-name:var(--font-cormorant)] text-4xl font-light text-[#F5F0E8] tracking-wide">
-          4Meaning
-        </h1>
-        <p className="text-[10px] uppercase tracking-[0.25em] text-[#C9A96E] mt-2">
+        {/* El lockup lleva espacio: la casa se llama 4 Meaning. Y va en la
+            sans del sistema, con la jerarquia por escala y aire que pide la
+            marca, no por negritas. Contraste medido: 15.96 a 1. */}
+        <h1 className="display text-[34px] text-paper">4 Meaning</h1>
+        <p className="cejilla cejilla-claro mt-3">
           Portal Trascendencia
         </p>
       </div>
@@ -51,51 +61,58 @@ export default function LoginPage() {
           rebotaba de vuelta a esta misma pantalla. */}
       <CompletarSesion />
 
-      {/* Card */}
-      <div className="w-full max-w-sm bg-[#1A1A1A] border border-white/10 rounded-2xl p-8">
+      {/* Tarjeta. Vino sobre vino profundo es la misma elevacion que el sitio
+          usa entre el hero y el bloque de las tres preguntas. */}
+      <div className={TARJETA}>
         <form onSubmit={handleSubmit} className="flex flex-col gap-0">
-          {/* Email */}
-          <label className="text-xs text-[#B0A898] mb-1.5">Correo electrónico</label>
+          {/* Correo */}
+          <label htmlFor="email" className={ETIQUETA}>Correo electrónico</label>
           <input
+            id="email"
             name="email"
             type="email"
             required
             placeholder="tu@correo.com"
-            className="bg-[#0C0C0C] border border-white/10 rounded-xl px-4 py-3 text-sm text-[#F5F0E8] placeholder:text-white/20 focus:outline-none focus:border-[#C9A96E]/50 w-full transition-colors"
+            className={CAMPO}
           />
 
-          {/* Password */}
-          <label className="text-xs text-[#B0A898] mb-1.5 mt-4">Contraseña</label>
+          {/* Contraseña */}
+          <label htmlFor="password" className={`${ETIQUETA} mt-4`}>Contraseña</label>
           <input
+            id="password"
             name="password"
             type="password"
             required
             placeholder="••••••••"
-            className="bg-[#0C0C0C] border border-white/10 rounded-xl px-4 py-3 text-sm text-[#F5F0E8] placeholder:text-white/20 focus:outline-none focus:border-[#C9A96E]/50 w-full transition-colors"
+            className={CAMPO}
           />
 
-          {/* Error */}
+          {/* Error. Enmarcado y no como texto rojo suelto: sobre vino profundo
+              no hay ningun rojo de la paleta que sea legible como texto, y el
+              vino de alerta si lo es como fondo. Contraste 7.39 a 1. */}
           {error && (
-            <p className="text-sm text-red-400 mt-3">{error}</p>
+            <p className={`${ERROR} mt-4`}>{error}</p>
           )}
 
-          {/* Submit */}
+          {/* Accion principal. Sobre fondo vino el primario no puede ser vino,
+              asi que se invierte a papel. La terracota queda para el acento,
+              que es su dosis en el sistema. Contraste 15.96 a 1. */}
           <button
             type="submit"
             disabled={loading}
-            className="mt-6 w-full py-3 bg-[#C9A96E] text-[#0C0C0C] font-semibold text-sm rounded-xl hover:bg-[#B8935D] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className={`${BOTON} mt-6`}
           >
             {loading ? 'Entrando...' : 'Entrar'}
           </button>
         </form>
 
-        {/* Divider */}
-        <div className="mt-6 border-t border-white/10" />
+        {/* Filete */}
+        <div className="mt-6 border-t border-line-dk" />
 
-        {/* Forgot password */}
+        {/* Recuperar acceso */}
         <Link
           href="/recuperar-contrasena"
-          className="mt-4 block text-center text-xs text-[#B0A898] hover:text-[#C9A96E] transition-colors"
+          className={`${ENLACE} mt-4`}
         >
           ¿Olvidaste tu contraseña?
         </Link>

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
+import { LIENZO, TARJETA, ETIQUETA, CAMPO, BOTON, ERROR, CONFIRMACION, ENLACE } from '@/lib/estilos/acceso'
 
 // Destino del correo de recuperacion. Esta ruta faltaba: el flujo mandaba
 // a /nueva-contrasena y ahi no habia nada, asi que todo el que pedia
@@ -87,64 +88,68 @@ export default function NuevaContrasenaPage() {
   }
 
   return (
-    <div className="bg-[#0C0C0C] min-h-screen flex flex-col items-center justify-center px-6">
-      <p className="font-[family-name:var(--font-cormorant)] text-3xl font-light text-[#F5F0E8] tracking-wide">
-        4Meaning
-      </p>
-      <p className="text-xs uppercase tracking-[0.2em] text-[#C9A96E] mt-1 mb-10">
-        Portal de gestión
-      </p>
+    <div className={LIENZO}>
+      {/* Marca. El lockup lleva espacio y va en la sans del sistema: Cormorant
+          es la familia de las citas, nunca del chrome. */}
+      <div className="text-center mb-10">
+        <p className="display text-[30px] text-paper">4 Meaning</p>
+        <p className="cejilla cejilla-claro mt-3">
+          Portal de gestión
+        </p>
+      </div>
 
-      <div className="bg-[#1A1A1A] border border-white/10 rounded-2xl p-8 w-full max-w-sm">
-        <h1 className="text-lg font-semibold text-[#F5F0E8] mb-1">Elige tu contraseña</h1>
-        <p className="text-xs text-[#B0A898] mb-6">
+      <div className={TARJETA}>
+        <h1 className="text-lg font-semibold text-paper mb-1">Elige tu contraseña</h1>
+        <p className="text-xs text-paper/70 mb-6">
           Con esta entras al portal de aquí en adelante.
         </p>
 
         {!lista ? (
-          <p className="text-sm text-[#B0A898]">Un momento…</p>
+          <p className="text-sm text-paper/70">Un momento…</p>
         ) : listo ? (
-          <p className="text-sm text-[#C9A96E]">
+          <p className={CONFIRMACION}>
             Listo. Te llevamos al portal.
           </p>
         ) : (
           <form onSubmit={guardar}>
-            <label className="block text-xs text-[#B0A898] mb-1.5">Nueva contraseña</label>
+            <label htmlFor="contrasena" className={ETIQUETA}>Nueva contraseña</label>
             <input
+              id="contrasena"
               type="password"
               required
               value={contrasena}
               onChange={e => setContrasena(e.target.value)}
               placeholder="Al menos 8 caracteres"
-              className="w-full bg-[#0C0C0C] border border-white/10 rounded-xl px-4 py-3 text-sm text-[#F5F0E8] placeholder:text-white/20 focus:outline-none focus:border-[#C9A96E]/50"
+              className={CAMPO}
             />
 
-            <label className="block text-xs text-[#B0A898] mt-4 mb-1.5">Repítela</label>
+            <label htmlFor="repetida" className={`${ETIQUETA} mt-4`}>Repítela</label>
             <input
+              id="repetida"
               type="password"
               required
               value={repetida}
               onChange={e => setRepetida(e.target.value)}
-              className="w-full bg-[#0C0C0C] border border-white/10 rounded-xl px-4 py-3 text-sm text-[#F5F0E8] placeholder:text-white/20 focus:outline-none focus:border-[#C9A96E]/50"
+              className={CAMPO}
             />
 
-            {error && <p className="text-sm text-red-400 mt-3">{error}</p>}
+            {error && <p className={`${ERROR} mt-3`}>{error}</p>}
 
             <button
               type="submit"
               disabled={cargando}
-              className="mt-6 w-full py-3 bg-[#C9A96E] text-[#0C0C0C] font-semibold rounded-xl hover:bg-[#B8935D] transition-colors disabled:opacity-50"
+              className={`${BOTON} mt-6`}
             >
               {cargando ? 'Guardando…' : 'Guardar y entrar'}
             </button>
           </form>
         )}
 
-        <div className="mt-6 border-t border-white/10" />
+        <div className="mt-6 border-t border-line-dk" />
 
         <a
           href="/recuperar-contrasena"
-          className="mt-4 text-center block text-xs text-[#B0A898] hover:text-[#C9A96E] transition-colors"
+          className={`${ENLACE} mt-4`}
         >
           Pedir un enlace nuevo
         </a>

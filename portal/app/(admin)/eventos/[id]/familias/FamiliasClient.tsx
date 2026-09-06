@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import CheckInButton from './CheckInButton'
 import VideoEntregadoButton from './VideoEntregadoButton'
+import { estadoEntrega, estaEntregado, ETIQUETA_ENTREGA } from '@/lib/entregas'
 
 export type EnrichedFamily = {
   id: string
@@ -14,8 +15,12 @@ export type EnrichedFamily = {
   status: string | null
   fotos_nube_recibidas: boolean | null
   checked_in_at: string | null
-  video_entregado: boolean | null
-  video_entregado_at: string | null
+  // La misma columna que lee la pareja. Antes esta tabla leia
+  // `video_entregado`, un boolean aparte que la app del participante nunca
+  // miraba, asi que las dos pantallas podian decir cosas distintas del mismo
+  // video.
+  video_status: string | null
+  video_fecha: string | null
   agreementsTotal: number
   agreementsSigned: number
   hasIntake: boolean
@@ -232,7 +237,7 @@ export default function FamiliasClient({
                   {/* Acuerdos */}
                   <td className="px-4 py-3">
                     {f.agreementsTotal === 0 ? (
-                      <span className="text-slate-400 text-xs">—</span>
+                      <span className="text-slate-400 text-xs">-</span>
                     ) : (
                       <span
                         className={`text-xs font-semibold ${
@@ -248,14 +253,14 @@ export default function FamiliasClient({
 
                   {/* Habitación */}
                   <td className="px-4 py-3 text-slate-600 text-sm">
-                    {f.habitacion || <span className="text-slate-300">—</span>}
+                    {f.habitacion || <span className="text-slate-300">-</span>}
                   </td>
 
                   {/* Dieta */}
                   <td className="px-4 py-3 text-slate-600 text-sm">
                     {f.restricciones
                       ? <span title={f.restricciones}>{f.restricciones.slice(0, 20)}{f.restricciones.length > 20 ? '…' : ''}</span>
-                      : <span className="text-slate-300">—</span>
+                      : <span className="text-slate-300">-</span>
                     }
                   </td>
 
@@ -268,27 +273,38 @@ export default function FamiliasClient({
                     />
                   </td>
 
-                  {/* Video */}
+                  {/* Video. Tres estados, no dos: el rotulo sale de
+                      `lib/entregas.ts`, que es la misma lista que ve la
+                      pareja y el mismo CHECK que tiene la base. Un valor
+                      desconocido no se pinta como "Pendiente": no se pinta. */}
                   <td className="px-4 py-3">
-                    {f.video_entregado ? (
+                    {estaEntregado(f.video_status) ? (
                       <div>
                         <span className="bg-emerald-100 text-emerald-700 text-xs font-semibold px-2 py-0.5 rounded-full">
-                          Entregado
+                          {ETIQUETA_ENTREGA.entregado}
                         </span>
-                        {f.video_entregado_at && (
+                        {f.video_fecha && (
                           <time
-                            dateTime={f.video_entregado_at}
+                            dateTime={f.video_fecha}
                             className="block text-[10px] text-slate-400 mt-0.5"
                           >
-                            {new Date(f.video_entregado_at).toLocaleDateString('es-MX', {
+                            {new Date(f.video_fecha + 'T12:00:00Z').toLocaleDateString('es-MX', {
                               day: '2-digit',
                               month: 'short',
+                              timeZone: 'UTC',
                             })}
                           </time>
                         )}
                       </div>
                     ) : (
-                      <VideoEntregadoButton familyId={f.id} eventId={eventId} />
+                      <div className="flex flex-col items-start gap-1">
+                        {estadoEntrega(f.video_status) === 'en_produccion' && (
+                          <span className="bg-blue-100 text-blue-700 text-xs font-semibold px-2 py-0.5 rounded-full">
+                            {ETIQUETA_ENTREGA.en_produccion}
+                          </span>
+                        )}
+                        <VideoEntregadoButton familyId={f.id} eventId={eventId} />
+                      </div>
                     )}
                   </td>
 

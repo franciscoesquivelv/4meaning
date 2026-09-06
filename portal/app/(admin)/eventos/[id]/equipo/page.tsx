@@ -22,7 +22,7 @@ export default async function EquipoPage({ params }: { params: { id: string } })
     .order('orden')
 
   const truncate = (s: string | null, n: number) =>
-    s ? (s.length > n ? s.slice(0, n) + '…' : s) : '—'
+    s ? (s.length > n ? s.slice(0, n) + '…' : s) : '-'
 
   return (
     <div className="p-8 max-w-7xl">

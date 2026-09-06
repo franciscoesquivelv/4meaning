@@ -49,7 +49,7 @@ export default async function CaratulaPage({
         .page {
           width: 216mm;
           height: 279mm;
-          background: #0C0C0C;
+          background: var(--dom-deep);
           display: flex;
           flex-direction: column;
           align-items: center;
@@ -63,7 +63,7 @@ export default async function CaratulaPage({
           position: absolute;
           width: 14mm;
           height: 14mm;
-          border-color: #C9A96E;
+          border-color: var(--terra);
           border-style: solid;
         }
         .corner-tl { top: 10mm; left: 10mm; border-width: 1px 0 0 1px; }
@@ -76,21 +76,21 @@ export default async function CaratulaPage({
           font-size: 8px;
           letter-spacing: 0.55em;
           text-transform: uppercase;
-          color: #C9A96E;
+          color: var(--terra-lo);
           text-align: center;
           margin-bottom: 10mm;
         }
-        .gold-line {
+        .filete {
           width: 40mm;
           height: 1px;
-          background: #C9A96E;
+          background: var(--terra);
           margin: 0 auto;
         }
         .apellido {
           font-family: Georgia, serif;
           font-size: 42px;
           font-weight: normal;
-          color: #F5F0E8;
+          color: var(--paper);
           text-align: center;
           letter-spacing: 0.06em;
           margin: 8mm 0 3mm;
@@ -99,7 +99,7 @@ export default async function CaratulaPage({
         .personas {
           font-family: Georgia, serif;
           font-size: 12px;
-          color: #8a8274;
+          color: color-mix(in srgb, var(--paper) 70%, transparent);
           text-align: center;
           letter-spacing: 0.15em;
           margin-bottom: 10mm;
@@ -109,7 +109,7 @@ export default async function CaratulaPage({
           font-size: 10px;
           letter-spacing: 0.2em;
           text-transform: uppercase;
-          color: #C9A96E;
+          color: var(--terra-lo);
           text-align: center;
           margin-top: 8mm;
           margin-bottom: 2mm;
@@ -117,7 +117,7 @@ export default async function CaratulaPage({
         .evento-detalle {
           font-family: Georgia, serif;
           font-size: 9px;
-          color: #5a5449;
+          color: color-mix(in srgb, var(--paper) 55%, transparent);
           text-align: center;
           letter-spacing: 0.08em;
         }
@@ -126,7 +126,7 @@ export default async function CaratulaPage({
           position: fixed;
           bottom: 0; left: 0; right: 0;
           background: white;
-          border-top: 1px solid #e5e7eb;
+          border-top: 1px solid var(--line);
           padding: 12px 24px;
           display: flex;
           align-items: center;
@@ -145,7 +145,7 @@ export default async function CaratulaPage({
         }
         @media print {
           .print-bar { display: none !important; }
-          body { background: #0C0C0C !important; }
+          body { background: var(--dom-deep) !important; }
           .page { width: 100vw; height: 100vh; }
         }
       `}</style>
@@ -158,7 +158,7 @@ export default async function CaratulaPage({
         <div className="corner corner-br" />
 
         <div className="brand">Trascendencia</div>
-        <div className="gold-line" />
+        <div className="filete" />
 
         <div className="apellido">{familia.nombre_familia}</div>
 
@@ -168,7 +168,7 @@ export default async function CaratulaPage({
           </div>
         )}
 
-        <div className="gold-line" />
+        <div className="filete" />
 
         <div className="evento-nombre">{evento.nombre}</div>
         <div className="evento-detalle">
@@ -177,8 +177,8 @@ export default async function CaratulaPage({
       </div>
 
       <div className="print-bar no-print">
-        <div style={{ fontFamily: '-apple-system, sans-serif', fontSize: 13, color: '#6b7280' }}>
-          Carátula del álbum — {familia.nombre_familia}
+        <div style={{ fontFamily: '-apple-system, sans-serif', fontSize: 13, color: 'var(--gray-ui)' }}>
+          Carátula del álbum · {familia.nombre_familia}
         </div>
         <button className="print-btn" onClick={() => window.print()}>
           Imprimir / Guardar PDF

@@ -1,0 +1,128 @@
+/* ══════════════════════════════════════════════════════════════
+   TOKENS DE MARCA · 4 Meaning
+   ══════════════════════════════════════════════════════════════
+   Copiados de /assets/brand.css, que es la fuente de verdad del
+   brandsite. Si esos cambian, estos se actualizan a partir de ahí,
+   nunca al revés.
+
+   POR QUE EXISTE ESTE BLOQUE. El portal no tenia ni una variable de
+   color. Los colores vivian escritos a mano dentro de las clases de
+   Tailwind, y el resultado medido fue: un dorado #C9A96E repetido 261
+   veces que NO ESTA en ninguna paleta de la marca (el dorado de marca
+   es #C99E63, y esta reservado para dosis minima), y el vino de
+   Trascendencia apareciendo dos veces en todo el portal.
+
+   Mientras los colores esten en las clases, cada pantalla nueva vuelve
+   a inventarlos. Por eso esto va antes de dibujar.
+   ══════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Paleta oficial ────────────────────────────────────── */
+  --teal:      #002B34;   /* Verde Petróleo · color rector de la casa */
+  --teal-deep: #001A21;   /* Fondo inmersivo con dominancia teal */
+  --teal-2:    #0E5866;   /* Superficie teal elevada */
+
+  --wine:      #4C0F18;   /* Vino Profundo · legado */
+  --wine-deep: #2B080E;   /* Fondo inmersivo con dominancia vino */
+  --wine-2:    #6E1A26;   /* Superficie vino elevada */
+
+  --terra:     #B9735A;   /* Terracota · acento humano */
+  --terra-lo:  #D8AC96;   /* Terracota clara, sobre oscuro */
+  --gold:      #C99E63;   /* Cuarto acento. Dosis mínima */
+
+  --ink:       #171310;   /* Texto base, negro marrón cálido */
+  --gray:      #7A736B;   /* Texto secundario, gris cálido */
+  --paper:     #F6EEE3;   /* Blanco cálido. NUNCA blanco liso */
+  --paper-2:   #EFE4D5;   /* Un tono más, para alternar */
+  --line:      #E2D5C4;   /* Filete sobre claro */
+  --line-dk:   rgba(255,255,255,.14);  /* Filete sobre oscuro */
+
+  /* ── Legibilidad ───────────────────────────────────────── */
+  /* MEDIDO, no estimado. Los dos colores de texto secundario de la marca no
+     alcanzan el mínimo legible sobre su propio papel:
+       Gris Criterio #7A736B sobre paper  →  4.06 : 1
+       Terracota     #B9735A sobre paper  →  3.22 : 1
+     El mínimo para texto normal es 4.5. Es de esperar: la paleta se diseñó
+     para material impreso y para titulares grandes, donde eso alcanza. En
+     una app, donde el 80% del texto es chico, no.
+     Estos dos conservan el tono y bajan la luminosidad hasta 4.5 sobre
+     paper-2, que es la superficie más oscura, así que un solo valor sirve
+     en las tres. Los originales se quedan para titulares grandes, iconos y
+     bordes, que es donde la marca los pensó. */
+  --gray-ui:  #6C665F;
+  --terra-ui: #965640;
+
+  /* ── Semánticos ────────────────────────────────────────── */
+  /* La marca no define color de error ni de éxito, porque el sistema es de
+     comunicación y no de interfaz. Estos dos son derivados: el rojo se
+     acerca al vino en vez de ser un rojo de alerta genérico, y el verde va
+     apagado para que no cante al lado de la terracota. No son colores
+     nuevos de la marca: son los dos únicos estados que una app necesita y
+     un folleto no. */
+  --alerta: #8C2A22;
+  --bien:   #2E6B4F;
+
+  /* ── Dominancia ────────────────────────────────────────── */
+  /* Las tres marcas usan la misma combinación. Lo que cambia es cuál
+     manda. El layout de cada marca sobreescribe estas tres. */
+  --dom:      var(--teal);
+  --dom-deep: var(--teal-deep);
+  --sec:      var(--wine);
+
+  /* ── Tipografía ────────────────────────────────────────── */
+  /* La marca especifica Avenir Next, que no es fuente web libre, así
+     que se usa el stack de sistema Helvetica Neue: fiel, sin cargar
+     nada de fuera. Cormorant queda SOLO para citas y momentos
+     profundos, que es su papel en el sistema de marca. Nunca en
+     navegación, botones ni etiquetas. */
+  --sans: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  --ease: cubic-bezier(.16, 1, .3, 1);
+
+  /* Compatibilidad: tailwind.config.ts ya extendía estas dos y nadie
+     las definía nunca. */
+  --background: var(--paper);
+  --foreground: var(--ink);
+}
+
+/* Trascendencia domina en VINO. Se aplica en el layout de la marca. */
+.marca-trascendencia {
+  --dom:      var(--wine);
+  --dom-deep: var(--wine-deep);
+  --sec:      var(--teal);
+}
+
+/* PersonaLab domina en TEAL, que ya es el valor por defecto. */
+.marca-personalab {
+  --dom:      var(--teal);
+  --dom-deep: var(--teal-deep);
+  --sec:      var(--wine);
+}
+
+/* La cejilla de la marca: sans, mayúsculas, tracking muy abierto, en
+   terracota. Aparece en el brandsite y en las cinco pantallas
+   aprobadas, así que vive aquí y no se vuelve a escribir. */
+.cejilla {
+  font-size: .66rem;
+  font-weight: 600;
+  letter-spacing: .34em;
+  text-transform: uppercase;
+  /* La variante de interfaz, porque una cejilla es texto CHICO en
+     mayúsculas: el caso donde el contraste bajo más se siente. La
+     terracota de marca sobre papel da 3.22 a 1. */
+  color: var(--terra-ui);
+}
+
+/* Sobre fondo profundo se invierte el problema: ahí la terracota clara es
+   la que respira. Da 8.97 a 1 sobre vino profundo. */
+.cejilla-claro {
+  color: var(--terra-lo);
+}
+
+/* Jerarquía por escala y aire, no por negritas. La marca descarta los
+   pesos 800 y 900 y las mayúsculas apretadas. */
+.display {
+  font-weight: 200;
+  letter-spacing: -.025em;
+  line-height: 1.04;
+}

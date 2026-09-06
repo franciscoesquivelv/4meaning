@@ -113,7 +113,7 @@ function getNextImportantSession(items: ItineraryItem[], today: string): Itinera
 function HeroNow({ item }: { item: ItineraryItem | null }) {
   const label = item ? 'Ahora mismo' : 'Próxima actividad'
   return (
-    <div className="rounded-2xl bg-[#0C0C0C] text-white p-8 mb-6">
+    <div className="rounded-2xl bg-dom-deep text-paper p-8 mb-6">
       <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-3">{label}</p>
       {item ? (
         <>
@@ -259,7 +259,7 @@ function VistaCoordinador({
         {pending.length > 0 && (
           <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
             <p className="text-xs font-semibold uppercase tracking-wider text-amber-700 mb-3">
-              Pendientes de llegar — {pending.length}
+              Pendientes de llegar · {pending.length}
             </p>
             <div className="space-y-2">
               {pending.map(f => (
@@ -311,7 +311,7 @@ function VistaCoordinador({
       {/* Sidebar */}
       <div className="space-y-4">
         {/* Current activity compact */}
-        <div className="rounded-xl bg-[#0C0C0C] text-white p-5">
+        <div className="rounded-xl bg-dom-deep text-paper p-5">
           <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 mb-2">
             {current ? 'Ahora mismo' : 'Sin actividad activa'}
           </p>
@@ -323,7 +323,7 @@ function VistaCoordinador({
               </p>
             </>
           ) : (
-            <p className="text-xs text-slate-500">—</p>
+            <p className="text-xs text-slate-500">-</p>
           )}
         </div>
 
@@ -407,7 +407,7 @@ function VistaDirector({
     <div>
       {/* Next important session hero */}
       {nextImportant && (
-        <div className="rounded-2xl bg-[#0C0C0C] text-white p-8 mb-6">
+        <div className="rounded-2xl bg-dom-deep text-paper p-8 mb-6">
           <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-2">Siguiente sesión importante</p>
           <h2 className="text-2xl font-semibold leading-tight mb-2">{nextImportant.titulo}</h2>
           <div className="flex items-center gap-3 mt-2">

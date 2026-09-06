@@ -31,7 +31,7 @@ export default function ToggleBlockButton({ blockId, activo, eventId }: Props) {
   if (optimisticActivo) {
     return (
       <div className="flex items-center gap-2">
-        {/* Estado — solo informativo */}
+        {/* Estado: solo informativo */}
         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700 whitespace-nowrap">
           {isPending
             ? <span className="inline-block w-2 h-2 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin" />
@@ -39,7 +39,7 @@ export default function ToggleBlockButton({ blockId, activo, eventId }: Props) {
           }
           Activo
         </span>
-        {/* Acción — solo acción */}
+        {/* Acción: solo acción */}
         <button
           onClick={handleClick}
           disabled={isPending}
@@ -53,12 +53,12 @@ export default function ToggleBlockButton({ blockId, activo, eventId }: Props) {
 
   return (
     <div className="flex items-center gap-2">
-      {/* Estado — solo informativo */}
+      {/* Estado: solo informativo */}
       <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-400 whitespace-nowrap">
         <span className="w-1.5 h-1.5 rounded-full bg-slate-300 flex-shrink-0" />
         Inactivo
       </span>
-      {/* Acción — solo acción */}
+      {/* Acción: solo acción */}
       <button
         onClick={handleClick}
         disabled={isPending}

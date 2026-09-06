@@ -63,7 +63,7 @@ function AgreementStatusBadge({ status }: { status: string }) {
 }
 
 function formatDate(d: string | null) {
-  if (!d) return '—'
+  if (!d) return '-'
   return new Date(d + 'T12:00:00').toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' })
 }
 
@@ -125,7 +125,7 @@ export default async function EventoDetailPage({ params }: { params: { id: strin
 
   return (
     <div className="px-8 pt-6 pb-12 max-w-7xl">
-      {/* Subheader — location, dates, edit */}
+      {/* Subheader: location, dates, edit */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2 flex-wrap text-sm text-slate-400">
           {(evento.ciudad || evento.pais) && (
@@ -264,7 +264,7 @@ export default async function EventoDetailPage({ params }: { params: { id: strin
             <dl className="space-y-2 text-sm">
               <div>
                 <dt className="text-xs text-slate-400">Parejas</dt>
-                <dd className="font-medium text-slate-900">{evento.n_parejas ?? '—'}</dd>
+                <dd className="font-medium text-slate-900">{evento.n_parejas ?? '-'}</dd>
               </div>
               <div>
                 <dt className="text-xs text-slate-400">Pipeline</dt>

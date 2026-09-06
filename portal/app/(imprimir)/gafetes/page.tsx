@@ -51,7 +51,7 @@ export default async function GafetesPage({
         }
         .badge {
           flex: 1;
-          background: #0C0C0C;
+          background: var(--dom-deep);
           border-radius: 6px;
           display: flex;
           flex-direction: column;
@@ -66,28 +66,28 @@ export default async function GafetesPage({
           position: absolute;
           top: 0; left: 0; right: 0;
           height: 3px;
-          background: #C9A96E;
+          background: var(--terra);
         }
         .badge::after {
           content: '';
           position: absolute;
           bottom: 0; left: 0; right: 0;
           height: 3px;
-          background: #C9A96E;
+          background: var(--terra);
         }
         .badge-brand {
           font-family: Georgia, serif;
           font-size: 9px;
           letter-spacing: 0.35em;
           text-transform: uppercase;
-          color: #C9A96E;
+          color: var(--terra-lo);
           margin-bottom: 8mm;
         }
         .badge-name {
           font-family: Georgia, serif;
           font-size: 38px;
           font-weight: normal;
-          color: #F5F0E8;
+          color: var(--paper);
           text-align: center;
           line-height: 1.1;
           margin-bottom: 4mm;
@@ -97,28 +97,28 @@ export default async function GafetesPage({
           font-size: 14px;
           letter-spacing: 0.2em;
           text-transform: uppercase;
-          color: #C9A96E;
+          color: var(--terra-lo);
           text-align: center;
           margin-bottom: 6mm;
         }
         .badge-divider {
           width: 32px;
           height: 1px;
-          background: #C9A96E;
+          background: var(--terra);
           margin-bottom: 6mm;
         }
         .badge-evento {
           font-family: Georgia, serif;
           font-size: 9px;
           letter-spacing: 0.12em;
-          color: #6b6b5e;
+          color: color-mix(in srgb, var(--paper) 55%, transparent);
           text-align: center;
         }
         .print-bar {
           position: fixed;
           bottom: 0; left: 0; right: 0;
           background: white;
-          border-top: 1px solid #e5e7eb;
+          border-top: 1px solid var(--line);
           padding: 12px 24px;
           display: flex;
           align-items: center;
@@ -168,17 +168,17 @@ export default async function GafetesPage({
 
         {/* Si solo hay 1 persona, agregar espacio vacío para mantener layout */}
         {personas.length === 1 && (
-          <div className="badge" style={{ background: '#f8f8f5', border: '1px dashed #e5e0d8' }}>
+          <div className="badge" style={{ background: 'var(--paper-2)', border: '1px dashed var(--line)' }}>
             <div style={{ color: '#ccc', fontSize: 11, fontFamily: 'Georgia, serif', letterSpacing: '0.1em' }}>
-              — segunda persona sin nombre registrado —
+              Segunda persona sin nombre registrado
             </div>
           </div>
         )}
       </div>
 
       <div className="print-bar no-print">
-        <div style={{ fontFamily: '-apple-system, sans-serif', fontSize: 13, color: '#6b7280' }}>
-          Gafetes — {familia.nombre_familia}
+        <div style={{ fontFamily: '-apple-system, sans-serif', fontSize: 13, color: 'var(--gray-ui)' }}>
+          Gafetes · {familia.nombre_familia}
         </div>
         <button className="print-btn" onClick={() => window.print()}>
           Imprimir / Guardar PDF
