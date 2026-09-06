@@ -27,7 +27,14 @@ export default async function EntregasPage({ params, searchParams }: {
     .single()
   if (!evento) notFound()
 
-  const { data: families } = await supabase
+  // EL ERROR NO SE TIRA. Antes esta consulta hacia `const { data: families }`
+  // y descartaba el error, asi que cualquier fallo caia en `?? []` y la
+  // pantalla anunciaba "No hay familias registradas en este evento" sobre un
+  // evento con cuatro. Una pantalla que confunde "fallo la consulta" con "no
+  // hay nada" miente sobre el estado del sistema, que es justo lo que no puede
+  // hacer. Es la misma falla que el boton de entrega, que envolvia en
+  // try/catch una accion que DEVUELVE el error en vez de lanzarlo.
+  const { data: families, error: errorFamilias } = await supabase
     .from('families')
     .select('id, nombre_familia, nombre1, nombre2, email1, storybook_status, video_status, entrega_estimada')
     .eq('event_id', params.id)
@@ -92,7 +99,21 @@ export default async function EntregasPage({ params, searchParams }: {
         ))}
       </div>
 
-      {list.length === 0 ? (
+      {errorFamilias ? (
+        <div className="bg-white border-l-4 border-alerta rounded-r-xl p-6 shadow-sm">
+          <p className="text-sm font-semibold text-slate-900">
+            Esta pantalla no pudo leer las familias.
+          </p>
+          <p className="text-sm text-slate-600 mt-1">
+            No es que no haya: es que la consulta falló. Mientras diga esto, los conteos de
+            arriba tampoco valen.
+          </p>
+          <p className="text-xs font-mono text-slate-500 mt-3 break-words">
+            {errorFamilias.message}
+            {errorFamilias.hint ? ` · ${errorFamilias.hint}` : ''}
+          </p>
+        </div>
+      ) : list.length === 0 ? (
         <div className="bg-white border border-slate-200 rounded-xl p-10 text-center shadow-sm">
           <p className="text-slate-400 text-sm">No hay familias registradas en este evento.</p>
         </div>
