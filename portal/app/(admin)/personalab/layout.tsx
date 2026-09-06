@@ -34,10 +34,21 @@ export default async function PersonaLabLayout({ children }: { children: React.R
     redirect('/workspaces')
   }
 
+  // `marca-personalab` sobreescribe la dominancia que el layout de (admin)
+  // fija en `marca-trascendencia`. A partir de aqui `bg-dom` y `text-dom`
+  // pintan TEAL y no vino, y ninguna de las 29 pantallas de este arbol lo
+  // declara: lo declara el layout de la marca, una vez.
+  //
+  // Medido el 2026-09-06, y es la razon de que esta linea exista: la clase
+  // estaba definida en `app/marca.css:96` y aplicada CERO veces en todo el
+  // repositorio. Este workspace y el de Trascendencia escribian la misma
+  // cadena de color caracter por caracter, asi que cruzar de una marca a la
+  // otra no cambiaba un solo pixel. El propio `tokens.ts:8` lo decia por
+  // escrito: "El chasis es NEUTRO (escala slate), igual que Trascendencia".
   return (
-    <>
+    <div className="marca-personalab">
       <PersonaLabNav />
       <div className="max-w-[1200px] mx-auto px-6 py-8">{children}</div>
-    </>
+    </div>
   )
 }

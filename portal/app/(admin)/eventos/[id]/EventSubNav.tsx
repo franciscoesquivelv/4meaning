@@ -4,6 +4,12 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { retiroTerminado } from '@/lib/participante/tiempo'
+import {
+  BARRA_WORKSPACE, ROTULO_BARRA, entradaWorkspace,
+  MENU_PANEL, menuEntrada, menuTitulo, MENU_NOTA,
+  PASTILLA_NEUTRA, PASTILLA_MARCA, PASTILLA_CURSO,
+  PASTILLA_BIEN, PASTILLA_ALERTA,
+} from '@/lib/estilos/oficina'
 
 // ── LA BARRA DEL EVENTO ─────────────────────────────────────────
 //
@@ -36,12 +42,26 @@ import { retiroTerminado } from '@/lib/participante/tiempo'
 // REGLA QUE ESTA BARRA NO PUEDE VOLVER A ROMPER: si necesita
 // `overflow-x-auto`, no cabe, y si no cabe hay que quitar, no hacer scroll.
 
+// Los ROTULOS no se tocan: son de Sora. Lo que cambia es de que color se
+// pintan. Eran cinco pares del arcoiris de Tailwind (blue, amber, emerald,
+// red, slate), ninguno de la paleta de la marca, y el de "Cancelado" daba
+// `text-red-500` sobre `bg-red-100`.
+//
+// Ahora los cinco salen de las pastillas de `lib/estilos/oficina.ts`, que
+// llevan la senal en el filete y en el texto y no en el relleno. Eso no es
+// una preferencia: `--gray-ui` y `--terra-ui` estan calibrados EXACTAMENTE
+// en 4.5 sobre papel, asi que cualquier relleno tintado con su propio color
+// los hunde por debajo del minimo (medido: 4.19 al 6%, 3.59 al 18%).
+//
+// "Confirmado" se pinta con `dom`, o sea con el color de la marca: es el
+// estado en que el evento ya es nuestro. Contrastes sobre papel: prospecto
+// 4.93, confirmado 13.15, en preparacion 4.93, ejecutado 5.48, cancelado 7.39.
 const PIPELINE_LABELS: Record<string, { label: string; cls: string }> = {
-  prospecto:      { label: 'Prospecto',      cls: 'bg-slate-100 text-slate-600' },
-  confirmado:     { label: 'Confirmado',      cls: 'bg-blue-100 text-blue-700' },
-  en_preparacion: { label: 'En preparación', cls: 'bg-amber-100 text-amber-700' },
-  ejecutado:      { label: 'Ejecutado',       cls: 'bg-emerald-100 text-emerald-700' },
-  cancelado:      { label: 'Cancelado',       cls: 'bg-red-100 text-red-500' },
+  prospecto:      { label: 'Prospecto',      cls: PASTILLA_NEUTRA },
+  confirmado:     { label: 'Confirmado',      cls: PASTILLA_MARCA },
+  en_preparacion: { label: 'En preparación', cls: PASTILLA_CURSO },
+  ejecutado:      { label: 'Ejecutado',       cls: PASTILLA_BIEN },
+  cancelado:      { label: 'Cancelado',       cls: PASTILLA_ALERTA },
 }
 
 type Destino = { href: string; label: string; nota: string }
@@ -123,17 +143,10 @@ export default function EventSubNav({ eventId, eventName, pipelineStatus, fechaF
 
   const esActivo = (href: string) => pathname === href || pathname.startsWith(href + '/')
 
-  const claseEntrada = (activo: boolean) =>
-    'text-xs px-3 py-1.5 rounded-md whitespace-nowrap transition-colors ' +
-    (activo
-      ? 'text-slate-900 font-semibold bg-slate-100'
-      : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100')
+  const claseEntrada = entradaWorkspace
 
   return (
-    <div
-      ref={barra}
-      className="sticky top-14 z-40 h-12 bg-white border-b border-slate-200 flex items-center px-6 gap-3"
-    >
+    <div ref={barra} className={BARRA_WORKSPACE}>
       {/* El nombre del evento. El enlace de vuelta a Eventos salio de aqui:
           la barra de arriba ya lo tiene, y era el mismo destino dos veces.
 
@@ -143,7 +156,7 @@ export default function EventSubNav({ eventId, eventName, pipelineStatus, fechaF
           INALCANZABLE, no quedar a un scroll. Medido en vivo: la barra pedia
           885 y la ventana daba 849. Un rotulo que se acorta es barato; un
           destino al que no se puede llegar, no. */}
-      <span className="text-sm font-semibold text-slate-900 truncate min-w-0 shrink">
+      <span className={`${ROTULO_BARRA} truncate min-w-0 shrink`}>
         {eventName}
       </span>
 
@@ -154,7 +167,7 @@ export default function EventSubNav({ eventId, eventName, pipelineStatus, fechaF
       {esPrueba && (
         <span
           title="Datos ficticios. Se borran cuando se quiera con borrar_datos_de_prueba()."
-          className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full flex-shrink-0 bg-alerta/10 text-alerta border border-alerta/25"
+          className={`${PASTILLA_ALERTA} uppercase tracking-wider flex-shrink-0`}
         >
           Prueba
         </span>
@@ -162,7 +175,7 @@ export default function EventSubNav({ eventId, eventName, pipelineStatus, fechaF
 
       {/* El estado del evento tambien esta en la pagina, debajo. Aqui es
           repeticion, asi que es lo primero que se va cuando falta sitio. */}
-      <span className={`hidden lg:inline text-[10px] font-semibold px-2 py-0.5 rounded-full flex-shrink-0 ${pipeline.cls}`}>
+      <span className={`hidden lg:inline flex-shrink-0 ${pipeline.cls}`}>
         {pipeline.label}
       </span>
 
@@ -188,21 +201,19 @@ export default function EventSubNav({ eventId, eventName, pipelineStatus, fechaF
               </button>
 
               {estaAbierto && (
-                <div
-                  role="menu"
-                  className="absolute left-0 top-full mt-1 w-72 bg-white border border-slate-200 rounded-xl shadow-lg py-1.5"
-                >
+                <div role="menu" className={MENU_PANEL}>
                   {grupo.destinos.map(d => (
                     <Link
                       key={d.href}
                       href={d.href}
                       role="menuitem"
-                      className={`block px-3 py-2 rounded-lg mx-1.5 transition-colors ${
-                        esActivo(d.href) ? 'bg-slate-100' : 'hover:bg-slate-50'
-                      }`}
+                      className={menuEntrada(esActivo(d.href))}
                     >
-                      <span className="block text-sm text-slate-900">{d.label}</span>
-                      <span className="block text-xs text-slate-400 mt-0.5">{d.nota}</span>
+                      <span className={menuTitulo(esActivo(d.href))}>{d.label}</span>
+                      {/* La nota era `text-slate-400`, 2.56 sobre blanco: la
+                          unica frase que explica a donde lleva cada destino
+                          era lo menos legible del menu. Ahora 4.93. */}
+                      <span className={MENU_NOTA}>{d.nota}</span>
                     </Link>
                   ))}
                 </div>
@@ -224,23 +235,24 @@ export default function EventSubNav({ eventId, eventName, pipelineStatus, fechaF
         <Link
           href={`${base}/preview`}
           title="La app tal como la ve la pareja"
-          className={
-            'text-xs px-3 py-1.5 rounded-md whitespace-nowrap transition-colors ' +
-            (esActivo(`${base}/preview`)
-              ? 'text-slate-900 font-semibold bg-slate-100'
-              : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100')
-          }
+          className={claseEntrada(esActivo(`${base}/preview`))}
         >
           Ver como la pareja
         </Link>
+        {/* El unico control de peso alto de la barra, y ahora lo dice en el
+            color de la marca: era `bg-slate-900` / `text-white`, o sea el
+            gris azulado de fabrica. `paper` sobre `dom` da 13.15 en vino y
+            13.09 en teal; el reposo en `text-dom` sobre papel da lo mismo. */}
         <Link
           href={`${base}/operacion`}
           title="Panel en vivo durante el retiro"
           className={
             'text-xs px-3 py-1.5 rounded-md whitespace-nowrap transition-colors ' +
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dom ' +
+            'focus-visible:ring-offset-2 focus-visible:ring-offset-paper ' +
             (esActivo(`${base}/operacion`)
-              ? 'bg-slate-900 text-white hover:bg-slate-700'
-              : 'border border-slate-200 text-slate-700 hover:bg-slate-900 hover:text-white')
+              ? 'bg-dom text-paper font-medium hover:bg-dom-deep'
+              : 'border border-dom/40 text-dom hover:bg-dom hover:text-paper')
           }
         >
           Modo operación

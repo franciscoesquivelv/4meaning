@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
+import { BARRA_CASA, ROTULO_BARRA, entradaCasa } from '@/lib/estilos/oficina'
 
 interface AdminTopNavProps {
   userEmail: string
@@ -24,18 +25,24 @@ export default function AdminTopNav({ userEmail }: AdminTopNavProps) {
 
   const enPersonaLab = pathname === '/personalab' || pathname.startsWith('/personalab/')
 
-  const navLinkClass = (prefix: string) => {
-    const isActive = pathname === prefix || pathname.startsWith(prefix + '/')
-    return [
-      'px-3 py-2 text-sm rounded-md transition-colors',
-      isActive
-        ? 'text-slate-900 font-medium bg-slate-100'
-        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100',
-    ].join(' ')
-  }
+  const navLinkClass = (prefix: string) =>
+    entradaCasa(pathname === prefix || pathname.startsWith(prefix + '/'))
+
+  // LA BARRA DICE EN QUE MARCA ESTAS, Y ESA ES LA CORRECCION DE FONDO.
+  //
+  // Medido el 2026-09-06: `.marca-personalab` estaba definida en
+  // `app/marca.css:96` y aplicada CERO veces en todo el repositorio, y esta
+  // barra y la de PersonaLab escribian la MISMA cadena caracter por caracter.
+  // Cruzar de Trascendencia a PersonaLab no cambiaba un solo pixel de color.
+  //
+  // El layout de (admin) declara `marca-trascendencia` para todo el arbol.
+  // Esta barra vive por encima de los dos workspaces, asi que tiene que
+  // corregir la dominancia por su cuenta: dentro de PersonaLab, la entrada
+  // activa se pinta teal y no vino, sin cambiar una sola clase.
+  const marca = enPersonaLab ? 'marca-personalab' : ''
 
   return (
-    <header className="fixed top-0 left-0 right-0 w-full h-14 bg-white border-b border-[#E5E7EB] z-50 flex items-center justify-between px-6">
+    <header className={`${marca} ${BARRA_CASA}`}>
       {/* Left: la casa. Lleva al selector de workspace, no al dashboard de
           Trascendencia: 4 Meaning es la capa de arriba, no una sub-marca. */}
       <Link
@@ -46,9 +53,13 @@ export default function AdminTopNav({ userEmail }: AdminTopNavProps) {
         {/* "4 Meaning" con espacio. El login lo escribia pegado y Julian lo
             corrigio ahi el 2026-09-06; aqui seguia pegado, asi que el mismo
             lockup se escribia de dos maneras a dos clics de distancia. */}
-        <span className="text-sm font-semibold tracking-tight text-slate-900">4 Meaning</span>
+        <span className={ROTULO_BARRA}>4 Meaning</span>
+        {/* El chevron era `text-slate-300`: 1.48 sobre blanco. Es la unica
+            senal de que el lockup es un boton y no un rotulo, o sea que la
+            unica pista de que se puede cambiar de workspace era invisible.
+            `gray-ui` da 4.93 sobre papel. */}
         <svg
-          className="w-3 h-3 text-slate-300 group-hover:text-slate-500 transition-colors"
+          className="w-3 h-3 text-gray-ui group-hover:text-dom transition-colors"
           fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}
         >
           <path strokeLinecap="round" strokeLinejoin="round" d="M8 9l4-4 4 4M16 15l-4 4-4-4" />
@@ -96,12 +107,17 @@ export default function AdminTopNav({ userEmail }: AdminTopNavProps) {
         )}
       </nav>
 
-      {/* Right: User info + logout */}
+      {/* Right: User info + logout.
+          Los dos eran `text-slate-400`: 2.56 sobre blanco. El correo es la
+          unica manera de saber con que cuenta estas mirando datos de otra
+          gente, y estaba por debajo de la mitad del minimo legible. El rojo
+          del hover era `red-500`, que no esta en ninguna paleta de la marca;
+          `alerta` si lo esta y da 7.39 sobre papel. */}
       <div className="flex items-center gap-4">
-        <span className="text-xs text-slate-400 hidden sm:block">{userEmail}</span>
+        <span className="text-xs text-gray-ui hidden sm:block">{userEmail}</span>
         <button
           onClick={handleLogout}
-          className="text-xs text-slate-400 hover:text-red-500 transition-colors cursor-pointer bg-transparent border-none"
+          className="text-xs text-gray-ui hover:text-alerta transition-colors cursor-pointer bg-transparent border-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dom focus-visible:ring-offset-2 focus-visible:ring-offset-paper rounded"
         >
           Cerrar sesión
         </button>

@@ -2,14 +2,24 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
 import EventStatusButton from './EventStatusButton'
+import {
+  PASTILLA_NEUTRA, PASTILLA_MARCA, PASTILLA_CURSO,
+  PASTILLA_BIEN, PASTILLA_ALERTA,
+} from '@/lib/estilos/oficina'
 
+// EL MISMO ESTADO, EL MISMO COLOR. Este mapa era gemelo del de
+// `EventSubNav.tsx` y llevaba el arcoiris de Tailwind. Cuando la barra paso a
+// las pastillas de marca, "Confirmado" quedo vino arriba y azul aqui, a
+// cuarenta pixeles de distancia y en la misma pantalla. Dos mapas para un
+// hecho es como nacio ese defecto, asi que ahora los dos leen de
+// `lib/estilos/oficina.ts` y no hay donde volver a divergir.
 function PipelineBadge({ status }: { status: string }) {
   const map: Record<string, string> = {
-    prospecto:       'bg-slate-100 text-slate-600',
-    confirmado:      'bg-blue-100 text-blue-700',
-    en_preparacion:  'bg-amber-100 text-amber-700',
-    ejecutado:       'bg-emerald-100 text-emerald-700',
-    cancelado:       'bg-red-100 text-red-500',
+    prospecto:      PASTILLA_NEUTRA,
+    confirmado:     PASTILLA_MARCA,
+    en_preparacion: PASTILLA_CURSO,
+    ejecutado:      PASTILLA_BIEN,
+    cancelado:      PASTILLA_ALERTA,
   }
   const labels: Record<string, string> = {
     prospecto:      'Prospecto',
@@ -19,7 +29,7 @@ function PipelineBadge({ status }: { status: string }) {
     cancelado:      'Cancelado',
   }
   return (
-    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${map[status] ?? 'bg-slate-100 text-slate-600'}`}>
+    <span className={map[status] ?? PASTILLA_NEUTRA}>
       {labels[status] ?? status}
     </span>
   )

@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import { H1, SUBTITULO, PASTILLA_BIEN, PASTILLA_CURSO } from '@/lib/estilos/oficina'
 
 // Panel de la casa: desde aqui se entra a cualquiera de los dos workspaces.
 // Vive dentro del grupo (admin), asi que ya queda protegido por su layout,
@@ -11,15 +12,29 @@ import Link from 'next/link'
 // el frente de identidad, super_admin ve las dos marcas y el resto ve
 // Trascendencia, que es la que esta en produccion.
 
+// CADA TARJETA LLEVA SU PROPIA CLASE DE MARCA, Y ESO ES TODO EL MECANISMO.
+//
+// Antes cada marca traia tres valores escritos a mano: un hex, un rgba de
+// tinte y un rgba de borde, seis en total, aplicados con `style={{}}`. Eso es
+// exactamente el mecanismo que llevo el dorado #C9A96E a 67 apariciones sin
+// que nadie lo decidiera: cuando el color se escribe en la pantalla, la
+// pantalla siguiente lo copia y lo desvia un poco.
+//
+// Ahora la tarjeta se pinta sola: dentro de `marca-trascendencia`, `text-dom`
+// es vino; dentro de `marca-personalab`, teal. Las clases son identicas en
+// las dos y no hay un solo color escrito aqui. El dia que entre una tercera
+// marca, se agrega su clase en `app/marca.css` y esta pagina no se toca.
+//
+// Esta es ademas la unica pagina del portal donde las dos dominancias se ven
+// una al lado de la otra, asi que es donde el codigo de color se aprende.
 interface Marca {
   id: string
   nombre: string
   descripcion: string
   estado: string
   href: string
-  color: string
-  tinte: string
-  borde: string
+  /** Clase de dominancia de `app/marca.css`. Decide de que color es la tarjeta. */
+  marca: string
   listo: boolean
 }
 
@@ -30,9 +45,7 @@ const MARCAS: Marca[] = [
     descripcion: 'Retiros familiares. Eventos, familias, acuerdos, itinerario y operación del día.',
     estado: 'En producción',
     href: '/hoy',
-    color: '#4C0F18',
-    tinte: 'rgba(76,15,24,0.05)',
-    borde: 'rgba(76,15,24,0.22)',
+    marca: 'marca-trascendencia',
     listo: true,
   },
   {
@@ -41,9 +54,7 @@ const MARCAS: Marca[] = [
     descripcion: 'Experiencias para foros. Catálogo, corridas, capítulos, moderadores y kit.',
     estado: 'Prototipo',
     href: '/personalab',
-    color: '#002B34',
-    tinte: 'rgba(0,43,52,0.05)',
-    borde: 'rgba(0,43,52,0.20)',
+    marca: 'marca-personalab',
     listo: false,
   },
 ]
@@ -66,14 +77,14 @@ export default async function WorkspacesPage() {
   return (
     <div className="max-w-3xl mx-auto px-6 py-14">
       <div className="mb-10">
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-gray-ui">
           {nombre ? `Hola, ${nombre}.` : 'Hola.'}
         </p>
-        <h1 className="text-2xl font-semibold tracking-tight text-slate-900 mt-1">
+        <h1 className={`${H1} mt-1`}>
           ¿Dónde vas a trabajar?
         </h1>
         {esSuper && (
-          <p className="text-sm text-slate-500 mt-2">
+          <p className={`${SUBTITULO} mt-2`}>
             Tu cuenta opera las dos marcas.
           </p>
         )}
@@ -84,34 +95,35 @@ export default async function WorkspacesPage() {
           <Link
             key={m.id}
             href={m.href}
-            className="block rounded-xl p-6 transition-all hover:shadow-md"
-            style={{ background: m.tinte, border: `1px solid ${m.borde}` }}
+            className={
+              `${m.marca} block rounded-marca p-6 bg-dom/[0.06] border border-dom/30 ` +
+              'transition-all hover:bg-dom/10 hover:border-dom/50 ' +
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dom ' +
+              'focus-visible:ring-offset-2 focus-visible:ring-offset-paper-2'
+            }
           >
             <div className="flex items-start justify-between gap-3 mb-3">
-              <h2 className="text-xl font-semibold tracking-tight" style={{ color: m.color }}>
+              {/* 13.15 en vino y 13.09 en teal, sobre su propio tinte. */}
+              <h2 className="text-xl font-semibold tracking-tight text-dom">
                 {m.nombre}
               </h2>
-              <span
-                className={`text-[10px] font-semibold px-2 py-0.5 rounded-full whitespace-nowrap ${
-                  m.listo ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
-                }`}
-              >
+              <span className={m.listo ? PASTILLA_BIEN : PASTILLA_CURSO}>
                 {m.estado}
               </span>
             </div>
-            <p className="text-sm text-slate-600 leading-relaxed">{m.descripcion}</p>
-            <div
-              className="mt-5 pt-4 text-xs font-medium"
-              style={{ borderTop: `1px solid ${m.borde}`, color: m.color }}
-            >
+            <p className="text-sm text-ink leading-relaxed">{m.descripcion}</p>
+            <div className="mt-5 pt-4 border-t border-dom/30 text-xs font-medium text-dom">
               Entrar →
             </div>
           </Link>
         ))}
       </div>
 
+      {/* Era `text-slate-400`: 2.45 sobre el fondo. Es la unica explicacion de
+          por que aqui solo se ve una marca, o sea la respuesta a la pregunta
+          que la pantalla provoca. `gray-ui` da 4.52 sobre el suelo. */}
       {!esSuper && (
-        <p className="text-xs text-slate-400 mt-8 leading-relaxed max-w-[60ch]">
+        <p className="text-xs text-gray-ui mt-8 leading-relaxed max-w-[60ch]">
           Si necesitas acceso a PersonaLab, pídeselo a un super admin. Los permisos por marca todavía no
           están seccionados: hoy el rol es global y se está trabajando en separarlo.
         </p>

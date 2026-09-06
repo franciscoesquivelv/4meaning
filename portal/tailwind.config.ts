@@ -79,6 +79,18 @@ const config: Config = {
       letterSpacing: {
         cejilla: ".34em",
       },
+      borderRadius: {
+        // LA FIRMA DE TARJETA DE LA MARCA, 10px. Medido en el sitio publico:
+        // `brand.css` + `trascendencia.css` tienen TRES radios en total y
+        // `10px` aparece 15 veces, o sea que es la forma de tarjeta mas
+        // portatil que la marca tiene. El portal la usaba 3 veces en 136
+        // archivos, y el back office llevaba DIEZ radios distintos,
+        // encabezados por `rounded-lg` (8px, x181) y `rounded-xl` (12px,
+        // x125). Ninguno de los dos es el de la marca, y estan tan cerca uno
+        // del otro que la diferencia no comunica nada: solo hace que dos
+        // tarjetas hermanas no coincidan.
+        marca: "10px",
+      },
       minHeight: {
         // Area minima de toque, medida en pantallas reales a 375px. Estaba
         // escrita a mano como `min-h-[44px]` pantalla por pantalla, que es un
