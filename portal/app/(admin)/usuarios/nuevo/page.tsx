@@ -47,6 +47,13 @@ export default function InvitarUsuarioPage() {
   const [sending, setSending] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
+  // El aviso de que la CUENTA se creó pero el ACCESO a la experiencia no.
+  // Antes de esto, `/api/admin/invite` ya devolvía `avisoGrant` cuando el
+  // grant fallaba, pero nada en esta pantalla lo leía: se mostraba
+  // "Invitación enviada" igual, exactamente el bug que Sora documentó como
+  // Estado B en docs/DISENO-REGISTRO-PERSONALAB.md, vivo aquí sin que nadie
+  // lo hubiera cerrado. Encontrado por Leo en la Etapa 5.
+  const [avisoGrant, setAvisoGrant] = useState<string | null>(null)
 
   useEffect(() => {
     // Load active/draft event families
@@ -121,10 +128,44 @@ export default function InvitarUsuarioPage() {
       return
     }
 
+    // La cuenta se creó (`res.ok`), pero el acceso a la experiencia puede
+    // haber fallado por separado. Es la misma escritura que se corrigió en
+    // la Etapa 4 para que dejara de responder `{ok:true}` en silencio; esta
+    // pantalla ahora tiene que escuchar lo que ya se le está diciendo.
+    setAvisoGrant(data.avisoGrant ?? null)
     setSuccess(true)
   }
 
   if (success) {
+    // Dos pantallas distintas, no una con un aviso pegado encima: si el
+    // acceso falló, no hay nada que celebrar todavía. Es el mismo principio
+    // del Estado B del diseño de registro (docs/DISENO-REGISTRO-PERSONALAB.md),
+    // aplicado aquí sin su regla de "no ofrecer reintentar": ahí no se
+    // reintenta porque ya hubo un cobro de por medio; aquí no hay ningún
+    // cobro en este flujo manual, así que reintentar es seguro y es
+    // literalmente correcto (enviar el mismo formulario otra vez vuelve a
+    // intentar el mismo grant sobre la cuenta que ya existe).
+    if (avisoGrant) {
+      return (
+        <div className="p-8 max-w-lg text-center">
+          <div className="w-14 h-14 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-4 text-2xl text-amber-600">!</div>
+          <h1 className="text-xl font-bold text-slate-900 mb-2">La cuenta se creó, pero el acceso no</h1>
+          <p className="text-sm text-slate-500 mb-2">
+            {form.full_name || form.email} ya tiene cuenta en el portal, pero no se pudo dar acceso a la experiencia elegida.
+          </p>
+          <p className="text-xs font-mono text-slate-400 mb-6 break-words">{avisoGrant}</p>
+          <div className="flex gap-3 justify-center">
+            <button
+              onClick={() => { setSuccess(false); setAvisoGrant(null) }}
+              className="px-5 py-2 text-sm bg-slate-900 text-white rounded-lg hover:bg-slate-700 transition-colors"
+            >
+              Volver a intentar el acceso
+            </button>
+          </div>
+        </div>
+      )
+    }
+
     return (
       <div className="p-8 max-w-lg text-center">
         <div className="w-14 h-14 rounded-full bg-[#DCFCE7] flex items-center justify-center mx-auto mb-4 text-2xl text-[#16A34A]">✓</div>
@@ -134,7 +175,7 @@ export default function InvitarUsuarioPage() {
         </p>
         <div className="flex gap-3 justify-center">
           <button
-            onClick={() => { setSuccess(false); setForm({ email: '', full_name: '', role: 'participant', family_id: '', slot: '1' }) }}
+            onClick={() => { setSuccess(false); setAvisoGrant(null); setForm({ email: '', full_name: '', role: 'participant', family_id: '', slot: '1' }) }}
             className="px-5 py-2 text-sm border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors text-slate-700"
           >
             Invitar otro
