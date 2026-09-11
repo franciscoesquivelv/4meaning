@@ -94,9 +94,16 @@ que nada lo diga.
 ### 3.4 El SMTP en Supabase
 
 En Supabase, Authentication, SMTP Settings: apuntar a Resend con el mismo
-dominio. Eso quita el límite de unos pocos correos por hora del mailer propio de
-Supabase, que es lo que rompe las invitaciones cuando se invita a un capítulo
-entero de golpe.
+dominio. Eso quita el límite del mailer propio de Supabase, que es lo que
+rompe las invitaciones cuando se invita a un capítulo entero de golpe.
+
+**El límite exacto, confirmado en vivo el 2026-09-11:** dos correos por hora,
+**por proyecto entero, no por cuenta**. Se chocó contra él probando el
+registro de PersonaLab, al crear una segunda cuenta de prueba minutos
+después de la primera: `email rate limit exceeded`. Pendiente, decisión de
+Francisco el mismo día: se deja para después, no bloquea el trabajo de hoy,
+pero **sí bloquea cualquier volumen real de registro de autoservicio**
+mientras no se conecte.
 
 ### 3.5 Al rotar la llave
 
