@@ -18,13 +18,31 @@ import { LIENZO, TARJETA, ETIQUETA, CAMPO, BOTON, ERROR, ENLACE } from '@/lib/es
 // convertiría este formulario en un redirector abierto: alguien manda un
 // enlace de phishing con la forma `app.4meaning.life/login?next=...` y, tras
 // un login real y legítimo, la víctima aterriza en un sitio ajeno confiando
-// en que salió de aquí. Se acepta solo lo que empieza en una sola `/`: ni
-// `//otro-sitio.com` (URL relativa de protocolo, mismo ataque) ni nada con
-// un esquema (`javascript:`, `https:`) escrito dentro del valor.
+// en que salió de aquí.
+//
+// CORREGIDO EL 2026-09-11. La primera versión bloqueaba con reglas de texto
+// (`startsWith('//')`, `includes('://')`) y Hugo la rompió con ejecución
+// real, no en teoría: `/\evil.com` no empieza con `//` ni lleva `://`, pasa
+// esas reglas, y el navegador lo normaliza a `//evil.com`, salto de origen,
+// porque trata la barra invertida igual que la barra normal dentro de un
+// esquema especial. Y una tabulación codificada (`%09`) llega ya decodificada
+// a esta función por `useSearchParams()`, así que `/\t/evil.com` también
+// colaba: el navegador descarta tabs y saltos de línea al normalizar.
+//
+// La corrección no agrega una regla más a la lista: dejar de adivinar.
+// `new URL()` resuelve `next` con el MISMO parser que el navegador va a usar
+// para navegar de verdad, así que cualquier normalización (barras invertidas,
+// tabs, lo que sea) ya ocurrió antes de comparar. Solo se compara el origen
+// resultante contra el propio.
 function destinoSeguro(next: string | null): string {
   if (!next) return '/'
-  if (!next.startsWith('/') || next.startsWith('//') || next.includes('://')) return '/'
-  return next
+  try {
+    const url = new URL(next, window.location.origin)
+    if (url.origin !== window.location.origin) return '/'
+    return url.pathname + url.search + url.hash
+  } catch {
+    return '/'
+  }
 }
 
 function LoginForm() {

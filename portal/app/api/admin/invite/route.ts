@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
+import { todosLosUsuariosDeAuth } from '@/lib/supabase/usuariosAuth'
 
 export async function POST(request: NextRequest) {
   // Verify the requester is admin/super_admin
@@ -73,7 +74,13 @@ export async function POST(request: NextRequest) {
   } else {
     // El usuario ya existía en auth.users (inviteError decía "already
     // registered"). Se busca por correo y se actualiza el rol ahí.
-    const { data: { users } } = await service.auth.admin.listUsers()
+    //
+    // `listUsers()` sin paginar, sin este helper, solo mira los primeros 50.
+    // Si el correo que se busca no estaba entre esos 50, la busqueda fallaba
+    // en silencio y la ruta respondia exito sin haber hecho nada: la misma
+    // forma del incidente que este archivo ya cerro una vez. Hallazgo de
+    // Hugo, Etapa 5.
+    const users = await todosLosUsuariosDeAuth()
     const existingUser = users.find(u => u.email === email)
     resolvedUserId = existingUser?.id
 

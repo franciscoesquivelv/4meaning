@@ -1,7 +1,8 @@
-import { createClient, createServiceClient } from '@/lib/supabase/server'
+import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import EditRoleSelect from './EditRoleSelect'
+import { todosLosUsuariosDeAuth } from '@/lib/supabase/usuariosAuth'
 
 interface Profile {
   id: string
@@ -92,12 +93,33 @@ export default async function UsuariosPage() {
     .select('id, nombre_familia, user_id1, user_id2, events(nombre)')
 
   // `last_sign_in_at` vive en `auth.users`, no en `profiles`, y esa tabla no
-  // se lee con el cliente normal. Es la misma llamada que ya usa
-  // `/api/admin/invite` para buscar por correo, aquí para leer, no escribir.
-  // Esta pantalla ya exige sesión de equipo (el layout de (admin) la
-  // protege), así que usar la clave de servicio aquí no abre nada nuevo.
-  const service = createServiceClient()
-  const { data: { users: authUsers } } = await service.auth.admin.listUsers()
+  // se lee con el cliente normal: hace falta la clave de servicio.
+  //
+  // NO SE CONFÍA SOLO EN QUE EL LAYOUT DE (admin) YA VERIFICÓ EL ROL. Hugo
+  // lo probó con ejecución real en la Etapa 5: Next.js arranca el cuerpo de
+  // esta página y el chequeo del layout en paralelo, no uno después del
+  // otro. Hoy el layout gana la carrera porque su camino es más corto, pero
+  // eso es un accidente de qué tan rápidas son las consultas de cada uno,
+  // no una garantía del framework. Un cambio futuro en esta misma página
+  // (agregar una consulta antes de esta línea, paralelizar con Promise.all)
+  // podría alterar esa carrera sin que nada lo avise. Por eso esta pantalla
+  // verifica su propio permiso antes de tocar la clave de servicio, en vez
+  // de heredarlo del padre.
+  const { data: perfilPropio } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single()
+
+  if (!perfilPropio || !['super_admin', 'admin', 'staff'].includes(perfilPropio.role)) {
+    redirect('/login')
+  }
+
+  // Reemplaza la llamada directa a `listUsers()`, que sin paginar solo veía
+  // los primeros 50: quien sí inició sesión, con el id fuera de esos 50, se
+  // habría visto con el badge falso "Nunca ha iniciado sesión". Hallazgo de
+  // Hugo, Etapa 5.
+  const authUsers = await todosLosUsuariosDeAuth()
   const ultimoIngreso = new Map(authUsers.map(u => [u.id, u.last_sign_in_at]))
 
   const profilesWithFamily: Profile[] = (profiles ?? []).map(p => {
