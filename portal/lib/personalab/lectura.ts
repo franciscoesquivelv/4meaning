@@ -21,6 +21,10 @@ export interface Bisagra {
   titulo: string
   descripcion: string | null
   duracion: string | null
+  // Agrupación temática. Nulo cuando la experiencia no se agrupa, y entonces
+  // la lista va plana. El Agradecimiento no tiene tramos; el Presente como
+  // Regalo tiene cuatro.
+  tramo: string | null
 }
 
 export interface Experiencia {
@@ -62,7 +66,7 @@ export async function cargarExperiencia(
   // en vez de aparecer contenido de sala delante de quien compró solo.
   const { data: bis, error: errBis } = await supabase
     .from('hinges')
-    .select('id, tiempo, orden, titulo, descripcion, duracion')
+    .select('id, tiempo, orden, titulo, descripcion, duracion, tramo')
     .eq('experience_id', exp.id)
     .in('modo', ['digital', 'ambos'])
     .order('tiempo')

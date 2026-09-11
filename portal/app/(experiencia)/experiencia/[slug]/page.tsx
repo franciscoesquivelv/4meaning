@@ -53,8 +53,16 @@ export default async function IndiceExperiencia({ params }: { params: { slug: st
       <ol className="mt-16 border-t border-line">
         {bisagras.map((b, i) => {
           const vista = iUltima >= 0 && i < iUltima
+          // El rótulo del tramo aparece solo cuando empieza uno nuevo, así que
+          // una experiencia sin tramos (El Agradecimiento) sale plana y una
+          // con tramos (El Presente como Regalo) sale agrupada, con la misma
+          // lista y sin dos componentes distintos que después divergen.
+          const abreTramo = b.tramo && b.tramo !== bisagras[i - 1]?.tramo
           return (
             <li key={b.id} className="border-b border-line">
+              {abreTramo && (
+                <div className="cejilla pt-7 pb-1">{b.tramo}</div>
+              )}
               <Link
                 href={`/experiencia/${experiencia.slug}/${b.id}`}
                 className="flex items-baseline gap-5 py-5 group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dom rounded"
