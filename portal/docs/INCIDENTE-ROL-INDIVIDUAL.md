@@ -74,5 +74,38 @@ carreras:
    truena. Con este flujo apuntando a convertirse en el camino de respaldo
    manual (Etapa 7 del protocolo), tiene que fallar de forma visible.
 
-Se cierra este documento cuando la Etapa 2 entregue el diseño completo y la
-migración correspondiente quede aprobada y aplicada.
+## Ampliación del 2026-09-11 (auditoría de Hugo y Leo, Etapa 3)
+
+El alcance era más grande de lo que este documento decía. Dos hallazgos que
+cambian la prioridad:
+
+**Leo: el respaldo manual está roto HOY, no solo en el flujo nuevo.**
+`app/(admin)/usuarios/nuevo/page.tsx` con rol "Cliente PersonaLab" pasa por
+la misma escritura defectuosa. Mientras no se corrija, `/usuarios/nuevo` no
+es un respaldo operable: es una ilusión de respaldo, porque responde éxito
+igual. Esto sube la urgencia de este incidente: no es solo un bloqueo del
+diseño de la Etapa 2, es un defecto activo en la única vía manual que existe
+ahora mismo.
+
+**Hugo: ampliar `profiles.role` NO basta. Hay dos listas más que rechazan
+`individual` a nivel de aplicación**, verificadas:
+
+```
+app/(admin)/usuarios/actions.ts:5
+const ROLES_VALIDOS = ['super_admin', 'admin', 'staff', 'participant'] as const
+```
+```
+app/(admin)/usuarios/EditRoleSelect.tsx:19
+const ROLES = ['super_admin', 'admin', 'staff', 'participant'] as const
+```
+
+`ROLES_VALIDOS` guarda `updateUserRole`, el server action detrás del
+selector estándar de edición de rol en `/usuarios`. Aunque la migración de
+`profiles.role` corra, un super admin **sigue sin poder** asignar
+`individual` desde esa pantalla: la única puerta seguiría siendo
+`/usuarios/nuevo`. Las tres correcciones (la restricción de la base y las
+dos listas de aplicación) tienen que aplicarse juntas, o el incidente queda
+resuelto a medias sin que se note.
+
+Se cierra este documento cuando la Etapa 4 entregue las tres correcciones
+juntas, verificadas contra código real.

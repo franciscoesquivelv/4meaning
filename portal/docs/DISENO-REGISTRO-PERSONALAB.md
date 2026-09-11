@@ -101,13 +101,19 @@ el portal no exige dos números distintos para "una contraseña válida".
 En este momento se están creando muchas cuentas a la vez. Espera un minuto e inténtalo otra vez: no tienes que volver a escribir nada.
 ```
 
-### Éxito
-Solo cuando las tres escrituras (cuenta, rol, acceso) están confirmadas,
-cada una con su error revisado:
+### Éxito de esta etapa
+Hoy el paso 8 solo hace una escritura, la cuenta: no hay cobro que intentar
+ni `grant` que confirmar (quita de la sección 1). El texto que exige las
+tres escrituras confirmadas es otro y vive en la sección 3, Estado C, para
+cuando exista el procesador.
 ```
-Listo. Tu cuenta quedó creada y ya tienes acceso a [nombre de la experiencia].
+Listo, tu cuenta quedó creada.
+
+Todavía no tienes acceso a [nombre de la experiencia]: el cobro de esta
+compra no está disponible desde aquí por ahora.
 ```
-Botón: `Empezar`, directo a la experiencia, no a una lista.
+Botón: `Ver mis experiencias`, hacia `/mis-experiencias`. Nunca `Empezar`:
+no hay experiencia a la que entrar todavía.
 
 ### Fallo genérico de sistema
 ```
@@ -120,6 +126,27 @@ No pudimos crear tu cuenta ahora. No es algo que hayas hecho tú: algo falló de
 
 Tres escrituras separadas. Lo que distingue cada estado: **¿ya se movió
 dinero?**
+
+### Antes de los tres, el estado de hoy: no hay cobro que intentar
+Mientras el paso 7 no exista (quita de la sección 1), el botón de envío
+hace una sola escritura. No es un cuarto estado de dinero junto a A, B y C:
+la pregunta "¿ya se movió dinero?" todavía no tiene sentido, porque nadie
+la intentó mover. Su texto es el de la sección 2, Éxito de esta etapa, y no
+se repite aquí para no tener dos copias que puedan divergir.
+
+Botón: `Ver mis experiencias`, hacia `/mis-experiencias`. Ese destino ya
+existe y ya dice la verdad sin que haya que tocarlo: con la cuenta sin
+ningún grant, hoy muestra "Todavía no tienes ninguna experiencia en tu
+cuenta" (`app/(experiencia)/mis-experiencias/page.tsx:31`), verificado
+contra `misExperiencias()` (`lib/personalab/cuenta.ts:21-56`), que lee la
+tabla `grants` y no falla: una cuenta sin grants es una lista vacía, no un
+error.
+
+**Por qué no puede sonar como A ni como B:** las dos describen un cobro que
+se intentó, uno que falló y uno que se completó. Aquí no se intentó nada,
+así que decir "no se pudo completar" o "nos falta conectar tu acceso"
+inventaría un intento que no hubo. La única frase verdadera es que el cobro
+no está disponible todavía, no que falló.
 
 ### Estado A — Cuenta creada, el cobro NO se completó
 ```
@@ -140,9 +167,13 @@ sobre un pago que ya existe. Este texto es la corrección directa de
 aunque el `grant` falle.
 
 ### Estado C — Las tres escrituras confirmadas
-El texto de Éxito de la sección 2, repetido aquí para que se note la
-diferencia de tono: no menciona el cobro, porque para cuando se lee ya es
-un hecho pasado.
+```
+Listo. Tu cuenta quedó creada y ya tienes acceso a [nombre de la experiencia].
+```
+Botón: `Empezar`, directo a la experiencia, no a una lista. No menciona el
+cobro, porque para cuando se lee ya es un hecho pasado. Es el único de los
+cuatro estados donde "Empezar" es honesto: es el único donde el `grant`
+existe.
 
 **Por qué no pueden compartir palabras:** si A y B sonaran igual, alguien
 a quien ya se le cobró podría leer "puedes intentarlo de nuevo" y pagar una
