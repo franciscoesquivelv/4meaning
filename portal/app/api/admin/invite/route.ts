@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json()
-  const { email, full_name, role = 'participant', family_id, slot } = body
+  const { email, full_name, role = 'participant', family_id, slot, experience_id } = body
 
   if (!email) return NextResponse.json({ error: 'Email requerido' }, { status: 400 })
 
@@ -80,6 +80,55 @@ export async function POST(request: NextRequest) {
       .from('families')
       .update({ [col]: resolvedUserId })
       .eq('id', family_id)
+  }
+
+  // 4. Dar acceso a una experiencia de PersonaLab, si se pidió.
+  //
+  // Es el mismo par de pasos (crear cuenta, crear grant) que va a hacer el
+  // webhook de pago cuando exista: crea la cuenta, y le da acceso a lo que
+  // compró. Construirlo aquí primero, a mano, es lo que hace que conectar el
+  // pago después sea llamar esta misma lógica desde otro disparador, no
+  // inventarla de cero.
+  if (resolvedUserId && experience_id) {
+    // NO SE HACE CON `upsert` + `onConflict`. La restricción única de
+    // `grants` es `(profile_id, experience_id, run_id)`, y `run_id` va nulo
+    // aquí porque esto no es una corrida. En Postgres dos NULL no cuentan
+    // como iguales para una restricción única corriente, así que el
+    // `onConflict` nunca dispara sobre estas filas: cada invitación repetida
+    // crearía OTRO grant en vez de reactivar el que ya existe, y esa
+    // duplicación se vería como la misma experiencia dos veces en "Mis
+    // experiencias". Se busca a mano y se decide.
+    const { data: existente } = await service
+      .from('grants')
+      .select('id, revocado_at')
+      .eq('profile_id', resolvedUserId)
+      .eq('experience_id', experience_id)
+      .is('run_id', null)
+      .maybeSingle()
+
+    const { error: grantError } = existente
+      ? await service
+          .from('grants')
+          .update({ revocado_at: null, otorgado_por: user.id, otorgado_at: new Date().toISOString() })
+          .eq('id', existente.id)
+      : await service
+          .from('grants')
+          .insert({
+            profile_id: resolvedUserId,
+            experience_id,
+            titularidad: 'individual',
+            otorgado_por: user.id,
+          })
+
+    if (grantError) {
+      // La cuenta ya se creó; no se deshace por esto. Se informa y el grant
+      // se puede dar a mano después.
+      return NextResponse.json({
+        ok: true,
+        userId: resolvedUserId,
+        avisoGrant: grantError.message,
+      })
+    }
   }
 
   return NextResponse.json({ ok: true, userId: resolvedUserId })

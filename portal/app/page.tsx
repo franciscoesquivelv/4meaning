@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import { inicioDe } from '@/lib/rutas/porRol'
 
 export default async function RootPage() {
   const supabase = createClient()
@@ -13,11 +14,9 @@ export default async function RootPage() {
     .eq('id', user.id)
     .single()
 
-  if (!profile) redirect('/login')
-
-  if (profile.role === 'participant') {
-    redirect('/mi-retiro')
-  } else {
-    redirect('/hoy')
-  }
+  // Antes esto solo distinguía 'participant' de todo lo demás, y todo lo
+  // demás caía en /hoy. Un rol nuevo (como 'individual', el cliente de
+  // PersonaLab) caía ahí también, que es de Trascendencia y exige ser del
+  // equipo: rebotaba. Ver lib/rutas/porRol.ts.
+  redirect(inicioDe(profile?.role))
 }

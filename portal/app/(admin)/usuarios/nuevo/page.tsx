@@ -14,6 +14,11 @@ interface Family {
   user_id2: string | null
 }
 
+interface ExperienciaOpcion {
+  id: string
+  nombre: string
+}
+
 export default function InvitarUsuarioPage() {
   const router = useRouter()
   const supabase = createBrowserClient(
@@ -23,6 +28,8 @@ export default function InvitarUsuarioPage() {
 
   const [families, setFamilies] = useState<Family[]>([])
   const [eventId, setEventId] = useState<string | null>(null)
+  const [experiencias, setExperiencias] = useState<ExperienciaOpcion[]>([])
+  const [experienceId, setExperienceId] = useState('')
 
   // Read URL params (prefill from family editor)
   const [form, setForm] = useState(() => {
@@ -64,6 +71,18 @@ export default function InvitarUsuarioPage() {
       setFamilies(fams ?? [])
     }
     load()
+
+    // Aparte de la carga de arriba: no depende de que haya un evento activo
+    // de Trascendencia, porque un cliente de PersonaLab no tiene nada que
+    // ver con eso.
+    async function cargarExperiencias() {
+      const { data } = await supabase
+        .from('experiences')
+        .select('id, nombre')
+        .order('nombre')
+      setExperiencias(data ?? [])
+    }
+    cargarExperiencias()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -90,6 +109,7 @@ export default function InvitarUsuarioPage() {
         role: form.role,
         family_id: form.family_id || null,
         slot: form.slot,
+        experience_id: form.role === 'individual' ? experienceId || null : null,
       }),
     })
 
@@ -181,11 +201,39 @@ export default function InvitarUsuarioPage() {
               className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 bg-white"
             >
               <option value="participant">Participante</option>
+              <option value="individual">Cliente PersonaLab</option>
               <option value="staff">Staff</option>
               <option value="admin">Admin</option>
             </select>
           </div>
         </div>
+
+        {/* Dar acceso a una experiencia. Es el mismo camino que va a usar
+            despues el webhook de pago: crear la cuenta y darle un grant en
+            el mismo paso, para probar hoy el recorrido completo sin esperar
+            a que exista el cobro. */}
+        {form.role === 'individual' && (
+          <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm space-y-4">
+            <div>
+              <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Dar acceso a una experiencia</h2>
+              <p className="text-xs text-slate-400 mt-0.5">Opcional: puedes vincularlo despues.</p>
+            </div>
+
+            <div>
+              <label className="block text-xs font-medium text-slate-500 mb-1.5 uppercase tracking-wider">Experiencia</label>
+              <select
+                value={experienceId}
+                onChange={e => setExperienceId(e.target.value)}
+                className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-900 bg-white"
+              >
+                <option value="">Sin asignar por ahora</option>
+                {experiencias.map(e => (
+                  <option key={e.id} value={e.id}>{e.nombre}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+        )}
 
         {/* Asignar a familia */}
         {form.role === 'participant' && (

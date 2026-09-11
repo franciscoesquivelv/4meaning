@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import TopNav from './TopNav'
 
 // ── EL LECTOR ───────────────────────────────────────────────────
 //
@@ -25,6 +26,7 @@ export default async function LectorLayout({ children }: { children: React.React
 
   return (
     <div className="marca-personalab min-h-screen bg-paper">
+      <TopNav />
       {children}
     </div>
   )

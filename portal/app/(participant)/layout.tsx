@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import ParticipantNav from '@/components/ParticipantNav'
+import { inicioDe } from '@/lib/rutas/porRol'
 
 export default async function ParticipantLayout({ children }: { children: React.ReactNode }) {
   const supabase = createClient()
@@ -16,8 +17,13 @@ export default async function ParticipantLayout({ children }: { children: React.
 
   if (!profile) redirect('/login')
 
+  // Mandaba a /login a cualquiera que no fuera participante o equipo, CON LA
+  // SESION ABIERTA. Un cliente de PersonaLab ('individual') que aterrizara
+  // aqui por error de navegacion se veia diciendole que no habia iniciado
+  // sesion, que era falso. Cada rol va a su propia casa; /login queda solo
+  // para quien de verdad no tiene perfil.
   if (!['participant', 'super_admin', 'admin', 'staff'].includes(profile.role)) {
-    redirect('/login')
+    redirect(inicioDe(profile.role))
   }
 
   // El equipo YA NO se rebota al dashboard. Ese rebote era lo que hacía

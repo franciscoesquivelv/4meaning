@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import AdminTopNav from '@/components/AdminTopNav'
 import ToastProvider from '@/components/ToastProvider'
 import { SUELO } from '@/lib/estilos/oficina'
+import { inicioDe } from '@/lib/rutas/porRol'
 
 // ── EL CHASIS DEL BACK OFFICE ───────────────────────────────────
 //
@@ -35,8 +36,12 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     .eq('id', user.id)
     .single()
 
+  // Mandaba a /mi-retiro sin mirar el rol. A un cliente de PersonaLab
+  // ('individual') eso lo entregaba a un layout que tampoco lo reconoce, y
+  // de ahi rebotaba a /login con la sesion abierta. Ahora cada rol va a su
+  // propia casa.
   if (!profile || !['super_admin', 'admin', 'staff'].includes(profile.role)) {
-    redirect('/mi-retiro')
+    redirect(inicioDe(profile?.role))
   }
 
   return (
