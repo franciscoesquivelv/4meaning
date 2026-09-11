@@ -145,3 +145,46 @@ export async function ultimaVista(experienciaId: string): Promise<string | null>
     .maybeSingle()
   return data?.hinge_id ?? null
 }
+
+// Todas las consignas de una experiencia, en orden, para el cierre.
+//
+// El cierre necesita saber QUÉ se preguntó para poder poner cada respuesta
+// debajo de su pregunta. Las respuestas no vienen de aquí: viven en el
+// navegador de la persona y no existen en esta base. Esto solo trae las
+// preguntas.
+export async function consignasDe(
+  slug: string
+): Promise<Resultado<{ experiencia: Experiencia; consignas: { id: string; texto: string; bisagra: string }[] }>> {
+  const base = await cargarExperiencia(slug)
+  if (base.estado !== 'ok') return base
+
+  const { experiencia, bisagras } = base.datos
+  if (bisagras.length === 0) {
+    return { estado: 'ok', datos: { experiencia, consignas: [] } }
+  }
+
+  const supabase = createClient()
+  const { data, error } = await supabase
+    .from('blocks')
+    .select('id, hinge_id, orden, contenido')
+    .eq('tipo', 'consigna')
+    .in('hinge_id', bisagras.map(b => b.id))
+    .order('orden')
+
+  if (error) return { estado: 'fallo', motivo: error.message }
+
+  const titulo = new Map(bisagras.map(b => [b.id, b.titulo]))
+  const orden = new Map(bisagras.map((b, i) => [b.id, i]))
+
+  const consignas = (data ?? [])
+    .map(f => ({
+      id: f.id,
+      texto: String((f.contenido as Record<string, unknown>)?.texto ?? ''),
+      bisagra: titulo.get(f.hinge_id) ?? '',
+      _o: (orden.get(f.hinge_id) ?? 0) * 1000 + f.orden,
+    }))
+    .sort((a, b) => a._o - b._o)
+    .map(({ _o, ...c }) => c)
+
+  return { estado: 'ok', datos: { experiencia, consignas } }
+}

@@ -3,6 +3,7 @@ import { cargarBisagra } from '@/lib/personalab/lectura'
 import BloqueLector from '@/app/(admin)/personalab/Bloques'
 import SinAcceso from '../../SinAcceso'
 import Fallo from '../../Fallo'
+import Escritura from '../../Escritura'
 import MarcarVisto from './MarcarVisto'
 
 // Una bisagra a la vez. Es el motor de lectura del producto digital.
@@ -44,10 +45,21 @@ export default async function LeerBisagra({
         <p className="mt-2 text-[13px] text-gray-ui">{bisagra.duracion}</p>
       )}
 
+      {/* LA CONSIGNA ES EL ÚNICO BLOQUE QUE SE COMPORTA DISTINTO AQUÍ.
+          En la sala se dice en voz alta y la persona escribe en papel; el
+          renderizador que ya existe la pinta así, como texto. En el producto
+          digital no hay quien la diga ni papel donde responder, así que lleva
+          dónde escribir. Es el mismo tipo de bloque y el mismo contenido: lo
+          que cambia es la entrega, que es justo la distinción sobre la que se
+          armó el modo digital. */}
       <article className="mt-10">
-        {bloques.map(b => (
-          <BloqueLector key={b.id} b={b} />
-        ))}
+        {bloques.map(b =>
+          b.tipo === 'consigna' ? (
+            <Escritura key={b.id} bloqueId={b.id} consigna={b.texto ?? ''} />
+          ) : (
+            <BloqueLector key={b.id} b={b} />
+          )
+        )}
       </article>
 
       {bloques.length === 0 && (
@@ -79,8 +91,8 @@ export default async function LeerBisagra({
           </Link>
         ) : (
           <Link
-            href={`/experiencia/${experiencia.slug}`}
-            className="inline-flex items-center px-6 py-3 rounded-full bg-dom text-paper text-[15px] font-medium hover:opacity-90 transition-opacity"
+            href={`/experiencia/${experiencia.slug}/cierre`}
+            className="inline-flex items-center px-6 py-3 rounded-full bg-dom text-paper text-[15px] font-medium hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dom focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
           >
             Terminar
           </Link>
