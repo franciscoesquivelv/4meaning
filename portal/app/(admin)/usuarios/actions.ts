@@ -2,7 +2,11 @@
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 
-const ROLES_VALIDOS = ['super_admin', 'admin', 'staff', 'participant'] as const
+// 'individual' agregado 2026-09-11: cliente de PersonaLab, sin foro ni
+// moderador. Sin este valor, un super admin podia elegir "Cliente
+// PersonaLab" en /usuarios/nuevo y la escritura fallaba aqui, en silencio
+// antes de esta correccion. Ver docs/INCIDENTE-ROL-INDIVIDUAL.md.
+const ROLES_VALIDOS = ['super_admin', 'admin', 'staff', 'participant', 'individual'] as const
 
 export async function updateUserRole(
   userId: string,

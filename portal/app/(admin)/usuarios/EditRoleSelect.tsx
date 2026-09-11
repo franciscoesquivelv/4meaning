@@ -7,6 +7,7 @@ const ROLE_LABELS: Record<string, string> = {
   admin: 'Admin',
   staff: 'Staff',
   participant: 'Participante',
+  individual: 'Cliente PersonaLab',
 }
 
 const ROLE_STYLES: Record<string, string> = {
@@ -14,9 +15,13 @@ const ROLE_STYLES: Record<string, string> = {
   admin: 'bg-blue-100 text-blue-700',
   staff: 'bg-green-100 text-green-700',
   participant: 'bg-slate-100 text-slate-600',
+  individual: 'bg-teal-100 text-teal-700',
 }
 
-const ROLES = ['super_admin', 'admin', 'staff', 'participant'] as const
+// 'individual' agregado 2026-09-11, mismo motivo que en actions.ts: sin
+// este valor aqui, el selector ni siquiera ofrecia la opcion, aunque la
+// base ya la aceptara. Ver docs/INCIDENTE-ROL-INDIVIDUAL.md.
+const ROLES = ['super_admin', 'admin', 'staff', 'participant', 'individual'] as const
 
 interface EditRoleSelectProps {
   userId: string

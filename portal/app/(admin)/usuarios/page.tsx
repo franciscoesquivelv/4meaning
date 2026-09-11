@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import EditRoleSelect from './EditRoleSelect'
@@ -11,6 +11,18 @@ interface Profile {
   created_at: string
   family_name: string | null
   event_name: string | null
+  // Nunca ha entrado con esa cuenta. Viene de `auth.users.last_sign_in_at`,
+  // no de una columna propia: no hace falta duplicar el dato.
+  //
+  // NO ES "no registrado". La cuenta existe desde que se creó. Lo único
+  // cierto que se puede decir es que nadie ha iniciado sesión todavía. Con
+  // la confirmación de correo apagada (decisión del 2026-09-11), no hay
+  // ningún estado intermedio real que mostrar aquí: una cuenta autoservicio
+  // queda activa en el instante en que se crea. Esto es lo único honesto
+  // que queda para decirle al equipo "esta cuenta existe y nadie la ha
+  // usado todavía", y aplica a cualquier rol, no solo a los clientes de
+  // PersonaLab: una invitación de staff que nadie aceptó se ve igual.
+  nunca_ha_entrado: boolean
 }
 
 function UserTable({ users }: { users: Profile[] }) {
@@ -34,7 +46,14 @@ function UserTable({ users }: { users: Profile[] }) {
               <td className="px-4 py-3 font-medium text-slate-900">
                 {u.full_name ?? <span className="text-slate-400 font-normal">Sin nombre</span>}
               </td>
-              <td className="px-4 py-3 text-slate-500">{u.email}</td>
+              <td className="px-4 py-3 text-slate-500">
+                {u.email}
+                {u.nunca_ha_entrado && (
+                  <span className="ml-2 inline-flex items-center rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-700 border border-amber-200">
+                    Nunca ha iniciado sesión
+                  </span>
+                )}
+              </td>
               <td className="px-4 py-3">
                 <EditRoleSelect userId={u.id} currentRole={u.role} />
               </td>
@@ -72,6 +91,15 @@ export default async function UsuariosPage() {
     .from('families')
     .select('id, nombre_familia, user_id1, user_id2, events(nombre)')
 
+  // `last_sign_in_at` vive en `auth.users`, no en `profiles`, y esa tabla no
+  // se lee con el cliente normal. Es la misma llamada que ya usa
+  // `/api/admin/invite` para buscar por correo, aquí para leer, no escribir.
+  // Esta pantalla ya exige sesión de equipo (el layout de (admin) la
+  // protege), así que usar la clave de servicio aquí no abre nada nuevo.
+  const service = createServiceClient()
+  const { data: { users: authUsers } } = await service.auth.admin.listUsers()
+  const ultimoIngreso = new Map(authUsers.map(u => [u.id, u.last_sign_in_at]))
+
   const profilesWithFamily: Profile[] = (profiles ?? []).map(p => {
     const fam = families?.find(f => f.user_id1 === p.id || f.user_id2 === p.id)
     const ev = fam?.events as unknown as { nombre: string } | null
@@ -79,12 +107,17 @@ export default async function UsuariosPage() {
       ...p,
       family_name: fam?.nombre_familia ?? null,
       event_name: ev?.nombre ?? null,
+      nunca_ha_entrado: !ultimoIngreso.get(p.id),
     }
   })
 
   const byRole = {
     team: profilesWithFamily.filter(p => ['super_admin', 'admin', 'staff'].includes(p.role)),
     participant: profilesWithFamily.filter(p => p.role === 'participant'),
+    // Grupo nuevo, 2026-09-11. Antes 'individual' no caía en ningún grupo y
+    // esas filas no aparecían en ninguna parte de esta pantalla, aunque la
+    // cuenta existiera. Ver docs/INCIDENTE-ROL-INDIVIDUAL.md.
+    individual: profilesWithFamily.filter(p => p.role === 'individual'),
   }
 
   return (
@@ -109,6 +142,16 @@ export default async function UsuariosPage() {
             Equipo ({byRole.team.length})
           </h2>
           <UserTable users={byRole.team} />
+        </section>
+      )}
+
+      {/* Clientes de PersonaLab */}
+      {byRole.individual.length > 0 && (
+        <section className="mb-8">
+          <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">
+            Clientes PersonaLab ({byRole.individual.length})
+          </h2>
+          <UserTable users={byRole.individual} />
         </section>
       )}
 

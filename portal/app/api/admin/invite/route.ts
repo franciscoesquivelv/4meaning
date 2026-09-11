@@ -37,12 +37,25 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  // 2. Get or create profile with correct role
+  // 2. Escribir el perfil con el rol correcto, revisando el error.
+  //
+  // ANTES: dos escrituras seguidas al mismo perfil, un upsert y despues un
+  // update con los mismos datos, y ninguna de las dos miraba `error`. El
+  // update era ademas puro trabajo repetido: cuando `userId` viene de una
+  // invitacion nueva, el upsert ya dejo el rol correcto, y repetirlo con la
+  // misma informacion no cambia nada salvo gastar una consulta sin revisar.
+  //
+  // Y las dos sin revisar `error` era el incidente documentado en
+  // docs/INCIDENTE-ROL-INDIVIDUAL.md: si `profiles.role` rechaza el valor
+  // (por ejemplo, antes de que existiera la migracion que acepta
+  // 'individual'), la ruta seguia respondiendo `{ok:true}` con el perfil sin
+  // el rol pedido. Ahora, si cualquiera de las dos escrituras falla, la ruta
+  // lo dice, no lo esconde.
   const userId = inviteData?.user?.id
+  let resolvedUserId = userId
 
   if (userId) {
-    // Upsert profile
-    await service
+    const { error: perfilError } = await service
       .from('profiles')
       .upsert({
         id: userId,
@@ -51,25 +64,31 @@ export async function POST(request: NextRequest) {
         role,
       }, { onConflict: 'id' })
 
-    // Update role if user already existed
-    await service
-      .from('profiles')
-      .update({ full_name: full_name ?? undefined, role })
-      .eq('id', userId)
-  }
-
-  // If userId not returned (user already existed), look up by email
-  let resolvedUserId = userId
-  if (!resolvedUserId) {
+    if (perfilError) {
+      return NextResponse.json(
+        { error: `La cuenta se creó, pero no se pudo escribir su perfil: ${perfilError.message}` },
+        { status: 500 }
+      )
+    }
+  } else {
+    // El usuario ya existía en auth.users (inviteError decía "already
+    // registered"). Se busca por correo y se actualiza el rol ahí.
     const { data: { users } } = await service.auth.admin.listUsers()
     const existingUser = users.find(u => u.email === email)
     resolvedUserId = existingUser?.id
 
     if (resolvedUserId) {
-      await service
+      const { error: perfilError } = await service
         .from('profiles')
         .update({ role, full_name: full_name ?? undefined })
         .eq('id', resolvedUserId)
+
+      if (perfilError) {
+        return NextResponse.json(
+          { error: `No se pudo actualizar el perfil existente: ${perfilError.message}` },
+          { status: 500 }
+        )
+      }
     }
   }
 

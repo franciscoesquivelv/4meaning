@@ -1,14 +1,36 @@
 'use client'
 
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
 import Link from 'next/link'
 import CompletarSesion from '@/components/CompletarSesion'
 import { LIENZO, TARJETA, ETIQUETA, CAMPO, BOTON, ERROR, ENLACE } from '@/lib/estilos/acceso'
 
-export default function LoginPage() {
+// A DÓNDE VUELVE DESPUÉS DE ENTRAR. Antes esta pantalla mandaba siempre a
+// `/`, sin mirar de dónde venía quien inició sesión. Eso rompía cualquier
+// intento de "inicia sesión y seguimos con tu compra": el enlace prometía
+// continuar y la persona aterrizaba en su casa de siempre, sin rastro de lo
+// que estaba haciendo. Es el bloqueo que dejó escrito
+// docs/DISENO-REGISTRO-PERSONALAB.md en su sección 2.
+//
+// SOLO RUTAS INTERNAS, nunca una URL completa. `next=https://otro-sitio.com`
+// convertiría este formulario en un redirector abierto: alguien manda un
+// enlace de phishing con la forma `app.4meaning.life/login?next=...` y, tras
+// un login real y legítimo, la víctima aterriza en un sitio ajeno confiando
+// en que salió de aquí. Se acepta solo lo que empieza en una sola `/`: ni
+// `//otro-sitio.com` (URL relativa de protocolo, mismo ataque) ni nada con
+// un esquema (`javascript:`, `https:`) escrito dentro del valor.
+function destinoSeguro(next: string | null): string {
+  if (!next) return '/'
+  if (!next.startsWith('/') || next.startsWith('//') || next.includes('://')) return '/'
+  return next
+}
+
+function LoginForm() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const params = useSearchParams()
 
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -32,7 +54,7 @@ export default function LoginPage() {
       return
     }
 
-    window.location.href = '/'
+    window.location.href = destinoSeguro(params.get('next'))
   }
 
   // El umbral es la portada, y una portada de Trascendencia es vino profundo:
@@ -118,5 +140,17 @@ export default function LoginPage() {
         </Link>
       </div>
     </div>
+  )
+}
+
+// `useSearchParams` exige un limite de Suspense alrededor en el App Router,
+// o el build falla. El lienzo vacio de reserva no llega a mostrarse nunca en
+// uso real, porque esta pantalla no trae datos que tarden: es la primera
+// pintura antes de que React lea el `next` de la URL, milisegundos.
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className={LIENZO} />}>
+      <LoginForm />
+    </Suspense>
   )
 }
