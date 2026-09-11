@@ -257,7 +257,6 @@ on conflict (id) do update set contenido = excluded.contenido, orden = excluded.
 --    group by h.titulo, h.orden order by h.orden;
 --
 -- Debe devolver 12 filas y 58 bloques en total.
-generado: 12 bisagras, 58 bloques
 
 -- ── Cómo probar el camino del COMPRADOR ───────────────────────────────
 --
