@@ -2,3 +2,4 @@
 
 # Se reescribe en cada build
 *.tsbuildinfo
+.env*

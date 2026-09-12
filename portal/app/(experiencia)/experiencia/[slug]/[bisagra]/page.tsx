@@ -5,6 +5,7 @@ import SinAcceso from '../../SinAcceso'
 import Fallo from '../../Fallo'
 import Escritura from '../../Escritura'
 import MarcarVisto from './MarcarVisto'
+import PisoDeTiempo from '../../PisoDeTiempo'
 
 // Una bisagra a la vez. Es el motor de lectura del producto digital.
 //
@@ -23,7 +24,14 @@ export default async function LeerBisagra({
   if (r.estado === 'fallo') return <Fallo motivo={r.motivo} />
   if (r.estado === 'sin-acceso') return <SinAcceso />
 
-  const { experiencia, bisagra, bloques, anterior, siguiente } = r.datos
+  const { experiencia, bisagra, bloques, anterior, siguiente, primeraVez } = r.datos
+
+  // EL PISO DE TIEMPO DE ESTA BISAGRA. Manda la pausa mayor, nunca la suma:
+  // es un piso mínimo de permanencia, no una cuenta acumulada (decisión de
+  // Sora). Corre solo la primera vez que se abre; al volver, cero.
+  const piso = primeraVez
+    ? bloques.reduce((may, b) => (b.tipo === 'pausa' ? Math.max(may, b.segundos ?? 0) : may), 0)
+    : 0
 
   return (
     <main className="max-w-[620px] mx-auto px-6 py-12 md:py-16">
@@ -82,31 +90,19 @@ export default async function LeerBisagra({
           <span />
         )}
 
-        {siguiente ? (
-          <span className="flex flex-col items-end gap-2">
-            {/* Texto de transición, decidido por Sora en el Consejo del
-                2026-09-11. Afirma el cierre sin condicionar nada ("ya
-                quedó hecho" es un hecho, no una promesa), y confirma que
-                hay continuación sin decir una palabra de qué es: el
-                misterio esconde qué viene, jamás que hay algo que sigue. */}
-            <span className="text-[12px] text-gray-ui">
-              Esto ya quedó hecho. Lo que sigue, aparece cuando llegues.
-            </span>
-            <Link
-              href={`/experiencia/${experiencia.slug}/${siguiente.id}`}
-              className="inline-flex items-center px-6 py-3 rounded-full bg-dom text-paper text-[15px] font-medium hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dom focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
-            >
-              Seguir
-            </Link>
-          </span>
-        ) : (
-          <Link
-            href={`/experiencia/${experiencia.slug}/cierre`}
-            className="inline-flex items-center px-6 py-3 rounded-full bg-dom text-paper text-[15px] font-medium hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dom focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
-          >
-            Terminar
-          </Link>
-        )}
+        {/* El paso adelante y su piso de tiempo. El texto de transición de
+            Sora vive dentro del componente, porque ahora aparece CON el
+            botón y no antes: con el piso cumplido, "lo que sigue aparece
+            cuando llegues" se vuelve literalmente cierto. */}
+        <PisoDeTiempo
+          segundos={piso}
+          href={
+            siguiente
+              ? `/experiencia/${experiencia.slug}/${siguiente.id}`
+              : `/experiencia/${experiencia.slug}/cierre`
+          }
+          etiqueta={siguiente ? 'Seguir' : 'Terminar'}
+        />
       </nav>
     </main>
   )

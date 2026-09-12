@@ -104,7 +104,7 @@ export function posicionAlcanzable(iUltima: number): number {
 export async function cargarBisagra(
   slug: string,
   bisagraId: string
-): Promise<Resultado<{ experiencia: Experiencia; bisagra: Bisagra; bloques: Bloque[]; anterior: Bisagra | null; siguiente: Bisagra | null }>> {
+): Promise<Resultado<{ experiencia: Experiencia; bisagra: Bisagra; bloques: Bloque[]; anterior: Bisagra | null; siguiente: Bisagra | null; primeraVez: boolean }>> {
   const base = await cargarExperiencia(slug)
   if (base.estado !== 'ok') return base
 
@@ -167,6 +167,7 @@ export async function cargarBisagra(
       peso: c.peso as string | undefined,
       descargable: c.descargable as boolean | undefined,
       duracion: c.duracion as string | undefined,
+      segundos: typeof c.segundos === 'number' ? c.segundos : undefined,
     } as Bloque
   })
 
@@ -178,6 +179,16 @@ export async function cargarBisagra(
       bloques,
       anterior: i > 0 ? bisagras[i - 1] : null,
       siguiente: i < bisagras.length - 1 ? bisagras[i + 1] : null,
+      // Si es la primera vez que esta persona abre ESTA bisagra. El piso de
+      // tiempo de la pausa corre solo entonces; quien vuelve no se topa con
+      // él otra vez (decisión de Sora: "se vuelve cerco el día que vuelva a
+      // correr cuando alguien regresa").
+      //
+      // No hace falta ningún campo nuevo: `MarcarVisto` mueve el marcador al
+      // montar la pantalla, o sea DESPUÉS de este render, así que aquí el
+      // marcador todavía trae la bisagra anterior. Si la pedida está más
+      // adelante que el marcador, es la primera vez.
+      primeraVez: i > iUltima,
     },
   }
 }

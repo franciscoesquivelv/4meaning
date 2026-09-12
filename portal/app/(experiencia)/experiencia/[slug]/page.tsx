@@ -22,7 +22,13 @@ export default async function IndiceExperiencia({ params }: { params: { slug: st
   const { experiencia, bisagras } = r.datos
   const ultima = await ultimaVista(experiencia.id)
   const iUltima = bisagras.findIndex(b => b.id === ultima)
-  const siguiente = iUltima >= 0 ? bisagras[iUltima] : bisagras[0]
+  // El botón "Continuar" y la última fila que el índice nombra son, por
+  // definición, la misma bisagra. Esto lo reescribía a mano en el mismo
+  // archivo que ya importa la función sesenta líneas más abajo (hallazgo de
+  // Leo, re-auditoría del 2026-09-12): dos copias de la misma regla que
+  // hasta hoy coincidían por casualidad, que es exactamente como nació el
+  // bug que esta re-auditoría vino a revisar.
+  const siguiente = bisagras[posicionActual(iUltima)]
   const vistaBienvenida = await bienvenidaVista(experiencia.id)
 
   return (

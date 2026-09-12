@@ -50,6 +50,13 @@ export interface Bloque {
   peso?: string           // 'archivo'
   descargable?: boolean   // 'archivo'
   duracion?: string       // 'video'
+  // 'pausa'. Segundos de piso: el tiempo minimo que esa bisagra dura antes
+  // de ofrecer el paso siguiente. Se escribe a mano, nunca lo infiere el
+  // sistema (decision de Leo). Sin este campo la pausa se comporta como
+  // siempre, sin ninguna demora. Hallazgo de Elena: este bloque existe
+  // desde el principio para encarnar un respiro, y hasta hoy eran tres
+  // puntos decorativos sin nada de tiempo detras.
+  segundos?: number       // 'pausa'
 }
 
 export const CATALOGO: Record<TipoBloque, { nombre: string; ayuda: string }> = {
@@ -232,6 +239,7 @@ export const BLOQUES: Bloque[] = [
   },
   {
     id: 'g6', bisagraId: 'ag2', orden: 2, tipo: 'pausa', audiencia: 'todos',
+    segundos: 20,
   },
   {
     id: 'g7', bisagraId: 'ag2', orden: 3, tipo: 'texto', audiencia: 'todos',
@@ -253,6 +261,7 @@ export const BLOQUES: Bloque[] = [
   },
   {
     id: 'g11', bisagraId: 'ag3', orden: 3, tipo: 'pausa', audiencia: 'todos',
+    segundos: 20,
   },
   {
     id: 'g12', bisagraId: 'ag3', orden: 4, tipo: 'nota', audiencia: 'moderador',
@@ -283,6 +292,7 @@ export const BLOQUES: Bloque[] = [
   // escribir, sin que el recuerdo asiente.
   {
     id: 'g62', bisagraId: 'ag4', orden: 4, tipo: 'pausa', audiencia: 'todos',
+    segundos: 20,
   },
   {
     id: 'g17', bisagraId: 'ag4', orden: 5, tipo: 'gesto', audiencia: 'todos',
@@ -308,6 +318,7 @@ export const BLOQUES: Bloque[] = [
   },
   {
     id: 'g22', bisagraId: 'ag5', orden: 4, tipo: 'pausa', audiencia: 'todos',
+    segundos: 20,
   },
   {
     id: 'g23', bisagraId: 'ag5', orden: 5, tipo: 'nota', audiencia: 'moderador',
@@ -368,6 +379,7 @@ export const BLOQUES: Bloque[] = [
   },
   {
     id: 'g36', bisagraId: 'ag7', orden: 4, tipo: 'pausa', audiencia: 'todos',
+    segundos: 20,
   },
   {
     id: 'g37', bisagraId: 'ag7', orden: 5, tipo: 'texto', audiencia: 'todos',

@@ -87,15 +87,18 @@ export default function BloqueLector({ b }: { b: Bloque }) {
       )
 
     case 'pausa':
-      // Antes de hoy este glifo estaba a mano en #D8AC96: el mismo hex,
-      // exacto, que ya vive como token en marca.css (`--terra-lo`). Hallazgo
-      // de Julian, Consejo del 2026-09-11: la disciplina de cero hex de esta
-      // casa nunca llegó a este bloque.
+      // Dos correcciones sobre el mismo glifo, en dos días. El 11 se cambió
+      // el hex a mano (#D8AC96) por su token, que era `terra-lo`. El 12,
+      // midiendo, Julian se corrigió a sí mismo: `terra-lo` es la terracota
+      // calibrada para FONDO OSCURO, y sobre papel da 1.78 a 1, o sea que
+      // el respiro era casi invisible. Sobre papel la calibrada es
+      // `terra-ui`, 4.93. El token correcto no es el que preserva el color
+      // viejo, es el que preserva la intención.
       return (
         <div className={`${mt} flex items-center justify-center gap-2.5`} aria-hidden="true">
-          <span className="w-1 h-1 rounded-full bg-terra-lo" />
-          <span className="w-1 h-1 rounded-full bg-terra-lo" />
-          <span className="w-1 h-1 rounded-full bg-terra-lo" />
+          <span className="w-1 h-1 rounded-full bg-terra-ui" />
+          <span className="w-1 h-1 rounded-full bg-terra-ui" />
+          <span className="w-1 h-1 rounded-full bg-terra-ui" />
         </div>
       )
 

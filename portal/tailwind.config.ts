@@ -100,6 +100,22 @@ const config: Config = {
       transitionTimingFunction: {
         marca: "cubic-bezier(.16, 1, .3, 1)",
       },
+      // El respiro del glifo mientras corre el piso de tiempo de una bisagra.
+      // Cifras de Julian, medidas, no elegidas de oido: la opacidad baja a
+      // .8 y no mas, porque `terra-ui` al 80% da 3.41 contra el papel y al
+      // 70% cae a 2.83, por debajo del 3 a 1 que exige un elemento no
+      // textual. 4s es el ciclo de una respiracion en reposo. Va aqui y no
+      // en la pantalla que lo estrena, para que el segundo que lo necesite
+      // lo herede en vez de reinventarlo.
+      keyframes: {
+        respiro: {
+          "0%, 100%": { opacity: ".8" },
+          "50%": { opacity: "1" },
+        },
+      },
+      animation: {
+        respiro: "respiro 4s ease-in-out infinite",
+      },
     },
   },
   plugins: [],
