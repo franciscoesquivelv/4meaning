@@ -176,6 +176,17 @@ export async function cargarBisagra(
 // Dónde se quedó. NO es progreso: no hay porcentaje, no hay racha, y la tabla
 // lleva escrito que agregarlos está prohibido. Solo sirve para recibir a la
 // persona donde la dejó en vez de devolverla al principio.
+// LA POSICIÓN SE RECALCULA EN VIVO CONTRA EL CATÁLOGO ACTUAL, NUNCA SE
+// GUARDA COMO UN CHECKPOINT FIJO. Auditoría de Hugo, Etapa 2: si el equipo
+// borra la bisagra donde alguien se quedó (`bookmarks.hinge_id` tiene `on
+// delete cascade`), esa persona vuelve a ver el índice desde cero, sin
+// aviso. Si el equipo reordena bisagras de una experiencia en curso, el
+// límite de "hasta dónde puede ver" puede moverse y esconder algo que ya
+// había abierto. Decisión de Francisco, mismo día: no se protege en
+// código. La regla es operativa, no técnica: una experiencia se termina
+// ANTES de lanzarla, y si algún día hace falta editarla mientras alguien la
+// está llevando, se PARA esa edición hasta que nadie esté adentro. No se
+// construye una barrera para un caso que el proceso ya evita.
 export async function ultimaVista(experienciaId: string): Promise<string | null> {
   const supabase = createClient()
   const { data } = await supabase
