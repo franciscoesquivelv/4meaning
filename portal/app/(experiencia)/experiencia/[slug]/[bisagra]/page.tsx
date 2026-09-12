@@ -96,6 +96,7 @@ export default async function LeerBisagra({
             cuando llegues" se vuelve literalmente cierto. */}
         <PisoDeTiempo
           segundos={piso}
+          bisagraId={bisagra.id}
           href={
             siguiente
               ? `/experiencia/${experiencia.slug}/${siguiente.id}`

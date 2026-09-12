@@ -39,11 +39,17 @@ export default function MarcarVisto({
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
     )
 
-    let cancelado = false
-
+    // YA NO SE CANCELA AL DESMONTAR, Y ES A PROPÓSITO. Hallazgo de Leo del
+    // 2026-09-12: este componente no pinta nada, así que no hay estado que
+    // proteger de una actualización tardía, que es para lo único que sirve
+    // cancelar. Lo que sí hacía la bandera era tirar la escritura cuando
+    // alguien pasaba rápido a la bisagra siguiente, porque `getUser()` es
+    // una llamada de red y a veces contesta después de que la pantalla se
+    // fue. Perder el marcador cuesta caro hoy (ver arriba), y la escritura
+    // no le molesta a nadie aunque la persona ya no esté mirando.
     ;(async () => {
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user || cancelado) return
+      if (!user) return
 
       // `profile_id` va explícito porque la política de inserción exige que
       // coincida con `auth.uid()`. Es la misma persona por los dos lados: la
@@ -58,8 +64,6 @@ export default function MarcarVisto({
         { onConflict: 'profile_id,experience_id' }
       )
     })()
-
-    return () => { cancelado = true }
   }, [experienciaId, bisagraId])
 
   return null

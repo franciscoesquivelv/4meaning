@@ -38,23 +38,60 @@ const CEILING = 30 // Techo de Sora. El silencio más largo que la formación
 // de la casa enseña a sostener. Un contenido que pida más está mal escrito,
 // no mal configurado.
 
+const CLAVE = 'pl.piso.'
+
 export default function PisoDeTiempo({
   segundos,
+  bisagraId,
   href,
   etiqueta,
 }: {
   segundos: number
+  bisagraId: string
   href: string
   etiqueta: string
 }) {
   const piso = Math.min(CEILING, Math.max(0, Math.round(segundos)))
   const [esperando, setEsperando] = useState(piso > 0)
 
+  // DOS MEMORIAS PARA LA MISMA REGLA, Y NO ES REDUNDANCIA.
+  //
+  // El servidor decide `primeraVez` con el marcador, y eso cubre volver otro
+  // día. No cubre volver ahora: el botón de atrás del navegador (y el gesto
+  // de atrás del teléfono, que es el camino real en móvil) restaura la
+  // respuesta que el navegador ya tenía guardada, con `primeraVez` congelado
+  // en true, y la espera volvía a correr sobre algo ya leído. Encontrado por
+  // Leo leyendo el código de Next, y reproducido en el deploy real antes de
+  // arreglarlo: `staleTimes` no alcanza, porque solo gobierna la navegación
+  // por enlace, no la restauración del historial.
+  //
+  // Por eso esta segunda memoria, en `sessionStorage`, el mismo mecanismo
+  // que `Escritura` ya usa en esta misma experiencia. No es una decisión
+  // nueva: es cumplir la que Sora ya tomó ("se vuelve cerco el día que
+  // vuelva a correr cuando alguien regresa").
+  //
+  // Se corrige DESPUÉS de montar y no en el primer render a propósito: el
+  // servidor no puede leer `sessionStorage`, así que arrancar distinto de él
+  // rompería la hidratación.
   useEffect(() => {
-    if (!esperando) return
+    if (piso <= 0) return
+    const clave = CLAVE + bisagraId
+
+    try {
+      if (sessionStorage.getItem(clave) === '1') {
+        setEsperando(false)
+        return
+      }
+      sessionStorage.setItem(clave, '1')
+    } catch {
+      // Navegador con el almacenamiento bloqueado. El piso corre igual: el
+      // servidor sigue siendo la memoria principal, y esto solo era el
+      // refuerzo para el historial.
+    }
+
     const t = setTimeout(() => setEsperando(false), piso * 1000)
     return () => clearTimeout(t)
-  }, [esperando, piso])
+  }, [piso, bisagraId])
 
   // Mientras corre el piso NO hay botón, ni siquiera apagado. Es la quita de
   // Sora sobre la forma que se había propuesto: un control visible que no
