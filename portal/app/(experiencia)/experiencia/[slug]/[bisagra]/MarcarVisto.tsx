@@ -14,9 +14,17 @@ import { createBrowserClient } from '@supabase/ssr'
 // racha, sin nada que se pueda pintar como un termómetro: el léxico del
 // Consejo #002 prohíbe esos campos por nombre y la tabla lo lleva escrito.
 //
-// Si falla, no pasa nada y no se le dice a nadie. Perder el marcador cuesta
-// un toque de más en el índice; interrumpir a alguien en medio de esto con un
-// aviso de error cuesta mucho más.
+// Si falla, no pasa nada y no se le dice a nadie: interrumpir a alguien en
+// medio de esto con un aviso de error cuesta más que el fallo.
+//
+// PERO EL COSTO YA NO ES EL QUE DECÍA AQUÍ. Hasta la Etapa 2, perder este
+// marcador costaba "un toque de más en el índice". Dejó de ser cierto dos
+// veces: el índice ahora decide con él qué se lista (así que perderlo
+// recorta el recorrido a la vista), y el piso de tiempo de la pausa decide
+// con él si ya se estuvo aquí (así que perderlo hace que la espera vuelva a
+// correr en algo ya leído). Sigue sin avisarse, y sigue siendo la decisión
+// correcta, pero quien lea esto tiene que saber qué se pierde de verdad.
+// Corregido el 2026-09-12, hallazgo de Leo.
 
 export default function MarcarVisto({
   experienciaId,

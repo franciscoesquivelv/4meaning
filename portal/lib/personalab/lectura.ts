@@ -167,7 +167,11 @@ export async function cargarBisagra(
       peso: c.peso as string | undefined,
       descargable: c.descargable as boolean | undefined,
       duracion: c.duracion as string | undefined,
-      segundos: typeof c.segundos === 'number' ? c.segundos : undefined,
+      // Se acepta "20" además de 20. Hallazgo de Leo: quien escriba este
+      // campo a mano en el editor de tablas de Supabase lo va a teclear como
+      // texto sin darse cuenta, y exigir el tipo exacto daba cero espera,
+      // cero error y cero señal. Lo que no es un número se descarta igual.
+      segundos: Number.isFinite(Number(c.segundos)) ? Number(c.segundos) : undefined,
     } as Bloque
   })
 
