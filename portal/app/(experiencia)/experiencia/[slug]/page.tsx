@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { cargarExperiencia, ultimaVista, bienvenidaVista, posicionAlcanzable } from '@/lib/personalab/lectura'
+import { cargarExperiencia, ultimaVista, bienvenidaVista, posicionActual } from '@/lib/personalab/lectura'
 import SinAcceso from '../SinAcceso'
 import Fallo from '../Fallo'
 import UmbralBienvenida from '../UmbralBienvenida'
@@ -82,9 +82,9 @@ export default async function IndiceExperiencia({ params }: { params: { slug: st
           disfrazado de lista, el mismo léxico que este proyecto ya prohíbe
           por nombre. */}
       <ol className="mt-10 border-t border-line">
-        {bisagras.slice(0, posicionAlcanzable(iUltima) + 1).map((b, i) => {
+        {bisagras.slice(0, posicionActual(iUltima) + 1).map((b, i) => {
           const vista = iUltima >= 0 && i < iUltima
-          const esSiguiente = i === posicionAlcanzable(iUltima)
+          const esSiguiente = i === posicionActual(iUltima)
           // El rótulo del tramo aparece solo cuando empieza uno nuevo, así que
           // una experiencia sin tramos (El Agradecimiento) sale plana y una
           // con tramos (El Presente como Regalo) sale agrupada, con la misma

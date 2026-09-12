@@ -81,15 +81,24 @@ export async function cargarExperiencia(
   }
 }
 
-// Hasta dónde se puede ver, dado dónde se quedó. Un solo lugar, con nombre:
-// `cargarBisagra` la usa para el redirect real, `[slug]/page.tsx` la usa
-// para saber qué recortar de la lista. Antes de que existiera esta función
-// exportada, el índice reescribía la misma cuenta a mano con su propia
-// fórmula: daba el mismo número por coincidencia de cálculo, no porque
-// citara la misma regla. Hallazgo de Leo, Consejo del 2026-09-11 (el mismo
-// patrón de "dos dueños" que ya rompió el campo `cn` del cotizador).
+// DOS POSICIONES QUE SE PARECEN Y NO SON LA MISMA. Separarlas con nombre es
+// el arreglo de un bug real, del 2026-09-12: por "quitar duplicación" se
+// usó una sola función para las dos, y el índice terminó enseñando el
+// título de una bisagra que la persona nunca había abierto. Justo lo que la
+// etapa existía para esconder.
+//
+// DÓNDE ESTÁ PARADA: la última bisagra que abrió, que es a donde la manda
+// el botón "Continuar". Es lo último que el índice puede nombrar.
+export function posicionActual(iUltima: number): number {
+  return iUltima >= 0 ? iUltima : 0
+}
+
+// HASTA DÓNDE PUEDE NAVEGAR: un paso más adelante, porque pulsar "Seguir"
+// dentro de la bisagra en la que está la lleva ahí de todas formas. Sirve
+// para el redirect de `cargarBisagra`, NUNCA para decidir qué se lista: el
+// índice no nombra lo que todavía no se abrió.
 export function posicionAlcanzable(iUltima: number): number {
-  return iUltima >= 0 ? iUltima + 1 : 0
+  return posicionActual(iUltima) + (iUltima >= 0 ? 1 : 0)
 }
 
 export async function cargarBisagra(
