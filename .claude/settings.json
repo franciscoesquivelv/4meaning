@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "timeout": 5,
+            "statusMessage": "Revisando la regla de verificación",
+            "command": "cmd=$(jq -r '.tool_input.command // \"\"'); case \"$cmd\" in *VERIFICADO=1*) exit 0 ;; *\"git push\"*) printf '%s\\n' \"BLOQUEADO: aquí no se empuja sin verificar. Acordado con Francisco el 2026-09-12, después de tres reportes seguidos de 'ya quedó' que no eran ciertos.\" \"\" \"Las tres condiciones, antes de empujar:\" \"  1. Lo abriste en la URL desplegada, como participante, con una cuenta limpia. Compilar no es funcionar.\" \"  2. Lo que se tocó DESPUÉS de la última auditoría se volvió a auditar. Ese fue el hueco que dejó pasar el bug del índice.\" \"  3. Tienes evidencia de comportamiento (captura, salida real), no una deducción.\" \"\" \"Si las tres son ciertas, repite el mismo comando anteponiendo VERIFICADO=1. Saltarse esto exige escribirlo, nunca callarlo.\" >&2; exit 2 ;; esac; exit 0"
+          }
+        ]
+      }
+    ]
+  }
+}
