@@ -21,7 +21,7 @@ role text not null default 'participant'
 ```
 
 `individual` no está en esa lista. Se amplió la restricción equivocada:
-`grants.titularidad` (columna distinta, en `20260911_personalab_modo_digital.sql`),
+`grants.titularidad` (columna distinta, en `20260911_0900_personalab_modo_digital.sql`),
 y se dio por hecho que con eso bastaba. No bastaba.
 
 ## Qué pasa exactamente cuando se dispara

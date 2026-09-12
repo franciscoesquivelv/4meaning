@@ -1,7 +1,8 @@
 import Link from 'next/link'
-import { cargarExperiencia, ultimaVista } from '@/lib/personalab/lectura'
+import { cargarExperiencia, ultimaVista, bienvenidaVista } from '@/lib/personalab/lectura'
 import SinAcceso from '../SinAcceso'
 import Fallo from '../Fallo'
+import UmbralBienvenida from '../UmbralBienvenida'
 
 // El índice de la experiencia. Lo primero que ve quien acaba de entrar, y lo
 // que ve cada vez que vuelve.
@@ -22,8 +23,15 @@ export default async function IndiceExperiencia({ params }: { params: { slug: st
   const ultima = await ultimaVista(experiencia.id)
   const iUltima = bisagras.findIndex(b => b.id === ultima)
   const siguiente = iUltima >= 0 ? bisagras[iUltima] : bisagras[0]
+  const vistaBienvenida = await bienvenidaVista(experiencia.id)
 
   return (
+    <UmbralBienvenida
+      experienciaId={experiencia.id}
+      nombre={experiencia.nombre}
+      narrativa={experiencia.narrativa}
+      vistaInicial={vistaBienvenida}
+    >
     <main className="max-w-[620px] mx-auto px-6 py-16 md:py-24">
 
       <div className="cejilla">PersonaLab</div>
@@ -47,12 +55,16 @@ export default async function IndiceExperiencia({ params }: { params: { slug: st
         </Link>
       )}
 
-      {/* La lista completa, a la vista. No se esconde lo que viene: quien
-          compró esto ya sabe que lo compró entero, y ocultarle el recorrido
-          sería tratarlo como a un alumno al que se le dosifica. */}
+      {/* Los títulos quedan a la vista siempre: la estructura del recorrido
+          no se esconde. Lo que se retiene es la reseña de cada bisagra
+          todavía no alcanzada, para que esto no se lea como una
+          contraportada que cuenta el final. Decisión de Elena, Consejo del
+          2026-09-11; el giro grande del índice (qué se lista y cuándo) sigue
+          siendo de Sora y llega en la etapa siguiente. */}
       <ol className="mt-16 border-t border-line">
         {bisagras.map((b, i) => {
           const vista = iUltima >= 0 && i < iUltima
+          const esSiguiente = i === (iUltima >= 0 ? iUltima : 0)
           // El rótulo del tramo aparece solo cuando empieza uno nuevo, así que
           // una experiencia sin tramos (El Agradecimiento) sale plana y una
           // con tramos (El Presente como Regalo) sale agrupada, con la misma
@@ -74,7 +86,7 @@ export default async function IndiceExperiencia({ params }: { params: { slug: st
                   <span className="block text-[17px] font-light text-ink group-hover:text-dom transition-colors">
                     {b.titulo}
                   </span>
-                  {b.descripcion && (
+                  {b.descripcion && (vista || esSiguiente) && (
                     <span className="block text-[14px] text-gray-ui mt-1 leading-snug">
                       {b.descripcion}
                     </span>
@@ -97,5 +109,6 @@ export default async function IndiceExperiencia({ params }: { params: { slug: st
         </p>
       )}
     </main>
+    </UmbralBienvenida>
   )
 }

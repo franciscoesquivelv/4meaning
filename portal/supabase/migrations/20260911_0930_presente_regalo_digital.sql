@@ -1,7 +1,7 @@
 -- ============================================================
 -- EL PRESENTE COMO REGALO · estructura del modo digital
 --
--- Corre DESPUÉS de 20260911_personalab_modo_digital.sql.
+-- Corre DESPUÉS de 20260911_0900_personalab_modo_digital.sql.
 --
 -- Arma el esqueleto vacío para que se pueda ver en su sitio y llenarlo.
 -- No trae contenido: los cuatro tramos están escritos como títulos y

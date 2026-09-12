@@ -146,6 +146,24 @@ export async function ultimaVista(experienciaId: string): Promise<string | null>
   return data?.hinge_id ?? null
 }
 
+// Si esta persona ya vio el umbral de bienvenida de esta experiencia.
+//
+// Se ignora el error de la consulta a propósito, y no es un atajo: lo único
+// que depende de esto es si se repite una pantalla de bienvenida. Fallar
+// hacia "no la ha visto" cuando algo sale mal cuesta, como mucho, que la
+// vuelva a ver una vez; fallar hacia "sí la vio" costaría escondérsela para
+// siempre. El costo real está del lado seguro sin necesidad de propagar el
+// error.
+export async function bienvenidaVista(experienciaId: string): Promise<boolean> {
+  const supabase = createClient()
+  const { data } = await supabase
+    .from('bookmarks')
+    .select('bienvenida_vista_at')
+    .eq('experience_id', experienciaId)
+    .maybeSingle()
+  return Boolean(data?.bienvenida_vista_at)
+}
+
 // Todas las consignas de una experiencia, en orden, para el cierre.
 //
 // El cierre necesita saber QUÉ se preguntó para poder poner cada respuesta

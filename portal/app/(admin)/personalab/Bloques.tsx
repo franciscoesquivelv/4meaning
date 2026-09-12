@@ -13,7 +13,11 @@ const MT: Record<string, string> = {
   aviso:    'mt-8 md:mt-10',
   nota:     'mt-8 md:mt-10',
   gesto:    'mt-8 md:mt-10',
-  pausa:    'my-16 md:my-20',
+  // Ampliado el 2026-09-11 (Elena, Consejo): el respiro de la pausa crecía
+  // ya el doble que cualquier otro bloque; sigue siendo el mayor margen del
+  // sistema, un paso más lejos, para que se sienta como un corte real y no
+  // un adorno entre párrafos.
+  pausa:    'my-20 md:my-24',
 }
 
 const ROTULO = 'text-[10px] font-semibold uppercase tracking-[0.16em] text-[#8F5341]'
@@ -83,11 +87,15 @@ export default function BloqueLector({ b }: { b: Bloque }) {
       )
 
     case 'pausa':
+      // Antes de hoy este glifo estaba a mano en #D8AC96: el mismo hex,
+      // exacto, que ya vive como token en marca.css (`--terra-lo`). Hallazgo
+      // de Julian, Consejo del 2026-09-11: la disciplina de cero hex de esta
+      // casa nunca llegó a este bloque.
       return (
         <div className={`${mt} flex items-center justify-center gap-2.5`} aria-hidden="true">
-          <span className="w-1 h-1 rounded-full bg-[#D8AC96]" />
-          <span className="w-1 h-1 rounded-full bg-[#D8AC96]" />
-          <span className="w-1 h-1 rounded-full bg-[#D8AC96]" />
+          <span className="w-1 h-1 rounded-full bg-terra-lo" />
+          <span className="w-1 h-1 rounded-full bg-terra-lo" />
+          <span className="w-1 h-1 rounded-full bg-terra-lo" />
         </div>
       )
 

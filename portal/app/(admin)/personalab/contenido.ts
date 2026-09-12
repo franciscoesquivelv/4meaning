@@ -277,12 +277,19 @@ export const BLOQUES: Bloque[] = [
     id: 'g16', bisagraId: 'ag4', orden: 3, tipo: 'consigna', audiencia: 'todos',
     texto: 'Busca un momento en que alguien te sostuvo: te ayudó, te cuidó, o simplemente estuvo cuando no podías solo. Uno. Con fecha, con lugar y con cara.',
   },
+  // Agregado 2026-09-11 (dictamen de Sora): esta consigna pide quedarse en
+  // un recuerdo puntual y cargado, el mismo criterio que ya justifica la
+  // pausa de g21 (ag5) y g34 (ag7). Antes pasaba directo al gesto de
+  // escribir, sin que el recuerdo asiente.
   {
-    id: 'g17', bisagraId: 'ag4', orden: 4, tipo: 'gesto', audiencia: 'todos',
+    id: 'g62', bisagraId: 'ag4', orden: 4, tipo: 'pausa', audiencia: 'todos',
+  },
+  {
+    id: 'g17', bisagraId: 'ag4', orden: 5, tipo: 'gesto', audiencia: 'todos',
     texto: 'Escríbelo a mano en la primera página. Todavía no la historia completa: solo el momento, tal como te llega.',
   },
   {
-    id: 'g18', bisagraId: 'ag4', orden: 5, tipo: 'nota', audiencia: 'moderador',
+    id: 'g18', bisagraId: 'ag4', orden: 6, tipo: 'nota', audiencia: 'moderador',
     texto: 'Va a haber alguien que no tenga un rostro claro. Hay quien agradece a la vida, o a algo que recibió sin saber de quién. No lo corrijas y no le pidas que encuentre una persona: lo que se pide es concreción, no destinatario.\n\nLo que sí pides siempre es el detalle. Un episodio real deja huella; un concepto no.',
   },
 
