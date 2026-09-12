@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { redirect } from 'next/navigation'
 import type { Bloque } from '@/app/(admin)/personalab/contenido'
 
 // ── LA LECTURA ──────────────────────────────────────────────────
@@ -80,6 +81,17 @@ export async function cargarExperiencia(
   }
 }
 
+// Hasta dónde se puede ver, dado dónde se quedó. Un solo lugar, con nombre:
+// `cargarBisagra` la usa para el redirect real, `[slug]/page.tsx` la usa
+// para saber qué recortar de la lista. Antes de que existiera esta función
+// exportada, el índice reescribía la misma cuenta a mano con su propia
+// fórmula: daba el mismo número por coincidencia de cálculo, no porque
+// citara la misma regla. Hallazgo de Leo, Consejo del 2026-09-11 (el mismo
+// patrón de "dos dueños" que ya rompió el campo `cn` del cotizador).
+export function posicionAlcanzable(iUltima: number): number {
+  return iUltima >= 0 ? iUltima + 1 : 0
+}
+
 export async function cargarBisagra(
   slug: string,
   bisagraId: string
@@ -90,6 +102,34 @@ export async function cargarBisagra(
   const { experiencia, bisagras } = base.datos
   const i = bisagras.findIndex(b => b.id === bisagraId)
   if (i === -1) return { estado: 'sin-acceso' }
+
+  // SE REVELA POR APERTURA, NO POR LOGRO. Decisión de Sora, Consejo del
+  // 2026-09-11. Pedir por URL una bisagra más allá de donde se ha llegado
+  // no es un error ni una falta de acceso (los dos ya tienen su propia
+  // pantalla, y no es ninguna de las dos): es simplemente pedir algo que
+  // todavía no toca. Se manda a seguir desde donde de verdad va, nunca con
+  // un mensaje de "contenido bloqueado". Depende de que el marcador sea
+  // monótono (Etapa 0, `solo_avanza_marcador()`): sin eso, releer algo
+  // hacia atrás podría retroceder este límite.
+  //
+  // ESTO ES UX, NO UNA BARRERA DEL SERVIDOR, Y ES UNA DECISIÓN, NO UN
+  // DESCUIDO. Auditoría de Hugo, mismo día: quien abre la consola del
+  // navegador puede llamar el mismo `bookmarks.upsert` que ya usa
+  // `MarcarVisto.tsx` con el `hinge_id` que quiera, y saltarse esto entero.
+  // Francisco decidió, con el hallazgo completo sobre la mesa, dejarlo así:
+  // bloquea toda navegación normal (clics, URLs), y quien lo evade a
+  // propósito solo se arruina su propia sorpresa, no le quita nada a nadie
+  // más. Construir la barrera real (validar cada salto contra el orden en
+  // el servidor) es el mismo tipo de candado que Sora y Julian ya
+  // descartaron por nombre para este producto. Si esto alguna vez necesita
+  // cambiar, que sea con el mismo peso de decisión, no agregado a la
+  // ligera.
+  const ultima = await ultimaVista(experiencia.id)
+  const iUltima = bisagras.findIndex(b => b.id === ultima)
+  const iAlcanzable = posicionAlcanzable(iUltima)
+  if (i > iAlcanzable) {
+    redirect(`/experiencia/${slug}/${bisagras[iAlcanzable].id}`)
+  }
 
   const supabase = createClient()
   const { data, error } = await supabase

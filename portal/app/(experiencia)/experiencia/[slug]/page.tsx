@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { cargarExperiencia, ultimaVista, bienvenidaVista } from '@/lib/personalab/lectura'
+import { cargarExperiencia, ultimaVista, bienvenidaVista, posicionAlcanzable } from '@/lib/personalab/lectura'
 import SinAcceso from '../SinAcceso'
 import Fallo from '../Fallo'
 import UmbralBienvenida from '../UmbralBienvenida'
@@ -46,25 +46,45 @@ export default async function IndiceExperiencia({ params }: { params: { slug: st
         </p>
       )}
 
+      {/* La línea de honestidad. Se dice una vez, siempre el mismo número
+          (el total real, calculado del mismo arreglo que ya se carga, nunca
+          uno inventado), y nunca como cuenta regresiva: eso sería un
+          contador de "cuánto falta" disfrazado de dato neutral. Decisión de
+          Sora, Consejo del 2026-09-11. */}
+      <p className="mt-6 text-[13px] text-gray-ui">
+        Son {bisagras.length} pasos.
+      </p>
+
       {siguiente && (
         <Link
           href={`/experiencia/${experiencia.slug}/${siguiente.id}`}
-          className="inline-flex items-center mt-10 px-6 py-3 rounded-full bg-dom text-paper text-[15px] font-medium hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dom focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
+          className="inline-flex items-center mt-6 px-6 py-3 rounded-full bg-dom text-paper text-[15px] font-medium hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dom focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
         >
           {iUltima >= 0 ? 'Continuar' : 'Empezar'}
         </Link>
       )}
 
-      {/* Los títulos quedan a la vista siempre: la estructura del recorrido
-          no se esconde. Lo que se retiene es la reseña de cada bisagra
-          todavía no alcanzada, para que esto no se lea como una
-          contraportada que cuenta el final. Decisión de Elena, Consejo del
-          2026-09-11; el giro grande del índice (qué se lista y cuándo) sigue
-          siendo de Sora y llega en la etapa siguiente. */}
-      <ol className="mt-16 border-t border-line">
-        {bisagras.map((b, i) => {
+      {/* EL GIRO GRANDE. Hasta hoy decía: "la lista completa, a la vista.
+          No se esconde lo que viene: quien compró esto ya sabe que lo
+          compró entero, y ocultarle el recorrido sería tratarlo como a un
+          alumno al que se le dosifica." Esa decisión era correcta para el
+          problema de entonces. Cambió el problema: Francisco pidió que la
+          experiencia deje de enseñarse entera de un vistazo. Sora, la misma
+          autora de la decisión vieja, la revisó con el encargo nuevo sobre
+          la mesa y decidió lo contrario: "se revela por apertura, no por
+          logro" (Consejo del 2026-09-11). No es un descuido pisando la
+          decisión anterior: es la misma jueza, fallando otra vez.
+
+          Se listan solo dos cosas: lo ya recorrido (con su "Visto", que ya
+          existe abajo y no cambia) y el título, sin reseña, de la única
+          bisagra que sigue. Nada de filas vacías o candados por lo que
+          falta ("6 más, bloqueadas"): eso sería un contador de progreso
+          disfrazado de lista, el mismo léxico que este proyecto ya prohíbe
+          por nombre. */}
+      <ol className="mt-10 border-t border-line">
+        {bisagras.slice(0, posicionAlcanzable(iUltima) + 1).map((b, i) => {
           const vista = iUltima >= 0 && i < iUltima
-          const esSiguiente = i === (iUltima >= 0 ? iUltima : 0)
+          const esSiguiente = i === posicionAlcanzable(iUltima)
           // El rótulo del tramo aparece solo cuando empieza uno nuevo, así que
           // una experiencia sin tramos (El Agradecimiento) sale plana y una
           // con tramos (El Presente como Regalo) sale agrupada, con la misma
@@ -84,9 +104,16 @@ export default async function IndiceExperiencia({ params }: { params: { slug: st
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="block text-[17px] font-light text-ink group-hover:text-dom transition-colors">
-                    {b.titulo}
+                    {/* "Ahora toca: ", solo el título, sin reseña. Decisión
+                        de Sora: certeza de dónde se para, cero spoiler de
+                        qué encuentra ahí. Hallazgo de Leo: la reseña se
+                        seguía mostrando aquí porque la condición vieja
+                        (`vista || esSiguiente`) quedó obsoleta en cuanto el
+                        recorte de arriba hizo que "no vista" y "esSiguiente"
+                        fueran siempre la misma fila. */}
+                    {esSiguiente ? `Ahora toca: ${b.titulo}` : b.titulo}
                   </span>
-                  {b.descripcion && (vista || esSiguiente) && (
+                  {b.descripcion && vista && (
                     <span className="block text-[14px] text-gray-ui mt-1 leading-snug">
                       {b.descripcion}
                     </span>

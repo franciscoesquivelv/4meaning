@@ -83,12 +83,22 @@ export default async function LeerBisagra({
         )}
 
         {siguiente ? (
-          <Link
-            href={`/experiencia/${experiencia.slug}/${siguiente.id}`}
-            className="inline-flex items-center px-6 py-3 rounded-full bg-dom text-paper text-[15px] font-medium hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dom focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
-          >
-            Seguir
-          </Link>
+          <span className="flex flex-col items-end gap-2">
+            {/* Texto de transición, decidido por Sora en el Consejo del
+                2026-09-11. Afirma el cierre sin condicionar nada ("ya
+                quedó hecho" es un hecho, no una promesa), y confirma que
+                hay continuación sin decir una palabra de qué es: el
+                misterio esconde qué viene, jamás que hay algo que sigue. */}
+            <span className="text-[12px] text-gray-ui">
+              Esto ya quedó hecho. Lo que sigue, aparece cuando llegues.
+            </span>
+            <Link
+              href={`/experiencia/${experiencia.slug}/${siguiente.id}`}
+              className="inline-flex items-center px-6 py-3 rounded-full bg-dom text-paper text-[15px] font-medium hover:opacity-90 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dom focus-visible:ring-offset-2 focus-visible:ring-offset-paper"
+            >
+              Seguir
+            </Link>
+          </span>
         ) : (
           <Link
             href={`/experiencia/${experiencia.slug}/cierre`}
