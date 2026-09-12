@@ -62,14 +62,27 @@ export async function cargarExperiencia(
   if (errExp) return { estado: 'fallo', motivo: errExp.message }
   if (!exp) return { estado: 'sin-acceso' }
 
+  // DOS FILTROS, Y LOS DOS FALLAN CERRADO.
+  //
   // `modo` separa las dos entregas de una misma experiencia. Una bisagra sin
   // marcar nace en 'presencial', así que lo que falta aquí falta a la vista,
   // en vez de aparecer contenido de sala delante de quien compró solo.
+  //
+  // `listo` dice si esa bisagra está terminada, y hasta hoy el lector lo
+  // ignoraba: se servía contenido a medias a quien tuviera acceso. Hallazgo
+  // de Leo, Consejo del 2026-09-12, sobre el caso concreto de El Presente
+  // como Regalo, cuyas cuatro bisagras existen con cero bloques adentro y
+  // habrían salido como cuatro pantallas en blanco.
+  //
+  // Quien escriba contenido nuevo tiene que saber esto: una bisagra no
+  // aparece en el lector hasta que alguien la marca `listo`. Escribir los
+  // bloques no basta.
   const { data: bis, error: errBis } = await supabase
     .from('hinges')
     .select('id, tiempo, orden, titulo, descripcion, duracion, tramo')
     .eq('experience_id', exp.id)
     .in('modo', ['digital', 'ambos'])
+    .eq('listo', true)
     .order('tiempo')
     .order('orden')
 
