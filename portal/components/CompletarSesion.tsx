@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { createBrowserClient } from '@supabase/ssr'
 import { CONFIRMACION, ERROR } from '@/lib/estilos/acceso'
+import { yaEstablecioContrasena } from '@/lib/supabase/contrasenaEstablecida'
 
 // Recoge la sesion que llega por enlace de correo y que hasta ahora se perdia.
 //
@@ -59,7 +60,7 @@ export default function CompletarSesion() {
 
     supabase.auth
       .setSession({ access_token, refresh_token })
-      .then(({ error }) => {
+      .then(async ({ error, data }) => {
         if (error) {
           setEstado('error')
           setMensaje('El enlace ya expiró o se usó antes. Pide uno nuevo.')
@@ -67,7 +68,27 @@ export default function CompletarSesion() {
         }
         // Se limpia el fragmento para que los tokens no queden en el historial.
         window.history.replaceState(null, '', window.location.pathname)
-        window.location.replace(tipo === 'recovery' ? '/nueva-contrasena' : '/')
+
+        if (tipo === 'recovery') {
+          window.location.replace('/nueva-contrasena')
+          return
+        }
+
+        // MISMO HALLAZGO QUE EN /auth/callback, PERO DEL LADO IMPLÍCITO.
+        // Un enlace de invitación que llega con tokens en el fragmento (en
+        // vez de `?code=`) pasaba por aquí y también mandaba derecho al
+        // portal, sin que la persona pusiera nunca una contraseña propia.
+        // Si `setSession` diera éxito sin sesión (el tipo lo permite, aunque
+        // hoy la implementación real nunca llega a este punto así, según
+        // auditoría de Hugo), `userId` sale indefinido: cae al mismo lado
+        // seguro que la falta de contraseña, no hacia el portal.
+        const userId = data.session?.user.id
+        if (!userId || !(await yaEstablecioContrasena(supabase, userId))) {
+          window.location.replace('/nueva-contrasena')
+          return
+        }
+
+        window.location.replace('/')
       })
       .catch(() => {
         setEstado('error')

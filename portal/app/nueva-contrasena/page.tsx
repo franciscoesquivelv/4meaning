@@ -75,14 +75,28 @@ export default function NuevaContrasenaPage() {
     }
 
     setCargando(true)
-    const { error: e2 } = await supabase.auth.updateUser({ password: contrasena })
-    setCargando(false)
+    const { error: e2, data } = await supabase.auth.updateUser({ password: contrasena })
 
     if (e2) {
+      setCargando(false)
       setError('No se pudo guardar. Pide un enlace nuevo e inténtalo otra vez.')
       return
     }
 
+    // Deja constancia de que esta cuenta ya tiene contraseña propia, para
+    // que /auth/callback y CompletarSesion.tsx dejen de mandarla aquí en
+    // cada enlace futuro. Si esto falla, la contraseña YA quedó guardada
+    // (lo de arriba); lo único que se pierde es que la próxima vez que use
+    // un enlace de invitación la traigan de vuelta a esta misma pantalla,
+    // no su acceso.
+    if (data.user) {
+      await supabase
+        .from('profiles')
+        .update({ contrasena_establecida_at: new Date().toISOString() })
+        .eq('id', data.user.id)
+    }
+
+    setCargando(false)
     setListo(true)
     setTimeout(() => router.push('/'), 1600)
   }
