@@ -1,7 +1,10 @@
 'use client'
 
 import { createBrowserClient } from '@supabase/ssr'
-import type { Bloque, TipoBloque, Audiencia } from './contenido'
+import {
+  desdeFila, aContenido,
+  type Bloque, type TipoBloque, type Audiencia, type FilaBloque,
+} from '@/lib/personalab/bloques'
 
 // Adaptador contra Supabase. Misma forma que el de localStorage: los tipos
 // no cambian y la interfaz tampoco, solo de donde salen los datos.
@@ -24,52 +27,24 @@ function cliente() {
   )
 }
 
-// La fila de la base trae nombres de columna; el prototipo trae los campos
-// planos que ya usa el editor. Esta es la unica traduccion, y esta aqui
-// para que no se repita en cada pantalla.
-interface FilaBloque {
-  id: string
-  hinge_id: string
-  orden: number
-  tipo: TipoBloque
-  audiencia: Audiencia
-  contenido: Record<string, unknown>
-  media_id: string | null
-  rev: number
-}
+// LA TRADUCCIÓN SE FUE AL CONTRATO, Y ESTA ERA LA COPIA MALA.
+//
+// Aquí vivían `aBloque` y `aContenido`, dos listas blancas de ocho campos
+// escritas a mano, y las dos se tragaban `segundos`. El lector sí lo conocía.
+// O sea que guardar una pausa desde el editor le habría borrado el piso de
+// tiempo y la habría devuelto a ser tres puntos decorativos, deshaciendo en
+// un guardado lo que costó una migración y un componente. Nadie lo habría
+// visto: el bloque seguía ahí, solo que sin su espera.
+//
+// Ese es el defecto que vuelve cada vez que el mismo conocimiento se escribe
+// dos veces. Ahora las dos direcciones salen de `lib/personalab/bloques.ts`,
+// y un campo nuevo viaja solo.
 
-function aBloque(f: FilaBloque): Bloque & { rev: number; mediaId: string | null } {
-  const c = f.contenido ?? {}
-  return {
-    id: f.id,
-    bisagraId: f.hinge_id,
-    orden: f.orden,
-    tipo: f.tipo,
-    audiencia: f.audiencia,
-    rev: f.rev,
-    mediaId: f.media_id,
-    texto: c.texto as string | undefined,
-    autor: c.autor as string | undefined,
-    pie: c.pie as string | undefined,
-    url: c.url as string | undefined,
-    nombreArchivo: c.nombreArchivo as string | undefined,
-    peso: c.peso as string | undefined,
-    descargable: c.descargable as boolean | undefined,
-    duracion: c.duracion as string | undefined,
-  }
-}
+type FilaConRev = FilaBloque & { rev: number }
 
-function aContenido(b: Bloque): Record<string, unknown> {
-  const c: Record<string, unknown> = {}
-  if (b.texto !== undefined) c.texto = b.texto
-  if (b.autor !== undefined) c.autor = b.autor
-  if (b.pie !== undefined) c.pie = b.pie
-  if (b.url !== undefined) c.url = b.url
-  if (b.nombreArchivo !== undefined) c.nombreArchivo = b.nombreArchivo
-  if (b.peso !== undefined) c.peso = b.peso
-  if (b.descargable !== undefined) c.descargable = b.descargable
-  if (b.duracion !== undefined) c.duracion = b.duracion
-  return c
+function aBloque(f: FilaConRev): (Bloque & { rev: number }) | null {
+  const b = desdeFila(f)
+  return b ? { ...b, rev: f.rev } : null
 }
 
 // ── Lectura ─────────────────────────────────────────────────
@@ -92,7 +67,11 @@ export async function cargarRemoto(versionId: string) {
     .order('orden')
 
   if (error) throw error
-  return (data as FilaBloque[]).map(aBloque)
+  // Un tipo que no esté en el contrato se descarta en vez de llegar a medias.
+  // Solo pasa si alguien agregó un valor al enum sin declararlo.
+  return (data as FilaConRev[])
+    .map(aBloque)
+    .filter((b): b is Bloque & { rev: number } => b !== null)
 }
 
 // ── Escritura, con concurrencia optimista ───────────────────
@@ -146,7 +125,12 @@ export async function crearBloque(b: Bloque, versionId: string) {
     .single()
 
   if (error) throw error
-  return aBloque(data as FilaBloque)
+  // Aquí sí se lanza en vez de devolver null: acabamos de crear este bloque
+  // con un tipo que salió del contrato, así que si vuelve sin reconocerse es
+  // que la base y el contrato se separaron, y eso hay que verlo, no tragarlo.
+  const creado = aBloque(data as FilaConRev)
+  if (!creado) throw new Error(`La base devolvió un tipo de bloque que el contrato no conoce.`)
+  return creado
 }
 
 export async function borrarBloque(id: string) {

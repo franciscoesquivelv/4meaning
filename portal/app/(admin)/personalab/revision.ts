@@ -1,4 +1,4 @@
-import { NIVEL, type Bloque } from './contenido'
+import { NIVEL, definicion, type Bloque } from '@/lib/personalab/bloques'
 import type { Experiencia } from './dominio'
 
 // Compuerta de publicacion. Distingue dos cosas que se confunden siempre:
@@ -37,6 +37,14 @@ function vacio(s?: string) {
   return !s || s.trim().length === 0
 }
 
+// Lee un campo del bloque por su nombre en el contrato. Un campo que no sea
+// texto (los segundos de la pausa, el interruptor de descargable) no se juzga
+// por "estar vacío", y por eso solo se devuelve algo cuando es una cadena.
+function valorDe(b: Bloque, campo: string): string | undefined {
+  const v = (b as unknown as Record<string, unknown>)[campo]
+  return typeof v === 'string' ? v : v === undefined || v === null ? undefined : ' '
+}
+
 export function revisar(experiencia: Experiencia, bloques: Bloque[]): Revision {
   const hallazgos: Hallazgo[] = []
   const bisagras = experiencia.bisagras.slice().sort((a, b) => a.orden - b.orden)
@@ -69,97 +77,66 @@ export function revisar(experiencia: Experiencia, bloques: Bloque[]): Revision {
       })
     }
 
+    // LAS REGLAS POR CAMPO SALEN DEL CONTRATO, NO DE UN `switch` AQUÍ.
+    //
+    // Aquí había una rama por tipo con las mismas reglas escritas por tercera
+    // vez, y YA ESTABA EN DESACUERDO CON LA BASE, no en teoría: pedía `url`
+    // para una imagen, mientras el constraint `blocks_contenido_por_tipo`
+    // exige `media_id`. El editor decía "puedes publicar" y la base habría
+    // rechazado el insert. Hallazgo de Leo.
+    //
+    // Ahora cada campo declara en el contrato si su ausencia impide, advierte
+    // o da igual, y con qué frase se explica. Un tipo de bloque nuevo trae sus
+    // reglas puestas, sin que nadie tenga que acordarse de esta pantalla.
     for (const b of suyos) {
-      switch (b.tipo) {
-        case 'texto':
-        case 'consigna':
-        case 'aviso':
-        case 'gesto':
-        case 'nota':
-          if (vacio(b.texto)) {
-            hallazgos.push({
-              severidad: 'impide',
-              bisagraId: bi.id,
-              bisagra: nombre,
-              que: `Un bloque de ${b.tipo} quedó sin texto.`,
-              comoSeArregla: 'Escríbelo, o quítalo si ya no hace falta.',
-            })
-          }
-          break
+      const def = definicion(b.tipo)
 
-        case 'cita':
-          if (vacio(b.texto)) {
-            hallazgos.push({
-              severidad: 'impide',
-              bisagraId: bi.id,
-              bisagra: nombre,
-              que: 'Una cita quedó sin texto.',
-              comoSeArregla: 'Escríbela, o quítala si ya no hace falta.',
-            })
-          } else if (vacio(b.autor)) {
-            hallazgos.push({
-              severidad: 'advierte',
-              bisagraId: bi.id,
-              bisagra: nombre,
-              que: 'Una cita no dice quién lo dijo.',
-              comoSeArregla: 'Una voz sin nombre se lee como nuestra.',
-            })
-          }
-          break
+      for (const [campo, regla] of Object.entries(def.campos)) {
+        if (regla.exigencia === 'opcional') continue
+        if (!vacio(valorDe(b, campo))) continue
 
-        case 'objeto':
-          if (vacio(b.texto)) {
-            hallazgos.push({
-              severidad: 'impide',
-              bisagraId: bi.id,
-              bisagra: nombre,
-              que: 'Un objeto quedó sin nombre.',
-              comoSeArregla: 'Di qué se tiene en la mano.',
-            })
-          } else if (vacio(b.pie)) {
-            hallazgos.push({
-              severidad: 'advierte',
-              bisagraId: bi.id,
-              bisagra: nombre,
-              que: `El objeto "${b.texto}" no dice qué hacer con él.`,
-              comoSeArregla: 'Agrega una frase al pie.',
-            })
-          }
-          break
+        hallazgos.push({
+          severidad: regla.exigencia,
+          bisagraId: bi.id,
+          bisagra: nombre,
+          que: `${def.nombre}: ${regla.queFalta ?? `falta ${regla.etiqueta.toLowerCase()}.`}`,
+          comoSeArregla: regla.comoSeArregla ?? 'Complétalo, o quita el bloque si ya no hace falta.',
+        })
+      }
 
-        case 'archivo':
-          if (vacio(b.nombreArchivo)) {
-            hallazgos.push({
-              severidad: 'impide',
-              bisagraId: bi.id,
-              bisagra: nombre,
-              que: 'Un archivo quedó sin subir.',
-              comoSeArregla: 'Súbelo, o quita el bloque si ya no hace falta.',
-            })
-          }
-          if (b.descargable && b.audiencia === 'todos') {
-            hallazgos.push({
-              severidad: 'advierte',
-              bisagraId: bi.id,
-              bisagra: nombre,
-              que: `"${b.nombreArchivo}" es descargable y lo ve todo el foro.`,
-              comoSeArregla: 'Los guiones de sala suelen ser solo para el moderador.',
-            })
-          }
-          break
+      // El medio subido, que no es un campo del jsonb sino una columna.
+      // Espeja la rama del constraint: para video y audio vale la URL
+      // externa, para imagen y archivo no hay salida.
+      if (def.medio && !b.medioId && !(def.medio.admiteUrl && !vacio(b.url))) {
+        hallazgos.push({
+          severidad: 'impide',
+          bisagraId: bi.id,
+          bisagra: nombre,
+          que: `${def.nombre}: quedó sin archivo.`,
+          comoSeArregla: def.medio.admiteUrl
+            ? 'Súbelo o pega un enlace, o quita el bloque si ya no hace falta.'
+            : 'Súbelo, o quita el bloque si ya no hace falta.',
+        })
+      }
 
-        case 'imagen':
-        case 'video':
-          if (vacio(b.url)) {
-            hallazgos.push({
-              severidad: 'impide',
-              bisagraId: bi.id,
-              bisagra: nombre,
-              que: `Un bloque de ${b.tipo} quedó sin contenido.`,
-              comoSeArregla: 'Súbelo, o quita el bloque si ya no hace falta.',
-            })
-          }
-          break
+      // LA ÚNICA REGLA QUE NO ES POR CAMPO, y por eso sigue escrita a mano:
+      // cruza dos cosas del bloque (que sea descargable y quién lo ve) en vez
+      // de mirar si un campo está vacío.
+      //
+      // Y CAMBIÓ DE SENTIDO EL 2026-09-13. Antes decía que un descargable
+      // visible para todos era sospechoso, porque descargable significaba
+      // guion de sala del moderador. El producto digital jubiló esa regla: al
+      // participante sí se le puede entregar una hoja para imprimir o llenar.
+      // Lo que queda es lo que sigue siendo cierto: un archivo marcado SOLO
+      // para el moderador y a la vez descargable por el foro no se sostiene.
+      if (b.tipo === 'archivo' && b.descargable && b.audiencia !== 'todos') {
+        hallazgos.push({
+          severidad: 'advierte',
+          bisagraId: bi.id,
+          bisagra: nombre,
+          que: `"${b.nombreArchivo ?? 'Un archivo'}" es descargable pero no lo ve el participante.`,
+          comoSeArregla: 'Si es una hoja de trabajo, ponla en Todos. Si es guion de sala, está bien así.',
+        })
       }
     }
 

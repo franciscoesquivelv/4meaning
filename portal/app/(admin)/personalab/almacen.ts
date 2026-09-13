@@ -1,6 +1,7 @@
 'use client'
 
-import { BLOQUES, type Bloque, type TipoBloque, type Audiencia } from './contenido'
+import { BLOQUES } from './contenido'
+import type { Bloque, TipoBloque, Audiencia } from '@/lib/personalab/bloques'
 
 // Almacen del prototipo. Persiste en localStorage para que el guardado de
 // borrador sea real y no un letrero: puedes escribir, cerrar la pestana y

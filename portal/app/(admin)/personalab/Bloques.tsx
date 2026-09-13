@@ -1,29 +1,17 @@
 import RenderMarkdown from './RenderMarkdown'
-import type { Bloque } from './contenido'
+import { definicion, type Bloque } from '@/lib/personalab/bloques'
 
-// Ritmo vertical de la especificacion, seccion 5.3. Base 4px.
-const MT: Record<string, string> = {
-  texto:    '',                    // el propio markdown pone su margen
-  cita:     'mt-10 md:mt-[52px]',
-  imagen:   'mt-9 md:mt-12',
-  video:    'mt-9 md:mt-12',
-  archivo:  'mt-8 md:mt-10',
-  objeto:   'mt-8 md:mt-10',
-  consigna: 'mt-8 md:mt-10',
-  aviso:    'mt-8 md:mt-10',
-  nota:     'mt-8 md:mt-10',
-  gesto:    'mt-8 md:mt-10',
-  // Ampliado el 2026-09-11 (Elena, Consejo): el respiro de la pausa crecía
-  // ya el doble que cualquier otro bloque; sigue siendo el mayor margen del
-  // sistema, un paso más lejos, para que se sienta como un corte real y no
-  // un adorno entre párrafos.
-  pausa:    'my-20 md:my-24',
-}
+// EL RITMO VERTICAL VIVE EN EL CONTRATO, NO AQUÍ. Era un mapa suelto con
+// una entrada por tipo y un `?? 'mt-8'` de red, o sea que un tipo nuevo
+// heredaba un margen por descarte y nadie lo notaba. Ahora cada tipo declara
+// el suyo junto a su definición. El de la pausa sigue siendo el mayor del
+// sistema, ampliado el 2026-09-11 por Elena para que se sienta como un corte
+// real y no un adorno entre párrafos.
 
 const ROTULO = 'text-[10px] font-semibold uppercase tracking-[0.16em] text-[#8F5341]'
 
 export default function BloqueLector({ b }: { b: Bloque }) {
-  const mt = MT[b.tipo] ?? 'mt-8'
+  const mt = definicion(b.tipo).margen
 
   switch (b.tipo) {
     case 'texto':
@@ -181,7 +169,53 @@ export default function BloqueLector({ b }: { b: Bloque }) {
         </figure>
       )
 
-    default:
-      return null
+    // ── Audio ──
+    // El tipo existía en la base desde el 2026-09-11 y no tenía caso aquí,
+    // así que caía en el `default: return null` que estaba justo debajo de
+    // esta línea: un audio publicado se pintaba como nada. Sin error, sin
+    // hueco, sin señal. Ese `default` es lo que se quitó, y por eso ahora
+    // olvidar un tipo no compila.
+    //
+    // No lleva `download`: la voz grabada se escucha, no se colecciona. Lo
+    // que sí se entrega para imprimir o llenar es el bloque `archivo`.
+    case 'audio':
+      return (
+        <figure className={mt}>
+          {b.url ? (
+            <audio
+              src={b.url}
+              controls
+              controlsList="nodownload"
+              className="w-full"
+            />
+          ) : (
+            <div className="rounded-xl bg-[#F3EEE6] border border-[#E7E1D8] px-5 py-4 flex items-center gap-3.5">
+              <svg className="w-5 h-5 text-[#8F5341] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 18.5a6.5 6.5 0 006.5-6.5M12 18.5A6.5 6.5 0 015.5 12M12 18.5V22M12 2a3 3 0 013 3v7a3 3 0 11-6 0V5a3 3 0 013-3z" />
+              </svg>
+              <span className="text-[13px] text-[#A69C90]">sin audio todavía</span>
+            </div>
+          )}
+          {(b.pie || b.duracion) && (
+            <figcaption className="mt-2.5 text-[12.5px] leading-[1.6] font-light text-[#676E6E] flex items-center gap-3">
+              {b.pie && <span>{b.pie}</span>}
+              {b.duracion && <span className="tabular-nums">{b.duracion}</span>}
+            </figcaption>
+          )}
+        </figure>
+      )
   }
+
+  // EXHAUSTIVIDAD, Y ES EL MECANISMO DE TODA LA ETAPA 1.
+  //
+  // Aquí había un `default: return null`. Con él, agregar un tipo de bloque
+  // al contrato y olvidar pintarlo producía una pantalla en blanco silenciosa
+  // en producción, que es exactamente lo que le pasó a `audio` durante dos
+  // días. Sin `default`, TypeScript estrecha `b.tipo` a `never` solo si
+  // TODOS los casos están cubiertos: si falta uno, esta línea no compila y el
+  // mensaje nombra el tipo que falta. El olvido deja de ser posible en vez de
+  // quedar prohibido por un comentario.
+  const _faltaPintar: never = b.tipo
+  void _faltaPintar
+  return null
 }

@@ -8,7 +8,7 @@ import { CORRIDAS } from '../../../dominio'
 import type { Experiencia } from '../../../dominio'
 import { TARJETA, BTN_PRIMARIO, BTN_SECUNDARIO } from '../../../tokens'
 import { Boton, Girador } from '../../../ui'
-import type { Bloque } from '../../../contenido'
+import type { Bloque } from '@/lib/personalab/bloques'
 
 // Piso perceptible, igual que en el editor: sin esto el botón termina antes
 // de que el ojo registre que empezó, y parece no haber respondido.

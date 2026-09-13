@@ -6,9 +6,10 @@ import BloqueLector from '../../../Bloques'
 import SubirArchivo from '../../../SubirArchivo'
 import { useFuente } from '../../../useFuente'
 import {
-  CATALOGO, NIVEL,
+  NIVEL, definicion,
+  TIPOS_FRECUENTES, TIPOS_OCASIONALES, CON_MEDIO,
   type Bloque, type TipoBloque, type Audiencia,
-} from '../../../contenido'
+} from '@/lib/personalab/bloques'
 import {
   cargar, guardar, descartarBorrador, hayBorrador,
   bloqueNuevo, reordenar, cambiarAudiencia,
@@ -21,12 +22,15 @@ import { Boton, Girador, EsqueletoEditor } from '../../../ui'
 
 const TIEMPOS: Tiempo[] = ['vispera', 'ignicion', 'retorno']
 
-// El catalogo, partido en dos filas segun cuanto se usa de verdad. En el
-// contenido sembrado, texto aparece 9 veces y nota 5; imagen y video, cero.
+// EL CATÁLOGO PARTIDO EN DOS FILAS YA NO SE ESCRIBE AQUÍ. La razón de
+// partirlo sigue siendo la misma y sigue siendo buena: en el contenido
+// sembrado, texto aparece 9 veces y nota 5, mientras imagen y video, cero.
 // Once botones del mismo peso mienten sobre esa diferencia.
-const TIPOS_FRECUENTES: TipoBloque[] = ['texto', 'cita', 'consigna', 'gesto', 'pausa', 'nota']
-const TIPOS_OCASIONALES: TipoBloque[] = ['aviso', 'objeto', 'archivo', 'imagen', 'video']
-const CON_SUBIDA: TipoBloque[] = ['archivo', 'imagen', 'video']
+//
+// Lo que cambió es de dónde sale la lista. Eran tres arreglos a mano, y por
+// eso el tipo `audio` no aparecía en ninguno: nacía sin botón, aunque la
+// base lo aceptara. Ahora cada tipo declara su frecuencia y si lleva archivo
+// en `lib/personalab/bloques.ts`, y estas listas se derivan solas.
 
 const CHIP: Record<EstadoGuardado, { texto: string; clase: string }> = {
   limpio:    { texto: 'Todo guardado',       clase: 'text-slate-400' },
@@ -561,12 +565,12 @@ function BotonTipo({ t, onClick, tenue = false }: { t: TipoBloque; onClick: () =
   return (
     <button
       onClick={onClick}
-      title={CATALOGO[t].ayuda}
+      title={definicion(t).ayuda}
       className={`text-xs px-3 py-1.5 rounded-lg border transition-[background-color,border-color,transform] duration-100 active:scale-[0.97] hover:bg-slate-900 hover:text-white hover:border-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900/25 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-50 ${
         tenue ? 'border-slate-200 text-slate-500' : 'border-slate-300 text-slate-800 font-medium'
       }`}
     >
-      {CATALOGO[t].nombre}
+      {definicion(t).nombre}
     </button>
   )
 }
@@ -599,7 +603,7 @@ function TarjetaBloque({
     >
       <div className="flex items-center justify-between gap-3 px-4 py-2.5 border-b border-slate-100 bg-slate-50/60">
         <div className="flex items-center gap-2.5 min-w-0">
-          <span className="text-xs font-semibold text-slate-700">{CATALOGO[b.tipo].nombre}</span>
+          <span className="text-xs font-semibold text-slate-700">{definicion(b.tipo).nombre}</span>
           <select
             value={b.audiencia}
             onChange={e => onCambio({ audiencia: cambiarAudiencia(b.tipo, e.target.value as Audiencia) })}
@@ -630,7 +634,7 @@ function TarjetaBloque({
       <div className="p-4">
         {b.tipo === 'pausa' ? (
           <p className="text-sm text-slate-400">Un respiro. No lleva contenido.</p>
-        ) : CON_SUBIDA.includes(b.tipo) ? (
+        ) : CON_MEDIO.includes(b.tipo) ? (
           <>
             <label className={ETIQUETA_INPUT}>
               {b.tipo === 'archivo' ? 'PDF' : b.tipo === 'video' ? 'Video' : 'Imagen'}

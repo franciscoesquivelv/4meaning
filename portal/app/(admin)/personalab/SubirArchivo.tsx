@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef, useState } from 'react'
-import type { TipoBloque } from './contenido'
+import type { TipoBloque } from '@/lib/personalab/bloques'
 import { BTN_FILA } from './tokens'
 
 // Subida simulada. El archivo NO sale del navegador: se usa

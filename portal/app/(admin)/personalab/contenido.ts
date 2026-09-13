@@ -1,77 +1,19 @@
-// ── MODELO DE CONTENIDO ─────────────────────────────────────────
-// Catalogo cerrado de 11 tipos de bloque. Criterio de la sintesis del
-// Consejo: cada tipo tiene un caso real en el dominio hoy, o lo exige el
-// encargo. Lo demas se descarto con su razon.
+// ── CONTENIDO SEMBRADO A MANO ───────────────────────────────────
 //
-// Descartados y por que: `titulo` y `separador` se absorben (## vive en el
-// markdown, `pausa` es el unico separador que la marca admite). `audio`,
-// `llamado` y `kit_ref` se van por cero casos. `certificado` no existe:
-// el testimonio lo entrega una persona.
+// EL MODELO YA NO VIVE AQUÍ. Este archivo declaraba el tipo de bloque, el
+// catálogo y la forma de `Bloque`, y era una de las doce copias del mismo
+// conocimiento. Todo eso está ahora en `lib/personalab/bloques.ts`, que es
+// el contrato único del que derivan el editor, el lector y la validación.
 //
-// Campos PROHIBIDOS en todo el modelo del participante:
-// progress, completion_pct, score, streak, badge, rank, quiz.
+// Lo que queda aquí es DATO, no modelo: las versiones y los bloques de
+// ejemplo que el prototipo usa mientras el editor no escribe a la base. Este
+// contenido muere en la Etapa 3, cuando el editor escriba de verdad y las
+// experiencias dejen de nacer de una migración de siembra.
 
-export type TipoBloque =
-  | 'texto'      // markdown restringido
-  | 'cita'       // voz ajena, con atribucion
-  | 'consigna'   // lo que se le pide hacer a la persona
-  | 'aviso'      // algo que hay que saber antes de seguir
-  | 'nota'       // solo moderador, el participante nunca la ve
-  | 'pausa'      // respiro deliberado, sin contenido
-  | 'gesto'      // lo que se escribe a mano y NO se sube
-  | 'objeto'     // pieza fisica que hay que tener en la mano
-  | 'archivo'    // PDF, normalmente descargable por el moderador
-  | 'imagen'
-  | 'video'
-
-// Quien puede ver un bloque. El nivel es acumulativo: el moderador ve todo
-// lo del participante, y el equipo ve todo.
-export type Audiencia = 'todos' | 'moderador' | 'equipo'
-
-export const NIVEL: Record<Audiencia, number> = {
-  todos: 1,
-  moderador: 2,
-  equipo: 3,
-}
-
-export interface Bloque {
-  id: string
-  bisagraId: string
-  orden: number
-  tipo: TipoBloque
-  audiencia: Audiencia
-  // Contenido segun el tipo. Se mantiene laxo a proposito en el prototipo:
-  // en el esquema real esto es jsonb con validacion por tipo.
-  texto?: string          // markdown para 'texto', literal para los demas
-  autor?: string          // 'cita'
-  pie?: string            // 'imagen', 'video', 'archivo', 'objeto'
-  url?: string            // 'imagen', 'video', 'archivo'
-  nombreArchivo?: string  // 'archivo'
-  peso?: string           // 'archivo'
-  descargable?: boolean   // 'archivo'
-  duracion?: string       // 'video'
-  // 'pausa'. Segundos de piso: el tiempo minimo que esa bisagra dura antes
-  // de ofrecer el paso siguiente. Se escribe a mano, nunca lo infiere el
-  // sistema (decision de Leo). Sin este campo la pausa se comporta como
-  // siempre, sin ninguna demora. Hallazgo de Elena: este bloque existe
-  // desde el principio para encarnar un respiro, y hasta hoy eran tres
-  // puntos decorativos sin nada de tiempo detras.
-  segundos?: number       // 'pausa'
-}
-
-export const CATALOGO: Record<TipoBloque, { nombre: string; ayuda: string }> = {
-  texto:    { nombre: 'Texto',    ayuda: 'Lo que se lee. Admite negrita, cursiva y subtitulos.' },
-  cita:     { nombre: 'Cita',     ayuda: 'Una voz que no es la nuestra. Siempre con atribucion.' },
-  consigna: { nombre: 'Consigna', ayuda: 'Lo que se le pide hacer a la persona, en una sola instruccion.' },
-  aviso:    { nombre: 'Aviso',    ayuda: 'Algo que hay que saber antes de seguir.' },
-  nota:     { nombre: 'Nota',     ayuda: 'Solo para el moderador. El participante nunca la ve.' },
-  pausa:    { nombre: 'Pausa',    ayuda: 'Un respiro. No lleva contenido.' },
-  gesto:    { nombre: 'Gesto',    ayuda: 'Lo que se escribe a mano. No se sube ni se transcribe.' },
-  objeto:   { nombre: 'Objeto',   ayuda: 'Una pieza fisica que hay que tener en la mano.' },
-  archivo:  { nombre: 'Archivo',  ayuda: 'Un PDF. Si es descargable, es para el moderador.' },
-  imagen:   { nombre: 'Imagen',   ayuda: 'Con pie de foto.' },
-  video:    { nombre: 'Video',    ayuda: 'Vimeo o YouTube en modo no listado.' },
-}
+// A propósito NO se re-exportan los tipos desde aquí. Un re-export dejaría
+// dos caminos válidos para importar lo mismo, y en un mes nadie sabría cuál
+// es el bueno. Quien necesite el modelo lo pide al contrato.
+import { NIVEL, type Bloque } from '@/lib/personalab/bloques'
 
 // ── Versiones ───────────────────────────────────────────────────
 export type EstadoVersion = 'borrador' | 'publicada'

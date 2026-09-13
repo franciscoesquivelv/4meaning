@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import type { Bloque } from '@/app/(admin)/personalab/contenido'
+import { desdeFila, type Bloque, type FilaBloque } from '@/lib/personalab/bloques'
 
 // ── LA LECTURA ──────────────────────────────────────────────────
 //
@@ -154,39 +154,35 @@ export async function cargarBisagra(
   }
 
   const supabase = createClient()
+  // PENDIENTE DE LA ETAPA 2, DICHO AQUÍ PARA QUE NO SE PIERDA. Esta consulta
+  // pide los bloques por bisagra y NO filtra por versión. Hoy no se nota,
+  // porque la RLS ata al participante a la publicada y no existe ninguna otra;
+  // el día que el editor abra un borrador, esta misma bisagra devuelve los
+  // bloques duplicados para quien sea del equipo. Se arregla cuando el lector
+  // se ate a su versión, que es justo lo que construye la Etapa 2, y no antes
+  // porque el `version_id` que habría que pasar todavía no se resuelve aquí.
+  // Hallazgo de Daniel.
   const { data, error } = await supabase
     .from('blocks')
-    .select('id, hinge_id, orden, tipo, audiencia, contenido')
+    .select('id, hinge_id, orden, tipo, audiencia, contenido, media_id')
     .eq('hinge_id', bisagraId)
     .order('orden')
 
   if (error) return { estado: 'fallo', motivo: error.message }
 
-  // La fila trae `contenido` como jsonb; el renderizador que ya existe espera
-  // los campos planos. Esta es la única traducción y vive aquí sola.
-  const bloques: Bloque[] = (data ?? []).map(f => {
-    const c = (f.contenido ?? {}) as Record<string, unknown>
-    return {
-      id: f.id,
-      bisagraId: f.hinge_id,
-      orden: f.orden,
-      tipo: f.tipo,
-      audiencia: f.audiencia,
-      texto: c.texto as string | undefined,
-      autor: c.autor as string | undefined,
-      pie: c.pie as string | undefined,
-      url: c.url as string | undefined,
-      nombreArchivo: c.nombreArchivo as string | undefined,
-      peso: c.peso as string | undefined,
-      descargable: c.descargable as boolean | undefined,
-      duracion: c.duracion as string | undefined,
-      // Se acepta "20" además de 20. Hallazgo de Leo: quien escriba este
-      // campo a mano en el editor de tablas de Supabase lo va a teclear como
-      // texto sin darse cuenta, y exigir el tipo exacto daba cero espera,
-      // cero error y cero señal. Lo que no es un número se descarta igual.
-      segundos: Number.isFinite(Number(c.segundos)) ? Number(c.segundos) : undefined,
-    } as Bloque
-  })
+  // LA TRADUCCIÓN YA NO VIVE AQUÍ. Aquí decía "esta es la única traducción y
+  // vive aquí sola", y era falso desde el día que se escribió: `almacenRemoto`
+  // tenía la otra, y ya diferían, porque esta conocía `segundos` y aquella no.
+  // Guardar una pausa desde el editor le habría borrado el piso de tiempo.
+  // Ahora las dos direcciones salen del contrato de bloque, y agregar un campo
+  // no exige acordarse de dos sitios.
+  //
+  // `desdeFila` devuelve null si el tipo no está en el contrato, que solo pasa
+  // si alguien agregó un valor al enum sin declararlo. Se descarta el bloque
+  // en vez de pintar un hueco que nadie sabe leer.
+  const bloques: Bloque[] = (data ?? [])
+    .map(f => desdeFila(f as FilaBloque))
+    .filter((b): b is Bloque => b !== null)
 
   return {
     estado: 'ok',
