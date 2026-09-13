@@ -4,13 +4,11 @@
 // cada uno, cuáles son obligatorios y cómo se traduce la fila de la base al
 // objeto que pinta la pantalla. Todo lo demás deriva de aquí.
 //
-// POR QUÉ EXISTE. Antes de este archivo, agregar un tipo de bloque costaba
-// DOCE sitios: el enum `pl_tipo_bloque`, el constraint
-// `blocks_contenido_por_tipo`, el tipo `TipoBloque`, el `CATALOGO`, el
-// margen en `Bloques.tsx`, el caso de render, las reglas de `revision.ts`,
-// el mapeo del lector en `lectura.ts`, el mapeo inverso de
-// `almacenRemoto.ts`, y las tres listas sueltas de `Editor.tsx`
-// (`TIPOS_FRECUENTES`, `TIPOS_OCASIONALES`, `CON_SUBIDA`).
+// POR QUÉ EXISTE. Antes de este archivo, el mismo conocimiento estaba escrito
+// en sitios que nada mantenía iguales: el tipo `TipoBloque`, el `CATALOGO`, el
+// mapa de márgenes de `Bloques.tsx`, las reglas de `revision.ts`, el mapeo del
+// lector en `lectura.ts`, el mapeo inverso de `almacenRemoto.ts` y las tres
+// listas sueltas de `Editor.tsx`. Todo eso deriva ahora de aquí.
 //
 // La prueba de que eso no era teoría: el tipo `audio` se agregó a la base el
 // 11 de septiembre de 2026 y consiguió DOS de los doce. Durante dos días
@@ -18,19 +16,40 @@
 // renderizador terminaba en `default: return null`. Sin error, sin hueco,
 // sin señal. Nadie lo iba a descubrir salvo publicando uno.
 //
-// Con este archivo, agregar un tipo cuesta:
-//   1. una entrada aquí,
-//   2. su caso de render en `Bloques.tsx`, que el compilador EXIGE (ver la
-//      comprobación de exhaustividad al final de ese archivo),
-//   3. su valor en el enum y su rama en el constraint, en una migración.
-// Uno para decidir, y dos que no se pueden olvidar en silencio.
+// CUÁNTO CUESTA HOY AGREGAR UN TIPO, CONTADO Y NO ESTIMADO. Aquí decía
+// "tres sitios, uno para decidir y dos que no se pueden olvidar". Era falso,
+// y Leo lo contó ejecutando el ejercicio el 2026-09-13. Son trece, de los
+// cuales SOLO DOS los fuerza el compilador:
+//
+//   FORZADOS (no compila si los olvidas):
+//     1. la entrada de este contrato,
+//     2. su caso de render en `Bloques.tsx`.
+//
+//   SUELTOS, y cada uno falla en silencio:
+//     3. `almacen.ts` `bloqueNuevo`, cuyo `default` siembra un campo que el
+//        tipo puede no tener,
+//     4. `almacen.ts` `cambiarAudiencia`, que solo conoce `nota`,
+//     5. el rótulo del formulario en `Editor.tsx`,
+//     6. la etiqueta y el placeholder del pie, en el mismo archivo,
+//     7. la escalera de campos del formulario sin medio,
+//     8. `SubirArchivo.tsx`, qué extensiones acepta,
+//     9. `SubirArchivo.tsx`, su copy y sus íconos,
+//    10. `lib/personalab/medios.ts`, los mimes y el bucket de la familia,
+//    11. la entrega propia del lector, en la página de la bisagra,
+//    12. el valor del enum `pl_tipo_bloque`, en una migración,
+//    13. su rama en `blocks_contenido_por_tipo`, cuyo `else` exige texto por
+//        descarte, así que un tipo sin rama nace rechazado por la base.
+//
+// Del 3 al 11 se van cayendo con las etapas 3 y 5. Están escritos con
+// nombre a propósito: la lección de `audio` es que lo que no está nombrado
+// no se agrega, y el próximo tipo lo va a agregar alguien que lea esto.
 //
 // LO QUE ESTE ARCHIVO TODAVÍA NO HACE, y por qué. `Bloque` sigue siendo una
 // interfaz plana con campos opcionales, y no un tipo por variante. Un tipo
 // por variante es lo correcto y exige cirugía en `Editor.tsx`, que se
 // reconstruye en la Etapa 3. Entra ahí, contra el editor nuevo, para no
-// hacerlo dos veces. Mientras tanto, la comprobación `_CamposCubiertos` del
-// final impide que el contrato y la interfaz se separen.
+// hacerlo dos veces. Mientras tanto, las DOS comprobaciones del final de este
+// archivo mantienen unidos el contrato y la interfaz, en los dos sentidos.
 //
 // Campos PROHIBIDOS en todo el modelo del participante, por el léxico del
 // Consejo #002: progress, completion_pct, score, streak, badge, rank, quiz.
@@ -64,6 +83,18 @@ export interface Campo {
   // Solo para 'numero'.
   min?: number
   max?: number
+  // QUIÉN PONE ESTE VALOR. Por defecto, la persona que escribe el contenido.
+  // 'sistema' significa que lo produce el propio producto (hoy: la subida de
+  // un archivo, que devuelve su nombre y su peso) y que NO se le debe ofrecer
+  // a nadie un campo para teclearlo.
+  //
+  // Está declarado antes de tener consumidor, y a propósito: el editor
+  // reconstruido de la Etapa 3 va a pintar el formulario recorriendo estos
+  // campos, y sin esta marca se encontraría ofreciéndole a un moderador
+  // teclear a mano el peso de un PDF. Hallazgo de Daniel. Los dos campos que
+  // la llevan desaparecen en la Etapa 5, cuando el peso y el nombre se lean
+  // de la fila de `media` en vez de copiarse al jsonb.
+  origen?: 'sistema'
 }
 
 // Los buckets de Storage separan por familia porque el techo de tamaño es
@@ -79,6 +110,22 @@ export interface Medio {
   // que para video y audio pide `media_id is not null or url <> ''` y para
   // imagen y archivo exige `media_id` sin salida.
   admiteUrl: boolean
+  // QUÉ HACE LA COMPUERTA SI FALTA EL ARCHIVO, y por qué esto es dato y no
+  // una constante escrita en `revision.ts`.
+  //
+  // La verdad del esquema es que sin `media_id` la base rechaza el bloque.
+  // Pero HOY NADIE ESCRIBE `media_id`: ni `crearBloque` ni `guardarBloque` lo
+  // mandan, y el editor solo guarda nombre, peso y url. O sea que poner
+  // 'impide' aquí ahora produce una compuerta que nadie puede satisfacer:
+  // le dice a quien escribe "arregla esto" sobre algo que no tiene arreglo
+  // desde ninguna pantalla. Eso no es fallar cerrado, es una pared.
+  //
+  // Así que hoy es 'advierte', con copy que dice la verdad completa, y pasa a
+  // 'impide' en la Etapa 3, el día que el editor escriba `media_id` de
+  // verdad. Cambiar una palabra por tipo, y la compuerta se endurece sola.
+  // Hallazgo de Leo: mi versión anterior dejó `presente-regalo` sin poder
+  // publicarse y sin forma de desbloquearla.
+  exigencia: Extract<Exigencia, 'impide' | 'advierte'>
 }
 
 export interface Definicion {
@@ -178,9 +225,15 @@ export const CONTRATO = {
       // siempre, sin ninguna demora.
       //
       // EL TECHO DE 30 ESTÁ AQUÍ Y NO SOLO EN `PisoDeTiempo.tsx`. La pantalla
-      // lo recorta al pintar, así que un 600 tecleado por error se veía como
-      // 30 y nadie se enteraba de que el dato estaba mal. Declarado aquí, el
-      // editor lo impide al escribir.
+      // del participante lo recorta al pintar, así que un 600 tecleado por
+      // error se veía como 30 y nadie se enteraba de que el dato estaba mal.
+      //
+      // Quien lee `max` hoy es la compuerta de publicación, que avisa del dato
+      // fuera de rango. El editor todavía no tiene campo para escribir los
+      // segundos (se teclean en la tabla de Supabase), así que no puede
+      // impedirlo al escribir; eso llega con el editor reconstruido. Lo digo
+      // aquí porque la versión anterior de este comentario afirmaba que el
+      // editor ya lo impedía, y era falso.
       segundos: {
         clase: 'numero',
         etiqueta: 'Segundos de espera',
@@ -229,7 +282,7 @@ export const CONTRATO = {
     ayuda: 'Un PDF. Puede entregarse para imprimir o llenar.',
     frecuencia: 'ocasional',
     margen: 'mt-8 md:mt-10',
-    medio: { familia: 'documento', admiteUrl: false },
+    medio: { familia: 'documento', admiteUrl: false, exigencia: 'advierte' },
     campos: {
       pie: { clase: 'linea', etiqueta: 'Pie', exigencia: 'opcional' },
       // DESCARGABLE YA NO ES SOLO DEL MODERADOR. El esquema llevaba escrita
@@ -241,8 +294,9 @@ export const CONTRATO = {
       // guarda IP y navegador) se resuelve en la Etapa 5, y la decisión fue
       // que la descarga del participante no deja ese rastro.
       descargable: { clase: 'booleano', etiqueta: 'Se puede descargar', exigencia: 'opcional' },
-      nombreArchivo: { clase: 'linea', etiqueta: 'Nombre del archivo', exigencia: 'opcional' },
-      peso: { clase: 'linea', etiqueta: 'Peso', exigencia: 'opcional' },
+      // Los pone la subida, no una persona. Ver `origen` arriba.
+      nombreArchivo: { clase: 'linea', etiqueta: 'Nombre del archivo', exigencia: 'opcional', origen: 'sistema' },
+      peso: { clase: 'linea', etiqueta: 'Peso', exigencia: 'opcional', origen: 'sistema' },
     },
   },
 
@@ -251,7 +305,7 @@ export const CONTRATO = {
     ayuda: 'Con pie de foto.',
     frecuencia: 'ocasional',
     margen: 'mt-9 md:mt-12',
-    medio: { familia: 'imagen', admiteUrl: false },
+    medio: { familia: 'imagen', admiteUrl: false, exigencia: 'advierte' },
     campos: {
       pie: { clase: 'linea', etiqueta: 'Pie de foto', exigencia: 'opcional' },
       url: { clase: 'url', etiqueta: 'Enlace', exigencia: 'opcional' },
@@ -263,7 +317,7 @@ export const CONTRATO = {
     ayuda: 'Subido, o de Vimeo o YouTube en modo no listado.',
     frecuencia: 'ocasional',
     margen: 'mt-9 md:mt-12',
-    medio: { familia: 'video', admiteUrl: true },
+    medio: { familia: 'video', admiteUrl: true, exigencia: 'advierte' },
     campos: {
       pie: { clase: 'linea', etiqueta: 'Pie', exigencia: 'opcional' },
       duracion: { clase: 'linea', etiqueta: 'Duración', exigencia: 'opcional' },
@@ -285,7 +339,7 @@ export const CONTRATO = {
     ayuda: 'Voz grabada. Se escucha, no se descarga.',
     frecuencia: 'ocasional',
     margen: 'mt-9 md:mt-12',
-    medio: { familia: 'audio', admiteUrl: true },
+    medio: { familia: 'audio', admiteUrl: true, exigencia: 'advierte' },
     campos: {
       pie: { clase: 'linea', etiqueta: 'Pie', exigencia: 'opcional' },
       duracion: { clase: 'linea', etiqueta: 'Duración', exigencia: 'opcional' },
@@ -390,6 +444,32 @@ function coaccionar(clase: ClaseCampo, crudo: unknown): unknown {
   }
 }
 
+// ¿ESTE CAMPO ESTÁ VACÍO? La respuesta depende de la clase del campo, igual
+// que la coerción, y por eso vive aquí y no en la compuerta.
+//
+// Antes esto era una función en `revision.ts` que devolvía una CADENA para
+// alimentar un predicado de cadenas, y usaba `' '` como centinela de "esto
+// existe, no lo juzgues". El centinela estaba invertido: el predicado hacía
+// `.trim()`, así que `' '` se leía como vacío. O sea que una pausa con 20
+// segundos puestos habría reportado "no tiene espera". No explotó por
+// casualidad, porque hoy todos los campos numéricos y booleanos son
+// opcionales y la compuerta sale antes de preguntar. Hallazgo de Daniel.
+//
+// Sin `default` a propósito: una clase de campo nueva obliga a decidir qué
+// significa estar vacío para ella, en vez de heredar una respuesta.
+export function estaVacio(clase: ClaseCampo, v: unknown): boolean {
+  switch (clase) {
+    case 'texto':
+    case 'linea':
+    case 'url':
+      return typeof v !== 'string' || v.trim() === ''
+    case 'numero':
+      return typeof v !== 'number' || !Number.isFinite(v)
+    case 'booleano':
+      return typeof v !== 'boolean'
+  }
+}
+
 export interface FilaBloque {
   id: string
   hinge_id: string
@@ -469,3 +549,23 @@ const _camposCubiertos: [CamposQueFaltanEnBloque] extends [never]
   ? true
   : { FALTA_DECLARAR_EN_BLOQUE: CamposQueFaltanEnBloque } = true
 void _camposCubiertos
+
+// Y LA GUARDA DEL SENTIDO CONTRARIO, que faltaba.
+//
+// La de arriba sola era de un solo sentido, y eso lo encontró Leo probándolo
+// en vez de leyéndolo: agregar `atribucion?: string` a `Bloque` sin declararlo
+// en ningún tipo del contrato compilaba limpio. Un campo así viaja a ninguna
+// parte, `aContenido` lo tira al guardar y se lee `undefined` para siempre,
+// sin error y sin señal. Es la enfermedad de `audio` en miniatura, dentro del
+// archivo escrito para curarla.
+//
+// Las estructurales (id, bisagraId, orden, tipo, audiencia, medioId) se
+// excluyen porque no son contenido: no viajan en el jsonb y no se declaran
+// por tipo.
+type CamposEstructurales = 'id' | 'bisagraId' | 'orden' | 'tipo' | 'audiencia' | 'medioId'
+type CamposHuerfanos = Exclude<Exclude<keyof Bloque, CamposEstructurales>, CamposDelContrato>
+
+const _sinHuerfanos: [CamposHuerfanos] extends [never]
+  ? true
+  : { CAMPO_EN_BLOQUE_QUE_NINGUN_TIPO_DECLARA: CamposHuerfanos } = true
+void _sinHuerfanos

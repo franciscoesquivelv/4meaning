@@ -1,4 +1,4 @@
-import { NIVEL, definicion, type Bloque } from '@/lib/personalab/bloques'
+import { NIVEL, definicion, estaVacio, type Bloque, type ClaseCampo } from '@/lib/personalab/bloques'
 import type { Experiencia } from './dominio'
 
 // Compuerta de publicacion. Distingue dos cosas que se confunden siempre:
@@ -37,12 +37,31 @@ function vacio(s?: string) {
   return !s || s.trim().length === 0
 }
 
-// Lee un campo del bloque por su nombre en el contrato. Un campo que no sea
-// texto (los segundos de la pausa, el interruptor de descargable) no se juzga
-// por "estar vacío", y por eso solo se devuelve algo cuando es una cadena.
-function valorDe(b: Bloque, campo: string): string | undefined {
-  const v = (b as unknown as Record<string, unknown>)[campo]
-  return typeof v === 'string' ? v : v === undefined || v === null ? undefined : ' '
+// Lee un campo del bloque por su nombre en el contrato, y pregunta al contrato
+// si está vacío. La pregunta la contesta `estaVacio`, que sabe que "vacío" no
+// significa lo mismo para un texto que para un número. Aquí vivía una función
+// que lo resolvía con un centinela de cadena, y el centinela estaba al revés.
+function campoVacio(b: Bloque, campo: string, clase: ClaseCampo): boolean {
+  return estaVacio(clase, (b as unknown as Record<string, unknown>)[campo])
+}
+
+// CÓMO SE NOMBRA EL BLOQUE DEL QUE HABLA UN HALLAZGO.
+//
+// Una bisagra tiene veinte bloques y varios del mismo tipo. Decir "Objeto: no
+// dice qué hacer con él" obliga a buscarlo a ojo; decir `El objeto "Tu
+// libreta"` lo señala. El código viejo interpolaba y al derivar las reglas se
+// perdió, dejando todos los hallazgos del mismo tipo con texto idéntico.
+// Hallazgo de Leo.
+//
+// Si el bloque todavía no tiene con qué identificarse, se nombra por su tipo
+// y ya: es el caso del bloque recién creado, que es justo cuando no hay nada
+// que citar.
+function etiquetaDe(b: Bloque, nombreTipo: string): string {
+  const seña = b.nombreArchivo || b.texto || b.pie
+  if (!seña || !seña.trim()) return `Un bloque de ${nombreTipo.toLowerCase()}`
+  const corta = seña.trim().replace(/\s+/g, ' ')
+  const recortada = corta.length > 42 ? `${corta.slice(0, 42).trimEnd()}...` : corta
+  return `${nombreTipo} "${recortada}"`
 }
 
 export function revisar(experiencia: Experiencia, bloques: Bloque[]): Revision {
@@ -90,54 +109,87 @@ export function revisar(experiencia: Experiencia, bloques: Bloque[]): Revision {
     // reglas puestas, sin que nadie tenga que acordarse de esta pantalla.
     for (const b of suyos) {
       const def = definicion(b.tipo)
+      const faltantes = Object.entries(def.campos)
+        .filter(([campo, regla]) => regla.exigencia !== 'opcional' && campoVacio(b, campo, regla.clase))
 
-      for (const [campo, regla] of Object.entries(def.campos)) {
-        if (regla.exigencia === 'opcional') continue
-        if (!vacio(valorDe(b, campo))) continue
+      // SI LO PRINCIPAL FALTA, NO SE ENUMERA LO SECUNDARIO. El código viejo
+      // usaba un `else if` y era deliberado: a un bloque recién creado no se
+      // le dice "la cita no tiene texto" y "la cita no dice quién lo dijo" a
+      // la vez. Se dice lo que hay que hacer primero. Al derivar las reglas se
+      // perdió ese agrupamiento y los hallazgos se duplicaron; lo encontró Leo
+      // diffeando la compuerta vieja contra la nueva.
+      const hayImpedimento = faltantes.some(([, r]) => r.exigencia === 'impide')
+      const aReportar = hayImpedimento
+        ? faltantes.filter(([, r]) => r.exigencia === 'impide')
+        : faltantes
 
+      for (const [, regla] of aReportar) {
         hallazgos.push({
-          severidad: regla.exigencia,
+          severidad: regla.exigencia as Severidad,
           bisagraId: bi.id,
           bisagra: nombre,
-          que: `${def.nombre}: ${regla.queFalta ?? `falta ${regla.etiqueta.toLowerCase()}.`}`,
+          que: `${etiquetaDe(b, def.nombre)} ${regla.queFalta ?? `no tiene ${regla.etiqueta.toLowerCase()}.`}`,
           comoSeArregla: regla.comoSeArregla ?? 'Complétalo, o quita el bloque si ya no hace falta.',
         })
       }
 
-      // El medio subido, que no es un campo del jsonb sino una columna.
-      // Espeja la rama del constraint: para video y audio vale la URL
-      // externa, para imagen y archivo no hay salida.
+      // El archivo subido, que no es un campo del jsonb sino una columna.
+      // Espeja la rama del constraint: para video y audio vale la URL externa,
+      // para imagen y archivo no hay salida. La severidad la decide el
+      // contrato, no esta línea, y hoy es 'advierte' en los cuatro porque
+      // todavía no existe ninguna pantalla que escriba `media_id`. El porqué
+      // completo está junto a la declaración, en `bloques.ts`.
       if (def.medio && !b.medioId && !(def.medio.admiteUrl && !vacio(b.url))) {
         hallazgos.push({
-          severidad: 'impide',
+          severidad: def.medio.exigencia,
           bisagraId: bi.id,
           bisagra: nombre,
-          que: `${def.nombre}: quedó sin archivo.`,
-          comoSeArregla: def.medio.admiteUrl
-            ? 'Súbelo o pega un enlace, o quita el bloque si ya no hace falta.'
-            : 'Súbelo, o quita el bloque si ya no hace falta.',
+          que: `${etiquetaDe(b, def.nombre)} no tiene un archivo subido, así que la base lo va a rechazar al publicar.`,
+          comoSeArregla: 'La subida real llega con el editor reconstruido. Por ahora es un aviso, no un bloqueo.',
         })
       }
 
-      // LA ÚNICA REGLA QUE NO ES POR CAMPO, y por eso sigue escrita a mano:
-      // cruza dos cosas del bloque (que sea descargable y quién lo ve) en vez
-      // de mirar si un campo está vacío.
-      //
-      // Y CAMBIÓ DE SENTIDO EL 2026-09-13. Antes decía que un descargable
-      // visible para todos era sospechoso, porque descargable significaba
-      // guion de sala del moderador. El producto digital jubiló esa regla: al
-      // participante sí se le puede entregar una hoja para imprimir o llenar.
-      // Lo que queda es lo que sigue siendo cierto: un archivo marcado SOLO
-      // para el moderador y a la vez descargable por el foro no se sostiene.
-      if (b.tipo === 'archivo' && b.descargable && b.audiencia !== 'todos') {
-        hallazgos.push({
-          severidad: 'advierte',
-          bisagraId: bi.id,
-          bisagra: nombre,
-          que: `"${b.nombreArchivo ?? 'Un archivo'}" es descargable pero no lo ve el participante.`,
-          comoSeArregla: 'Si es una hoja de trabajo, ponla en Todos. Si es guion de sala, está bien así.',
-        })
+      // El dato fuera del rango que el propio contrato declara. Hoy el único
+      // caso son los segundos de la pausa, que el participante ve recortados
+      // al techo: sin este aviso, un 600 tecleado por error se comporta como
+      // 30 y nadie se entera de que el dato está mal.
+      for (const [campo, regla] of Object.entries(def.campos)) {
+        if (regla.clase !== 'numero') continue
+        const v = (b as unknown as Record<string, unknown>)[campo]
+        if (typeof v !== 'number') continue
+        if (regla.max !== undefined && v > regla.max) {
+          hallazgos.push({
+            severidad: 'advierte',
+            bisagraId: bi.id,
+            bisagra: nombre,
+            que: `${etiquetaDe(b, def.nombre)} tiene ${regla.etiqueta.toLowerCase()} en ${v}, y el máximo es ${regla.max}.`,
+            comoSeArregla: `Se va a comportar como ${regla.max}. Bájalo para que el dato diga la verdad.`,
+          })
+        }
+        if (regla.min !== undefined && v < regla.min) {
+          hallazgos.push({
+            severidad: 'advierte',
+            bisagraId: bi.id,
+            bisagra: nombre,
+            que: `${etiquetaDe(b, def.nombre)} tiene ${regla.etiqueta.toLowerCase()} en ${v}, por debajo de ${regla.min}.`,
+            comoSeArregla: `Súbelo a ${regla.min} o más.`,
+          })
+        }
       }
+
+      // NO HAY REGLA SOBRE `descargable`, Y ESO ES UNA DECISIÓN.
+      //
+      // Había una que avisaba cuando un descargable lo veía todo el foro,
+      // porque descargable significaba guion de sala del moderador. Francisco
+      // jubiló esa regla el 2026-09-13: al participante digital sí se le puede
+      // pedir que imprima o descargue su hoja de trabajo.
+      //
+      // Yo la había sustituido por la inversa, y Leo probó que era falso
+      // positivo en los dos únicos archivos que existen, que son guiones de
+      // sala descargables a propósito. Una regla que se equivoca en el cien
+      // por ciento de sus casos reales no cumple la doctrina escrita arriba en
+      // este mismo archivo. Y nadie pidió una regla nueva: jubilar no es
+      // invertir. Queda fuera hasta que haya un caso que la sostenga.
     }
 
     // Dos pausas seguidas no son un respiro, son un hueco.

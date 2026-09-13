@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef, useState } from 'react'
-import type { TipoBloque } from '@/lib/personalab/bloques'
+import { familiaDe, type TipoBloque, type FamiliaMedio } from '@/lib/personalab/bloques'
 import { BTN_FILA } from './tokens'
 
 // Subida simulada. El archivo NO sale del navegador: se usa
@@ -13,10 +13,30 @@ import { BTN_FILA } from './tokens'
 
 type Estado = 'vacio' | 'eligiendo' | 'subiendo' | 'listo' | 'fallido'
 
-const ACEPTA: Record<string, string> = {
-  archivo: 'application/pdf',
+// QUÉ EXTENSIONES OFRECE EL SELECTOR, derivado de la familia que el tipo de
+// bloque declara en el contrato.
+//
+// Era un mapa a mano con tres entradas y un `?? '*/*'` de red, y ese descarte
+// era el defecto: `audio` no estaba en el mapa, así que el tipo que motivó
+// toda la etapa llegaba al selector aceptando CUALQUIER archivo. Hallazgo de
+// Leo y de Daniel, los dos. Ahora el mapa es por familia y sin descarte: una
+// familia nueva no compila hasta que alguien diga qué acepta.
+//
+// Esto es lo que el selector del navegador SUGIERE, no una garantía: la
+// validación de verdad vive en el servidor y en el bucket, que es donde tiene
+// que estar. La lista completa de mimes por familia es de la Etapa 5.
+const ACEPTA_POR_FAMILIA: Record<FamiliaMedio, string> = {
+  documento: 'application/pdf',
   imagen: 'image/*',
   video: 'video/mp4,video/quicktime',
+  audio: 'audio/mpeg,audio/mp4,audio/aac,audio/ogg,audio/webm',
+}
+
+// Un tipo sin medio no debería llegar aquí, y si llega no se le ofrece nada
+// en vez de ofrecerle todo, que es lo que hacía el `*/*`.
+function aceptaDe(tipo: TipoBloque): string | undefined {
+  const familia = familiaDe(tipo)
+  return familia ? ACEPTA_POR_FAMILIA[familia] : undefined
 }
 
 const MOTIVOS = [
@@ -109,7 +129,7 @@ export default function SubirArchivo({
       <input
         ref={entrada}
         type="file"
-        accept={ACEPTA[tipo] ?? '*/*'}
+        accept={aceptaDe(tipo)}
         onChange={alElegir}
         className="hidden"
       />

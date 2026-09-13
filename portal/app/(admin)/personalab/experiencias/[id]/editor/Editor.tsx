@@ -636,9 +636,11 @@ function TarjetaBloque({
           <p className="text-sm text-slate-400">Un respiro. No lleva contenido.</p>
         ) : CON_MEDIO.includes(b.tipo) ? (
           <>
-            <label className={ETIQUETA_INPUT}>
-              {b.tipo === 'archivo' ? 'PDF' : b.tipo === 'video' ? 'Video' : 'Imagen'}
-            </label>
+            {/* El rótulo sale del contrato. Era una escalera de ternarios
+                cuyo último escalón era 'Imagen', así que un bloque de audio
+                se rotulaba como imagen: el tipo pasó de invisible a visible
+                y mal etiquetado. Lo encontraron Leo y Daniel. */}
+            <label className={ETIQUETA_INPUT}>{definicion(b.tipo).nombre}</label>
             <SubirArchivo
               tipo={b.tipo}
               nombre={b.nombreArchivo}
