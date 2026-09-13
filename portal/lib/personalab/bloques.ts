@@ -120,9 +120,9 @@ export interface Medio {
   // le dice a quien escribe "arregla esto" sobre algo que no tiene arreglo
   // desde ninguna pantalla. Eso no es fallar cerrado, es una pared.
   //
-  // Así que hoy es 'advierte', con copy que dice la verdad completa, y pasa a
-  // 'impide' en la Etapa 3, el día que el editor escriba `media_id` de
-  // verdad. Cambiar una palabra por tipo, y la compuerta se endurece sola.
+  // Así que hoy es 'advierte', con copy que dice la verdad completa, y se
+  // endurece a 'impide' poniendo `EDITOR_ESCRIBE_MEDIA_ID` en true, que es un
+  // solo cambio y está justo al lado del código que lo va a provocar.
   // Hallazgo de Leo: mi versión anterior dejó `presente-regalo` sin poder
   // publicarse y sin forma de desbloquearla.
   exigencia: Extract<Exigencia, 'impide' | 'advierte'>
@@ -154,6 +154,22 @@ const FALTA_TEXTO = {
   queFalta: 'quedó sin texto.',
   comoSeArregla: 'Escríbelo, o quita el bloque si ya no hace falta.',
 } as const
+
+// EL INTERRUPTOR QUE ENDURECE LA COMPUERTA DEL ARCHIVO, en un solo sitio.
+//
+// La versión anterior de esto era una frase en un comentario: "pasa a impide
+// en la Etapa 3, cambiando una palabra por tipo". O sea cuatro ediciones que
+// nadie estaba obligado a hacer, dentro del archivo escrito precisamente para
+// abolir las promesas en comentarios. Hugo lo llamó el sitio suelto número
+// catorce y tenía razón.
+//
+// Ahora es un booleano. Se pone en `true` el día que `crearBloque` y
+// `guardarBloque` escriban `media_id`, y las cuatro reglas se endurecen
+// solas. Un cambio, en el sitio del cambio.
+const EDITOR_ESCRIBE_MEDIA_ID = false
+
+const EXIGENCIA_MEDIO: Extract<Exigencia, 'impide' | 'advierte'> =
+  EDITOR_ESCRIBE_MEDIA_ID ? 'impide' : 'advierte'
 
 export const CONTRATO = {
   texto: {
@@ -282,7 +298,7 @@ export const CONTRATO = {
     ayuda: 'Un PDF. Puede entregarse para imprimir o llenar.',
     frecuencia: 'ocasional',
     margen: 'mt-8 md:mt-10',
-    medio: { familia: 'documento', admiteUrl: false, exigencia: 'advierte' },
+    medio: { familia: 'documento', admiteUrl: false, exigencia: EXIGENCIA_MEDIO },
     campos: {
       pie: { clase: 'linea', etiqueta: 'Pie', exigencia: 'opcional' },
       // DESCARGABLE YA NO ES SOLO DEL MODERADOR. El esquema llevaba escrita
@@ -305,7 +321,7 @@ export const CONTRATO = {
     ayuda: 'Con pie de foto.',
     frecuencia: 'ocasional',
     margen: 'mt-9 md:mt-12',
-    medio: { familia: 'imagen', admiteUrl: false, exigencia: 'advierte' },
+    medio: { familia: 'imagen', admiteUrl: false, exigencia: EXIGENCIA_MEDIO },
     campos: {
       pie: { clase: 'linea', etiqueta: 'Pie de foto', exigencia: 'opcional' },
       url: { clase: 'url', etiqueta: 'Enlace', exigencia: 'opcional' },
@@ -317,7 +333,7 @@ export const CONTRATO = {
     ayuda: 'Subido, o de Vimeo o YouTube en modo no listado.',
     frecuencia: 'ocasional',
     margen: 'mt-9 md:mt-12',
-    medio: { familia: 'video', admiteUrl: true, exigencia: 'advierte' },
+    medio: { familia: 'video', admiteUrl: true, exigencia: EXIGENCIA_MEDIO },
     campos: {
       pie: { clase: 'linea', etiqueta: 'Pie', exigencia: 'opcional' },
       duracion: { clase: 'linea', etiqueta: 'Duración', exigencia: 'opcional' },
@@ -339,7 +355,7 @@ export const CONTRATO = {
     ayuda: 'Voz grabada. Se escucha, no se descarga.',
     frecuencia: 'ocasional',
     margen: 'mt-9 md:mt-12',
-    medio: { familia: 'audio', admiteUrl: true, exigencia: 'advierte' },
+    medio: { familia: 'audio', admiteUrl: true, exigencia: EXIGENCIA_MEDIO },
     campos: {
       pie: { clase: 'linea', etiqueta: 'Pie', exigencia: 'opcional' },
       duracion: { clase: 'linea', etiqueta: 'Duración', exigencia: 'opcional' },
@@ -425,8 +441,31 @@ export interface Bloque {
 // Ahora hay una, deriva del contrato, y agregar un campo no requiere
 // acordarse de nada: si está declarado, viaja en las dos direcciones.
 
+// UNA URL QUE SOBREVIVE A LA PESTAÑA, que es lo único que sirve de contenido.
+//
+// `URL.createObjectURL` produce `blob:...`, y eso vive solo en la memoria del
+// navegador que lo creó: se muere al recargar y no significa nada para nadie
+// más. La subida simulada del editor escribe justo eso, y el efecto era peor
+// que un archivo que falta: como video y audio admiten URL externa, un `blob:`
+// APAGABA el aviso de la compuerta, pasaba el constraint (que solo pide que la
+// url no esté vacía) y le pintaba al participante un reproductor muerto. Un
+// bloque roto que nadie reportaba, que es la forma de defecto que más veces ha
+// vuelto en este proyecto. Hallazgo de Hugo.
+//
+// Se admite lo absoluto de http y https, y lo relativo que empieza por `/`,
+// que es la forma de la puerta de medios del propio portal.
+function urlUtilizable(v: unknown): v is string {
+  if (typeof v !== 'string') return false
+  const s = v.trim()
+  if (s === '') return false
+  return s.startsWith('/') || s.startsWith('http://') || s.startsWith('https://')
+}
+
 function coaccionar(clase: ClaseCampo, crudo: unknown): unknown {
   switch (clase) {
+    case 'url':
+      return urlUtilizable(crudo) ? crudo.trim() : undefined
+
     case 'numero': {
       // Se acepta "20" además de 20. Hallazgo de Leo: quien escriba este
       // campo a mano en el editor de tablas de Supabase lo va a teclear como
@@ -437,11 +476,24 @@ function coaccionar(clase: ClaseCampo, crudo: unknown): unknown {
     }
     case 'booleano':
       return typeof crudo === 'boolean' ? crudo : undefined
+
     case 'texto':
     case 'linea':
-    case 'url':
       return typeof crudo === 'string' ? crudo : undefined
   }
+
+  // LA GUARDA QUE FALTABA, y es del mismo tipo que ya me encontraron una vez.
+  //
+  // El comentario de `estaVacio` decía que una clase de campo nueva obliga a
+  // decidir en las dos funciones. Era falso: `estaVacio` devuelve `boolean` y
+  // el compilador la protege sola, pero esta devuelve `unknown`, así que
+  // caerse del final era legal. Quien agregara una clase nueva habría
+  // arreglado el único error que el compilador enseñaba y publicado una clase
+  // cuyos valores se descartan en silencio en las dos direcciones. Hallazgo
+  // de Hugo, y es exactamente la forma del defecto que arreglé esta mañana.
+  const _faltaCoaccionar: never = clase
+  void _faltaCoaccionar
+  return undefined
 }
 
 // ¿ESTE CAMPO ESTÁ VACÍO? La respuesta depende de la clase del campo, igual
@@ -459,9 +511,12 @@ function coaccionar(clase: ClaseCampo, crudo: unknown): unknown {
 // significa estar vacío para ella, en vez de heredar una respuesta.
 export function estaVacio(clase: ClaseCampo, v: unknown): boolean {
   switch (clase) {
+    case 'url':
+      // Una url que no sobrevive a la pestaña cuenta como ausente, no como
+      // presente pero rota. Ver `urlUtilizable`.
+      return !urlUtilizable(v)
     case 'texto':
     case 'linea':
-    case 'url':
       return typeof v !== 'string' || v.trim() === ''
     case 'numero':
       return typeof v !== 'number' || !Number.isFinite(v)

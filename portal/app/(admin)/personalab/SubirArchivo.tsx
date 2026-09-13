@@ -32,6 +32,16 @@ const ACEPTA_POR_FAMILIA: Record<FamiliaMedio, string> = {
   audio: 'audio/mpeg,audio/mp4,audio/aac,audio/ogg,audio/webm',
 }
 
+// Cómo se nombra el archivo de cada familia cuando se le pide a una persona.
+// Sin descarte: una familia nueva no compila hasta que alguien le ponga
+// nombre, en vez de heredar el de la imagen.
+const QUE_ELIGE: Record<FamiliaMedio, string> = {
+  documento: 'el PDF',
+  imagen: 'la imagen',
+  video: 'el video',
+  audio: 'el audio',
+}
+
 // Un tipo sin medio no debería llegar aquí, y si llega no se le ofrece nada
 // en vez de ofrecerle todo, que es lo que hacía el `*/*`.
 function aceptaDe(tipo: TipoBloque): string | undefined {
@@ -137,13 +147,16 @@ export default function SubirArchivo({
       {estado === 'vacio' && (
         <div className="border border-dashed border-slate-300 rounded-lg px-4 py-6 text-center">
           {/* Nombrar el vacío no sirve de nada cuando el botón está justo
-              debajo. Nombrar la acción sí. */}
+              debajo. Nombrar la acción sí.
+
+              Y NOMBRARLA BIEN: aquí había una escalera de ternarios que
+              terminaba en 'imagen', así que a un bloque de audio le decía
+              "Elige la imagen que va en este bloque". Es el mismo defecto que
+              el rótulo del editor, un archivo más allá, y lo encontró Hugo
+              después de que Leo y Daniel arreglaran el otro. Ahora sale de la
+              familia que el contrato declara. */}
           <p className="text-sm text-slate-500">
-            {tipo === 'archivo'
-              ? 'Elige el PDF que va en este bloque.'
-              : tipo === 'video'
-                ? 'Elige el video que va en este bloque.'
-                : 'Elige la imagen que va en este bloque.'}
+            Elige {QUE_ELIGE[familiaDe(tipo) ?? 'documento']} que va en este bloque.
           </p>
           <div className="flex items-center justify-center gap-2 mt-3">
             <button onClick={() => elegir(false)} className={BTN_FILA}>

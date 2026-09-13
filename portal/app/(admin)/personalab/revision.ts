@@ -139,13 +139,18 @@ export function revisar(experiencia: Experiencia, bloques: Bloque[]): Revision {
       // contrato, no esta línea, y hoy es 'advierte' en los cuatro porque
       // todavía no existe ninguna pantalla que escriba `media_id`. El porqué
       // completo está junto a la declaración, en `bloques.ts`.
-      if (def.medio && !b.medioId && !(def.medio.admiteUrl && !vacio(b.url))) {
+      // La url se juzga con el criterio del contrato y no con `vacio()`: una
+      // `blob:` de la subida simulada es una cadena llena y aun así no sirve
+      // de nada, y antes apagaba este aviso. Ver `urlUtilizable`.
+      if (def.medio && !b.medioId && !(def.medio.admiteUrl && !estaVacio('url', b.url))) {
         hallazgos.push({
           severidad: def.medio.exigencia,
           bisagraId: bi.id,
           bisagra: nombre,
-          que: `${etiquetaDe(b, def.nombre)} no tiene un archivo subido, así que la base lo va a rechazar al publicar.`,
-          comoSeArregla: 'La subida real llega con el editor reconstruido. Por ahora es un aviso, no un bloqueo.',
+          que: `${etiquetaDe(b, def.nombre)} no tiene un archivo que se pueda servir.`,
+          comoSeArregla: def.medio.admiteUrl
+            ? 'Súbelo cuando el editor guarde de verdad, o pega un enlace. Por ahora es un aviso, no un bloqueo.'
+            : 'La subida real llega con el editor reconstruido. Por ahora es un aviso, no un bloqueo.',
         })
       }
 
