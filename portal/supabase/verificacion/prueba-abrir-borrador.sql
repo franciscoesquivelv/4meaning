@@ -31,6 +31,7 @@ begin;
 do $$
 declare
   v_exp uuid;
+  v_super uuid;
   v_originales int;
   v_nuevo uuid;
   v_copiadas int;
@@ -41,6 +42,15 @@ begin
   if v_exp is null then
     raise exception 'No encontré la experiencia presente-regalo. Ajusta el slug antes de correr esto.';
   end if;
+
+  -- pl_abrir_borrador exige pl_es_equipo(). El editor SQL no corre como
+  -- nadie en particular, así que hay que decirle a la base quién es quien
+  -- pregunta. Mismo truco que ya usa verificar-almacenamiento.sql.
+  select id into v_super from public.profiles where role = 'super_admin' limit 1;
+  if v_super is null then
+    raise exception 'No encontré ningún profiles.role = super_admin. Sin eso no se puede probar pl_abrir_borrador aquí.';
+  end if;
+  perform set_config('request.jwt.claims', json_build_object('sub', v_super)::text, true);
 
   select count(*) into v_originales
   from public.hinges h
