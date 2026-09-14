@@ -1,30 +1,33 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import { familiaDe, type TipoBloque, type FamiliaMedio } from '@/lib/personalab/bloques'
+import { subirArchivo } from './almacenRemoto'
 import { BTN_FILA } from './tokens'
 
-// Subida simulada. El archivo NO sale del navegador: se usa
-// URL.createObjectURL para poder verlo, y se pierde al recargar. La pantalla
-// lo dice en vez de fingir que hay un bucket detras.
+// SUBIDA REAL, ETAPA 3. Hasta hoy este componente no mandaba nada a ningún
+// lado: `URL.createObjectURL` fingía el archivo y se perdía al recargar.
+// Ahora usa `subirArchivo()` de `almacenRemoto.ts`, que ya estaba escrita y
+// bien hecha (URL firmada, sube directo a Storage, registra la fila), solo
+// que nunca se había llamado desde ningún componente real.
+//
+// Lo que se retiró junto con la simulación: el botón "Ver el estado de
+// error" existía para poder diseñar la pantalla de fallo sin esperar a que
+// fallara de verdad. Ahora sí puede fallar de verdad (la red, el bucket, el
+// servidor), así que un botón que finge un fallo al lado de una subida real
+// confunde más de lo que ayuda: alguien podría creer que prueba algo.
 //
 // Seis estados, porque los cinco felices no son el problema: el que hay que
-// poder ver y disenar es el que falla.
+// poder ver y diseñar es el que falla.
 
 type Estado = 'vacio' | 'eligiendo' | 'subiendo' | 'listo' | 'fallido'
 
 // QUÉ EXTENSIONES OFRECE EL SELECTOR, derivado de la familia que el tipo de
 // bloque declara en el contrato.
 //
-// Era un mapa a mano con tres entradas y un `?? '*/*'` de red, y ese descarte
-// era el defecto: `audio` no estaba en el mapa, así que el tipo que motivó
-// toda la etapa llegaba al selector aceptando CUALQUIER archivo. Hallazgo de
-// Leo y de Daniel, los dos. Ahora el mapa es por familia y sin descarte: una
-// familia nueva no compila hasta que alguien diga qué acepta.
-//
 // Esto es lo que el selector del navegador SUGIERE, no una garantía: la
-// validación de verdad vive en el servidor y en el bucket, que es donde tiene
-// que estar. La lista completa de mimes por familia es de la Etapa 5.
+// validación de verdad vive en el servidor y en el bucket, que es donde
+// tiene que estar.
 const ACEPTA_POR_FAMILIA: Record<FamiliaMedio, string> = {
   documento: 'application/pdf',
   imagen: 'image/*',
@@ -33,8 +36,6 @@ const ACEPTA_POR_FAMILIA: Record<FamiliaMedio, string> = {
 }
 
 // Cómo se nombra el archivo de cada familia cuando se le pide a una persona.
-// Sin descarte: una familia nueva no compila hasta que alguien le ponga
-// nombre, en vez de heredar el de la imagen.
 const QUE_ELIGE: Record<FamiliaMedio, string> = {
   documento: 'el PDF',
   imagen: 'la imagen',
@@ -42,19 +43,10 @@ const QUE_ELIGE: Record<FamiliaMedio, string> = {
   audio: 'el audio',
 }
 
-// Un tipo sin medio no debería llegar aquí, y si llega no se le ofrece nada
-// en vez de ofrecerle todo, que es lo que hacía el `*/*`.
 function aceptaDe(tipo: TipoBloque): string | undefined {
   const familia = familiaDe(tipo)
   return familia ? ACEPTA_POR_FAMILIA[familia] : undefined
 }
-
-const MOTIVOS = [
-  'Se cortó la conexión al 62 por ciento. El archivo sigue en tu computadora, no se perdió nada.',
-  'Pesa 240 MB y el máximo son 200. Comprímelo o divídelo en dos.',
-  'El PDF tiene contraseña. Quítasela y vuelve a subirlo.',
-  'Falló del lado nuestro, no del tuyo. Vuelve a intentar en un minuto.',
-]
 
 function pesoLegible(bytes: number) {
   if (bytes < 1024) return `${bytes} B`
@@ -68,48 +60,43 @@ export default function SubirArchivo({
   tipo: TipoBloque
   nombre?: string
   url?: string
-  onListo: (datos: { nombreArchivo: string; peso: string; url: string }) => void
+  onListo: (datos: { nombreArchivo: string; peso: string; url: string; medioId: string }) => void
   onQuitar: () => void
 }) {
   const [estado, setEstado] = useState<Estado>(nombre || url ? 'listo' : 'vacio')
   const [avance, setAvance] = useState(0)
   const [motivo, setMotivo] = useState('')
   const [pendiente, setPendiente] = useState<File | null>(null)
-  const entrada = useRef<HTMLInputElement>(null)
-  const forzarFallo = useRef(false)
 
-  function elegir(fallar: boolean) {
-    forzarFallo.current = fallar
-    entrada.current?.click()
+  function elegir() {
+    const entrada = document.createElement('input')
+    entrada.type = 'file'
+    const acepta = aceptaDe(tipo)
+    if (acepta) entrada.accept = acepta
+    entrada.onchange = () => {
+      const f = entrada.files?.[0]
+      if (f) subir(f)
+    }
+    entrada.click()
   }
 
-  function alElegir(e: React.ChangeEvent<HTMLInputElement>) {
-    const f = e.target.files?.[0]
-    if (!f) return
+  async function subir(f: File) {
     setPendiente(f)
     setEstado('subiendo')
     setAvance(0)
-
-    const debeFallar = forzarFallo.current
-    let pct = 0
-    const reloj = setInterval(() => {
-      pct += Math.random() * 18 + 7
-      if (debeFallar && pct >= 62) {
-        clearInterval(reloj)
-        setMotivo(MOTIVOS[Math.floor(Math.random() * MOTIVOS.length)])
-        setEstado('fallido')
-        return
-      }
-      if (pct >= 100) {
-        clearInterval(reloj)
-        setAvance(100)
-        const objeto = URL.createObjectURL(f)
-        onListo({ nombreArchivo: f.name, peso: pesoLegible(f.size), url: objeto })
-        setEstado('listo')
-        return
-      }
-      setAvance(Math.min(pct, 99))
-    }, 260)
+    try {
+      const resultado = await subirArchivo(f, pct => setAvance(pct))
+      onListo({
+        nombreArchivo: resultado.nombre,
+        peso: resultado.peso,
+        url: resultado.url,
+        medioId: resultado.id,
+      })
+      setEstado('listo')
+    } catch (e) {
+      setMotivo(e instanceof Error ? e.message : 'Falló del lado nuestro, no del tuyo. Vuelve a intentar en un minuto.')
+      setEstado('fallido')
+    }
   }
 
   function reintentar() {
@@ -117,60 +104,19 @@ export default function SubirArchivo({
       setEstado('vacio')
       return
     }
-    forzarFallo.current = false
-    setEstado('subiendo')
-    setAvance(0)
-    let pct = 0
-    const reloj = setInterval(() => {
-      pct += Math.random() * 20 + 10
-      if (pct >= 100) {
-        clearInterval(reloj)
-        const objeto = URL.createObjectURL(pendiente)
-        onListo({ nombreArchivo: pendiente.name, peso: pesoLegible(pendiente.size), url: objeto })
-        setEstado('listo')
-        return
-      }
-      setAvance(Math.min(pct, 99))
-    }, 220)
+    subir(pendiente)
   }
 
   return (
     <div>
-      <input
-        ref={entrada}
-        type="file"
-        accept={aceptaDe(tipo)}
-        onChange={alElegir}
-        className="hidden"
-      />
-
       {estado === 'vacio' && (
         <div className="border border-dashed border-slate-300 rounded-lg px-4 py-6 text-center">
-          {/* Nombrar el vacío no sirve de nada cuando el botón está justo
-              debajo. Nombrar la acción sí.
-
-              Y NOMBRARLA BIEN: aquí había una escalera de ternarios que
-              terminaba en 'imagen', así que a un bloque de audio le decía
-              "Elige la imagen que va en este bloque". Es el mismo defecto que
-              el rótulo del editor, un archivo más allá, y lo encontró Hugo
-              después de que Leo y Daniel arreglaran el otro. Ahora sale de la
-              familia que el contrato declara. */}
           <p className="text-sm text-slate-500">
             Elige {QUE_ELIGE[familiaDe(tipo) ?? 'documento']} que va en este bloque.
           </p>
           <div className="flex items-center justify-center gap-2 mt-3">
-            <button onClick={() => elegir(false)} className={BTN_FILA}>
+            <button onClick={elegir} className={BTN_FILA}>
               Elegir archivo
-            </button>
-            {/* Esto es andamio de diseño, no una función del producto: sirve
-                para poder ver el estado de error sin esperar a que falle de
-                verdad. Va en gris y nombrado por lo que hace. */}
-            <button
-              onClick={() => elegir(true)}
-              className="text-xs text-slate-400 hover:text-slate-600 underline underline-offset-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900/25 focus-visible:ring-offset-2 rounded"
-              title="Solo para revisar el diseño. Fuerza un fallo de subida."
-            >
-              Ver el estado de error
             </button>
           </div>
         </div>
@@ -180,7 +126,6 @@ export default function SubirArchivo({
         <div className="border border-slate-200 rounded-lg px-4 py-3.5">
           <div className="flex items-center justify-between gap-3 mb-2">
             <span className="text-sm text-slate-700 truncate">{pendiente?.name}</span>
-            {/* Un número sin verbo no dice en qué va. */}
             <span className="text-xs text-slate-400 tabular-nums flex-shrink-0" role="status" aria-live="polite">
               {avance < 1 ? 'Preparando' : `Subiendo, ${Math.round(avance)} %`}
             </span>
@@ -228,6 +173,8 @@ export default function SubirArchivo({
               <svg className="w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.6}>
                 {tipo === 'video' ? (
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15 10l4.55-2.28A1 1 0 0121 8.62v6.76a1 1 0 01-1.45.9L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                ) : tipo === 'audio' ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 18.5a6.5 6.5 0 006.5-6.5M12 18.5A6.5 6.5 0 015.5 12M12 18.5V22M12 2a3 3 0 013 3v7a3 3 0 11-6 0V5a3 3 0 013-3z" />
                 ) : (
                   <path strokeLinecap="round" strokeLinejoin="round" d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8zM14 2v6h6" />
                 )}
@@ -236,7 +183,7 @@ export default function SubirArchivo({
           )}
           <span className="text-sm text-slate-700 truncate flex-1 min-w-0">{nombre ?? 'archivo'}</span>
           <div className="flex items-center gap-1.5 flex-shrink-0">
-            <button onClick={() => elegir(false)} className={BTN_FILA}>Reemplazar</button>
+            <button onClick={elegir} className={BTN_FILA}>Reemplazar</button>
             <button
               onClick={() => { setEstado('vacio'); setPendiente(null); onQuitar() }}
               className={BTN_FILA}
@@ -245,16 +192,6 @@ export default function SubirArchivo({
             </button>
           </div>
         </div>
-      )}
-
-      {/* El aviso vivía bajo TODOS los estados de TODOS los bloques, y
-          repetido así se vuelve ruido y deja de leerse. Se queda solo aquí,
-          en "listo", que es el único momento donde alguien puede creer que
-          el archivo ya está guardado en algún lado. */}
-      {estado === 'listo' && (
-        <p className="text-[11px] text-amber-700 mt-2 leading-relaxed">
-          El archivo no se subió a ningún lado: se pierde al recargar.
-        </p>
       )}
     </div>
   )

@@ -10,6 +10,18 @@ import { exigirEquipo } from '@/lib/personalab/medios'
 // existe, y con eso se puede sondear el catalogo entero preguntando por ids.
 // El 404 no distingue entre "no existe" y "no es tuyo", que es justo lo que
 // se quiere.
+//
+// DOS FORMAS DE RESPONDER, Y ES A PROPÓSITO. Por defecto, esta ruta
+// REDIRIGE (307) a la URL firmada: así `<img src>`, `<video src>` y
+// `<audio src>` la usan directo, sin JavaScript de por medio, porque el
+// navegador sigue el redirect solo. Antes SIEMPRE devolvía JSON, y
+// `almacenRemoto.ts` guardaba esa URL de JSON tal cual dentro del bloque: un
+// bloque de imagen o video apuntaba a un endpoint que nunca sirve una
+// imagen. Hallazgo de Leo, semanas atrás, nunca cerrado porque nada escribía
+// `media_id` todavía. Con `?descargar=1` sigue devolviendo JSON: esa rama
+// necesita el nombre del archivo para forzar la descarga y confirmar que la
+// bitácora se escribió antes de que el navegador se vaya, y eso un redirect
+// no lo permite verificar del lado del cliente.
 
 const VIDA_SEGUNDOS = 300
 
@@ -64,13 +76,17 @@ export async function GET(
       ip_txt: request.headers.get('x-forwarded-for') ?? null,
       ua: request.headers.get('user-agent') ?? null,
     })
+    return NextResponse.json({
+      url: firmada.signedUrl,
+      nombre: medio.nombre,
+      expiraEn: VIDA_SEGUNDOS,
+    })
   }
 
-  return NextResponse.json({
-    url: firmada.signedUrl,
-    nombre: medio.nombre,
-    expiraEn: VIDA_SEGUNDOS,
-  })
+  // El caso normal, el que usan img/video/audio: redirect directo al
+  // archivo real. 307 y no 302, para que un POST (si alguna vez lo hay)
+  // no se convierta en GET en el salto.
+  return NextResponse.redirect(firmada.signedUrl, 307)
 }
 
 export async function DELETE(
@@ -88,11 +104,30 @@ export async function DELETE(
 
   if (!medio) return NextResponse.json({ error: 'No encontrado.' }, { status: 404 })
 
-  // Primero el objeto, despues la fila. Al reves quedaria un archivo
-  // huerfano en el bucket que nadie sabe que existe.
-  await service.storage.from(medio.bucket).remove([medio.path])
+  // PRIMERO LA FILA, DESPUÉS EL OBJETO. Al revés estaba antes, con el
+  // razonamiento de que así no quedaba un archivo huérfano en el bucket —
+  // cierto en aislamiento, pero incompleto: `blocks.media_id` es
+  // `on delete set null`, y el CHECK `blocks_contenido_por_tipo` exige
+  // `media_id is not null` para los tipos `archivo` e `imagen`. Si esta fila
+  // todavía la usa un bloque de esos, el `set null` viola el CHECK, el
+  // DELETE de la fila FALLA, y con el orden viejo el objeto YA SE HABÍA
+  // BORRADO: fila viva apuntando a un archivo que ya no existe, bloque roto,
+  // 500 con el error crudo de Postgres. Hallazgo de Hugo. Con este orden, si
+  // la fila no se puede borrar, el objeto ni se toca: el estado inconsistente
+  // deja de ser posible.
   const { error } = await service.from('media').delete().eq('id', params.id)
+  if (error) {
+    const enUso = error.code === '23514' // violación de CHECK
+    return NextResponse.json(
+      {
+        error: enUso
+          ? 'Este archivo todavía lo usa un bloque que lo necesita. Quítalo del bloque primero.'
+          : error.message,
+      },
+      { status: enUso ? 409 : 500 }
+    )
+  }
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  await service.storage.from(medio.bucket).remove([medio.path])
   return NextResponse.json({ ok: true })
 }

@@ -4,35 +4,64 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import BloqueLector from '../../../Bloques'
 import SubirArchivo from '../../../SubirArchivo'
-import { useFuente } from '../../../useFuente'
 import {
   NIVEL, definicion,
   TIPOS_FRECUENTES, TIPOS_OCASIONALES, CON_MEDIO,
   type Bloque, type TipoBloque, type Audiencia,
 } from '@/lib/personalab/bloques'
 import {
-  cargar, guardar, descartarBorrador, hayBorrador,
-  bloqueNuevo, reordenar, cambiarAudiencia,
-  type EstadoGuardado,
-} from '../../../almacen'
-import type { Experiencia, Tiempo } from '../../../dominio'
-import { ETIQUETA_TIEMPO } from '../../../dominio'
+  crearBloque, guardarBloque, borrarBloque, reordenarRemoto,
+  camposPorDefecto, cambiarAudiencia, reordenar,
+  ConflictoDeVersion,
+} from '../../../almacenRemoto'
+import type { ExperienciaEditable, BloqueEditable } from '@/lib/personalab/editorDatos'
+import { ETIQUETA_TIEMPO, type Tiempo } from '../../../dominio'
 import { BTN_PRIMARIO, BTN_SECUNDARIO, BTN_FILA, BTN_PELIGRO, TARJETA } from '../../../tokens'
-import { Boton, Girador, EsqueletoEditor } from '../../../ui'
+import { Boton, Girador } from '../../../ui'
 
-const TIEMPOS: Tiempo[] = ['vispera', 'ignicion', 'retorno']
-
-// EL CATÁLOGO PARTIDO EN DOS FILAS YA NO SE ESCRIBE AQUÍ. La razón de
-// partirlo sigue siendo la misma y sigue siendo buena: en el contenido
-// sembrado, texto aparece 9 veces y nota 5, mientras imagen y video, cero.
-// Once botones del mismo peso mienten sobre esa diferencia.
+// ETAPA 3. Este componente ya no guarda en localStorage: cada acción
+// (agregar, editar, mover, borrar un bloque) escribe a la base real, contra
+// el borrador de esta experiencia. `almacen.ts` y su copia de "borrador vs.
+// publicado" quedan retirados: ahora el borrador ES la versión en estado
+// 'borrador' de `experience_versions`, y lo protege la base, no el
+// navegador de quien edita.
 //
-// Lo que cambió es de dónde sale la lista. Eran tres arreglos a mano, y por
-// eso el tipo `audio` no aparecía en ninguno: nacía sin botón, aunque la
-// base lo aceptara. Ahora cada tipo declara su frecuencia y si lleva archivo
-// en `lib/personalab/bloques.ts`, y estas listas se derivan solas.
+// EL CAMBIO DE FONDO: antes se acumulaban ediciones en memoria y se volcaba
+// el arreglo COMPLETO a disco cada 700ms. Eso no existe con una base
+// compartida: dos personas editando pisarían el trabajo de la otra en cada
+// volcado. Ahora cada bloque persiste POR SU CUENTA, con el mismo candado de
+// concurrencia optimista (`rev`) que ya traía `almacenRemoto.ts` escrito y
+// sin usar.
 
-const CHIP: Record<EstadoGuardado, { texto: string; clase: string }> = {
+type EstadoBloque = 'limpio' | 'pendiente' | 'guardando' | 'guardado' | 'error'
+
+// UN BLOQUE PUEDE EXISTIR EN PANTALLA ANTES DE EXISTIR EN LA BASE.
+//
+// ENCONTRADO PROBANDO, NO LEYENDO: la primera versión de este archivo creaba
+// el bloque en la base EN EL INSTANTE de hacer clic en "Texto", con
+// contenido vacío. `blocks_contenido_por_tipo` exige contenido no vacío
+// para casi todos los tipos desde la primera fila (`pausa` es el único que
+// no exige nada), así que ese insert fallaba siempre, en el primer intento,
+// para once de doce tipos. "No se pudo crear el bloque" apenas se
+// terminaba de construir la función que lo crea.
+//
+// La corrección no es rellenar el contenido con algo falso para pasar la
+// validación (un espacio en blanco pasaría el CHECK de la base y seguiría
+// siendo vacío para quien lee): es no mentir sobre cuándo existe la fila.
+// Un bloque recién agregado vive SOLO en el navegador (id con el prefijo
+// `local:`) hasta que tiene contenido de verdad; el primer guardado que ya
+// no viola el CHECK es el que lo crea en la base, con su id real. Si se
+// abandona vacío y se navega a otra bisagra, nunca llegó a existir en la
+// base: no hay nada que limpiar después.
+const PREFIJO_LOCAL = 'local:'
+function esLocal(id: string): boolean {
+  return id.startsWith(PREFIJO_LOCAL)
+}
+function idLocal(): string {
+  return PREFIJO_LOCAL + Math.random().toString(36).slice(2) + Date.now().toString(36)
+}
+
+const CHIP: Record<EstadoBloque, { texto: string; clase: string }> = {
   limpio:    { texto: 'Todo guardado',       clase: 'text-slate-400' },
   pendiente: { texto: 'Cambios sin guardar', clase: 'text-amber-600' },
   guardando: { texto: 'Guardando',           clase: 'text-slate-400' },
@@ -40,133 +69,240 @@ const CHIP: Record<EstadoGuardado, { texto: string; clase: string }> = {
   error:     { texto: 'No se pudo guardar',  clase: 'text-red-600' },
 }
 
-// Debajo de este umbral el ojo no registra el cambio y el boton parece no
-// haber respondido. localStorage es instantaneo, asi que sin este piso el
-// estado "guardando" no llega a pintarse nunca.
-const MINIMO_PERCEPTIBLE = 400
+// El orden importa: si un bloque está en error, eso manda sobre cualquier
+// otra cosa que esté pasando en el resto de la pantalla.
+const PESO_ESTADO: Record<EstadoBloque, number> = {
+  error: 4, guardando: 3, pendiente: 2, guardado: 1, limpio: 0,
+}
+
+const DEMORA_AUTOGUARDADO = 700
 
 const ETIQUETA_INPUT = 'block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1.5'
 const INPUT =
   'w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder:text-slate-300 focus:outline-none focus:border-slate-400 transition-colors'
 
-export default function Editor({ experiencia }: { experiencia: Experiencia }) {
-  const [bloques, setBloques] = useState<Bloque[]>([])
+const TIEMPOS: Tiempo[] = ['vispera', 'ignicion', 'retorno']
+
+export default function Editor({
+  experiencia, bloquesIniciales,
+}: {
+  experiencia: ExperienciaEditable
+  bloquesIniciales: BloqueEditable[]
+}) {
+  const [bloques, setBloques] = useState<BloqueEditable[]>(bloquesIniciales)
   const [activa, setActiva] = useState<string>('')
-  const [estado, setEstado] = useState<EstadoGuardado>('limpio')
+  const [estadosPorBloque, setEstadosPorBloque] = useState<Map<string, EstadoBloque>>(new Map())
   const [lente, setLente] = useState<'participante' | 'moderador'>('participante')
   const [porBorrar, setPorBorrar] = useState<string | null>(null)
-  const [conBorrador, setConBorrador] = useState(false)
-  const [confirmandoDescarte, setConfirmandoDescarte] = useState(false)
-  const [guardandoUI, setGuardandoUI] = useState(false)
-  const [recienGuardado, setRecienGuardado] = useState(false)
+  const [borrando, setBorrando] = useState<string | null>(null)
+  const [errorGlobal, setErrorGlobal] = useState<string | null>(null)
+  const [conflicto, setConflicto] = useState<string | null>(null)
   const [recienCreado, setRecienCreado] = useState<string | null>(null)
-  const montado = useRef(false)
   const enfocarAlResaltar = useRef(false)
-  const temporizador = useRef<ReturnType<typeof setTimeout> | null>(null)
-  // La firma de lo ultimo que quedo en disco. Sirve para dos cosas: no
-  // marcar "sin guardar" por el simple hecho de haber cargado, y volver a
-  // "todo guardado" solo si deshaces hasta donde estabas.
-  const ultimoGuardado = useRef<string | null>(null)
-  const fuente = useFuente()
+  const temporizadores = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map())
+  // BUG REAL, ENCONTRADO PROBANDO EN EL NAVEGADOR, NO LEYENDO EL CÓDIGO:
+  // `guardarBloqueAhora` hacía `bloques.find(...)` cerrando sobre el
+  // `bloques` de la renderización donde el temporizador se programó. Al
+  // escribir rápido, varias pulsaciones caen dentro del mismo lote de
+  // React antes de que exista una renderización nueva, así que el cierre
+  // que sobrevivía (el del último timeout) seguía viendo el texto de
+  // ANTES de escribir. El chip decía "Guardado" y la base se guardaba de
+  // verdad, solo que con el contenido viejo: pérdida de datos silenciosa,
+  // sin ningún error que la delatara. Verificado contra la base real con
+  // la llave de servicio: `rev` subía, `contenido` no cambiaba.
+  //
+  // La corrección: una ref que SIEMPRE tiene el `bloques` más reciente,
+  // sin importar de qué renderización viene el cierre que la lee. Un ref
+  // se desreferencia en el momento en que se lee, no en el momento en que
+  // el cierre se creó, que es justo la garantía que un `setTimeout`
+  // necesita y que el estado de React no da por sí solo.
+  const bloquesRef = useRef<BloqueEditable[]>(bloques)
+  useEffect(() => {
+    bloquesRef.current = bloques
+  }, [bloques])
+
+  // LA LLAVE DE REACT DE UNA TARJETA NO PUEDE SER `b.id`. Un bloque nace
+  // local y su id cambia una vez, al primer guardado que lo crea de verdad
+  // (ver PREFIJO_LOCAL arriba). Si la llave de React fuera el id, ese
+  // cambio desmontaría la tarjeta y remontaría una nueva: quien estuviera
+  // escribiendo en ese instante perdería el foco del campo a mitad de
+  // palabra. Esta tabla asigna una llave que nace con el bloque y no
+  // cambia aunque su id sí.
+  const clavesEstables = useRef<Map<string, string>>(
+    new Map(bloquesIniciales.map(b => [b.id, b.id]))
+  )
+  function claveDe(id: string): string {
+    let c = clavesEstables.current.get(id)
+    if (!c) {
+      c = id
+      clavesEstables.current.set(id, c)
+    }
+    return c
+  }
+  function renombrarClave(idViejo: string, idNuevo: string) {
+    const c = clavesEstables.current.get(idViejo) ?? idViejo
+    clavesEstables.current.delete(idViejo)
+    clavesEstables.current.set(idNuevo, c)
+  }
 
   useEffect(() => {
-    const inicial = cargar(experiencia.id)
-    setBloques(inicial)
-    ultimoGuardado.current = JSON.stringify(inicial)
-    setConBorrador(hayBorrador(experiencia.id))
-    setEstado('limpio')
-
-    // ?bisagra= viene de la pantalla de publicar. Cada hallazgo señala una
-    // bisagra concreta, y antes el enlace traía al editor genérico: el autor
-    // aterrizaba en la primera y tenía que buscar a mano lo que el sistema
-    // acababa de señalarle.
     const orden = experiencia.bisagras.slice().sort((a, b) => a.orden - b.orden)
     const pedida = new URLSearchParams(window.location.search).get('bisagra')
     const valida = pedida && orden.some(b => b.id === pedida) ? pedida : null
     setActiva(valida ?? (orden[0]?.id ?? ''))
-    montado.current = true
   }, [experiencia])
 
-  // Autoguardado con retardo. El estado del chip es el contrato con el autor,
-  // asi que no puede mentir en ninguna de las dos direcciones: ni decir que
-  // hay cambios cuando solo se abrio la pantalla, ni callarse cuando los hay.
-  useEffect(() => {
-    if (ultimoGuardado.current === null) return
-    const serie = JSON.stringify(bloques)
-    if (serie === ultimoGuardado.current) {
-      setEstado('limpio')
-      return
-    }
-    setEstado('pendiente')
-    if (temporizador.current) clearTimeout(temporizador.current)
-    temporizador.current = setTimeout(() => {
-      setEstado('guardando')
-      try {
-        guardar(experiencia.id, bloques)
-        ultimoGuardado.current = serie
-        setConBorrador(true)
-        setEstado('guardado')
-      } catch {
-        setEstado('error')
-      }
-    }, 700)
-    return () => {
-      if (temporizador.current) clearTimeout(temporizador.current)
-    }
-  }, [bloques, experiencia.id])
+  // El chip global es el peor caso entre todos los bloques con actividad
+  // reciente. Un bloque que nunca se tocó no cuenta: si contara, la
+  // pantalla abriría diciendo "Todo guardado" de forma vacía, sin que
+  // nadie hubiera guardado nada todavía.
+  const estadoGlobal = useMemo<EstadoBloque>(() => {
+    let peor: EstadoBloque = 'limpio'
+    Array.from(estadosPorBloque.values()).forEach(e => {
+      if (PESO_ESTADO[e] > PESO_ESTADO[peor]) peor = e
+    })
+    return peor
+  }, [estadosPorBloque])
 
-  // Llevar la vista al bloque recien creado o movido, y el cursor dentro si
-  // acaba de nacer. Corre DESPUES del commit, que es cuando el bloque ya
-  // existe en el DOM: hacerlo dentro del manejador no funciona, porque ahi
-  // React todavia no lo ha montado.
-  useEffect(() => {
-    if (!recienCreado) return
-    const el = document.getElementById(`bloque-${recienCreado}`)
-    el?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    if (enfocarAlResaltar.current) {
-      el?.querySelector<HTMLTextAreaElement | HTMLInputElement>('textarea, input[type="text"], input:not([type])')?.focus()
-      enfocarAlResaltar.current = false
-    }
-    const t = setTimeout(() => setRecienCreado(actual => (actual === recienCreado ? null : actual)), 1400)
-    return () => clearTimeout(t)
-  }, [recienCreado])
+  // Los estados y los temporizadores también se llevan por clave estable,
+  // no por id, por la misma razón que la llave de React: el id de un
+  // bloque local cambia una vez, y nada de esta contabilidad puede
+  // perderse ni duplicarse cuando eso pasa.
+  function marcarPorClave(clave: string, e: EstadoBloque) {
+    setEstadosPorBloque(prev => {
+      const copia = new Map(prev)
+      copia.set(clave, e)
+      return copia
+    })
+  }
 
-  // No dejar salir con trabajo que no llego a disco. El estado de error
-  // cuenta: es justo cuando mas caro sale cerrar la pestana.
+  function idPorClave(clave: string): string | null {
+    for (const [id, c] of Array.from(clavesEstables.current.entries())) {
+      if (c === clave) return id
+    }
+    return null
+  }
+
+  // No dejar salir con un guardado en curso o fallido. Cuenta lo mismo que
+  // antes: es justo cuando más caro sale cerrar la pestaña.
   useEffect(() => {
     function alSalir(e: BeforeUnloadEvent) {
-      if (estado === 'pendiente' || estado === 'guardando' || estado === 'error') {
+      if (estadoGlobal === 'pendiente' || estadoGlobal === 'guardando' || estadoGlobal === 'error') {
         e.preventDefault()
         e.returnValue = ''
       }
     }
     window.addEventListener('beforeunload', alSalir)
     return () => window.removeEventListener('beforeunload', alSalir)
-  }, [estado])
+  }, [estadoGlobal])
 
-  const guardarYa = useCallback(async () => {
-    if (temporizador.current) clearTimeout(temporizador.current)
-    const serie = JSON.stringify(bloques)
-    setGuardandoUI(true)
-    setEstado('guardando')
-    const inicio = Date.now()
-    let ok = true
+  useEffect(() => {
+    const temporizadoresActuales = temporizadores.current
+    return () => {
+      Array.from(temporizadoresActuales.values()).forEach(t => clearTimeout(t))
+    }
+  }, [])
+
+  // Una creación en camino por clave, para que dos guardados que caen muy
+  // cerca (escribir, y volver a escribir antes de que la primera creación
+  // responda) no terminen creando DOS filas para el mismo bloque. El
+  // segundo espera a que la primera termine y sigue desde ahí, en vez de
+  // dispararse por su cuenta.
+  const creacionesEnCurso = useRef<Map<string, Promise<BloqueEditable | null>>>(new Map())
+
+  async function guardarOCrear(clave: string) {
+    let id = idPorClave(clave)
+    if (!id) return
+
+    if (esLocal(id)) {
+      const enCurso = creacionesEnCurso.current.get(clave)
+      if (enCurso) {
+        await enCurso
+        id = idPorClave(clave)
+        if (!id || esLocal(id)) return // la creación en curso falló: nada más que hacer aquí
+      } else {
+        const promesa = crearAhora(clave, id)
+        creacionesEnCurso.current.set(clave, promesa)
+        await promesa
+        creacionesEnCurso.current.delete(clave)
+        return
+      }
+    }
+
+    const b = bloquesRef.current.find(x => x.id === id)
+    if (!b) return
+    marcarPorClave(clave, 'guardando')
     try {
-      guardar(experiencia.id, bloques)
-      ultimoGuardado.current = serie
-      setConBorrador(true)
-    } catch {
-      ok = false
+      const rev = await guardarBloque(b, experiencia.versionId)
+      setBloques(prev => prev.map(x => (x.id === b.id ? { ...x, rev } : x)))
+      marcarPorClave(clave, 'guardado')
+    } catch (e) {
+      if (e instanceof ConflictoDeVersion) {
+        setConflicto(
+          'Alguien más guardó cambios en este bloque mientras editabas. Para no perder ni tu trabajo ni el suyo, recarga la página y vuelve a hacer tu cambio sobre la versión más reciente.'
+        )
+      }
+      marcarPorClave(clave, 'error')
     }
-    const resto = MINIMO_PERCEPTIBLE - (Date.now() - inicio)
-    if (resto > 0) await new Promise(r => setTimeout(r, resto))
-    setGuardandoUI(false)
-    setEstado(ok ? 'guardado' : 'error')
-    if (ok) {
-      setRecienGuardado(true)
-      setTimeout(() => setRecienGuardado(false), 1200)
+  }
+
+  // La primera vez que un bloque local tiene algo que valga la pena
+  // guardar, ESTO lo crea de verdad, con id real, y avisa a
+  // `clavesEstables` del cambio. Si el contenido sigue sin ser válido para
+  // su tipo, la base lo rechaza con el CHECK `blocks_contenido_por_tipo`
+  // (código 23514): eso no es un error para mostrar, es "todavía no hay
+  // nada que guardar", y el bloque se queda local hasta la próxima vez.
+  async function crearAhora(clave: string, idLocalDeAhora: string): Promise<BloqueEditable | null> {
+    const b = bloquesRef.current.find(x => x.id === idLocalDeAhora)
+    if (!b) return null
+    marcarPorClave(clave, 'guardando')
+    try {
+      const creado = await crearBloque(b, experiencia.versionId)
+      renombrarClave(idLocalDeAhora, creado.id)
+      setBloques(prev => prev.map(x => (x.id === idLocalDeAhora ? creado : x)))
+      marcarPorClave(clave, 'guardado')
+      return creado
+    } catch (e) {
+      const codigo = (e as { code?: string } | null)?.code
+      if (codigo === '23514') {
+        marcarPorClave(clave, 'limpio')
+        return null
+      }
+      marcarPorClave(clave, 'error')
+      return null
     }
-  }, [bloques, experiencia.id])
+  }
+
+  function programarGuardado(clave: string) {
+    const existente = temporizadores.current.get(clave)
+    if (existente) clearTimeout(existente)
+    temporizadores.current.set(
+      clave,
+      setTimeout(() => {
+        temporizadores.current.delete(clave)
+        guardarOCrear(clave)
+      }, DEMORA_AUTOGUARDADO)
+    )
+  }
+
+  // Debounce POR BLOQUE, no global. Editar el bloque A y luego el B dispara
+  // dos temporizadores independientes; guardar A no espera a B ni al revés.
+  function actualizar(id: string, campos: Partial<Bloque>) {
+    setBloques(prev => prev.map(b => (b.id === id ? { ...b, ...campos } : b)))
+    const clave = claveDe(id)
+    marcarPorClave(clave, 'pendiente')
+    programarGuardado(clave)
+  }
+
+  // El botón "Guardar" y Cmd/Ctrl+S adelantan lo pendiente en vez de
+  // esperar el debounce. No hacen nada nuevo: solo dejan de esperar.
+  const guardarYa = useCallback(() => {
+    Array.from(temporizadores.current.entries()).forEach(([clave, t]) => {
+      clearTimeout(t)
+      temporizadores.current.delete(clave)
+      guardarOCrear(clave)
+    })
+  }, [bloques, experiencia.versionId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     function atajo(e: KeyboardEvent) {
@@ -178,6 +314,18 @@ export default function Editor({ experiencia }: { experiencia: Experiencia }) {
     window.addEventListener('keydown', atajo)
     return () => window.removeEventListener('keydown', atajo)
   }, [guardarYa])
+
+  useEffect(() => {
+    if (!recienCreado) return
+    const el = document.getElementById(`bloque-${recienCreado}`)
+    el?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    if (enfocarAlResaltar.current) {
+      el?.querySelector<HTMLTextAreaElement | HTMLInputElement>('textarea, input[type="text"], input:not([type])')?.focus()
+      enfocarAlResaltar.current = false
+    }
+    const t = setTimeout(() => setRecienCreado(actual => (actual === recienCreado ? null : actual)), 1400)
+    return () => clearTimeout(t)
+  }, [recienCreado])
 
   const bisagras = useMemo(
     () => experiencia.bisagras.slice().sort((a, b) => a.orden - b.orden),
@@ -193,73 +341,82 @@ export default function Editor({ experiencia }: { experiencia: Experiencia }) {
     [delBloque, lente]
   )
 
-  function actualizar(id: string, campos: Partial<Bloque>) {
-    setBloques(prev => prev.map(b => (b.id === id ? { ...b, ...campos } : b)))
-  }
-  // Agregar tiene que terminar donde empieza el trabajo: en el campo del
-  // bloque nuevo. Antes no pasaba nada visible y con seis bloques en
-  // pantalla el nuevo nacia fuera de vista.
+  // Nace local, no en la base. Ver PREFIJO_LOCAL: la base exige contenido
+  // válido desde la primera fila para once de los doce tipos, así que
+  // crear en el instante del clic fallaba siempre para esos once. Ahora se
+  // agrega a la pantalla de inmediato (para que la persona pueda empezar a
+  // escribir ya mismo) y se programa un intento de guardado con el mismo
+  // mecanismo que usa cada tecla: si el tipo puede existir vacío (pausa),
+  // se crea solo; si no, se queda local hasta que haya algo que guardar.
   function agregar(tipo: TipoBloque) {
-    const nuevo = bloqueNuevo(activa, tipo, delBloque.length + 1)
+    setErrorGlobal(null)
+    const id = idLocal()
+    const nuevo: BloqueEditable = {
+      id, bisagraId: activa, orden: delBloque.length + 1, tipo, audiencia: 'todos', rev: 0,
+      ...camposPorDefecto(tipo),
+    }
     setBloques(prev => [...prev, nuevo])
-    resaltar(nuevo.id, true)
+    const clave = claveDe(id)
+    resaltar(id, true)
+    programarGuardado(clave)
   }
-  function mover(id: string, delta: number) {
-    setBloques(prev => reordenar(prev, activa, id, delta))
-    // Sin esto la tarjeta cambia de sitio sin dejar traza y el ojo pierde
-    // cual se movio.
+
+  async function mover(id: string, delta: number) {
+    const antes = new Map(bloques.map(b => [b.id, b.orden]))
+    const despues = reordenar(bloques, activa, id, delta)
+    const cambiados = despues.filter(b => antes.get(b.id) !== b.orden)
+    if (cambiados.length === 0) return
+
+    setBloques(despues)
     resaltar(id, false)
+
+    // Los locales no existen en la base todavía: mover uno es pura
+    // contabilidad de pantalla, nada que persistir hasta que se cree.
+    const cambiadosReales = cambiados.filter(b => !esLocal(b.id))
+    if (cambiadosReales.length === 0) return
+
+    for (const c of cambiadosReales) marcarPorClave(claveDe(c.id), 'guardando')
+    try {
+      await reordenarRemoto(cambiadosReales.map(b => ({ id: b.id, orden: b.orden })), experiencia.versionId)
+      for (const c of cambiadosReales) marcarPorClave(claveDe(c.id), 'guardado')
+    } catch {
+      // Revertir: el orden que se ve tiene que ser el que hay en la base.
+      setBloques(bloques)
+      for (const c of cambiadosReales) marcarPorClave(claveDe(c.id), 'error')
+      setErrorGlobal('No se pudo mover el bloque. Se deshizo el cambio en pantalla.')
+    }
   }
-  // Solo marca. Llevar la vista y el foco se hace en el efecto de abajo,
-  // porque aqui el bloque nuevo todavia no existe en el DOM.
+
   function resaltar(id: string, conFoco: boolean) {
     enfocarAlResaltar.current = conFoco
     setRecienCreado(id)
   }
-  function borrar(id: string) {
-    setBloques(prev => prev.filter(b => b.id !== id))
-    setPorBorrar(null)
-  }
 
-  if (fuente.modo === 'cargando') {
-    return (
-      <>
-        <p className="text-sm text-slate-400 mb-6 flex items-center gap-2">
-          <Girador />
-          Comprobando tu sesión
-        </p>
-        <EsqueletoEditor />
-      </>
-    )
-  }
+  async function borrar(id: string) {
+    setErrorGlobal(null)
 
-  // Entraste con sesión, porque el layout no deja pasar sin ella. Si estamos
-  // aquí es que venció mientras trabajabas.
-  if (fuente.modo === 'sin-sesion') {
-    return (
-      <div className="max-w-[560px] mt-8">
-        <div className={`${TARJETA} p-6`}>
-          <h1 className="text-lg font-semibold text-slate-900">Tu sesión venció</h1>
-          <p className="text-sm text-slate-600 mt-2 leading-relaxed">
-            La base solo responde a cuentas con sesión abierta, así que esta pantalla saldría vacía.
-            Vuelve a entrar y regresas justo aquí.
-          </p>
-          <div className="flex gap-2 mt-5">
-            <Link href="/login" className={BTN_PRIMARIO}>Volver a entrar</Link>
-            <Link
-              href={`/personalab/experiencias/${experiencia.id}`}
-              className={BTN_SECUNDARIO}
-            >
-              Volver
-            </Link>
-          </div>
-        </div>
-      </div>
-    )
-  }
+    // Local: nunca llegó a la base. Quitarlo de pantalla es todo lo que
+    // hay que hacer, y no hace falta esperar ninguna red.
+    if (esLocal(id)) {
+      const clave = claveDe(id)
+      const t = temporizadores.current.get(clave)
+      if (t) clearTimeout(t)
+      temporizadores.current.delete(clave)
+      setBloques(prev => prev.filter(b => b.id !== id))
+      setPorBorrar(null)
+      return
+    }
 
-  if (!montado.current) {
-    return <EsqueletoEditor />
+    setBorrando(id)
+    try {
+      await borrarBloque(id)
+      setBloques(prev => prev.filter(b => b.id !== id))
+      setPorBorrar(null)
+    } catch {
+      setErrorGlobal('No se pudo quitar el bloque. Sigue ahí, sin cambios.')
+    } finally {
+      setBorrando(null)
+    }
   }
 
   return (
@@ -269,51 +426,26 @@ export default function Editor({ experiencia }: { experiencia: Experiencia }) {
         <div className="flex items-center justify-between gap-4 flex-wrap">
           <div className="flex items-baseline gap-3 min-w-0">
             <Link
-              href={`/personalab/experiencias/${experiencia.id}`}
+              href={`/personalab/experiencias/${experiencia.slug}`}
               className="text-xs text-slate-400 hover:text-slate-600 transition-colors whitespace-nowrap"
             >
               ← {experiencia.nombre}
             </Link>
             <span className="text-sm font-semibold text-slate-900 truncate">Editor</span>
             <span
-              className={`text-xs ${CHIP[estado].clase} whitespace-nowrap inline-flex items-center gap-1.5`}
+              className={`text-xs ${CHIP[estadoGlobal].clase} whitespace-nowrap inline-flex items-center gap-1.5`}
               role="status"
               aria-live="polite"
             >
-              {estado === 'guardando' && <Girador />}
-              {CHIP[estado].texto}
-            </span>
-            {/* DONDE QUEDA EL TRABAJO, que no es lo mismo que si hay sesión.
-                Esta pastilla decía "Base real" en verde en cuanto había
-                sesión, pero el editor escribe en localStorage en los dos
-                casos: el adaptador remoto está escrito y todavía no
-                enchufado. Una pastilla verde que miente sobre dónde está el
-                trabajo de alguien es peor que no tener pastilla. */}
-            <span
-              className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full whitespace-nowrap bg-amber-100 text-amber-700"
-              title={
-                fuente.modo === 'remoto'
-                  ? `Tu sesión es válida (${fuente.email}), pero el editor todavía escribe en esta computadora y no en la base.`
-                  : 'El trabajo se guarda en esta computadora y no se comparte con el resto del equipo.'
-              }
-            >
-              Guardado en este navegador
+              {estadoGlobal === 'guardando' && <Girador />}
+              {CHIP[estadoGlobal].texto}
             </span>
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
-            {conBorrador && !confirmandoDescarte && (
-              <button onClick={() => setConfirmandoDescarte(true)} className={BTN_FILA}>
-                Descartar borrador
-              </button>
-            )}
             <Boton
               variante="secundario"
               onClick={guardarYa}
-              cargando={guardandoUI}
-              listo={recienGuardado}
-              textoCargando="Guardando"
-              textoListo="Guardado"
-              disabled={estado === 'limpio'}
+              disabled={estadoGlobal !== 'pendiente'}
             >
               Guardar
             </Boton>
@@ -326,49 +458,18 @@ export default function Editor({ experiencia }: { experiencia: Experiencia }) {
           </div>
         </div>
 
-        {/* Descartar borrador borraba todo el trabajo no publicado con un
-            clic y sin preguntar, mientras que quitar UN bloque sí
-            preguntaba. La acción destructiva grande era la que no pedía
-            confirmación. */}
-        {confirmandoDescarte && (
-          <div className="mt-3 bg-red-50 border border-red-200 rounded-lg px-4 py-3 flex items-start justify-between gap-4 flex-wrap">
-            <p className="text-sm text-red-800 leading-relaxed max-w-[70ch]">
-              Descartar el borrador borra todo lo que escribiste desde la última publicación. Vuelves
-              a la versión que hoy leen los participantes.
-            </p>
-            <div className="flex items-center gap-2 flex-shrink-0">
-              <button
-                onClick={() => {
-                  descartarBorrador(experiencia.id)
-                  const vuelta = cargar(experiencia.id)
-                  setBloques(vuelta)
-                  ultimoGuardado.current = JSON.stringify(vuelta)
-                  setConBorrador(false)
-                  setConfirmandoDescarte(false)
-                  setEstado('limpio')
-                }}
-                className={BTN_PELIGRO}
-              >
-                Sí, descartar
-              </button>
-              <button onClick={() => setConfirmandoDescarte(false)} className={`${BTN_FILA} bg-white`}>
-                Cancelar
-              </button>
-            </div>
+        {conflicto && (
+          <div className="mt-3 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 flex items-start justify-between gap-4 flex-wrap">
+            <p className="text-sm text-amber-900 leading-relaxed max-w-[70ch]">{conflicto}</p>
+            <button onClick={() => window.location.reload()} className={BTN_PRIMARIO}>
+              Recargar
+            </button>
           </div>
         )}
 
-        {/* El error no puede ser solo un chip rojo: sin salida, el autor no
-            sabe si perdió el trabajo ni qué hacer con él. */}
-        {estado === 'error' && (
-          <div className="mt-3 bg-red-50 border border-red-200 rounded-lg px-4 py-3 flex items-start justify-between gap-4 flex-wrap">
-            <p className="text-sm text-red-800 leading-relaxed max-w-[70ch]">
-              No se pudo guardar. Tu trabajo sigue en pantalla y no se ha perdido. Si el problema
-              sigue, copia el texto a otro lado antes de cerrar esta pestaña.
-            </p>
-            <Boton variante="peligro" onClick={guardarYa} cargando={guardandoUI} textoCargando="Guardando">
-              Reintentar
-            </Boton>
+        {errorGlobal && (
+          <div className="mt-3 bg-red-50 border border-red-200 rounded-lg px-4 py-3">
+            <p className="text-sm text-red-800 leading-relaxed max-w-[70ch]">{errorGlobal}</p>
           </div>
         )}
       </div>
@@ -411,8 +512,6 @@ export default function Editor({ experiencia }: { experiencia: Experiencia }) {
 
         {/* Lienzo */}
         <div className="min-w-0">
-          {/* Dos de las cuatro experiencias no tienen bisagras todavía. Sin
-              esto el lienzo salía en blanco, sin decir por qué. */}
           {bisagras.length === 0 && (
             <div className="border border-dashed border-slate-200 rounded-xl px-5 py-10 text-center">
               <p className="text-sm text-slate-600">
@@ -439,10 +538,6 @@ export default function Editor({ experiencia }: { experiencia: Experiencia }) {
           )}
 
           <div className="flex flex-col gap-3">
-            {/* El vacío se nombra con el título de la bisagra, y la acción
-                que lo resuelve va DENTRO de la caja. Antes decía "agrega el
-                primer bloque abajo" y ese "abajo" quedaba a 300 px, después
-                de otra tarjeta. */}
             {bisagraActiva && delBloque.length === 0 && (
               <div className="border border-dashed border-slate-200 rounded-xl px-5 py-8 text-center">
                 <p className="text-sm text-slate-500">
@@ -456,12 +551,14 @@ export default function Editor({ experiencia }: { experiencia: Experiencia }) {
 
             {delBloque.map((b, i) => (
               <TarjetaBloque
-                key={b.id}
+                key={claveDe(b.id)}
                 b={b}
                 primero={i === 0}
                 ultimo={i === delBloque.length - 1}
                 porBorrar={porBorrar === b.id}
+                borrando={borrando === b.id}
                 resaltado={recienCreado === b.id}
+                estado={estadosPorBloque.get(claveDe(b.id)) ?? 'limpio'}
                 onCambio={campos => actualizar(b.id, campos)}
                 onMover={d => mover(b.id, d)}
                 onPedirBorrar={() => setPorBorrar(b.id)}
@@ -471,8 +568,6 @@ export default function Editor({ experiencia }: { experiencia: Experiencia }) {
             ))}
           </div>
 
-          {/* Agregar bloque. Dos filas: los seis que se usan siempre y los
-              cinco ocasionales, en vez de once del mismo peso. */}
           {bisagraActiva && (
             <div className={`${TARJETA} p-4 mt-4`}>
               <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-3">
@@ -488,10 +583,6 @@ export default function Editor({ experiencia }: { experiencia: Experiencia }) {
                   <BotonTipo key={t} t={t} onClick={() => agregar(t)} tenue />
                 ))}
               </div>
-              <p className="text-[11px] text-slate-400 mt-3 leading-relaxed">
-                La subida de archivo, imagen y video todavía no está conectada. Puedes armar el bloque
-                y ver cómo queda; el archivo no sale de tu navegador y se pierde al recargar.
-              </p>
             </div>
           )}
         </div>
@@ -542,7 +633,7 @@ export default function Editor({ experiencia }: { experiencia: Experiencia }) {
                         : 'Con la lente de participante esto sale en blanco. Todo lo que hay en esta bisagra está marcado como solo moderador.'}
                     </p>
                   ) : (
-                    visiblesEnPrevia.map(b => <BloqueLector key={b.id} b={b} />)
+                    visiblesEnPrevia.map(b => <BloqueLector key={claveDe(b.id)} b={b} />)
                   )}
                 </div>
               </div>
@@ -578,14 +669,16 @@ function BotonTipo({ t, onClick, tenue = false }: { t: TipoBloque; onClick: () =
 // ── Tarjeta de un bloque ────────────────────────────────────────
 
 function TarjetaBloque({
-  b, primero, ultimo, porBorrar, resaltado,
+  b, primero, ultimo, porBorrar, borrando, resaltado, estado,
   onCambio, onMover, onPedirBorrar, onCancelarBorrar, onBorrar,
 }: {
   b: Bloque
   primero: boolean
   ultimo: boolean
   porBorrar: boolean
+  borrando: boolean
   resaltado: boolean
+  estado: EstadoBloque
   onCambio: (campos: Partial<Bloque>) => void
   onMover: (delta: number) => void
   onPedirBorrar: () => void
@@ -599,7 +692,7 @@ function TarjetaBloque({
       id={`bloque-${b.id}`}
       className={`${TARJETA} overflow-hidden transition-shadow duration-500 ${
         resaltado ? 'ring-2 ring-slate-900/15' : ''
-      }`}
+      } ${estado === 'error' ? 'ring-2 ring-red-300' : ''}`}
     >
       <div className="flex items-center justify-between gap-3 px-4 py-2.5 border-b border-slate-100 bg-slate-50/60">
         <div className="flex items-center gap-2.5 min-w-0">
@@ -614,14 +707,19 @@ function TarjetaBloque({
             <option value="todos">Todos</option>
             <option value="moderador">Solo moderador</option>
           </select>
+          {estado === 'error' && (
+            <span className="text-[11px] text-red-600 font-medium">No se guardó</span>
+          )}
         </div>
         <div className="flex items-center gap-1 flex-shrink-0">
           <button onClick={() => onMover(-1)} disabled={primero} className={BTN_FILA} title="Subir">↑</button>
           <button onClick={() => onMover(1)} disabled={ultimo} className={BTN_FILA} title="Bajar">↓</button>
           {porBorrar ? (
             <>
-              <button onClick={onBorrar} className={BTN_PELIGRO}>Confirmar</button>
-              <button onClick={onCancelarBorrar} className={BTN_FILA}>Cancelar</button>
+              <button onClick={onBorrar} disabled={borrando} className={BTN_PELIGRO}>
+                {borrando ? 'Quitando…' : 'Confirmar'}
+              </button>
+              <button onClick={onCancelarBorrar} disabled={borrando} className={BTN_FILA}>Cancelar</button>
             </>
           ) : (
             <button onClick={onPedirBorrar} className={`${BTN_FILA} hover:text-red-600 hover:border-red-200`}>
@@ -633,20 +731,34 @@ function TarjetaBloque({
 
       <div className="p-4">
         {b.tipo === 'pausa' ? (
-          <p className="text-sm text-slate-400">Un respiro. No lleva contenido.</p>
+          <>
+            <p className="text-sm text-slate-400">Un respiro. Nadie ve texto aquí.</p>
+            <div className="mt-3">
+              <label className={ETIQUETA_INPUT}>Segundos de espera (máximo 30)</label>
+              <input
+                type="number"
+                min={0}
+                max={30}
+                value={b.segundos ?? ''}
+                onChange={e => onCambio({ segundos: e.target.value === '' ? undefined : Number(e.target.value) })}
+                placeholder="0"
+                className={`${INPUT} w-24`}
+              />
+              <p className="text-[11px] text-slate-400 mt-1.5 leading-relaxed">
+                Cuánto espera la persona antes de que aparezca el botón para seguir. Sin este campo,
+                la pausa no detiene nada.
+              </p>
+            </div>
+          </>
         ) : CON_MEDIO.includes(b.tipo) ? (
           <>
-            {/* El rótulo sale del contrato. Era una escalera de ternarios
-                cuyo último escalón era 'Imagen', así que un bloque de audio
-                se rotulaba como imagen: el tipo pasó de invisible a visible
-                y mal etiquetado. Lo encontraron Leo y Daniel. */}
             <label className={ETIQUETA_INPUT}>{definicion(b.tipo).nombre}</label>
             <SubirArchivo
               tipo={b.tipo}
               nombre={b.nombreArchivo}
               url={b.url}
-              onListo={d => onCambio({ nombreArchivo: d.nombreArchivo, peso: d.peso, url: d.url })}
-              onQuitar={() => onCambio({ nombreArchivo: '', peso: undefined, url: undefined })}
+              onListo={d => onCambio({ nombreArchivo: d.nombreArchivo, peso: d.peso, url: d.url, medioId: d.medioId })}
+              onQuitar={() => onCambio({ nombreArchivo: '', peso: undefined, url: undefined, medioId: null })}
             />
 
             <div className="mt-3">
@@ -725,6 +837,7 @@ function TarjetaBloque({
                 />
               </div>
             )}
+
           </>
         )}
       </div>

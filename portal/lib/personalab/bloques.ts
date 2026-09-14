@@ -163,10 +163,11 @@ const FALTA_TEXTO = {
 // abolir las promesas en comentarios. Hugo lo llamó el sitio suelto número
 // catorce y tenía razón.
 //
-// Ahora es un booleano. Se pone en `true` el día que `crearBloque` y
-// `guardarBloque` escriban `media_id`, y las cuatro reglas se endurecen
-// solas. Un cambio, en el sitio del cambio.
-const EDITOR_ESCRIBE_MEDIA_ID = false
+// Ahora es un booleano. Se puso en `true` el día que `crearBloque` y
+// `guardarBloque` (en `almacenRemoto.ts`) empezaron a escribir `media_id` de
+// verdad, Etapa 3. Las cuatro reglas se endurecieron solas con este único
+// cambio.
+const EDITOR_ESCRIBE_MEDIA_ID = true
 
 const EXIGENCIA_MEDIO: Extract<Exigencia, 'impide' | 'advierte'> =
   EDITOR_ESCRIBE_MEDIA_ID ? 'impide' : 'advierte'

@@ -6,12 +6,12 @@ import {
   type Bloque, type TipoBloque, type Audiencia, type FilaBloque,
 } from '@/lib/personalab/bloques'
 
-// Adaptador contra Supabase. Misma forma que el de localStorage: los tipos
-// no cambian y la interfaz tampoco, solo de donde salen los datos.
-//
-// SIN USAR TODAVIA. Se enciende con NEXT_PUBLIC_PERSONALAB_REMOTO=1, y eso
-// no debe hacerse hasta que las migraciones esten aplicadas y probadas.
-// Mientras tanto el editor sigue con localStorage y el prototipo funciona.
+// Adaptador contra Supabase. Se escribió completo desde la Etapa 1 y no se
+// usó hasta la Etapa 3: `Editor.tsx` y `Publicar.tsx` lo llaman ahora de
+// verdad, en cada acción. `almacen.ts` (localStorage, borrador/publicado
+// como dos copias en el navegador) y el interruptor
+// `NEXT_PUBLIC_PERSONALAB_REMOTO` quedaron retirados junto con esto: ya no
+// hay un modo local que mantener en sincronía con este.
 
 export class ConflictoDeVersion extends Error {
   constructor(public revEsperada: number, public revReal: number) {
@@ -74,6 +74,59 @@ export async function cargarRemoto(versionId: string) {
     .filter((b): b is Bloque & { rev: number } => b !== null)
 }
 
+// Qué trae un bloque recién nacido, antes de que exista en la base. Vivía en
+// `almacen.ts` (el archivo que se retira con esta etapa) como `bloqueNuevo`,
+// con generación de id local incluida. Aquí no genera id: `crearBloque` deja
+// que la base lo asigne, y el llamador usa el que la base devuelve.
+export function camposPorDefecto(tipo: TipoBloque): Partial<Bloque> {
+  switch (tipo) {
+    case 'nota':
+      return { audiencia: 'moderador', texto: '' }
+    case 'archivo':
+      return { audiencia: 'moderador', nombreArchivo: '', descargable: true, pie: '' }
+    case 'pausa':
+      return {}
+    case 'cita':
+      return { texto: '', autor: '' }
+    case 'objeto':
+      return { texto: '', pie: '' }
+    case 'imagen':
+    case 'video':
+    case 'audio':
+      return { pie: '' }
+    default:
+      return { texto: '' }
+  }
+}
+
+// Recalcula el `orden` local tras mover un bloque. Pura, sin red: quien
+// llama decide, comparando contra el arreglo de antes, cuáles ids cambiaron
+// de verdad y solo persiste esos con `reordenarRemoto`. Para un movimiento
+// de una posición (que es el único que ofrece la interfaz, con las flechas),
+// siempre son exactamente dos: el que se mueve y con quien intercambia
+// lugar.
+export function reordenar<T extends Bloque>(bloques: T[], bisagraId: string, id: string, delta: number): T[] {
+  const dentro = bloques
+    .filter(b => b.bisagraId === bisagraId)
+    .sort((a, b) => a.orden - b.orden)
+  const i = dentro.findIndex(b => b.id === id)
+  const j = i + delta
+  if (i < 0 || j < 0 || j >= dentro.length) return bloques
+
+  const copia = [...dentro]
+  const [movido] = copia.splice(i, 1)
+  copia.splice(j, 0, movido)
+  const ordenes = new Map(copia.map((b, k) => [b.id, k + 1]))
+
+  return bloques.map(b => (ordenes.has(b.id) ? { ...b, orden: ordenes.get(b.id)! } : b))
+}
+
+// Una nota nunca puede ser pública: es su definición, no una preferencia.
+export function cambiarAudiencia(tipo: TipoBloque, audiencia: Audiencia): Audiencia {
+  if (tipo === 'nota') return 'moderador'
+  return audiencia
+}
+
 // ── Escritura, con concurrencia optimista ───────────────────
 //
 // El `eq('rev', revEsperada)` es el candado: si otra persona guardo entre
@@ -93,6 +146,12 @@ export async function guardarBloque(
       tipo: b.tipo,
       audiencia: b.audiencia,
       contenido: aContenido(b),
+      // ANTES NO SE ESCRIBÍA. Es la razón concreta por la que la compuerta
+      // de publicación tenía que quedarse en 'advierte' en vez de 'impide'
+      // para archivo/imagen/video/audio: no había forma de satisfacerla.
+      // Con esto ya la hay, y por eso EDITOR_ESCRIBE_MEDIA_ID pasa a true
+      // en el mismo commit que este cambio.
+      media_id: b.medioId ?? null,
     })
     .eq('id', b.id)
     .eq('version_id', versionId)
@@ -110,7 +169,9 @@ export async function guardarBloque(
   return data.rev
 }
 
-export async function crearBloque(b: Bloque, versionId: string) {
+// Sin `id` en el parámetro, a propósito: la base lo asigna, y pedirlo aquí
+// solo invitaría a alguien a rellenarlo con algo que nunca se usa.
+export async function crearBloque(b: Omit<Bloque, 'id'>, versionId: string) {
   const { data, error } = await cliente()
     .from('blocks')
     .insert({
@@ -119,7 +180,8 @@ export async function crearBloque(b: Bloque, versionId: string) {
       orden: b.orden,
       tipo: b.tipo,
       audiencia: b.audiencia,
-      contenido: aContenido(b),
+      contenido: aContenido(b as Bloque),
+      media_id: b.medioId ?? null,
     })
     .select('id, hinge_id, orden, tipo, audiencia, contenido, media_id, rev')
     .single()
@@ -138,6 +200,26 @@ export async function borrarBloque(id: string) {
   if (error) throw error
 }
 
+// Mover un bloque cambia el `orden` de él Y del que le cedió el lugar: dos
+// filas, una operación para quien edita. Sin concurrencia optimista a
+// propósito: si dos personas mueven bloques de la MISMA bisagra a la vez el
+// peor caso es que el orden final no sea el que ninguna de las dos esperaba,
+// nunca contenido perdido, y hoy el editor lo usa una persona a la vez.
+export async function reordenarRemoto(
+  cambios: { id: string; orden: number }[],
+  versionId: string
+): Promise<void> {
+  const sb = cliente()
+  for (const c of cambios) {
+    const { error } = await sb
+      .from('blocks')
+      .update({ orden: c.orden })
+      .eq('id', c.id)
+      .eq('version_id', versionId)
+    if (error) throw error
+  }
+}
+
 // ── Ciclo de publicacion ────────────────────────────────────
 // Los dos van por RPC a proposito: son operaciones de varias tablas que
 // tienen que ser atomicas. Hacerlas desde el cliente deja estados a medias
@@ -153,6 +235,14 @@ export async function abrirBorrador(experienciaId: string): Promise<string> {
 export async function publicarVersion(versionId: string): Promise<void> {
   const { error } = await cliente()
     .rpc('pl_publicar_version', { ver: versionId })
+  if (error) throw error
+}
+
+// Deshace la última publicación. Hermana de publicarVersion, misma forma:
+// una RPC atómica, nunca varias escrituras sueltas desde el cliente.
+export async function revertirVersion(experienciaId: string): Promise<void> {
+  const { error } = await cliente()
+    .rpc('pl_revertir_version', { exp: experienciaId })
   if (error) throw error
 }
 
@@ -188,13 +278,14 @@ export async function subirArchivo(
 
   alAvanzar?.(85)
 
-  // 3. Registrar la fila solo cuando el objeto ya existe.
+  // 3. Registrar la fila solo cuando el objeto ya existe. El mime y el peso
+  //    ya NO se mandan: el servidor los lee de la metadata real que Storage
+  //    registró, no de lo que este código declare. Ver el comentario en
+  //    registrar/route.ts (hallazgo A2 de Hugo).
   const r3 = await fetch('/api/personalab/medios/registrar', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      bucket, ruta, nombre: archivo.name, mime: archivo.type, bytes: archivo.size,
-    }),
+    body: JSON.stringify({ bucket, ruta, nombre: archivo.name }),
   })
   if (!r3.ok) {
     const { error } = await r3.json().catch(() => ({ error: 'No se pudo registrar el archivo.' }))
@@ -212,6 +303,3 @@ export async function subirArchivo(
   }
 }
 
-// Si el adaptador remoto esta encendido. Mientras sea falso, el editor
-// sigue con localStorage y el prototipo funciona sin base.
-export const REMOTO_ACTIVO = process.env.NEXT_PUBLIC_PERSONALAB_REMOTO === '1'

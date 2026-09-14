@@ -1,67 +1,77 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
-import { cargar, publicar, diferencias, historial, type Publicacion } from '../../../almacen'
+import { publicarVersion, revertirVersion } from '../../../almacenRemoto'
 import { revisar, type Hallazgo } from '../../../revision'
-import { CORRIDAS } from '../../../dominio'
-import type { Experiencia } from '../../../dominio'
 import { TARJETA, BTN_PRIMARIO, BTN_SECUNDARIO } from '../../../tokens'
-import { Boton, Girador } from '../../../ui'
+import { Boton } from '../../../ui'
 import type { Bloque } from '@/lib/personalab/bloques'
+import type { ExperienciaEditable, VersionPublicada } from '@/lib/personalab/editorDatos'
 
-// Piso perceptible, igual que en el editor: sin esto el botón termina antes
-// de que el ojo registre que empezó, y parece no haber respondido.
+// ETAPA 3. Antes: `cargar()`/`publicar()` de `almacen.ts`, contra
+// localStorage. Ahora: los datos llegan ya resueltos del servidor (mismo
+// borrador que ve el editor, por la misma `cargarParaEditar`), y publicar
+// llama a `pl_abrir_borrador` → `pl_publicar_version` de verdad, la RPC
+// atómica que ya existía escrita y sin usar desde la Etapa 2.
+//
+// LA CAJA "CAMBIOS SOBRE LO PUBLICADO" YA NO EMPAREJA BLOQUE POR BLOQUE. Ver
+// el comentario largo en `editorDatos.ts`, `resumenDePublicacion`: con ids
+// nuevos en cada borrador, un diff por id mentiría. Se cuenta, no se
+// empareja.
+
 const MINIMO_PERCEPTIBLE = 400
 
-export default function Publicar({ experiencia }: { experiencia: Experiencia }) {
-  const [bloques, setBloques] = useState<Bloque[] | null>(null)
+export default function Publicar({
+  experiencia, bloques, resumenPublicacion,
+}: {
+  experiencia: ExperienciaEditable
+  bloques: Bloque[]
+  resumenPublicacion: { bloquesEnBorrador: number; bloquesEnPublicada: number; historial: VersionPublicada[] }
+}) {
   const [confirmando, setConfirmando] = useState(false)
   const [publicando, setPublicando] = useState(false)
-  const [fallo, setFallo] = useState(false)
-  const [publicado, setPublicado] = useState<Publicacion | null>(null)
-  const [previo, setPrevio] = useState<Publicacion[]>([])
-  const [dif, setDif] = useState({ nuevos: 0, editados: 0, quitados: 0 })
+  const [fallo, setFallo] = useState<string | null>(null)
+  const [publicado, setPublicado] = useState(false)
+  const [confirmandoRevertir, setConfirmandoRevertir] = useState(false)
+  const [revirtiendo, setRevirtiendo] = useState(false)
+  const [falloRevertir, setFalloRevertir] = useState<string | null>(null)
+  const [revertido, setRevertido] = useState(false)
 
-  useEffect(() => {
-    setBloques(cargar(experiencia.id))
-    setPrevio(historial(experiencia.id))
-    setDif(diferencias(experiencia.id))
-  }, [experiencia.id])
+  // Solo tiene sentido si hay a dónde volver: la publicada de hoy, más al
+  // menos una retirada antes que ella.
+  const puedeRevertir = resumenPublicacion.historial.length >= 2
 
-  if (!bloques) {
-    return (
-      <div className="text-sm text-slate-400 flex items-center gap-2">
-        <Girador />
-        Revisando lo que escribiste
-      </div>
-    )
+  async function deshacer() {
+    setRevirtiendo(true)
+    setFalloRevertir(null)
+    try {
+      await revertirVersion(experiencia.id)
+      setRevertido(true)
+      setConfirmandoRevertir(false)
+    } catch (e) {
+      setFalloRevertir(e instanceof Error ? e.message : 'Falló sin motivo claro.')
+    } finally {
+      setRevirtiendo(false)
+    }
   }
 
   const r = revisar(experiencia, bloques)
   const impedimentos = r.hallazgos.filter(h => h.severidad === 'impide')
   const advertencias = r.hallazgos.filter(h => h.severidad === 'advierte')
-  // La primera corrida de esta experiencia. Antes este enlace apuntaba a c2
-  // fijo en el código: publicaras lo que publicaras, te llevaba a esa.
-  const corrida = CORRIDAS.find(c => c.experienciaId === experiencia.id)
 
-  // Sin este try/catch, si el guardado fallaba (cuota llena, ventana
-  // privada) el botón no hacía absolutamente nada visible y el autor lo
-  // presionaba otra vez, y otra.
   async function hacerlo() {
     setPublicando(true)
-    setFallo(false)
+    setFallo(null)
     const inicio = Date.now()
     try {
-      const hoy = new Date().toISOString().slice(0, 10)
-      const entrada = publicar(experiencia.id, bloques!, hoy)
+      await publicarVersion(experiencia.versionId)
       const resto = MINIMO_PERCEPTIBLE - (Date.now() - inicio)
       if (resto > 0) await new Promise(res => setTimeout(res, resto))
-      setPublicado(entrada)
+      setPublicado(true)
       setConfirmando(false)
-      setPrevio(historial(experiencia.id))
-    } catch {
-      setFallo(true)
+    } catch (e) {
+      setFallo(e instanceof Error ? e.message : 'Falló sin motivo claro.')
     } finally {
       setPublicando(false)
     }
@@ -71,24 +81,18 @@ export default function Publicar({ experiencia }: { experiencia: Experiencia }) 
     return (
       <div className="max-w-[620px]">
         <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-6 py-6">
-          <h1 className="text-xl font-semibold text-emerald-900">
-            Versión {publicado.numero} publicada
-          </h1>
+          <h1 className="text-xl font-semibold text-emerald-900">Publicado</h1>
           <p className="text-sm text-emerald-800 mt-2 leading-relaxed">
-            Desde ahora, quien entre a leer ve esto. El borrador quedó cerrado. Si vuelves al editor
-            empiezas uno nuevo, encima de lo que acabas de publicar.
+            Desde ahora, quien entre a leer ve esto. Quien ya estaba leyendo la versión anterior la
+            sigue viendo hasta que termine: no se le mueve el piso a mitad de camino. Si vuelves al
+            editor, empiezas un borrador nuevo, encima de lo que acabas de publicar.
           </p>
           <div className="flex gap-2 mt-5">
-            {corrida && (
-              <Link href={`/personalab/vista/${corrida.id}`} className={BTN_PRIMARIO}>
-                Ver como participante
-              </Link>
-            )}
-            <Link
-              href={`/personalab/experiencias/${experiencia.id}`}
-              className={BTN_SECUNDARIO}
-            >
-              Volver a la experiencia
+            <Link href={`/experiencia/${experiencia.slug}`} target="_blank" className={BTN_PRIMARIO}>
+              Ver como participante
+            </Link>
+            <Link href="/personalab/experiencias" className={BTN_SECUNDARIO}>
+              Volver
             </Link>
           </div>
         </div>
@@ -107,14 +111,13 @@ export default function Publicar({ experiencia }: { experiencia: Experiencia }) 
         </Link>
         <h1 className="text-2xl font-semibold tracking-tight text-slate-900 mt-3">Publicar</h1>
         <p className="text-sm text-slate-500 mt-1 max-w-[62ch]">
-          {experiencia.nombre}. Al publicar, lo que escribiste reemplaza lo que hoy leen los
-          participantes.
+          {experiencia.nombre}. Al publicar, lo que escribiste reemplaza lo que hoy leen quienes
+          empiecen de nuevo. Quien ya está leyendo termina la versión con la que empezó.
         </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] gap-5">
         <div className="flex flex-col gap-4">
-          {/* Franja 1: lo que impide */}
           {impedimentos.length > 0 && (
             <Franja
               tono="rojo"
@@ -125,7 +128,6 @@ export default function Publicar({ experiencia }: { experiencia: Experiencia }) 
             />
           )}
 
-          {/* Franja 2: lo que conviene revisar */}
           {advertencias.length > 0 && (
             <Franja
               tono="ambar"
@@ -136,7 +138,6 @@ export default function Publicar({ experiencia }: { experiencia: Experiencia }) 
             />
           )}
 
-          {/* Franja 3: todo bien */}
           {r.hallazgos.length === 0 && (
             <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-5 py-4">
               <p className="text-sm font-semibold text-emerald-900">No encontré nada que corregir.</p>
@@ -155,28 +156,25 @@ export default function Publicar({ experiencia }: { experiencia: Experiencia }) 
             </div>
             <dl className="space-y-2.5 text-sm">
               <Dato k="Bisagras con contenido" v={`${r.resumen.bisagrasConContenido} de ${r.resumen.bisagrasTotales}`} />
-              <Dato k="Bloques en total" v={String(r.resumen.bloques)} />
+              <Dato k="Bloques en el borrador" v={String(r.resumen.bloques)} />
               <Dato k="Ve el participante" v={String(r.resumen.visiblesAlParticipante)} />
               <Dato k="Solo el moderador" v={String(r.resumen.soloModerador)} />
             </dl>
 
-            {/* Esta caja se ocultaba entera cuando no había diferencias, así
-                que publicar algo idéntico a lo publicado se veía igual que
-                publicar veinte cambios. El silencio se lee como confirmación. */}
             <div className="mt-4 pt-4 border-t border-slate-100">
               <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-2">
-                Cambios sobre lo publicado
+                Frente a lo publicado hoy
               </div>
-              {dif.nuevos === 0 && dif.editados === 0 && dif.quitados === 0 ? (
+              {resumenPublicacion.bloquesEnPublicada === 0 ? (
                 <p className="text-sm text-slate-400">
-                  Ninguno. Esto es idéntico a lo que ya está publicado.
+                  Nada publicado todavía. Esta sería la primera versión.
                 </p>
               ) : (
-                <div className="text-sm text-slate-600 space-y-1">
-                  {dif.nuevos > 0 && <div>{dif.nuevos} bloque{dif.nuevos > 1 ? 's' : ''} nuevo{dif.nuevos > 1 ? 's' : ''}</div>}
-                  {dif.editados > 0 && <div>{dif.editados} editado{dif.editados > 1 ? 's' : ''}</div>}
-                  {dif.quitados > 0 && <div>{dif.quitados} quitado{dif.quitados > 1 ? 's' : ''}</div>}
-                </div>
+                <p className="text-sm text-slate-600">
+                  Lo publicado hoy tiene {resumenPublicacion.bloquesEnPublicada} bloque
+                  {resumenPublicacion.bloquesEnPublicada === 1 ? '' : 's'}. Este borrador tiene{' '}
+                  {resumenPublicacion.bloquesEnBorrador}.
+                </p>
               )}
             </div>
 
@@ -185,8 +183,7 @@ export default function Publicar({ experiencia }: { experiencia: Experiencia }) 
                 <>
                   <p className="text-sm font-semibold text-red-700">No se pudo publicar</p>
                   <p className="text-sm text-slate-600 mt-1 leading-relaxed">
-                    Tu borrador está intacto y nadie ha visto los cambios. Vuelve a intentar; si falla
-                    otra vez, avisa antes de seguir editando.
+                    Tu borrador está intacto y nadie ha visto los cambios. {fallo}
                   </p>
                   <div className="flex gap-2 mt-3">
                     <Boton
@@ -217,10 +214,9 @@ export default function Publicar({ experiencia }: { experiencia: Experiencia }) 
               ) : confirmando ? (
                 <>
                   <p className="text-sm text-slate-700 leading-relaxed mb-3">
-                    Al publicar, {r.resumen.visiblesAlParticipante} bloques quedan visibles para el foro
-                    y {r.resumen.soloModerador} solo para el moderador. Reemplaza
-                    {previo[0] ? ` la versión ${previo[0].numero}` : ' lo que hay publicado'} desde este
-                    momento.
+                    Al publicar, {r.resumen.visiblesAlParticipante} bloques quedan visibles para el
+                    participante y {r.resumen.soloModerador} solo para el moderador.
+                    {resumenPublicacion.bloquesEnPublicada > 0 && ' Reemplaza lo que hay publicado desde este momento, para quien empiece de nuevo.'}
                   </p>
                   <div className="flex gap-2">
                     <Boton
@@ -245,17 +241,68 @@ export default function Publicar({ experiencia }: { experiencia: Experiencia }) 
             </div>
           </div>
 
-          {previo.length > 0 && (
+          {resumenPublicacion.historial.length > 0 && (
             <div className={`${TARJETA} p-5`}>
               <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-3">
                 Publicaciones anteriores
               </div>
-              {previo.slice(0, 5).map(p => (
+              {resumenPublicacion.historial.slice(0, 5).map(p => (
                 <div key={p.numero} className="flex items-center justify-between py-1.5 text-sm">
                   <span className="text-slate-700">Versión {p.numero}</span>
                   <span className="text-slate-400 text-xs tabular-nums">{p.fecha}</span>
                 </div>
               ))}
+
+              {/* Deshacer la última publicación. Existe porque Hugo marcó,
+                  antes de que el editor escribiera de verdad, que publicar
+                  sin forma de volver atrás era un bloqueo: un clic sin
+                  vuelta atrás. */}
+              {puedeRevertir && (
+                <div className="mt-3 pt-3 border-t border-slate-100">
+                  {revertido ? (
+                    <p className="text-sm text-emerald-700">
+                      Deshecho. Quien empiece de nuevo ve la versión anterior.
+                    </p>
+                  ) : falloRevertir ? (
+                    <>
+                      <p className="text-xs text-red-600 mb-2">{falloRevertir}</p>
+                      <button onClick={deshacer} className="text-xs font-medium text-red-700 underline underline-offset-2">
+                        Reintentar
+                      </button>
+                    </>
+                  ) : confirmandoRevertir ? (
+                    <div className="bg-amber-50 border border-amber-200 rounded-lg px-3 py-2.5">
+                      <p className="text-xs text-amber-900 leading-relaxed mb-2">
+                        Vuelve a publicarse la versión anterior a la de hoy. Quien empiece de nuevo la
+                        va a ver a ella, no a la de hoy.
+                      </p>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={deshacer}
+                          disabled={revirtiendo}
+                          className="text-xs font-medium text-amber-900 bg-white border border-amber-300 rounded px-2 py-1 hover:bg-amber-100 disabled:opacity-60"
+                        >
+                          {revirtiendo ? 'Deshaciendo…' : 'Sí, deshacer'}
+                        </button>
+                        <button
+                          onClick={() => setConfirmandoRevertir(false)}
+                          disabled={revirtiendo}
+                          className="text-xs text-slate-500 hover:text-slate-700"
+                        >
+                          Cancelar
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => setConfirmandoRevertir(true)}
+                      className="text-xs text-slate-500 hover:text-red-600 underline underline-offset-2"
+                    >
+                      Deshacer la última publicación
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -301,9 +348,6 @@ function Franja({
                 <p className="text-sm text-slate-900">{h.que}</p>
                 <p className="text-xs text-slate-500 mt-0.5">{h.comoSeArregla}</p>
               </div>
-              {/* El enlace lleva a LA bisagra del hallazgo, no al editor
-                  genérico. Antes el autor aterrizaba en la primera y tenía
-                  que buscar a mano lo que el sistema acababa de señalarle. */}
               <Link
                 href={`/personalab/experiencias/${experienciaId}/editor?bisagra=${h.bisagraId}`}
                 className="text-xs text-slate-500 hover:text-slate-900 whitespace-nowrap flex-shrink-0 underline underline-offset-2"

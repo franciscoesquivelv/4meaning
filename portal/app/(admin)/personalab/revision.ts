@@ -1,5 +1,5 @@
 import { NIVEL, definicion, estaVacio, type Bloque, type ClaseCampo } from '@/lib/personalab/bloques'
-import type { Experiencia } from './dominio'
+import type { ExperienciaEditable as Experiencia } from '@/lib/personalab/editorDatos'
 
 // Compuerta de publicacion. Distingue dos cosas que se confunden siempre:
 //
