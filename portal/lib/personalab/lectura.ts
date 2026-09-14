@@ -35,6 +35,9 @@ export interface Experiencia {
   subtitulo: string | null
   narrativa: string | null
   duracion: string | null
+  // A qué versión está anclada esta lectura. Ver `versionAnclada` para el
+  // porqué: no siempre es "la publicada".
+  versionId: string
 }
 
 // Las tres respuestas posibles, y son tres y no dos A PROPÓSITO.
@@ -47,6 +50,54 @@ export type Resultado<T> =
   | { estado: 'ok'; datos: T }
   | { estado: 'sin-acceso' }
   | { estado: 'fallo'; motivo: string }
+
+// A QUÉ VERSIÓN SE ANCLA ESTA LECTURA, Y NO SIEMPRE ES "LA PUBLICADA".
+//
+// ETAPA 2. Antes, hinges no tenía versión: solo existía "la" bisagra de una
+// experiencia, y publicar de nuevo mientras alguien la leía le movía el
+// piso sin aviso. Ahora cada bisagra pertenece a una versión, y la regla es:
+//
+//   SI YA HAY UN MARCADOR, esa es su versión, y se queda ahí. La bisagra
+//   donde se quedó pertenece a una versión concreta; se lee esa hasta que
+//   termine, aunque el equipo publique una nueva mientras tanto. Quien
+//   estaba a la mitad no se entera de la republicación.
+//
+//   SI NO HAY MARCADOR (primera vez), la publicada de hoy se vuelve su
+//   ancla desde el primer bloque que abra, vía el primer `MarcarVisto`.
+//
+// Con esto, la vieja regla operativa de más abajo ("si hay que editar
+// mientras alguien la lleva, se para") deja de ser la única defensa: sigue
+// siendo la práctica correcta del día a día, pero ya no es lo único que
+// evita que a alguien se le desaparezca el suelo. La RLS (`pl_puede_ver_
+// version`) hace cumplir esto mismo del lado de la base: una versión
+// retirada solo se puede leer si el marcador de quien pregunta apunta ahí.
+async function versionAnclada(experienceId: string): Promise<string | null> {
+  const supabase = createClient()
+
+  const { data: marcador } = await supabase
+    .from('bookmarks')
+    .select('hinge_id')
+    .eq('experience_id', experienceId)
+    .maybeSingle()
+
+  if (marcador?.hinge_id) {
+    const { data: h } = await supabase
+      .from('hinges')
+      .select('version_id')
+      .eq('id', marcador.hinge_id)
+      .maybeSingle()
+    if (h?.version_id) return h.version_id
+  }
+
+  const { data: pub } = await supabase
+    .from('experience_versions')
+    .select('id')
+    .eq('experience_id', experienceId)
+    .eq('estado', 'publicada')
+    .maybeSingle()
+
+  return pub?.id ?? null
+}
 
 export async function cargarExperiencia(
   slug: string
@@ -61,6 +112,12 @@ export async function cargarExperiencia(
 
   if (errExp) return { estado: 'fallo', motivo: errExp.message }
   if (!exp) return { estado: 'sin-acceso' }
+
+  // Sin versión que leer (nunca se publicó nada, y tampoco hay marcador
+  // previo) es exactamente "no hay acceso": no hay ninguna mentira que
+  // decir aquí, solo nada que mostrar.
+  const versionId = await versionAnclada(exp.id)
+  if (!versionId) return { estado: 'sin-acceso' }
 
   // DOS FILTROS, Y LOS DOS FALLAN CERRADO.
   //
@@ -80,7 +137,7 @@ export async function cargarExperiencia(
   const { data: bis, error: errBis } = await supabase
     .from('hinges')
     .select('id, tiempo, orden, titulo, descripcion, duracion, tramo')
-    .eq('experience_id', exp.id)
+    .eq('version_id', versionId)
     .in('modo', ['digital', 'ambos'])
     .eq('listo', true)
     .order('tiempo')
@@ -90,7 +147,10 @@ export async function cargarExperiencia(
 
   return {
     estado: 'ok',
-    datos: { experiencia: exp as Experiencia, bisagras: (bis ?? []) as Bisagra[] },
+    datos: {
+      experiencia: { ...exp, versionId } as Experiencia,
+      bisagras: (bis ?? []) as Bisagra[],
+    },
   }
 }
 
@@ -154,18 +214,16 @@ export async function cargarBisagra(
   }
 
   const supabase = createClient()
-  // PENDIENTE DE LA ETAPA 2, DICHO AQUÍ PARA QUE NO SE PIERDA. Esta consulta
-  // pide los bloques por bisagra y NO filtra por versión. Hoy no se nota,
-  // porque la RLS ata al participante a la publicada y no existe ninguna otra;
-  // el día que el editor abra un borrador, esta misma bisagra devuelve los
-  // bloques duplicados para quien sea del equipo. Se arregla cuando el lector
-  // se ate a su versión, que es justo lo que construye la Etapa 2, y no antes
-  // porque el `version_id` que habría que pasar todavía no se resuelve aquí.
-  // Hallazgo de Daniel.
+  // Filtrado por versión, no solo por bisagra. ETAPA 2 cierra el pendiente
+  // que Daniel dejó escrito aquí: sin este filtro, el día que exista un
+  // borrador esta misma bisagra devolvería los bloques duplicados (los del
+  // borrador y los de lo publicado) para quien fuera del equipo.
+  // `experiencia.versionId` ya viene resuelto por `versionAnclada`.
   const { data, error } = await supabase
     .from('blocks')
     .select('id, hinge_id, orden, tipo, audiencia, contenido, media_id')
     .eq('hinge_id', bisagraId)
+    .eq('version_id', experiencia.versionId)
     .order('orden')
 
   if (error) return { estado: 'fallo', motivo: error.message }
@@ -209,17 +267,30 @@ export async function cargarBisagra(
 // Dónde se quedó. NO es progreso: no hay porcentaje, no hay racha, y la tabla
 // lleva escrito que agregarlos está prohibido. Solo sirve para recibir a la
 // persona donde la dejó en vez de devolverla al principio.
-// LA POSICIÓN SE RECALCULA EN VIVO CONTRA EL CATÁLOGO ACTUAL, NUNCA SE
-// GUARDA COMO UN CHECKPOINT FIJO. Auditoría de Hugo, Etapa 2: si el equipo
-// borra la bisagra donde alguien se quedó (`bookmarks.hinge_id` tiene `on
-// delete cascade`), esa persona vuelve a ver el índice desde cero, sin
-// aviso. Si el equipo reordena bisagras de una experiencia en curso, el
-// límite de "hasta dónde puede ver" puede moverse y esconder algo que ya
-// había abierto. Decisión de Francisco, mismo día: no se protege en
-// código. La regla es operativa, no técnica: una experiencia se termina
-// ANTES de lanzarla, y si algún día hace falta editarla mientras alguien la
-// está llevando, se PARA esa edición hasta que nadie esté adentro. No se
-// construye una barrera para un caso que el proceso ya evita.
+// LA POSICIÓN SE RECALCULA EN VIVO CONTRA EL CATÁLOGO DE SU VERSIÓN
+// ANCLADA, no contra "lo que esté publicado ahora mismo". Este comentario
+// decía, hasta la Etapa 2 del editor (2026-09-13), que reordenar o publicar
+// de nuevo mientras alguien lee "no se protege en código", y que la única
+// defensa era operativa: parar toda edición mientras hubiera alguien
+// adentro. Eso dejó de ser del todo cierto.
+//
+// Con `hinges` versionada y `versionAnclada()` (en `cargarExperiencia`)
+// atando la lectura a la versión donde está el marcador, el caso que
+// preocupaba (el equipo reordena o publica de nuevo con alguien a la mitad)
+// ya no mueve nada debajo de esa persona: sigue leyendo exactamente el
+// catálogo, el orden y el contenido de SU versión hasta que termina, sin
+// enterarse de que se publicó una nueva. La RLS lo hace cumplir
+// (`pl_puede_ver_version`): una versión retirada solo se puede leer si el
+// marcador de quien pregunta apunta ahí.
+//
+// LO QUE SIGUE SIN PROTECCIÓN TÉCNICA, y es un caso mucho más angosto: que
+// alguien del equipo borre a mano, por fuera del ciclo de borrador y
+// publicación, la fila histórica de una bisagra que una versión retirada
+// todavía necesita (`bookmarks.hinge_id` tiene `on delete cascade`). El
+// flujo normal nunca hace esto: abrir un borrador COPIA bisagras con ids
+// nuevos, nunca borra las viejas. Ese caso sigue siendo operativo, no
+// técnico, y la regla de Francisco sigue en pie para él: no se construye
+// una barrera para un borrado manual que el proceso normal no produce.
 export async function ultimaVista(experienciaId: string): Promise<string | null> {
   const supabase = createClient()
   const { data } = await supabase
@@ -266,10 +337,18 @@ export async function consignasDe(
   }
 
   const supabase = createClient()
+  // Mismo filtro por versión, y por la misma razón que en `cargarBisagra`:
+  // sin él, esta consulta duplicaría preguntas el día que exista un
+  // borrador. Y hay una segunda razón, propia del cierre: sin este filtro,
+  // alguien que terminó de leer después de una republicación vería el texto
+  // NUEVO de una pregunta al lado de la respuesta que escribió cuando la
+  // pregunta decía otra cosa. Con el filtro, el cierre lee exactamente las
+  // consignas de la versión que esa persona atravesó.
   const { data, error } = await supabase
     .from('blocks')
     .select('id, hinge_id, orden, contenido')
     .eq('tipo', 'consigna')
+    .eq('version_id', experiencia.versionId)
     .in('hinge_id', bisagras.map(b => b.id))
     .order('orden')
 

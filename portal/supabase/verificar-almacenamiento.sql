@@ -23,14 +23,15 @@ language plpgsql
 as $$
 declare
   id_b uuid; rev_antes int; rev_despues int;
-  id_exp uuid; id_ver uuid; id_h uuid; id_super uuid;
+  id_exp uuid; id_ver uuid; id_super uuid;
+  -- Bisagra SINTÉTICA, no una real: ver el porqué junto a la prueba 9.
+  id_h_falsa uuid;
   rechazo boolean;
   v_bool boolean;
 begin
   -- Los ids se resuelven ANTES de cualquier prueba: la 10 los necesita y
   -- corre primero.
   select e.id into id_exp   from public.experiences e where e.slug = 'presente-regalo';
-  select h.id into id_h     from public.hinges h where h.experience_id = id_exp limit 1;
   select p.id into id_super from public.profiles p where p.role = 'super_admin' limit 1;
 
   -- ── Buckets ───────────────────────────────────────────────
@@ -151,8 +152,25 @@ begin
       insert into public.experience_versions (experience_id, numero, estado)
       values (id_exp, 9999, 'borrador') returning id into id_ver;
 
+      -- LA BISAGRA TIENE QUE SER DE ESTA MISMA VERSIÓN SINTÉTICA, NO
+      -- CUALQUIERA REAL. Antes de la Etapa 2 (hinges por versión), una
+      -- bisagra real cualquiera de esta experiencia bastaba: adjuntarle un
+      -- bloque a una
+      -- versión sintética y esperar que "la bisagra quedaría en blanco"
+      -- funcionaba porque el chequeo viejo cruzaba por experience_id, sin
+      -- importar versión. Con hinges versionada eso ya no describe un
+      -- estado real: pl_abrir_borrador nunca deja un bloque de la versión
+      -- 9999 colgado de una bisagra de OTRA versión, y desde esta migración
+      -- la FK `blocks_version_de_su_bisagra` lo rechazaría de raíz en el
+      -- insert de abajo. La prueba necesita su PROPIA bisagra bajo id_ver
+      -- para seguir probando lo que dice probar. Hallazgo de Daniel,
+      -- 2026-09-14, auditando la migración de esa misma etapa.
+      insert into public.hinges (experience_id, version_id, tiempo, orden, titulo)
+      values (id_exp, id_ver, 'ignicion', 9999, 'bisagra de prueba, se deshace')
+      returning id into id_h_falsa;
+
       insert into public.blocks (version_id, hinge_id, orden, tipo, audiencia, contenido)
-      values (id_ver, id_h, 1, 'nota', 'moderador', '{"texto":"solo para mí"}'::jsonb);
+      values (id_ver, id_h_falsa, 1, 'nota', 'moderador', '{"texto":"solo para mí"}'::jsonb);
 
       perform public.pl_publicar_version(id_ver);
       rechazo := false;
