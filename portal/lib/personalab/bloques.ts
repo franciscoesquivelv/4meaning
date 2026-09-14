@@ -326,6 +326,14 @@ export const CONTRATO = {
     campos: {
       pie: { clase: 'linea', etiqueta: 'Pie de foto', exigencia: 'opcional' },
       url: { clase: 'url', etiqueta: 'Enlace', exigencia: 'opcional' },
+      // Los pone la subida, no una persona. Ver `origen` arriba. Sin esto,
+      // `aContenido()` los descarta al guardar (solo conserva campos
+      // declarados aquí) y el nombre real desaparece en la primera
+      // recarga: la subida se ve bien un instante y luego el archivo se
+      // exhibe como "archivo" a secas. Hallazgo de esta etapa, probando
+      // subir una imagen real y recargando.
+      nombreArchivo: { clase: 'linea', etiqueta: 'Nombre del archivo', exigencia: 'opcional', origen: 'sistema' },
+      peso: { clase: 'linea', etiqueta: 'Peso', exigencia: 'opcional', origen: 'sistema' },
     },
   },
 
@@ -339,6 +347,10 @@ export const CONTRATO = {
       pie: { clase: 'linea', etiqueta: 'Pie', exigencia: 'opcional' },
       duracion: { clase: 'linea', etiqueta: 'Duración', exigencia: 'opcional' },
       url: { clase: 'url', etiqueta: 'Enlace', exigencia: 'opcional' },
+      // Mismo hallazgo que en imagen: sin declarar estos dos, la subida
+      // real de un video pierde su nombre en la primera recarga.
+      nombreArchivo: { clase: 'linea', etiqueta: 'Nombre del archivo', exigencia: 'opcional', origen: 'sistema' },
+      peso: { clase: 'linea', etiqueta: 'Peso', exigencia: 'opcional', origen: 'sistema' },
     },
   },
 
@@ -361,6 +373,11 @@ export const CONTRATO = {
       pie: { clase: 'linea', etiqueta: 'Pie', exigencia: 'opcional' },
       duracion: { clase: 'linea', etiqueta: 'Duración', exigencia: 'opcional' },
       url: { clase: 'url', etiqueta: 'Enlace', exigencia: 'opcional' },
+      // Mismo hallazgo que en imagen y video. Audio no puede subir archivo
+      // real todavía (Etapa 5), pero el día que pueda, sin esto perdería
+      // el nombre igual.
+      nombreArchivo: { clase: 'linea', etiqueta: 'Nombre del archivo', exigencia: 'opcional', origen: 'sistema' },
+      peso: { clase: 'linea', etiqueta: 'Peso', exigencia: 'opcional', origen: 'sistema' },
     },
   },
 } as const satisfies Record<string, Definicion>
