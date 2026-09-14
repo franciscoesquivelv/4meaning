@@ -259,7 +259,19 @@ export default function Editor({
     try {
       const creado = await crearBloque(b, experiencia.versionId)
       renombrarClave(idLocalDeAhora, creado.id)
-      setBloques(prev => prev.map(x => (x.id === idLocalDeAhora ? creado : x)))
+      // SOLO id Y rev vienen del servidor, nunca el resto del bloque.
+      // `creado` refleja el contenido tal como estaba en el instante en
+      // que se mandó el INSERT (t=700ms del debounce); si la persona
+      // siguió escribiendo mientras la red respondía (realista: un
+      // INSERT tarda lo suyo), reemplazar el objeto completo por
+      // `creado` habría hecho retroceder el texto en pantalla a mitad de
+      // escritura, en el momento exacto en que la creación resuelve, sin
+      // ningún error que lo delatara. Hallazgo de Daniel, auditando esta
+      // misma etapa. La edición que llegó durante la espera ya tiene su
+      // propio guardado programado (el debounce de esa tecla), así que
+      // fusionar en vez de reemplazar no pierde nada: ese guardado
+      // posterior la persiste como una actualización normal.
+      setBloques(prev => prev.map(x => (x.id === idLocalDeAhora ? { ...x, id: creado.id, rev: creado.rev } : x)))
       marcarPorClave(clave, 'guardado')
       return creado
     } catch (e) {
@@ -302,7 +314,14 @@ export default function Editor({
       temporizadores.current.delete(clave)
       guardarOCrear(clave)
     })
-  }, [bloques, experiencia.versionId]) // eslint-disable-line react-hooks/exhaustive-deps
+    // Deps vacías a propósito, no un olvido: el cuerpo no lee `bloques` ni
+    // `experiencia` directamente, todo pasa por `guardarOCrear`, que lee
+    // `bloquesRef.current` (siempre al día) y `experiencia` por closure de
+    // props (la misma experiencia durante toda la sesión de edición). Antes
+    // decía `[bloques, experiencia.versionId]`, una dependencia que ya no
+    // describía lo que el cuerpo hace. Hallazgo de Daniel.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     function atajo(e: KeyboardEvent) {
@@ -380,10 +399,23 @@ export default function Editor({
       await reordenarRemoto(cambiadosReales.map(b => ({ id: b.id, orden: b.orden })), experiencia.versionId)
       for (const c of cambiadosReales) marcarPorClave(claveDe(c.id), 'guardado')
     } catch {
-      // Revertir: el orden que se ve tiene que ser el que hay en la base.
-      setBloques(bloques)
+      // Revertir SOLO el orden de los bloques que ESTE movimiento tocó,
+      // sobre el estado más reciente (función de actualización, no el
+      // `bloques` cerrado de cuando se hizo clic). `reordenarRemoto` manda
+      // sus updates uno por uno, no en una transacción (el propio
+      // comentario ahí lo admite a propósito), así que mientras esperaba
+      // la red, otro bloque pudo haberse autoguardado con su propio
+      // cambio real. `setBloques(bloques)` volvía a ESE snapshot viejo
+      // completo y se llevaba esa edición por delante sin avisar.
+      // Hallazgo de Daniel, mismo tipo de cierre obsoleto que ya había
+      // corregido en el guardado de texto, reaparecido aquí porque la
+      // corrección de uno no cubría al otro.
+      const ordenPrevio = new Map(cambiados.map(b => [b.id, antes.get(b.id)!]))
+      setBloques(prev => prev.map(b => (ordenPrevio.has(b.id) ? { ...b, orden: ordenPrevio.get(b.id)! } : b)))
       for (const c of cambiadosReales) marcarPorClave(claveDe(c.id), 'error')
-      setErrorGlobal('No se pudo mover el bloque. Se deshizo el cambio en pantalla.')
+      setErrorGlobal(
+        'No se pudo mover el bloque. Se deshizo el cambio en pantalla. Si moviste varios a la vez, revisa el orden: reordenarRemoto no es una sola operación, así que alguno pudo haberse guardado antes de que fallara.'
+      )
     }
   }
 

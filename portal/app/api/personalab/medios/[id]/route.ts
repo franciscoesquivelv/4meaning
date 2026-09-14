@@ -128,6 +128,17 @@ export async function DELETE(
     )
   }
 
-  await service.storage.from(medio.bucket).remove([medio.path])
+  // La fila ya no existe: para quien pregunta, esto se borró. Pero si
+  // Storage no pudo quitar el objeto, decirlo importa, aunque no haya nada
+  // que deshacer — el hallazgo era que el error se ignoraba en silencio.
+  // No es nuevo de este cambio (ya faltaba antes), pero antes esta ruta
+  // era código muerto y ahora es alcanzable. Hallazgo de Hugo.
+  const { error: errorStorage } = await service.storage.from(medio.bucket).remove([medio.path])
+  if (errorStorage) {
+    return NextResponse.json({
+      ok: true,
+      aviso: 'El registro se borró, pero el archivo pudo haber quedado en el almacén. No afecta a nadie: ya no hay ningún bloque que lo use.',
+    })
+  }
   return NextResponse.json({ ok: true })
 }
