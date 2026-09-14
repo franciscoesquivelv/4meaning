@@ -509,7 +509,7 @@ export default function Editor({
               Guardar
             </Boton>
             <Link
-              href={`/personalab/experiencias/${experiencia.id}/publicar`}
+              href={`/personalab/experiencias/${experiencia.slug}/publicar`}
               className={BTN_PRIMARIO}
             >
               Revisar y publicar

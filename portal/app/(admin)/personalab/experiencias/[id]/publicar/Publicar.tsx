@@ -95,7 +95,7 @@ export default function Publicar({
             que termine: tampoco aquí se le mueve el piso a mitad de camino.
           </p>
           <div className="flex gap-2 mt-5">
-            <Link href={`/personalab/experiencias/${experiencia.id}/editor`} className={BTN_PRIMARIO}>
+            <Link href={`/personalab/experiencias/${experiencia.slug}/editor`} className={BTN_PRIMARIO}>
               Volver al editor
             </Link>
             <Link href="/personalab/experiencias" className={BTN_SECUNDARIO}>
@@ -134,7 +134,7 @@ export default function Publicar({
     <>
       <div className="mb-6">
         <Link
-          href={`/personalab/experiencias/${experiencia.id}/editor`}
+          href={`/personalab/experiencias/${experiencia.slug}/editor`}
           className="text-xs text-slate-400 hover:text-slate-600 transition-colors"
         >
           ← Editor
@@ -154,7 +154,7 @@ export default function Publicar({
               titulo={`${impedimentos.length} ${impedimentos.length === 1 ? 'cosa impide' : 'cosas impiden'} publicar`}
               nota="Esto dejaría contenido roto o vacío del lado del participante."
               hallazgos={impedimentos}
-              experienciaId={experiencia.id}
+              experienciaId={experiencia.slug}
             />
           )}
 
@@ -164,7 +164,7 @@ export default function Publicar({
               titulo={`${advertencias.length} ${advertencias.length === 1 ? 'cosa conviene' : 'cosas convienen'} revisar`}
               nota="No impiden publicar. Puede que sean deliberadas."
               hallazgos={advertencias}
-              experienciaId={experiencia.id}
+              experienciaId={experiencia.slug}
             />
           )}
 
@@ -226,7 +226,7 @@ export default function Publicar({
                       Reintentar
                     </Boton>
                     <Link
-                      href={`/personalab/experiencias/${experiencia.id}/editor`}
+                      href={`/personalab/experiencias/${experiencia.slug}/editor`}
                       className={BTN_SECUNDARIO}
                     >
                       Volver al editor
