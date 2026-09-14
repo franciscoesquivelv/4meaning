@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { familiaDe, type TipoBloque, type FamiliaMedio } from '@/lib/personalab/bloques'
 import { subirArchivo } from './almacenRemoto'
-import { BTN_FILA } from './tokens'
+import { BTN_FILA, BTN_PELIGRO } from './tokens'
 
 // SUBIDA REAL, ETAPA 3. Hasta hoy este componente no mandaba nada a ningún
 // lado: `URL.createObjectURL` fingía el archivo y se perdía al recargar.
@@ -149,10 +149,9 @@ export default function SubirArchivo({
               <p className="text-xs text-red-600 mt-0.5 leading-relaxed">{motivo}</p>
             </div>
             <div className="flex items-center gap-1.5 flex-shrink-0">
-              <button
-                onClick={reintentar}
-                className="text-xs font-medium text-red-700 border border-red-300 bg-white px-2.5 py-1 rounded-md hover:bg-red-100 transition-colors"
-              >
+              {/* Antes tenía una clase suelta a mano, único control nuevo
+                  de esta etapa sin focus-visible. Hallazgo de Julián. */}
+              <button onClick={reintentar} className={BTN_PELIGRO}>
                 Reintentar
               </button>
               <button onClick={() => { setEstado('vacio'); setPendiente(null) }} className={`${BTN_FILA} bg-white`}>

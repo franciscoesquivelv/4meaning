@@ -77,6 +77,23 @@ const PESO_ESTADO: Record<EstadoBloque, number> = {
 
 const DEMORA_AUTOGUARDADO = 700
 
+// Debajo de este piso el ojo no registra el cambio de "Guardando" a
+// "Guardado" y parece que no pasó nada. Ya regía para el botón manual de
+// Publicar.tsx (`MINIMO_PERCEPTIBLE`, decisión de Julián); se le había
+// olvidado aplicar al guardado automático de cada bloque al reescribir este
+// archivo para la base real, y en red rápida el chip podía no pintarse un
+// solo cuadro. Mismo nombre, mismo valor, para que la sensación sea igual
+// en las dos pantallas.
+const MINIMO_PERCEPTIBLE = 400
+
+async function conPisoPerceptible<T>(promesa: Promise<T>): Promise<T> {
+  const inicio = Date.now()
+  const resultado = await promesa
+  const resto = MINIMO_PERCEPTIBLE - (Date.now() - inicio)
+  if (resto > 0) await new Promise(r => setTimeout(r, resto))
+  return resultado
+}
+
 const ETIQUETA_INPUT = 'block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1.5'
 const INPUT =
   'w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder:text-slate-300 focus:outline-none focus:border-slate-400 transition-colors'
@@ -233,13 +250,23 @@ export default function Editor({
     if (!b) return
     marcarPorClave(clave, 'guardando')
     try {
-      const rev = await guardarBloque(b, experiencia.versionId)
+      const rev = await conPisoPerceptible(guardarBloque(b, experiencia.versionId))
       setBloques(prev => prev.map(x => (x.id === b.id ? { ...x, rev } : x)))
       marcarPorClave(clave, 'guardado')
     } catch (e) {
       if (e instanceof ConflictoDeVersion) {
         setConflicto(
           'Alguien más guardó cambios en este bloque mientras editabas. Para no perder ni tu trabajo ni el suyo, recarga la página y vuelve a hacer tu cambio sobre la versión más reciente.'
+        )
+      } else if ((e as { code?: string } | null)?.code === '23514') {
+        // Vaciar un campo obligatorio de un bloque QUE YA EXISTÍA es
+        // distinto de un fallo de red, y antes de esto se veían igual:
+        // el mismo chip rojo genérico para las dos causas. Aquí lo que
+        // hay en la base sigue siendo lo último que sí se guardó — lo
+        // que se perdería es solo lo que se ve en pantalla ahora mismo,
+        // si se recarga sin corregirlo. Hallazgo de Julián.
+        setErrorGlobal(
+          `${definicion(b.tipo).nombre}: no puede quedar sin ${definicion(b.tipo).campos.texto ? 'texto' : 'contenido'}. Lo último que sí se guardó sigue en la base; esto que ves ahora no se ha guardado.`
         )
       }
       marcarPorClave(clave, 'error')
@@ -257,7 +284,7 @@ export default function Editor({
     if (!b) return null
     marcarPorClave(clave, 'guardando')
     try {
-      const creado = await crearBloque(b, experiencia.versionId)
+      const creado = await conPisoPerceptible(crearBloque(b, experiencia.versionId))
       renombrarClave(idLocalDeAhora, creado.id)
       // SOLO id Y rev vienen del servidor, nunca el resto del bloque.
       // `creado` refleja el contenido tal como estaba en el instante en
@@ -518,7 +545,13 @@ export default function Editor({
                   {ETIQUETA_TIEMPO[t]}
                 </div>
                 {bs.map(b => {
-                  const n = bloques.filter(x => x.bisagraId === b.id).length
+                  // Solo cuenta lo que de verdad está en la base. Un
+                  // bloque local recién creado (todavía sin contenido
+                  // válido) hacía que esto dijera "1 bloque" para una
+                  // bisagra que, si se recarga la página ahora mismo,
+                  // sigue vacía. Dos señales que mentían en la misma
+                  // dirección. Hallazgo de Julián.
+                  const n = bloques.filter(x => x.bisagraId === b.id && !esLocal(x.id)).length
                   const act = b.id === activa
                   return (
                     <button
@@ -788,10 +821,40 @@ function TarjetaBloque({
             <SubirArchivo
               tipo={b.tipo}
               nombre={b.nombreArchivo}
-              url={b.url}
+              url={b.medioId ? b.url : undefined}
               onListo={d => onCambio({ nombreArchivo: d.nombreArchivo, peso: d.peso, url: d.url, medioId: d.medioId })}
               onQuitar={() => onCambio({ nombreArchivo: '', peso: undefined, url: undefined, medioId: null })}
             />
+
+            {/* EL CAMINO QUE LA COMPUERTA YA PROMETÍA Y NINGUNA PANTALLA
+                OFRECÍA. `blocks_contenido_por_tipo` acepta video y audio
+                con solo una URL, sin archivo subido (contrato:
+                `admiteUrl`), y `revision.ts` le decía a quien edita "pega
+                un enlace" — pero no había dónde. Consecuencia real:
+                agregar un bloque de Audio bloqueaba publicar sin ningún
+                remedio que funcionara, porque tampoco hay bucket que
+                admita audio todavía (Etapa 5). Encontrado por Julián,
+                probando en el navegador. Este campo es el remedio real
+                para audio hoy, y una segunda vía honesta para video. */}
+            {definicion(b.tipo).medio?.admiteUrl && !b.medioId && (
+              <div className="mt-3">
+                <label className={ETIQUETA_INPUT}>
+                  O pega un enlace{b.tipo === 'video' ? ' (Vimeo, YouTube sin listar)' : ''}
+                </label>
+                <input
+                  value={b.url ?? ''}
+                  onChange={e => onCambio({ url: e.target.value || undefined })}
+                  placeholder="https://…"
+                  className={INPUT}
+                />
+                {b.tipo === 'audio' && (
+                  <p className="text-[11px] text-slate-400 mt-1.5 leading-relaxed">
+                    Subir el archivo directo todavía no está disponible: ningún bucket admite
+                    audio por ahora. Un enlace a donde ya esté alojado sí funciona.
+                  </p>
+                )}
+              </div>
+            )}
 
             <div className="mt-3">
               <label className={ETIQUETA_INPUT}>

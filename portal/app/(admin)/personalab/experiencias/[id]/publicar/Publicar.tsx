@@ -77,6 +77,36 @@ export default function Publicar({
     }
   }
 
+  // Pantalla completa, igual que "publicado" abajo, y no un mensaje
+  // pequeño dentro de la tarjeta de historial. Esa tarjeta viene de una
+  // prop cargada una vez al abrir la pantalla (`resumenPublicacion`): tras
+  // deshacer, sigue mostrando la lista de ANTES, porque nada la vuelve a
+  // pedir al servidor. En vez de parchear esa lista para que mienta menos,
+  // se reemplaza toda la vista, que es lo que "publicar" ya hacía y es
+  // consistente. Hallazgo de Julián.
+  if (revertido) {
+    return (
+      <div className="max-w-[620px]">
+        <div className="bg-amber-50 border border-amber-200 rounded-xl px-6 py-6">
+          <h1 className="text-xl font-semibold text-amber-900">Deshecho</h1>
+          <p className="text-sm text-amber-800 mt-2 leading-relaxed">
+            La versión anterior a la de hoy volvió a ser la publicada. Quien entre a leer desde
+            ahora ve esa. Quien ya estaba leyendo la que acabas de retirar la sigue viendo hasta
+            que termine: tampoco aquí se le mueve el piso a mitad de camino.
+          </p>
+          <div className="flex gap-2 mt-5">
+            <Link href={`/personalab/experiencias/${experiencia.id}/editor`} className={BTN_PRIMARIO}>
+              Volver al editor
+            </Link>
+            <Link href="/personalab/experiencias" className={BTN_SECUNDARIO}>
+              Volver
+            </Link>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   if (publicado) {
     return (
       <div className="max-w-[620px]">
