@@ -134,6 +134,27 @@ export function cambiarAudiencia(tipo: TipoBloque, audiencia: Audiencia): Audien
 // afecta ninguna fila. Ahi se lanza el conflicto en vez de pisar su trabajo
 // en silencio, que es lo que pasa sin esto.
 
+// LA PUERTA DE DESCARGA LEE `media.descargable`, NUNCA `blocks.contenido`.
+// El checkbox "Se puede descargar" del editor solo movía el jsonb del
+// bloque; la fila de `media` (lo que `GET .../medios/[id]?descargar=1` de
+// verdad consulta) se fijaba una sola vez al subir y nada la volvía a
+// tocar. Hallazgo de Hugo, 2026-09-15, confirmado desmarcando la casilla y
+// descargando igual. Se sincroniza aquí, en el mismo punto donde el bloque
+// ya se está guardando, para que no haga falta acordarse de llamarlo aparte
+// cada vez que alguien mueve el checkbox.
+async function sincronizarDescargable(b: Bloque) {
+  if (b.tipo !== 'archivo' || !b.medioId) return
+  const r = await fetch(`/api/personalab/medios/${b.medioId}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ descargable: b.descargable ?? false }),
+  })
+  if (!r.ok) {
+    const { error } = await r.json().catch(() => ({ error: 'No se pudo actualizar si se puede descargar.' }))
+    throw new Error(error)
+  }
+}
+
 export async function guardarBloque(
   b: Bloque & { rev: number },
   versionId: string
@@ -166,6 +187,9 @@ export async function guardarBloque(
       .from('blocks').select('rev').eq('id', b.id).maybeSingle()
     throw new ConflictoDeVersion(b.rev, actual?.rev ?? -1)
   }
+
+  await sincronizarDescargable(b)
+
   return data.rev
 }
 
@@ -192,7 +216,27 @@ export async function crearBloque(b: Omit<Bloque, 'id'>, versionId: string) {
   // que la base y el contrato se separaron, y eso hay que verlo, no tragarlo.
   const creado = aBloque(data as FilaConRev)
   if (!creado) throw new Error(`La base devolvió un tipo de bloque que el contrato no conoce.`)
+
+  await sincronizarDescargable(creado)
+
   return creado
+}
+
+// EL ARCHIVO QUE "REEMPLAZAR" DEJABA VIVO PARA SIEMPRE. Subir uno nuevo
+// solo cambiaba a qué `media_id` apunta el bloque; el objeto viejo se
+// quedaba en Storage y su fila en `media`, sin ningún bloque que lo
+// referenciara y sin ninguna pantalla que lo mostrara. Hallazgo de Leo,
+// 2026-09-15, reproducido subiendo dos veces seguidas y confirmando la fila
+// huérfana contra la base. `Editor.tsx` llama esto DESPUÉS de guardar el
+// bloque con el `medioId` nuevo, nunca antes: si el guardado falla, el
+// archivo viejo se queda como estaba, en vez de perderse sin que el nuevo
+// haya quedado a salvo.
+export async function borrarMedio(medioId: string): Promise<void> {
+  const r = await fetch(`/api/personalab/medios/${medioId}`, { method: 'DELETE' })
+  if (!r.ok) {
+    const { error } = await r.json().catch(() => ({ error: 'No se pudo borrar el archivo anterior.' }))
+    throw new Error(error)
+  }
 }
 
 export async function borrarBloque(id: string) {

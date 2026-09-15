@@ -1,4 +1,5 @@
 import RenderMarkdown from './RenderMarkdown'
+import BotonDescargar from './BotonDescargar'
 import { definicion, type Bloque } from '@/lib/personalab/bloques'
 
 // EL RITMO VERTICAL VIVE EN EL CONTRATO, NO AQUÍ. Era un mapa suelto con
@@ -9,6 +10,29 @@ import { definicion, type Bloque } from '@/lib/personalab/bloques'
 // real y no un adorno entre párrafos.
 
 const ROTULO = 'text-[10px] font-semibold uppercase tracking-[0.16em] text-[#8F5341]'
+
+// UN ENLACE DE VIMEO/YOUTUBE NO ES UN ARCHIVO DE VIDEO. `revision.ts` y el
+// campo "O pega un enlace" del editor prometen los dos por igual ("Vimeo,
+// YouTube sin listar"), pero `<video src>` solo sabe reproducir un archivo
+// directo (mp4, mov, o la URL firmada propia de `/api/personalab/medios/…`
+// tras el redirect): pegado a una URL de página como
+// `https://vimeo.com/76979871`, el navegador no tiene qué reproducir y el
+// participante ve un reproductor negro y muerto. Hallazgo de Hugo,
+// reproducido pegando exactamente el enlace que el propio campo invita a
+// pegar. La forma correcta de un enlace de plataforma es un `<iframe>` a
+// su URL de embed, no un `<video>`.
+function comoIncrustable(url: string): string | null {
+  const vimeo = url.match(/vimeo\.com\/(?:video\/)?(\d+)/)
+  if (vimeo) return `https://player.vimeo.com/video/${vimeo[1]}`
+
+  const ytLargo = url.match(/[?&]v=([\w-]{11})/)
+  if (ytLargo) return `https://www.youtube.com/embed/${ytLargo[1]}`
+
+  const ytCorto = url.match(/youtu\.be\/([\w-]{11})/)
+  if (ytCorto) return `https://www.youtube.com/embed/${ytCorto[1]}`
+
+  return null
+}
 
 export default function BloqueLector({ b }: { b: Bloque }) {
   const mt = definicion(b.tipo).margen
@@ -114,11 +138,7 @@ export default function BloqueLector({ b }: { b: Bloque }) {
           </div>
           <div className="flex items-center gap-3 flex-shrink-0">
             {b.peso && <span className="text-[12px] text-[#676E6E] tabular-nums">{b.peso}</span>}
-            {b.descargable && (
-              <span className="text-[12px] font-medium text-[#8F5341] border border-[#E0CFC4] rounded-lg px-3 py-1.5">
-                Descargar
-              </span>
-            )}
+            {b.descargable && b.medioId && <BotonDescargar medioId={b.medioId} />}
           </div>
         </div>
       )
@@ -142,10 +162,18 @@ export default function BloqueLector({ b }: { b: Bloque }) {
         </figure>
       )
 
-    case 'video':
+    case 'video': {
+      const incrustable = b.url ? comoIncrustable(b.url) : null
       return (
         <figure className={mt}>
-          {b.url ? (
+          {incrustable ? (
+            <iframe
+              src={incrustable}
+              className="rounded-xl w-full aspect-video bg-[#1A2426]"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          ) : b.url ? (
             <video src={b.url} controls className="rounded-xl w-full bg-[#1A2426]" />
           ) : (
             <div className="rounded-xl bg-[#1A2426] aspect-video flex items-center justify-center relative">
@@ -168,6 +196,7 @@ export default function BloqueLector({ b }: { b: Bloque }) {
           )}
         </figure>
       )
+    }
 
     // ── Audio ──
     // El tipo existía en la base desde el 2026-09-11 y no tenía caso aquí,

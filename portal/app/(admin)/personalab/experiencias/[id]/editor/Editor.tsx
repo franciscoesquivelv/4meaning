@@ -10,7 +10,7 @@ import {
   type Bloque, type TipoBloque, type Audiencia,
 } from '@/lib/personalab/bloques'
 import {
-  crearBloque, guardarBloque, borrarBloque, reordenarRemoto,
+  crearBloque, guardarBloque, borrarBloque, borrarMedio, reordenarRemoto,
   camposPorDefecto, cambiarAudiencia, reordenar,
   ConflictoDeVersion,
 } from '../../../almacenRemoto'
@@ -202,8 +202,19 @@ export default function Editor({
 
   // No dejar salir con un guardado en curso o fallido. Cuenta lo mismo que
   // antes: es justo cuando más caro sale cerrar la pestaña.
+  //
+  // LA BANDERA ES PARA UN CASO DISTINTO: cuando el botón "Recargar" del
+  // banner de conflicto llama a esto él mismo, a propósito, para abandonar
+  // el estado local roto y traer el real del servidor. Sin esta bandera,
+  // ese mismo `estadoGlobal === 'error'` que puso el conflicto activa este
+  // guardia y el navegador pregunta "¿Salir del sitio?" — justo el
+  // recuadro que puede tragarse sin querer alguien que ya está tratando de
+  // salir de un error. Hallazgo de Hugo, reproducido: el diálogo nativo
+  // bloqueó la recuperación dos veces seguidas en su propia prueba.
+  const saltarConfirmacionSalida = useRef(false)
   useEffect(() => {
     function alSalir(e: BeforeUnloadEvent) {
+      if (saltarConfirmacionSalida.current) return
       if (estadoGlobal === 'pendiente' || estadoGlobal === 'guardando' || estadoGlobal === 'error') {
         e.preventDefault()
         e.returnValue = ''
@@ -226,6 +237,14 @@ export default function Editor({
   // segundo espera a que la primera termine y sigue desde ahí, en vez de
   // dispararse por su cuenta.
   const creacionesEnCurso = useRef<Map<string, Promise<BloqueEditable | null>>>(new Map())
+
+  // EL ARCHIVO QUE "REEMPLAZAR" REEMPLAZABA A MEDIAS. `onListo` (más abajo)
+  // deja aquí el `medioId` viejo, por clave, antes de que `onCambio` lo
+  // pise con el nuevo. Se borra recién DESPUÉS de que el guardado con el
+  // `medioId` nuevo confirme, nunca antes: si el guardado fallara primero,
+  // el archivo viejo se queda como estaba en vez de perderse sin que el
+  // nuevo haya quedado a salvo. Hallazgo de Leo.
+  const mediosAReemplazar = useRef<Map<string, string>>(new Map())
 
   async function guardarOCrear(clave: string) {
     let id = idPorClave(clave)
@@ -253,12 +272,36 @@ export default function Editor({
       const rev = await conPisoPerceptible(guardarBloque(b, experiencia.versionId))
       setBloques(prev => prev.map(x => (x.id === b.id ? { ...x, rev } : x)))
       marcarPorClave(clave, 'guardado')
+
+      const medioViejo = mediosAReemplazar.current.get(clave)
+      if (medioViejo) {
+        mediosAReemplazar.current.delete(clave)
+        borrarMedio(medioViejo).catch(() => {
+          // No hay nada que el usuario pueda hacer con este error: el
+          // bloque ya quedó bien, un archivo huérfano en el almacén no le
+          // afecta a nadie. Se deja para una limpieza aparte, no para una
+          // alarma en pantalla por algo que ya no tiene remedio desde aquí.
+        })
+      }
     } catch (e) {
-      if (e instanceof ConflictoDeVersion) {
+      const codigo = (e as { code?: string } | null)?.code
+      if (e instanceof ConflictoDeVersion || codigo === '42501') {
+        // MISMO BANNER PARA LAS DOS CAUSAS, A PROPÓSITO. El mensaje viejo
+        // decía "alguien guardó cambios en ESTE bloque", y eso era falso
+        // en el caso real que lo disparó: alguien publicó o revirtió la
+        // EXPERIENCIA completa mientras se editaba, no tocó este bloque en
+        // particular. Un update contra una versión que ya no es el
+        // borrador vivo cae aquí (RLS lo invalida en silencio, sale como
+        // `ConflictoDeVersion` porque el update no afecta ninguna fila).
+        // Un insert nuevo contra esa misma versión muerta no tiene fila
+        // que comparar: Postgres lo rechaza directo con `42501`, y antes
+        // de este arreglo caía al chip rojo genérico sin explicación.
+        // Hallazgo de Hugo, reproducido en vivo con una publicación real
+        // mientras el editor seguía abierto.
         setConflicto(
-          'Alguien más guardó cambios en este bloque mientras editabas. Para no perder ni tu trabajo ni el suyo, recarga la página y vuelve a hacer tu cambio sobre la versión más reciente.'
+          'Esta experiencia cambió del lado del servidor mientras editabas (alguien publicó o deshizo una publicación). Para no perder ni tu trabajo ni el de esa persona, recarga la página y vuelve a hacer tu cambio sobre la versión más reciente.'
         )
-      } else if ((e as { code?: string } | null)?.code === '23514') {
+      } else if (codigo === '23514') {
         // Vaciar un campo obligatorio de un bloque QUE YA EXISTÍA es
         // distinto de un fallo de red, y antes de esto se veían igual:
         // el mismo chip rojo genérico para las dos causas. Aquí lo que
@@ -307,6 +350,18 @@ export default function Editor({
         marcarPorClave(clave, 'limpio')
         return null
       }
+      if (codigo === '42501') {
+        // Un bloque nuevo, creado contra una versión que dejó de ser el
+        // borrador vivo (alguien publicó o revirtió mientras se escribía):
+        // no hay fila que comparar como en `guardarBloque`, así que
+        // Postgres lo rechaza directo por RLS en vez de devolver cero
+        // filas. Antes de este arreglo caía al mismo `else` genérico que
+        // un fallo de red, sin explicación. Mismo banner que el caso de
+        // edición, mismo remedio. Hallazgo de Hugo.
+        setConflicto(
+          'Esta experiencia cambió del lado del servidor mientras editabas (alguien publicó o deshizo una publicación). Para no perder ni tu trabajo ni el de esa persona, recarga la página y vuelve a hacer tu cambio sobre la versión más reciente.'
+        )
+      }
       marcarPorClave(clave, 'error')
       return null
     }
@@ -327,6 +382,19 @@ export default function Editor({
   // Debounce POR BLOQUE, no global. Editar el bloque A y luego el B dispara
   // dos temporizadores independientes; guardar A no espera a B ni al revés.
   function actualizar(id: string, campos: Partial<Bloque>) {
+    // Reemplazar o quitar un archivo cambia `medioId` a otra cosa (uno
+    // nuevo, o null). Las dos veces el archivo viejo se queda huérfano en
+    // Storage y en `media` si nadie lo borra — ver el comentario de
+    // `mediosAReemplazar` más arriba y el de `borrarMedio` en
+    // `almacenRemoto.ts`. Se detecta aquí, en el único sitio por el que
+    // pasa todo cambio de `medioId`, en vez de repetirlo en cada `onListo`
+    // y `onQuitar` de `TarjetaBloque`.
+    if ('medioId' in campos) {
+      const medioViejo = bloquesRef.current.find(x => x.id === id)?.medioId
+      if (medioViejo && medioViejo !== campos.medioId) {
+        mediosAReemplazar.current.set(claveDe(id), medioViejo)
+      }
+    }
     setBloques(prev => prev.map(b => (b.id === id ? { ...b, ...campos } : b)))
     const clave = claveDe(id)
     marcarPorClave(clave, 'pendiente')
@@ -520,7 +588,10 @@ export default function Editor({
         {conflicto && (
           <div className="mt-3 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 flex items-start justify-between gap-4 flex-wrap">
             <p className="text-sm text-amber-900 leading-relaxed max-w-[70ch]">{conflicto}</p>
-            <button onClick={() => window.location.reload()} className={BTN_PRIMARIO}>
+            <button
+              onClick={() => { saltarConfirmacionSalida.current = true; window.location.reload() }}
+              className={BTN_PRIMARIO}
+            >
               Recargar
             </button>
           </div>
@@ -880,6 +951,23 @@ function TarjetaBloque({
                   Los guiones de sala suelen ser solo para el moderador.
                 </span>
               </label>
+            )}
+
+            {/* El contrato (bloques.ts) declara `duracion` para video y
+                audio desde que existen, pero nunca tuvo dónde escribirse
+                aquí: quien editaba solo podía teclearla directo en
+                Supabase. Campo opcional, así que nunca bloqueó publicar,
+                pero era un campo prometido sin pantalla. Hallazgo de Leo. */}
+            {(b.tipo === 'video' || b.tipo === 'audio') && (
+              <div className="mt-3">
+                <label className={ETIQUETA_INPUT}>Duración</label>
+                <input
+                  value={b.duracion ?? ''}
+                  onChange={e => onCambio({ duracion: e.target.value || undefined })}
+                  placeholder="12:34"
+                  className={`${INPUT} w-24`}
+                />
+              </div>
             )}
           </>
         ) : (
