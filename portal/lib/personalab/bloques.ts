@@ -92,14 +92,16 @@ export interface Campo {
   // reconstruido de la Etapa 3 va a pintar el formulario recorriendo estos
   // campos, y sin esta marca se encontraría ofreciéndole a un moderador
   // teclear a mano el peso de un PDF. Hallazgo de Daniel. Los dos campos que
-  // la llevan desaparecen en la Etapa 5, cuando el peso y el nombre se lean
-  // de la fila de `media` en vez de copiarse al jsonb.
+  // la llevan (`nombreArchivo`, `peso`) ya no se copian al jsonb: `desdeFila`
+  // y `aContenido` (más abajo) los saltan y el valor sale de la fila de
+  // `media`. Cerrado en la Etapa 5.
   origen?: 'sistema'
 }
 
 // Los buckets de Storage separan por familia porque el techo de tamaño es
 // POR BUCKET: meter un master WAV junto al video obligaría a subir el techo
-// de los dos. El detalle de mimes y límites es de la Etapa 5; aquí solo se
+// de los dos. El mime y el límite de cada bucket están en
+// `lib/personalab/medios.ts`, que ahora incluye audio (Etapa 5); aquí solo se
 // dice de qué familia es el medio de cada tipo.
 export type FamiliaMedio = 'documento' | 'imagen' | 'video' | 'audio'
 
@@ -308,8 +310,9 @@ export const CONTRATO = {
       // jubila por decisión de Francisco del 2026-09-13: al participante
       // digital sí se le puede pedir que imprima o descargue su hoja de
       // trabajo. La consecuencia de privacidad (el registro de descargas
-      // guarda IP y navegador) se resuelve en la Etapa 5, y la decisión fue
-      // que la descarga del participante no deja ese rastro.
+      // guarda IP y navegador) se cerró en la Etapa 5: `pl_registrar_descarga`
+      // ya no guarda IP ni navegador cuando quien descarga es nivel 1
+      // (participante); moderador y equipo sí dejan ese rastro.
       descargable: { clase: 'booleano', etiqueta: 'Se puede descargar', exigencia: 'opcional' },
       // Los pone la subida, no una persona. Ver `origen` arriba.
       nombreArchivo: { clase: 'linea', etiqueta: 'Nombre del archivo', exigencia: 'opcional', origen: 'sistema' },
@@ -360,9 +363,9 @@ export const CONTRATO = {
   // el audio es la mitad de lo que se entrega: el silencio con los ojos
   // tapados se guía con voz grabada, no con texto.
   //
-  // Lo que falta para que sea utilizable de punta a punta es la Etapa 5: hoy
-  // ningún bucket admite un mime de audio, así que el bloque se puede
-  // declarar y pintar, pero todavía no se le puede subir un archivo.
+  // Utilizable de punta a punta desde la Etapa 5: `personalab-medios` ya
+  // admite mimes de audio (`lib/personalab/medios.ts`), así que el bloque
+  // se declara, se pinta y se sube de verdad.
   audio: {
     nombre: 'Audio',
     ayuda: 'Voz grabada. Se escucha, no se descarga.',
@@ -373,9 +376,7 @@ export const CONTRATO = {
       pie: { clase: 'linea', etiqueta: 'Pie', exigencia: 'opcional' },
       duracion: { clase: 'linea', etiqueta: 'Duración', exigencia: 'opcional' },
       url: { clase: 'url', etiqueta: 'Enlace', exigencia: 'opcional' },
-      // Mismo hallazgo que en imagen y video. Audio no puede subir archivo
-      // real todavía (Etapa 5), pero el día que pueda, sin esto perdería
-      // el nombre igual.
+      // Los pone la subida, no una persona. Ver `origen` arriba.
       nombreArchivo: { clase: 'linea', etiqueta: 'Nombre del archivo', exigencia: 'opcional', origen: 'sistema' },
       peso: { clase: 'linea', etiqueta: 'Peso', exigencia: 'opcional', origen: 'sistema' },
     },
@@ -551,6 +552,17 @@ export interface FilaBloque {
   audiencia: string
   contenido: unknown
   media_id?: string | null
+  // El join contra `media`, ETAPA 5. Opcional porque no toda consulta lo
+  // pide (ej. el conteo de `resumenDePublicacion`), y porque un `media_id`
+  // presente con el archivo ya borrado deja esto en null sin que sea un
+  // error: `blocks.media_id` es `on delete set null`.
+  media?: { nombre: string; peso_bytes: number | null } | null
+}
+
+// Cuánto pesa un archivo, en la forma que ya se le mostraba a quien sube:
+// "NNN KB". Un solo sitio para no tener dos redondeos que puedan divergir.
+export function formatearPeso(bytes: number): string {
+  return `${Math.round(bytes / 1024)} KB`
 }
 
 // De la fila de la base al objeto que pinta la pantalla.
@@ -574,10 +586,21 @@ export function desdeFila(f: FilaBloque): Bloque | null {
   }
 
   for (const [nombre, campo] of Object.entries(DEF[tipo].campos)) {
+    // ORIGEN 'sistema' NO SE LEE DEL JSONB. Etapa 5: `nombreArchivo` y
+    // `peso` se leen de la fila de `media` (abajo), nunca de `contenido`,
+    // aunque una fila vieja todavía tenga una copia ahí de antes de este
+    // cambio. Copia vieja e ignorada es inofensiva; copia vieja y leída es
+    // la duplicación que esta etapa existe para cerrar.
+    if (campo.origen === 'sistema') continue
     const valor = coaccionar(campo.clase, contenido[nombre])
     if (valor !== undefined) {
       ;(bloque as unknown as Record<string, unknown>)[nombre] = valor
     }
+  }
+
+  if (f.media) {
+    bloque.nombreArchivo = f.media.nombre
+    if (f.media.peso_bytes != null) bloque.peso = formatearPeso(f.media.peso_bytes)
   }
 
   return bloque
@@ -588,9 +611,18 @@ export function desdeFila(f: FilaBloque): Bloque | null {
 // Solo viajan los campos DECLARADOS para ese tipo. Un bloque que traiga
 // `autor` porque alguien lo cambió de cita a texto en el editor no arrastra
 // el campo a la base: el contrato decide, no lo que traiga el objeto.
+//
+// ORIGEN 'sistema' TAMPOCO SE ESCRIBE. Nombre y peso ya viven en `media`,
+// que es la fila real (Storage los confirma al registrar, ver
+// `medios/registrar/route.ts`); copiarlos aquí era la duplicación que la
+// Etapa 5 cierra. El valor que trae `b` en estos dos campos sigue sirviendo
+// para pintar la pantalla justo después de subir, antes de que exista una
+// recarga que vuelva a leer de `media` — pero no se persiste una segunda
+// vez.
 export function aContenido(b: Bloque): Record<string, unknown> {
   const salida: Record<string, unknown> = {}
   for (const [nombre, campo] of Object.entries(DEF[b.tipo].campos)) {
+    if (campo.origen === 'sistema') continue
     const valor = coaccionar(campo.clase, (b as unknown as Record<string, unknown>)[nombre])
     if (valor !== undefined && valor !== '') salida[nombre] = valor
   }

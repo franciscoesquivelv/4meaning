@@ -830,12 +830,13 @@ function TarjetaBloque({
                 OFRECÍA. `blocks_contenido_por_tipo` acepta video y audio
                 con solo una URL, sin archivo subido (contrato:
                 `admiteUrl`), y `revision.ts` le decía a quien edita "pega
-                un enlace" — pero no había dónde. Consecuencia real:
-                agregar un bloque de Audio bloqueaba publicar sin ningún
-                remedio que funcionara, porque tampoco hay bucket que
-                admita audio todavía (Etapa 5). Encontrado por Julián,
-                probando en el navegador. Este campo es el remedio real
-                para audio hoy, y una segunda vía honesta para video. */}
+                un enlace" — pero no había dónde. Encontrado por Julián,
+                probando en el navegador, mientras el bucket de audio
+                todavía no existía y subir un archivo directo no era
+                opción. Ahora sí lo es (Etapa 5, `lib/personalab/medios.ts`),
+                pero el enlace externo se queda: para video sigue siendo la
+                vía honesta hacia Vimeo o un YouTube sin listar, algo que
+                subir el archivo nunca reemplaza. */}
             {definicion(b.tipo).medio?.admiteUrl && !b.medioId && (
               <div className="mt-3">
                 <label className={ETIQUETA_INPUT}>
@@ -847,12 +848,6 @@ function TarjetaBloque({
                   placeholder="https://…"
                   className={INPUT}
                 />
-                {b.tipo === 'audio' && (
-                  <p className="text-[11px] text-slate-400 mt-1.5 leading-relaxed">
-                    Subir el archivo directo todavía no está disponible: ningún bucket admite
-                    audio por ahora. Un enlace a donde ya esté alojado sí funciona.
-                  </p>
-                )}
               </div>
             )}
 

@@ -221,7 +221,7 @@ export async function cargarBisagra(
   // `experiencia.versionId` ya viene resuelto por `versionAnclada`.
   const { data, error } = await supabase
     .from('blocks')
-    .select('id, hinge_id, orden, tipo, audiencia, contenido, media_id')
+    .select('id, hinge_id, orden, tipo, audiencia, contenido, media_id, media(nombre, peso_bytes)')
     .eq('hinge_id', bisagraId)
     .eq('version_id', experiencia.versionId)
     .order('orden')
@@ -238,8 +238,13 @@ export async function cargarBisagra(
   // `desdeFila` devuelve null si el tipo no está en el contrato, que solo pasa
   // si alguien agregó un valor al enum sin declararlo. Se descarta el bloque
   // en vez de pintar un hueco que nadie sabe leer.
+  // El doble cast es porque este cliente no genera tipos desde el esquema:
+  // sin eso, un embed a-uno como `media(...)` se infiere como arreglo. Ya
+  // se verificó contra la base real (Etapa 5) que `media` llega como un
+  // solo objeto, nunca un arreglo -- `blocks.media_id` apunta a una sola
+  // fila.
   const bloques: Bloque[] = (data ?? [])
-    .map(f => desdeFila(f as FilaBloque))
+    .map(f => desdeFila(f as unknown as FilaBloque))
     .filter((b): b is Bloque => b !== null)
 
   return {

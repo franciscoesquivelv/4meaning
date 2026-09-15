@@ -87,7 +87,7 @@ export async function cargarParaEditar(slug: string): Promise<ResultadoEditor> {
 
   const { data: filas, error: errBloques } = await supabase
     .from('blocks')
-    .select('id, hinge_id, orden, tipo, audiencia, contenido, media_id, rev')
+    .select('id, hinge_id, orden, tipo, audiencia, contenido, media_id, rev, media(nombre, peso_bytes)')
     .eq('version_id', versionId)
     .order('orden')
 
@@ -96,9 +96,12 @@ export async function cargarParaEditar(slug: string): Promise<ResultadoEditor> {
   // Mismo criterio que el lector: un tipo que el contrato no reconoce se
   // descarta en vez de llegar a medias. Solo pasa si alguien agregó un
   // valor al enum sin declararlo en `lib/personalab/bloques.ts`.
+  // El doble cast es por lo mismo que en `lectura.ts`: sin tipos generados
+  // desde el esquema, el embed `media(...)` se infiere como arreglo aunque
+  // en la base real siempre llega como un solo objeto.
   const bloques: BloqueEditable[] = (filas ?? [])
     .map(f => {
-      const b = desdeFila(f as FilaBloque)
+      const b = desdeFila(f as unknown as FilaBloque)
       return b ? { ...b, rev: (f as { rev: number }).rev } : null
     })
     .filter((b): b is BloqueEditable => b !== null)

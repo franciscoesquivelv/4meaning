@@ -2,7 +2,7 @@
 
 import { createBrowserClient } from '@supabase/ssr'
 import {
-  desdeFila, aContenido,
+  desdeFila, aContenido, formatearPeso,
   type Bloque, type TipoBloque, type Audiencia, type FilaBloque,
 } from '@/lib/personalab/bloques'
 
@@ -298,7 +298,7 @@ export async function subirArchivo(
   return {
     id: fila.id,
     nombre: fila.nombre,
-    peso: `${Math.round((fila.peso_bytes ?? archivo.size) / 1024)} KB`,
+    peso: formatearPeso(fila.peso_bytes ?? archivo.size),
     url: `/api/personalab/medios/${fila.id}`,
   }
 }
