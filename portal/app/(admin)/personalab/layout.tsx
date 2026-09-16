@@ -9,12 +9,22 @@ import PersonaLabNav from './PersonaLabNav'
 // de la puerta de equipo: ser staff de Trascendencia no deberia dar acceso
 // a PersonaLab.
 //
-// POR QUE SOLO SUPER ADMIN, POR AHORA. El rol es un campo unico y global en
-// profiles: no existe todavia "staff de PersonaLab". Hasta que el frente de
-// identidad separe los permisos por marca, la unica regla que no se
-// equivoca es la mas cerrada. Es la misma que ya aplica el selector de
-// workspaces, y se ensancha cambiando esta linea.
-const ROLES_CON_ACCESO = ['super_admin']
+// YA NO SOLO SUPER ADMIN. Hasta la Etapa 6a esta era la unica puerta del
+// portal entero cerrada a `['super_admin']` en vez del equipo completo: en
+// todos los demas lados (`(admin)/layout.tsx`, `exigirEquipo()`,
+// `/usuarios`, las rutas de push) "equipo" es
+// `['super_admin','admin','staff']`, y esta linea decia por escrito que
+// era una excepcion "por ahora", no una regla aparte.
+//
+// Deja de sostenerse el dia que alguien real necesita entrar y no puede:
+// Francisco confirmo que el onboarding de compradores de PersonaLab (la
+// pantalla de Compras) lo va a operar tambien otra persona del equipo, sin
+// que esa persona necesite ver el pago directamente. Con la puerta en
+// `['super_admin']`, esa persona no podia entrar a NINGUNA pantalla de
+// PersonaLab, ni siquiera a la que existe para que ella la use. Se ensancha
+// a la misma definicion de equipo que ya usa el resto del portal; el dia
+// que exista permiso por marca, esto se vuelve a angostar desde aqui.
+const ROLES_CON_ACCESO = ['super_admin', 'admin', 'staff']
 
 export default async function PersonaLabLayout({ children }: { children: React.ReactNode }) {
   const supabase = createClient()

@@ -17,6 +17,7 @@ import {
 const SECCIONES = [
   { href: '/personalab',              label: 'Resumen', exacto: true },
   { href: '/personalab/experiencias', label: 'Experiencias' },
+  { href: '/personalab/compras',      label: 'Compras' },
   { href: '/personalab/corridas',     label: 'Corridas' },
   { href: '/personalab/capitulos',    label: 'Capítulos' },
   { href: '/personalab/moderadores',  label: 'Moderadores' },

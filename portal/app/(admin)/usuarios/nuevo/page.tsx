@@ -54,6 +54,12 @@ export default function InvitarUsuarioPage() {
   // Estado B en docs/DISENO-REGISTRO-PERSONALAB.md, vivo aquí sin que nadie
   // lo hubiera cerrado. Encontrado por Leo en la Etapa 5.
   const [avisoGrant, setAvisoGrant] = useState<string | null>(null)
+  // Si la cuenta YA estaba activa (confirmada), `/api/admin/invite` no le
+  // manda ningún correo: no hace falta, ya puede entrar con su contraseña.
+  // Antes la pantalla decía "Invitación enviada" en ese caso igual, porque
+  // nadie leía esto. Hallazgo de Leo, Etapa 6a, cerrado junto con el
+  // defecto real que lo causaba en `/api/admin/invite/route.ts`.
+  const [correoEnviado, setCorreoEnviado] = useState(true)
 
   useEffect(() => {
     // Load active/draft event families
@@ -133,6 +139,7 @@ export default function InvitarUsuarioPage() {
     // la Etapa 4 para que dejara de responder `{ok:true}` en silencio; esta
     // pantalla ahora tiene que escuchar lo que ya se le está diciendo.
     setAvisoGrant(data.avisoGrant ?? null)
+    setCorreoEnviado(data.correoEnviado !== false)
     setSuccess(true)
   }
 
@@ -149,14 +156,14 @@ export default function InvitarUsuarioPage() {
       return (
         <div className="p-8 max-w-lg text-center">
           <div className="w-14 h-14 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-4 text-2xl text-amber-600">!</div>
-          <h1 className="text-xl font-bold text-slate-900 mb-2">La cuenta se creó, pero el acceso no</h1>
+          <h1 className="text-xl font-bold text-slate-900 mb-2">La cuenta quedó, pero el acceso no</h1>
           <p className="text-sm text-slate-500 mb-2">
             {form.full_name || form.email} ya tiene cuenta en el portal, pero no se pudo dar acceso a la experiencia elegida.
           </p>
           <p className="text-xs font-mono text-slate-400 mb-6 break-words">{avisoGrant}</p>
           <div className="flex gap-3 justify-center">
             <button
-              onClick={() => { setSuccess(false); setAvisoGrant(null) }}
+              onClick={() => { setSuccess(false); setAvisoGrant(null); setCorreoEnviado(true) }}
               className="px-5 py-2 text-sm bg-slate-900 text-white rounded-lg hover:bg-slate-700 transition-colors"
             >
               Volver a intentar el acceso
@@ -169,13 +176,17 @@ export default function InvitarUsuarioPage() {
     return (
       <div className="p-8 max-w-lg text-center">
         <div className="w-14 h-14 rounded-full bg-[#DCFCE7] flex items-center justify-center mx-auto mb-4 text-2xl text-[#16A34A]">✓</div>
-        <h1 className="text-xl font-bold text-slate-900 mb-2">Invitación enviada</h1>
+        <h1 className="text-xl font-bold text-slate-900 mb-2">
+          {correoEnviado ? 'Invitación enviada' : 'Ya tenía cuenta activa'}
+        </h1>
         <p className="text-sm text-slate-500 mb-6">
-          {form.full_name || form.email} recibirá un email con un enlace para acceder al portal.
+          {correoEnviado
+            ? `${form.full_name || form.email} recibirá un email con un enlace para acceder al portal.`
+            : `${form.full_name || form.email} ya tiene una cuenta activa en el portal. No se envió ningún correo porque no hacía falta: ya puede entrar con su contraseña.`}
         </p>
         <div className="flex gap-3 justify-center">
           <button
-            onClick={() => { setSuccess(false); setAvisoGrant(null); setForm({ email: '', full_name: '', role: 'participant', family_id: '', slot: '1' }) }}
+            onClick={() => { setSuccess(false); setAvisoGrant(null); setCorreoEnviado(true); setForm({ email: '', full_name: '', role: 'participant', family_id: '', slot: '1' }) }}
             className="px-5 py-2 text-sm border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors text-slate-700"
           >
             Invitar otro
