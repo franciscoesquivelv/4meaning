@@ -6,7 +6,7 @@ export default function Cargando() {
       {/* El título ya se sabe, así que se pinta desde el primer frame. Un
           encabezado que parpadea se siente peor que una espera. */}
       <Titulo>Experiencias</Titulo>
-      <EsqueletoTabla columnas={5} />
+      <EsqueletoTabla columnas={6} />
     </>
   )
 }

@@ -1,89 +1,113 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import {
-  experiencia, MADURACION, CORRIDAS, capitulo, fecha,
-  ETIQUETA_TIEMPO, PAPEL_SOFTWARE, SOPORTE_NOTA, COLUMNA_KIT, ESTADO_CORRIDA,
-  type Tiempo, type ColumnaKit, type Bisagra,
-} from '../../dominio'
-import { Badge, Panel, Etiqueta, Vacio, TarjetaLista, Fila, BotonPronto } from '../../ui'
-import {
-  TARJETA, BTN_PRIMARIO, BTN_SECUNDARIO, PASTILLA,
-  COLOR_MADURACION, COLOR_ESTADO, COLOR_SOPORTE, AVISO,
-} from '../../tokens'
+import { cargarFichaExperiencia } from '@/lib/personalab/catalogo'
+import { Badge, Etiqueta, Vacio, TarjetaLista, Fila } from '../../ui'
+import { TARJETA, BTN_PRIMARIO, BTN_SECUNDARIO, PASTILLA, AVISO } from '../../tokens'
+import { TONO } from '@/lib/estilos/oficina'
 
-const TIEMPOS: Tiempo[] = ['vispera', 'ignicion', 'retorno']
-const COLUMNAS: ColumnaKit[] = ['objeto', 'humano', 'administrativo']
+// ETAPA "SECCIÓN DE EXPERIENCIAS". Antes leía `dominio.ts`. Ver
+// `lib/personalab/catalogo.ts` para el detalle exacto de qué tan real es
+// cada sección de esta ficha (bisagras, kit, corridas).
 
-function FilaBisagra({ b }: { b: Bisagra }) {
-  return (
-    <div className="grid grid-cols-[28px_76px_1fr_auto] gap-4 items-start px-5 py-3.5 border-b border-slate-100 last:border-b-0">
-      <span className="text-xs text-slate-400 tabular-nums pt-0.5">
-        {String(b.orden).padStart(2, '0')}
-      </span>
-      <span className={`${PASTILLA} ${COLOR_SOPORTE[b.soporte]} text-center`} title={SOPORTE_NOTA[b.soporte]}>
-        {b.soporte}
-      </span>
-      <div className="min-w-0">
-        <div className="text-sm font-medium text-slate-900">
-          {b.titulo}
-          {b.duracion && <span className="text-xs text-slate-400 font-normal ml-2">{b.duracion}</span>}
-        </div>
-        <div className="text-xs text-slate-500 mt-0.5 leading-relaxed">{b.descripcion}</div>
-        {b.requiere && b.requiere.length > 0 && (
-          <div className="text-xs text-amber-700 mt-1.5">Requiere: {b.requiere.join(' · ')}</div>
-        )}
-      </div>
-      <span className={`text-xs font-medium whitespace-nowrap pt-0.5 ${b.listo ? 'text-emerald-700' : 'text-amber-700'}`}>
-        {b.listo ? 'Listo' : 'Falta'}
-      </span>
-    </div>
-  )
+const ETIQUETA_TIEMPO: Record<string, string> = {
+  vispera: 'Víspera', ignicion: 'Ignición', retorno: 'Retorno',
+}
+const PAPEL_SOFTWARE: Record<string, string> = {
+  vispera: 'El software es protagonista. Es el tiempo que hoy no existe en ningún lado.',
+  ignicion: 'Software mudo. Solo modo sala para el moderador.',
+  retorno: 'El software es indispensable, no cómodo.',
+}
+const SOPORTE_NOTA: Record<string, string> = {
+  sala: 'Ocurre entre personas. El software no entra.',
+  objeto: 'Pieza física. El software la administra, no la entrega.',
+  pantalla: 'Vive dentro del portal.',
+}
+const TONO_SOPORTE: Record<string, string> = {
+  sala: TONO.curso, objeto: TONO.marca, pantalla: 'border-sec/45 text-sec',
+}
+const ETIQUETA_MADURACION: Record<string, string> = {
+  diseno: 'En diseño', piloto: 'En piloto', lista: 'Lista', retirada: 'Retirada',
+}
+const TONO_MADURACION: Record<string, string> = {
+  diseno: TONO.curso, piloto: TONO.marca, lista: TONO.bien, retirada: TONO.neutro,
+}
+const COLUMNA_KIT: Record<string, { titulo: string; regla: string }> = {
+  objeto: { titulo: 'Objeto físico', regla: 'Nunca digital, nunca descargable, nunca sustituible por PDF.' },
+  humano: { titulo: 'Pieza humana', regla: 'Solo se transmite en formación presencial. Jamás por video.' },
+  administrativo: { titulo: 'Capa administrativa', regla: 'Aquí sí, software. Inventario, versiones, fechas, accesos.' },
+}
+const ETIQUETA_ESTADO_CORRIDA: Record<string, string> = {
+  prospecto: 'Prospecto', confirmada: 'Confirmada', en_preparacion: 'En preparación',
+  corrida: 'Corrida', cancelada: 'Cancelada',
+}
+const TONO_ESTADO_CORRIDA: Record<string, string> = {
+  prospecto: TONO.neutro, confirmada: TONO.marca, en_preparacion: TONO.curso,
+  corrida: TONO.bien, cancelada: TONO.alerta,
+}
+const TIEMPOS = ['vispera', 'ignicion', 'retorno']
+const COLUMNAS = ['objeto', 'humano', 'administrativo']
+
+function formatoFecha(iso: string | null) {
+  if (!iso) return 'sin fecha'
+  return new Date(iso + 'T12:00:00').toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' })
 }
 
-export default function ExperienciaPage({ params }: { params: { id: string } }) {
-  const e = experiencia(params.id)
-  if (!e) notFound()
+export default async function ExperienciaPage({ params }: { params: { id: string } }) {
+  const r = await cargarFichaExperiencia(params.id)
 
-  const corridas = CORRIDAS.filter(c => c.experienciaId === e.id)
+  if (r.estado === 'sin-acceso') notFound()
+
+  if (r.estado === 'fallo') {
+    return (
+      <div className="max-w-[560px] mt-8">
+        <div className={`${TARJETA} p-6`}>
+          <h1 className="text-lg font-semibold text-ink">No se pudo abrir esta experiencia</h1>
+          <p className="text-sm text-ink mt-2 leading-relaxed">{r.motivo}</p>
+          <Link href="/personalab/experiencias" className={`${BTN_PRIMARIO} inline-block mt-5`}>Volver</Link>
+        </div>
+      </div>
+    )
+  }
+
+  const e = r.datos
   const listas = e.bisagras.filter(b => b.listo).length
 
   return (
     <>
-      <Link
-        href="/personalab/experiencias"
-        className="text-xs text-slate-400 hover:text-slate-600 transition-colors"
-      >
+      <Link href="/personalab/experiencias" className="text-xs text-gray-ui hover:text-ink transition-colors">
         ← Experiencias
       </Link>
 
       <div className="flex items-start justify-between gap-6 mt-4 mb-6">
         <div>
           <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="text-2xl font-semibold tracking-tight text-slate-900">{e.nombre}</h1>
-            <Badge label={MADURACION[e.maduracion].etiqueta} cls={COLOR_MADURACION[e.maduracion]} />
+            <h1 className="text-2xl font-semibold tracking-tight text-ink">{e.nombre}</h1>
+            <Badge label={ETIQUETA_MADURACION[e.maduracion] ?? e.maduracion} cls={TONO_MADURACION[e.maduracion] ?? TONO.neutro} />
           </div>
-          {e.subtitulo && <p className="text-sm text-slate-500 mt-1">{e.subtitulo}</p>}
-          {e.narrativa && <p className="text-base text-slate-700 italic mt-3">{e.narrativa}</p>}
+          {e.subtitulo && <p className="text-sm text-gray-ui mt-1">{e.subtitulo}</p>}
+          {e.narrativa && <p className="text-base text-ink italic mt-3">{e.narrativa}</p>}
         </div>
         <div className="flex gap-2 flex-shrink-0">
-          <BotonPronto>Editar ficha</BotonPronto>
-          <Link href={`/personalab/experiencias/${e.id}/editor`} className={BTN_PRIMARIO}>
+          <Link href={`/personalab/experiencias/${e.slug}/editar`} className={BTN_SECUNDARIO}>
+            Editar ficha
+          </Link>
+          <Link href={`/personalab/experiencias/${e.slug}/editor`} className={BTN_PRIMARIO}>
             Abrir editor
           </Link>
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-x-8 gap-y-2 text-xs text-slate-500 pb-5 mb-6 border-b border-slate-200">
-        <span>Duración <b className="text-slate-900 font-medium">{e.duracion}</b></span>
-        <span>Ha corrido <b className="text-slate-900 font-medium">{e.corridas === 0 ? 'nunca' : `${e.corridas} vez${e.corridas > 1 ? 'ces' : ''}`}</b></span>
-        <span>Espacio al foro <b className="text-slate-900 font-medium">{e.abreEspacioAlForo ? 'sí' : 'no'}</b></span>
-        <span>Bisagras <b className="text-slate-900 font-medium tabular-nums">{listas} de {e.bisagras.length}</b></span>
+      <div className="flex flex-wrap gap-x-8 gap-y-2 text-xs text-gray-ui pb-5 mb-6 border-b border-line">
+        <span>Duración <b className="text-ink font-medium">{e.duracion ?? 'Por definir'}</b></span>
+        <span>Ha corrido <b className="text-ink font-medium">{e.corridas.length === 0 ? 'nunca' : `${e.corridas.length} vez${e.corridas.length > 1 ? 'ces' : ''}`}</b></span>
+        <span>Espacio al foro <b className="text-ink font-medium">{e.abreEspacioAlForo ? 'sí' : 'no'}</b></span>
+        <span>Bisagras <b className="text-ink font-medium tabular-nums">{listas} de {e.bisagras.length}</b></span>
       </div>
 
-      {e.notaDiseño && (
+      {e.notaDiseno && (
         <div className={`${AVISO} mb-8`}>
-          <div className="text-xs font-semibold uppercase tracking-wider text-amber-700 mb-1">Nota de diseño</div>
-          <p className="text-sm text-slate-700 leading-relaxed">{e.notaDiseño}</p>
+          <div className="text-xs font-semibold uppercase tracking-wider text-terra-ui mb-1">Nota de diseño</div>
+          <p className="text-sm text-ink leading-relaxed">{e.notaDiseno}</p>
         </div>
       )}
 
@@ -93,36 +117,53 @@ export default function ExperienciaPage({ params }: { params: { id: string } }) 
           {e.bisagras.length === 0 ? (
             <Vacio
               accion={
-                <Link
-                  href={`/personalab/experiencias/${e.id}/editor`}
-                  className={BTN_SECUNDARIO}
-                >
+                <Link href={`/personalab/experiencias/${e.slug}/editor`} className={BTN_SECUNDARIO}>
                   Abrir editor
                 </Link>
               }
             >
-              Esta experiencia no tiene ninguna bisagra definida. No es que falte capturarla: es que no
-              está diseñada. Mientras siga así, no se puede correr ni licenciar a un capítulo.
+              Esta experiencia no tiene ninguna bisagra definida todavía. No es que falte capturarla: es que
+              no está diseñada. Mientras siga así, no se puede correr ni licenciar a un capítulo.
             </Vacio>
           ) : (
             TIEMPOS.map(t => {
               const bs = e.bisagras.filter(b => b.tiempo === t).sort((a, b) => a.orden - b.orden)
               const ok = bs.filter(b => b.listo).length
               return (
-                <div key={t} className={TARJETA + ' overflow-hidden'}>
-                  <div className="px-5 py-3.5 border-b border-slate-100">
+                <div key={t} className={`${TARJETA} overflow-hidden`}>
+                  <div className="px-5 py-3.5 border-b border-line">
                     <div className="flex items-center justify-between gap-3">
-                      <h2 className="text-sm font-semibold text-slate-900">{ETIQUETA_TIEMPO[t]}</h2>
-                      <span className="text-xs text-slate-400 tabular-nums">
+                      <h2 className="text-sm font-semibold text-ink">{ETIQUETA_TIEMPO[t]}</h2>
+                      <span className="text-xs text-gray-ui tabular-nums">
                         {bs.length === 0 ? 'Sin bisagras' : `${ok} de ${bs.length} listas`}
                       </span>
                     </div>
-                    <p className="text-xs text-slate-500 mt-1 leading-relaxed">{PAPEL_SOFTWARE[t]}</p>
+                    <p className="text-xs text-gray-ui mt-1 leading-relaxed">{PAPEL_SOFTWARE[t]}</p>
                   </div>
                   {bs.length === 0 ? (
-                    <div className="px-5 py-5 text-sm text-slate-500">Este tiempo no está diseñado.</div>
+                    <div className="px-5 py-5 text-sm text-gray-ui">Este tiempo no está diseñado.</div>
                   ) : (
-                    bs.map(b => <FilaBisagra key={b.id} b={b} />)
+                    bs.map(b => (
+                      <div key={b.id} className="grid grid-cols-[28px_76px_1fr_auto] gap-4 items-start px-5 py-3.5 border-b border-line last:border-b-0">
+                        <span className="text-xs text-gray-ui tabular-nums pt-0.5">{String(b.orden).padStart(2, '0')}</span>
+                        <span className={`${PASTILLA} ${TONO_SOPORTE[b.soporte] ?? TONO.neutro} text-center`} title={SOPORTE_NOTA[b.soporte]}>
+                          {b.soporte}
+                        </span>
+                        <div className="min-w-0">
+                          <div className="text-sm font-medium text-ink">
+                            {b.titulo}
+                            {b.duracion && <span className="text-xs text-gray-ui font-normal ml-2">{b.duracion}</span>}
+                          </div>
+                          {b.descripcion && <div className="text-xs text-gray-ui mt-0.5 leading-relaxed">{b.descripcion}</div>}
+                          {b.requiere && b.requiere.length > 0 && (
+                            <div className="text-xs text-terra-ui mt-1.5">Requiere: {b.requiere.join(' · ')}</div>
+                          )}
+                        </div>
+                        <span className={`text-xs font-medium whitespace-nowrap pt-0.5 ${b.listo ? 'text-bien' : 'text-terra-ui'}`}>
+                          {b.listo ? 'Listo' : 'Falta'}
+                        </span>
+                      </div>
+                    ))
                   )}
                 </div>
               )
@@ -134,7 +175,7 @@ export default function ExperienciaPage({ params }: { params: { id: string } }) 
           <div>
             <Etiqueta>Kit de replicabilidad</Etiqueta>
             {e.kit.length === 0 ? (
-              <Vacio>Sin kit definido.</Vacio>
+              <Vacio neutro>Sin kit definido todavía.</Vacio>
             ) : (
               <div className="flex flex-col gap-3">
                 {COLUMNAS.map(col => {
@@ -142,24 +183,24 @@ export default function ExperienciaPage({ params }: { params: { id: string } }) 
                   const c = COLUMNA_KIT[col]
                   return (
                     <div key={col} className={`${TARJETA} p-4`}>
-                      <div className="text-sm font-semibold text-slate-900">{c.titulo}</div>
-                      <p className="text-xs text-amber-700 mt-1 leading-relaxed">{c.regla}</p>
+                      <div className="text-sm font-semibold text-ink">{c.titulo}</div>
+                      <p className="text-xs text-terra-ui mt-1 leading-relaxed">{c.regla}</p>
                       <div className="mt-3">
-                        {piezas.length === 0 && (
-                          <span className="text-xs text-slate-400">Nada todavía.</span>
-                        )}
+                        {piezas.length === 0 && <span className="text-xs text-gray-ui">Nada todavía.</span>}
                         {piezas.map(p => (
-                          <div key={p.id} className="py-2 border-t border-slate-100">
+                          <div key={p.id} className="py-2 border-t border-line">
                             <div className="flex items-start justify-between gap-2">
-                              <span className="text-sm text-slate-700">{p.nombre}</span>
-                              <span className={`text-xs font-medium whitespace-nowrap ${p.disponible ? 'text-emerald-700' : 'text-amber-700'}`}>
+                              <span className="text-sm text-ink">{p.nombre}</span>
+                              <span className={`text-xs font-medium whitespace-nowrap ${p.disponible ? 'text-bien' : 'text-terra-ui'}`}>
                                 {p.disponible ? 'Listo' : 'Falta'}
                               </span>
                             </div>
-                            <div className="text-xs text-slate-500 mt-0.5 leading-relaxed">
-                              {p.detalle}
-                              {p.porPersona && <span className="text-slate-400"> · por persona</span>}
-                            </div>
+                            {p.detalle && (
+                              <div className="text-xs text-gray-ui mt-0.5 leading-relaxed">
+                                {p.detalle}
+                                {p.porPersona && <span className="text-gray-ui"> · por persona</span>}
+                              </div>
+                            )}
                           </div>
                         ))}
                       </div>
@@ -171,16 +212,15 @@ export default function ExperienciaPage({ params }: { params: { id: string } }) 
           </div>
 
           <TarjetaLista titulo="Corridas">
-            {corridas.length === 0 ? (
-              <div className="px-5 py-5 text-sm text-slate-500">Nunca se ha corrido.</div>
+            {e.corridas.length === 0 ? (
+              <div className="px-5 py-5 text-sm text-gray-ui">Nunca se ha corrido.</div>
             ) : (
-              corridas.map(c => (
+              e.corridas.map(c => (
                 <Fila
                   key={c.id}
-                  href={`/personalab/corridas/${c.id}`}
-                  titulo={capitulo(c.capituloId)!.nombre}
-                  sub={`${fecha(c.fecha)} · ${c.personasEnElForo || 'sin'} personas`}
-                  derecha={<Badge label={ESTADO_CORRIDA[c.estado].etiqueta} cls={COLOR_ESTADO[c.estado]} />}
+                  titulo={c.capituloNombre}
+                  sub={`${formatoFecha(c.fecha)} · ${c.personasEnElForo || 'sin'} personas${c.moderadorNombre ? ` · ${c.moderadorNombre}` : ''}`}
+                  derecha={<Badge label={ETIQUETA_ESTADO_CORRIDA[c.estado] ?? c.estado} cls={TONO_ESTADO_CORRIDA[c.estado] ?? TONO.neutro} />}
                 />
               ))
             )}
