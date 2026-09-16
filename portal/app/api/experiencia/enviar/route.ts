@@ -72,8 +72,15 @@ export async function POST(req: Request) {
 
   const clave = process.env.RESEND_API_KEY
   if (!clave) {
-    console.error('[enviar] falta RESEND_API_KEY')
-    return NextResponse.json({ error: 'fallo' }, { status: 500 })
+    // 503, no 500: esto no es un fallo inesperado, es una pieza que
+    // todavía no se conectó (docs/PROTOCOLO-CORREO.md, sección 3). El
+    // 500 genérico mezclaba esto con un error real de la consulta de
+    // arriba, y en los registros de Vercel se veían idénticos. El
+    // participante ve el mismo aviso de siempre (Cierre.tsx no
+    // distingue por código), pero quien revise los registros ya no
+    // tiene que adivinar cuál de las dos cosas pasó.
+    console.error('[enviar] RESEND_API_KEY no está configurada — ver docs/PROTOCOLO-CORREO.md sección 3')
+    return NextResponse.json({ error: 'no-configurado' }, { status: 503 })
   }
 
   const esc = (s: string) =>
