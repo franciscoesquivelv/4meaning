@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
 import Link from 'next/link'
 import CompletarSesion from '@/components/CompletarSesion'
+import CampoContrasena from '@/components/CampoContrasena'
 import { LIENZO, TARJETA, ETIQUETA, CAMPO, BOTON, ERROR, ENLACE } from '@/lib/estilos/acceso'
 
 // A DÓNDE VUELVE DESPUÉS DE ENTRAR. Antes esta pantalla mandaba siempre a
@@ -118,13 +119,11 @@ function LoginForm() {
 
           {/* Contraseña */}
           <label htmlFor="password" className={`${ETIQUETA} mt-4`}>Contraseña</label>
-          <input
+          <CampoContrasena
             id="password"
             name="password"
-            type="password"
             required
             placeholder="••••••••"
-            className={CAMPO}
           />
 
           {/* Error. Enmarcado y no como texto rojo suelto: sobre vino profundo

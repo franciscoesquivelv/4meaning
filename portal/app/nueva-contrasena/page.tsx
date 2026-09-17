@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createBrowserClient } from '@supabase/ssr'
-import { LIENZO, TARJETA, ETIQUETA, CAMPO, BOTON, ERROR, CONFIRMACION, ENLACE } from '@/lib/estilos/acceso'
+import CampoContrasena from '@/components/CampoContrasena'
+import { LIENZO, TARJETA, ETIQUETA, BOTON, ERROR, CONFIRMACION, ENLACE } from '@/lib/estilos/acceso'
 
 // Destino del correo de recuperacion. Esta ruta faltaba: el flujo mandaba
 // a /nueva-contrasena y ahi no habia nada, asi que todo el que pedia
@@ -127,24 +128,20 @@ export default function NuevaContrasenaPage() {
         ) : (
           <form onSubmit={guardar}>
             <label htmlFor="contrasena" className={ETIQUETA}>Nueva contraseña</label>
-            <input
+            <CampoContrasena
               id="contrasena"
-              type="password"
               required
               value={contrasena}
               onChange={e => setContrasena(e.target.value)}
               placeholder="Al menos 8 caracteres"
-              className={CAMPO}
             />
 
             <label htmlFor="repetida" className={`${ETIQUETA} mt-4`}>Repítela</label>
-            <input
+            <CampoContrasena
               id="repetida"
-              type="password"
               required
               value={repetida}
               onChange={e => setRepetida(e.target.value)}
-              className={CAMPO}
             />
 
             {error && <p className={`${ERROR} mt-3`}>{error}</p>}
