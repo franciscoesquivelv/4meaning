@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Confirma tu compra | PersonaLab</title>
+<meta name="description" content="Simulación del proceso de compra de una experiencia PersonaLab.">
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://4meaning.life/personalab/checkout/">
+<link rel="stylesheet" href="/assets/brand.css">
+<style>
+  :root {
+    --primary:       var(--teal);
+    --primary-light: var(--teal-2);
+    --primary-mid:   #2A6470;
+    --primary-sage:  var(--terra);
+    --primary-mist:  #A9C7C6;
+    --primary-frost: #DCE9E7;
+    --primary-faint: var(--paper-2);
+    --ink-soft:      #2A3438;
+    --muted:         var(--gray);
+    --warm-white:    var(--paper);
+    --white:         #ffffff;
+    --border:        var(--line);
+  }
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, Arial, sans-serif; background: var(--warm-white); color: var(--ink); line-height: 1.6; }
+
+  /* NAV — siempre sobre fondo claro, esta pantalla no tiene imagen de fondo */
+  #navbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    height: 76px; display: flex; align-items: center;
+    justify-content: space-between; padding: 0 52px;
+    background: rgba(248,246,241,0.96); backdrop-filter: blur(18px); box-shadow: 0 1px 0 var(--border);
+  }
+  .nav-logo { text-decoration: none; display: flex; align-items: center; }
+  .nav-logo img { height: 30px; width: auto; display: block; }
+  .nav-back { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none; color: var(--ink-soft); display: flex; align-items: center; gap: 8px; transition: color 0.25s, gap 0.25s; }
+  .nav-back:hover { gap: 12px; color: var(--primary); }
+
+  .container { max-width: 1160px; margin: 0 auto; padding: 0 52px; }
+
+  main { padding: 168px 0 100px; }
+
+  .checkout-head { max-width: 640px; margin-bottom: 56px; }
+  .eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 0.24em; text-transform: uppercase; color: var(--primary-mid); margin-bottom: 16px; }
+  .checkout-title { font-size: clamp(30px, 4vw, 44px); font-weight: 300; color: var(--ink); letter-spacing: -0.015em; line-height: 1.15; margin-bottom: 16px; }
+  .checkout-title em { font-style: normal; font-weight: 400; color: var(--primary); }
+  .checkout-sub { font-size: 15px; font-weight: 300; color: var(--ink-soft); line-height: 1.7; }
+  .demo-note { display: inline-flex; align-items: center; gap: 8px; margin-top: 16px; font-size: 12px; font-weight: 600; letter-spacing: 0.04em; color: var(--primary-mid); background: var(--primary-faint); border: 1px solid var(--border); padding: 8px 16px; border-radius: 999px; }
+
+  .checkout-grid { display: grid; grid-template-columns: 1fr 380px; gap: 64px; align-items: start; }
+
+  .form-section { margin-bottom: 40px; }
+  .form-section h2 { font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--primary); margin-bottom: 20px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .field { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+  .field label { font-size: 12px; font-weight: 500; color: var(--ink-soft); }
+  .field input, .field select {
+    font-family: inherit; font-size: 14px; color: var(--ink);
+    background: var(--white); border: 1px solid var(--border); border-radius: 8px;
+    padding: 12px 14px; transition: border-color 0.2s;
+  }
+  .field input:focus, .field select:focus { outline: none; border-color: var(--primary-mid); }
+  .field input::placeholder { color: rgba(42,52,56,0.35); }
+  .pay-note { font-size: 12px; color: var(--muted); margin-bottom: 20px; }
+
+  .checkout-summary { background: var(--white); border: 1px solid var(--border); border-radius: 14px; padding: 32px; position: sticky; top: 108px; }
+  .checkout-summary h2 { font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--primary); margin-bottom: 24px; }
+  .summary-item { display: flex; gap: 16px; align-items: flex-start; padding-bottom: 24px; border-bottom: 1px solid var(--border); margin-bottom: 24px; }
+  .summary-item img { width: 76px; height: 76px; object-fit: cover; border-radius: 10px; flex-shrink: 0; background: var(--primary-faint); }
+  .summary-name { font-size: 15px; font-weight: 500; color: var(--ink); line-height: 1.4; margin-bottom: 6px; }
+  .summary-tipo { display: inline-flex; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--primary-mid); background: var(--primary-faint); padding: 4px 10px; border-radius: 999px; }
+  .summary-empty { font-size: 14px; color: var(--muted); padding-bottom: 24px; border-bottom: 1px solid var(--border); margin-bottom: 24px; }
+  .summary-empty a { color: var(--primary); }
+
+  .btn-comprar {
+    width: 100%; display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    background: var(--primary); color: white; padding: 15px 24px; border-radius: 999px;
+    font-size: 14px; font-weight: 500; letter-spacing: 0.03em; text-decoration: none;
+    border: 1px solid var(--primary); transition: all 0.3s; cursor: pointer;
+  }
+  .btn-comprar:hover { background: var(--primary-sage); border-color: var(--primary-sage); }
+  .btn-comprar:disabled { opacity: 0.55; cursor: not-allowed; }
+  .summary-footnote { font-size: 12px; color: var(--muted); line-height: 1.6; margin-top: 16px; }
+
+  footer { background: var(--ink); padding: 52px; display: flex; justify-content: space-between; align-items: center; gap: 24px; margin-top: 40px; }
+  .footer-brand { display: flex; flex-direction: column; gap: 8px; }
+  .footer-logo { text-decoration: none; display: flex; align-items: center; }
+  .footer-logo img { height: 28px; width: auto; opacity: 0.65; transition: opacity 0.2s; }
+  .footer-logo:hover img { opacity: 0.9; }
+  .footer-tagline { font-size: 13px; font-weight: 300; color: rgba(255,255,255,0.48); }
+  .footer-nav { display: flex; gap: 36px; flex-wrap: wrap; justify-content: flex-end; }
+  .footer-nav a { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.32); text-decoration: none; transition: color 0.2s; }
+  .footer-nav a:hover { color: rgba(255,255,255,0.7); }
+
+  @media (max-width: 1024px) {
+    .container { padding: 0 36px; }
+    #navbar { padding: 0 36px; }
+    .checkout-grid { grid-template-columns: 1fr; gap: 48px; }
+    .checkout-summary { position: static; }
+  }
+  @media (max-width: 768px) {
+    #navbar { padding: 0 24px; }
+    .container { padding: 0 24px; }
+    main { padding: 140px 0 72px; }
+    .form-row { grid-template-columns: 1fr; }
+    footer { flex-direction: column; align-items: flex-start; }
+    .footer-nav { justify-content: flex-start; }
+    .nav-back span.txt { display: none; }
+  }
+</style>
+  <link rel="icon" href="../../logos/blk-icon.png" media="(prefers-color-scheme: light)">
+  <link rel="icon" href="../../logos/wht-icon.png" media="(prefers-color-scheme: dark)">
+</head>
+<body>
+
+<nav id="navbar">
+  <a href="../" class="nav-logo">
+    <img src="../../logos/personalab-marcas.png" alt="PersonaLab" width="5797" height="802">
+  </a>
+  <a href="../#catalogo" class="nav-back">← <span class="txt">Volver al catálogo</span></a>
+</nav>
+
+<main>
+  <div class="container">
+    <div class="checkout-head">
+      <p class="eyebrow">Checkout</p>
+      <h1 class="checkout-title">Confirma tu <em>compra.</em></h1>
+      <p class="checkout-sub">Revisa los datos y confirma para continuar. Vas a entrar directo al portal donde vive tu experiencia.</p>
+      <span class="demo-note">Esto es una simulación — ningún campo es obligatorio</span>
+    </div>
+
+    <div class="checkout-grid">
+      <div class="checkout-form">
+        <div class="form-section">
+          <h2>Tus datos</h2>
+          <div class="field"><label for="nombre">Nombre completo</label><input id="nombre" type="text" placeholder="Tu nombre"></div>
+          <div class="form-row">
+            <div class="field"><label for="correo">Correo electrónico</label><input id="correo" type="email" placeholder="tu@correo.com"></div>
+            <div class="field"><label for="telefono">Teléfono</label><input id="telefono" type="tel" placeholder="+503 0000 0000"></div>
+          </div>
+        </div>
+
+        <div class="form-section" id="grupoSection" style="display:none">
+          <h2>Sobre tu grupo</h2>
+          <div class="field"><label for="foro">Nombre del foro o capítulo</label><input id="foro" type="text" placeholder="Ej. Foro Anáhuac"></div>
+          <div class="field"><label for="tamano">Tamaño aproximado del grupo</label><input id="tamano" type="text" placeholder="Ej. 8 – 10 personas"></div>
+        </div>
+
+        <div class="form-section">
+          <h2>Pago</h2>
+          <p class="pay-note">Simulado — no se procesa ningún cobro real en esta demostración.</p>
+          <div class="field"><label for="tarjeta">Número de tarjeta</label><input id="tarjeta" type="text" placeholder="0000 0000 0000 0000" inputmode="numeric"></div>
+          <div class="form-row">
+            <div class="field"><label for="venc">Vencimiento</label><input id="venc" type="text" placeholder="MM / AA"></div>
+            <div class="field"><label for="cvc">CVC</label><input id="cvc" type="text" placeholder="123" inputmode="numeric"></div>
+          </div>
+        </div>
+      </div>
+
+      <aside class="checkout-summary">
+        <h2>Tu orden</h2>
+        <div id="summaryItem"></div>
+        <button id="btnComprar" class="btn-comprar">Comprar</button>
+        <p class="summary-footnote">Al confirmar, entras al portal donde tu experiencia realmente vive.</p>
+      </aside>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="footer-brand">
+    <a href="../" class="footer-logo">
+      <img src="../../logos/wht-logo.png" alt="PersonaLab" width="5235" height="1223" loading="lazy">
+    </a>
+    <span class="footer-tagline">Experiencias con propósito y sentido.</span>
+  </div>
+  <nav class="footer-nav">
+    <a href="../#catalogo">Catálogo</a>
+    <a href="../sobrenosotros/">Sobre nosotros</a>
+    <a href="../#cierre">Contacto</a>
+    <a href="/">4 Meaning</a>
+  </nav>
+</footer>
+
+<script>
+  // Catálogo simulado del checkout. Los datos (nombre, imagen) vienen de
+  // los mismos que ya usa cada página de experiencia (hero-headline / og:image).
+  const EXPERIENCIAS = {
+    'el-presente-como-regalo': { nombre: 'El Presente como Regalo', img: '../stock/vista-del-atardecer-entre-las-nubes-toma-desde-un-avion.webp' },
+    'metamorfosis-y-metanoia': { nombre: 'Metamorfosis y Metanoia: Cerrando Círculos', img: '../stock/silhouetted-woman-wading-in-baltic-sea-during-gold-2026-01-25-00-20-58-utc.webp' },
+    'una-pincelada-a-la-muerte': { nombre: 'Una Pincelada a la Muerte', img: '../stock/vista-panoramica-de-un-arcoiris-sobre-la-ciudad.webp' },
+    'el-nido-vacio': { nombre: 'El Nido Vacío: Nuevas Oportunidades de Crecimiento en Pareja', img: '../stock/look-at-our-family-2026-01-09-11-12-28-utc.webp' },
+    'la-llave-la-comunicacion': { nombre: 'La Llave de la Comunicación: Analogías', img: '../stock/senior-aged-couple-of-travelers-relaxing-sitting-o-2026-01-08-23-04-53-utc.webp' },
+  };
+
+  const params = new URLSearchParams(window.location.search);
+  const slug = params.get('experiencia');
+  const tipo = params.get('tipo') === 'grupo' ? 'grupo' : 'individual';
+  const exp = slug ? EXPERIENCIAS[slug] : null;
+
+  const summaryItem = document.getElementById('summaryItem');
+  const btnComprar = document.getElementById('btnComprar');
+
+  if (exp) {
+    summaryItem.innerHTML = `
+      <div class="summary-item">
+        <img src="${exp.img}" alt="">
+        <div>
+          <div class="summary-name">${exp.nombre}</div>
+          <span class="summary-tipo">${tipo === 'grupo' ? 'Para tu grupo' : 'Para ti'}</span>
+        </div>
+      </div>`;
+    if (tipo === 'grupo') document.getElementById('grupoSection').style.display = 'block';
+  } else {
+    summaryItem.innerHTML = `
+      <p class="summary-empty">No hay ninguna experiencia seleccionada todavía. <a href="../#catalogo">Vuelve al catálogo</a> y elige una.</p>`;
+    btnComprar.disabled = true;
+  }
+
+  // Demo: no hay pasarela real. Cualquier dato en el formulario, con o sin
+  // llenar, lleva directo al portal donde la experiencia comprada vive.
+  btnComprar.addEventListener('click', () => {
+    window.location.href = 'https://app.4meaning.life/login';
+  });
+</script>
+</body>
+</html>

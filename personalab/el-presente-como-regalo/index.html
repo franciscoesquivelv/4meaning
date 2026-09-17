@@ -155,6 +155,8 @@
   .btn-primary:hover .arrow { transform: translateX(4px); }
   .btn-secondary { display: inline-flex; align-items: center; gap: 10px; color: var(--primary); font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none; border-bottom: 1px solid var(--primary-mist); padding-bottom: 2px; transition: all 0.25s; }
   .btn-secondary:hover { border-color: var(--primary); }
+  .btn-secondary-cta { display: inline-flex; align-items: center; gap: 8px; background: transparent; color: var(--primary); padding: 0.65rem 1.4rem; border-radius: 999px; font-size: 12.5px; font-weight: 500; letter-spacing: 0.02em; text-decoration: none; border: 1px solid var(--primary-mist); transition: all 0.3s; }
+  .btn-secondary-cta:hover { background: var(--primary-faint); border-color: var(--primary); }
 
   .other-experiencias { padding: 40px; background: var(--primary-faint); border: 1px solid var(--border); border-radius:10px;}
   .other-title { font-size: 16px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink); margin-bottom: 20px; }
@@ -346,9 +348,12 @@
         <p class="section-label reveal">¿Te interesa?</p>
         <h2 class="section-title reveal d1">Lleva esta experiencia a tu <em><strong>próximo</strong> retiro.</em></h2>
         <p class="cta-sub reveal d2">Escríbenos. Te contamos cómo funciona, qué necesitas y cómo prepararte para facilitar con confianza.</p>
-        <div style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap;" class="reveal d3">
-          <a href="https://wa.me/50230179048?text=%C2%A1Hola%21%20Me%20interesa%20la%20experiencia%3A%20El%20Presente%20como%20Regalo." target="_blank" rel="noopener" class="btn-primary">
-            Quiero esta experiencia <span class="arrow">→</span>
+        <div class="reveal d3" style="display: flex; flex-direction: column; align-items: flex-start; gap: 16px;">
+          <a href="../checkout/?experiencia=el-presente-como-regalo&tipo=individual" class="btn-primary">
+            Adquirir esta experiencia <span class="arrow">→</span>
+          </a>
+          <a href="../checkout/?experiencia=el-presente-como-regalo&tipo=grupo" class="btn-secondary-cta">
+            Quiero esta experiencia para mi grupo
           </a>
           <a href="../#catalogo" class="btn-secondary">Ver otros módulos</a>
         </div>
