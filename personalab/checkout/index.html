@@ -221,9 +221,10 @@
   }
 
   // Demo: no hay pasarela real. Cualquier dato en el formulario, con o sin
-  // llenar, lleva directo al portal donde la experiencia comprada vive.
+  // llenar, abre el portal donde la experiencia comprada vive, en una
+  // pestaña nueva — el checkout se queda abierto detrás.
   btnComprar.addEventListener('click', () => {
-    window.location.href = 'https://app.4meaning.life/login';
+    window.open('https://app.4meaning.life/login', '_blank', 'noopener');
   });
 </script>
 </body>
