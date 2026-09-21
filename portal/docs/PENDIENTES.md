@@ -35,15 +35,16 @@ la base) igual que exige el resto del protocolo de este portal.
 ## Abiertos / decididos
 
 ### P-001 — Vocabulario propio, sin YPO, para las dos líneas
-- Estado: **abierto**
+- Estado: **abierto** (dos palabras ya resueltas, ver H-006 en Hecho)
 - Origen: Francisco, 2026-09-21. "Esas palabras tampoco me gustan para
   trascendencia... en general tienen que tener otro vocabulario. Ya te dije
   que YPO tiene que quedar por aparte, no le estamos vendiendo a ellos."
-- Qué se sabe: `app/(admin)/personalab/dominio.ts:1-11` declara, como
-  "Léxico vinculante del Consejo #002", una traducción literal del modelo de
-  Trascendencia (evento→corrida, familia→foro, itinerario→guion,
-  materiales→kit, entregas→retorno) — heredado de la estructura de YPO.
-  Francisco pide repensarlo para AMBAS líneas, no solo relabelear PersonaLab.
+- Qué se sabe: `capítulo`→`grupo` y `corrida`→`encuentro` ya se hicieron
+  (H-006). Lo que sigue abierto es lo más grande: `foro` (todavía dice
+  "Foro Anáhuac", "El foro", en decenas de sitios, en las dos líneas),
+  `guion`, `kit`, `retorno` — el resto del "Léxico vinculante del Consejo
+  #002" (`dominio.ts:1-14`), heredado de la estructura de YPO. Francisco
+  pide repensarlo para AMBAS líneas, no solo relabelear PersonaLab.
 - Dueño: Claude investiga alcance (dónde aparece cada término, en cuál línea,
   en label vs. en dato vs. en nombre de columna) y lo trae al consejo
   (Daniel ya lo señaló; falta Nora, que es quien piensa el copy) antes de
@@ -52,18 +53,6 @@ la base) igual que exige el resto del protocolo de este portal.
 - Criterio de cierre: propuesta de vocabulario nueva, aprobada por Francisco,
   aplicada en TODOS los lugares donde aparece el término viejo (label, dato,
   y donde sea razonable, nombre de ruta) — no una parte.
-
-### P-002 — Capítulos → Grupos (parte de P-001, ya decidida en cuanto a la palabra)
-- Estado: **decidido**
-- Origen: Francisco, 2026-09-21 ("tiene que decir grupos").
-- Qué se sabe: Daniel y Leo confirman que los propios datos ya usan "Foro
-  Anáhuac", nunca "Capítulo X" — el cambio de palabra no rompe nada
-  estructural. Pero depende de P-001 para no quedar como un cambio a medias
-  si "foro" y el resto del léxico también cambian.
-- Dueño: Claude, después de que P-001 tenga aunque sea un borrador de
-  alcance (para no renombrar dos veces).
-- Criterio de cierre: "capítulo" no aparece en ningún label visible de
-  PersonaLab ni Trascendencia; verificado por grep, no por muestreo.
 
 ### P-003 — Moderadores anidados dentro de su grupo
 - Estado: **decidido**
@@ -76,16 +65,6 @@ la base) igual que exige el resto del protocolo de este portal.
 - Criterio de cierre: página de detalle de grupo construida y navegable,
   mostrando su moderador; la entrada de nav separada para moderadores,
   eliminada; probado en el navegador, no solo compilado.
-
-### P-004 — Kit y Fronteras fuera del nav operativo
-- Estado: **decidido**
-- Origen: Francisco, 2026-09-21 ("no veo el valor de llevar eso ahí").
-  Daniel y Leo confirman: es documento de planeación interna ("la frontera
-  de qué se replica en software y qué no"), no herramienta operativa.
-- Dueño: Claude.
-- Criterio de cierre: contenido real (qué kit tiene cada experiencia, qué
-  falta) preservado en un documento interno, no en el nav de trabajo diario;
-  entrada quitada de `PersonaLabNav.tsx`.
 
 ### P-005 — Retorno: automatizar los envíos ahora, sin caso de uso activo
 - Estado: **decidido, bloqueado en parte por infraestructura externa**
@@ -129,6 +108,29 @@ la base) igual que exige el resto del protocolo de este portal.
 *(vacío por ahora)*
 
 ## Hecho
+
+### H-006 — Capítulo → Grupo, Corrida → Encuentro; Kit fuera del nav
+- Estado: **hecho** — verificado 2026-09-21
+- Origen: Francisco ("CAMBIA LOS NOMBRES"), sobre P-002 (ya decidido) y
+  P-004 (ya decidido).
+- `capítulo`→`grupo` y `corrida`→`encuentro`, palabra e identificadores,
+  en todo `app/(admin)/personalab` y `lib/personalab`: `dominio.ts` (tipos,
+  datos, funciones), `lib/personalab/catalogo.ts` (el catálogo REAL, que
+  lee `chapters`/`runs`), rutas (`/personalab/grupos`,
+  `/personalab/encuentros`, `vista/[encuentroId]`), nav, `/workspaces`.
+  El enum real de la base (`pl_estado_corrida`) NO se tocó — renombrar un
+  enum de Postgres es una migración aparte, no un cambio de etiqueta; sus
+  claves siguen en español-viejo mientras que solo lo que se MUESTRA
+  cambió. Verificado en un deploy real, sección por sección: Resumen,
+  Grupos, Encuentros, Moderadores, Retorno, y la ficha real de una
+  experiencia con un encuentro de verdad (no solo datos de `dominio.ts`).
+- Kit ya no aparece en `PersonaLabNav.tsx`. Su contenido real sigue en
+  `Experiencia.kit`, sin pantalla propia — migrarlo a un documento interno
+  de verdad queda pendiente, no se inventó hoy.
+- Sin tocar, a propósito: `foro`, `guion`, `retorno` y el resto del léxico
+  compartido con Trascendencia — eso es P-001, sigue abierto. Moderadores
+  sigue como pestaña plana — eso es P-003, sigue abierto (falta construir
+  la página de detalle de grupo donde debería anidarse).
 
 ### H-005 — Rediseño real del lector de participante y del editor, sección por sección
 - Estado: **hecho** — verificado 2026-09-21
