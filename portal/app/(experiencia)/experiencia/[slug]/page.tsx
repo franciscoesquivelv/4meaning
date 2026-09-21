@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { cargarExperiencia, ultimaVista, bienvenidaVista, posicionActual } from '@/lib/personalab/lectura'
 import SinAcceso from '../SinAcceso'
+import SinContenido from '../SinContenido'
 import Fallo from '../Fallo'
 import UmbralBienvenida from '../UmbralBienvenida'
 
@@ -18,6 +19,7 @@ export default async function IndiceExperiencia({ params }: { params: { slug: st
 
   if (r.estado === 'fallo') return <Fallo motivo={r.motivo} />
   if (r.estado === 'sin-acceso') return <SinAcceso />
+  if (r.estado === 'sin-contenido') return <SinContenido />
 
   const { experiencia, bisagras } = r.datos
   const ultima = await ultimaVista(experiencia.id)

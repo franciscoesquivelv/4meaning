@@ -1,5 +1,6 @@
 import { consignasDe } from '@/lib/personalab/lectura'
 import SinAcceso from '../../SinAcceso'
+import SinContenido from '../../SinContenido'
 import Fallo from '../../Fallo'
 import Cierre from './Cierre'
 
@@ -11,8 +12,9 @@ export default async function PaginaCierre({ params }: { params: { slug: string 
 
   if (r.estado === 'fallo') return <Fallo motivo={r.motivo} />
   if (r.estado === 'sin-acceso') return <SinAcceso />
+  if (r.estado === 'sin-contenido') return <SinContenido />
 
-  const { experiencia, consignas } = r.datos
+  const { experiencia, consignas, completo } = r.datos
 
   return (
     <main className="max-w-[620px] mx-auto px-6 py-16 md:py-24">
@@ -21,6 +23,7 @@ export default async function PaginaCierre({ params }: { params: { slug: string 
         slug={experiencia.slug}
         nombre={experiencia.nombre}
         consignas={consignas}
+        completo={completo}
       />
     </main>
   )

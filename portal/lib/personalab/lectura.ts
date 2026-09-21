@@ -51,6 +51,28 @@ export type Resultado<T> =
   | { estado: 'sin-acceso' }
   | { estado: 'fallo'; motivo: string }
 
+// UN CUARTO ESTADO, PERO SOLO PARA QUIEN LEE COMO PARTICIPANTE.
+//
+// `Resultado<T>` lo usan también `compras.ts`, `progreso.ts`, `catalogo.ts`
+// y `cuenta.ts` para sus propias consultas de administrador, que nunca
+// producen este caso: ensanchar el tipo compartido les habría exigido a
+// todas esas pantallas manejar una rama que no les puede pasar, puro ruido.
+// `ResultadoLectura<T>` es el tipo de las tres funciones de este archivo que
+// sí lo necesitan (`cargarExperiencia`, `cargarBisagra`, `consignasDe`).
+//
+// 'sin-contenido' SE SEPARÓ DE 'sin-acceso' EL 2026-09-21. Las dos vivían en
+// la misma rama de `cargarExperiencia` (`!versionId`), y "no hay nada que
+// publicar todavía" y "esta cuenta no compró esto" son verdades distintas
+// que `SinAcceso.tsx` mezclaba: su texto ("puede que hayas entrado con un
+// correo distinto... escríbenos y lo resolvemos") le decía a un comprador
+// real, sin nada mal, que quizás se equivocó de cuenta. Hallazgo de Hugo.
+// Es seguro separarlas SIN una consulta aparte a `grants`: `experiences`
+// tiene su propia RLS ("pl lectura con acceso", `pl_nivel_audiencia(id) > 0`),
+// así que si `cargarExperiencia` llega más allá de encontrar la fila de
+// `experiences`, quien pregunta YA tiene un grant vivo. Lo que falta ahí no
+// es acceso, es contenido.
+export type ResultadoLectura<T> = Resultado<T> | { estado: 'sin-contenido' }
+
 // A QUÉ VERSIÓN SE ANCLA ESTA LECTURA, Y NO SIEMPRE ES "LA PUBLICADA".
 //
 // ETAPA 2. Antes, hinges no tenía versión: solo existía "la" bisagra de una
@@ -101,7 +123,7 @@ async function versionAnclada(experienceId: string): Promise<string | null> {
 
 export async function cargarExperiencia(
   slug: string
-): Promise<Resultado<{ experiencia: Experiencia; bisagras: Bisagra[] }>> {
+): Promise<ResultadoLectura<{ experiencia: Experiencia; bisagras: Bisagra[] }>> {
   const supabase = createClient()
 
   const { data: exp, error: errExp } = await supabase
@@ -114,10 +136,11 @@ export async function cargarExperiencia(
   if (!exp) return { estado: 'sin-acceso' }
 
   // Sin versión que leer (nunca se publicó nada, y tampoco hay marcador
-  // previo) es exactamente "no hay acceso": no hay ninguna mentira que
-  // decir aquí, solo nada que mostrar.
+  // previo). Llegar hasta aquí ya cruzó la RLS de `experiences`, que exige
+  // un grant vivo (`pl_nivel_audiencia(id) > 0`) — así que esta cuenta SÍ
+  // compró esto. Lo que falta no es acceso, es contenido.
   const versionId = await versionAnclada(exp.id)
-  if (!versionId) return { estado: 'sin-acceso' }
+  if (!versionId) return { estado: 'sin-contenido' }
 
   // DOS FILTROS, Y LOS DOS FALLAN CERRADO.
   //
@@ -177,7 +200,7 @@ export function posicionAlcanzable(iUltima: number): number {
 export async function cargarBisagra(
   slug: string,
   bisagraId: string
-): Promise<Resultado<{ experiencia: Experiencia; bisagra: Bisagra; bloques: Bloque[]; anterior: Bisagra | null; siguiente: Bisagra | null; primeraVez: boolean }>> {
+): Promise<ResultadoLectura<{ experiencia: Experiencia; bisagra: Bisagra; bloques: Bloque[]; anterior: Bisagra | null; siguiente: Bisagra | null; primeraVez: boolean }>> {
   const base = await cargarExperiencia(slug)
   if (base.estado !== 'ok') return base
 
@@ -332,14 +355,29 @@ export async function bienvenidaVista(experienciaId: string): Promise<boolean> {
 // preguntas.
 export async function consignasDe(
   slug: string
-): Promise<Resultado<{ experiencia: Experiencia; consignas: { id: string; texto: string; bisagra: string }[] }>> {
+): Promise<ResultadoLectura<{
+  experiencia: Experiencia
+  consignas: { id: string; texto: string; bisagra: string }[]
+  // SI DE VERDAD LLEGÓ AL FINAL. `Cierre.tsx` decía "Terminaste [experiencia]"
+  // con la única condición de no haber escrito nada, sin mirar nunca si la
+  // persona recorrió las bisagras. Reproducido en vivo por Hugo: entrar por
+  // URL directa a `/cierre` habiendo visitado 3 de 11 bisagras pintaba
+  // "Terminaste" en letra grande. Es la misma regla que ya protege el índice
+  // y `cargarBisagra` (revelar por apertura, nunca afirmar de más): el
+  // marcador tiene que estar en la última bisagra real, no en cualquiera.
+  completo: boolean
+}>> {
   const base = await cargarExperiencia(slug)
   if (base.estado !== 'ok') return base
 
   const { experiencia, bisagras } = base.datos
   if (bisagras.length === 0) {
-    return { estado: 'ok', datos: { experiencia, consignas: [] } }
+    return { estado: 'ok', datos: { experiencia, consignas: [], completo: false } }
   }
+
+  const ultima = await ultimaVista(experiencia.id)
+  const iUltima = bisagras.findIndex(b => b.id === ultima)
+  const completo = iUltima === bisagras.length - 1
 
   const supabase = createClient()
   // Mismo filtro por versión, y por la misma razón que en `cargarBisagra`:
@@ -372,5 +410,5 @@ export async function consignasDe(
     .sort((a, b) => a._o - b._o)
     .map(({ _o, ...c }) => c)
 
-  return { estado: 'ok', datos: { experiencia, consignas } }
+  return { estado: 'ok', datos: { experiencia, consignas, completo } }
 }

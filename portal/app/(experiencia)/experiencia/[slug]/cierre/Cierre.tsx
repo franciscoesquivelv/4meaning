@@ -20,10 +20,15 @@ export default function Cierre({
   slug,
   nombre,
   consignas,
+  completo,
 }: {
   slug: string
   nombre: string
   consignas: Consigna[]
+  // Si de verdad llegó a la última bisagra. Ver el comentario en
+  // `lib/personalab/lectura.ts#consignasDe`: sin esto, "Terminaste" se
+  // afirmaba con solo mirar si había algo escrito, nunca la posición real.
+  completo: boolean
 }) {
   const [respuestas, setRespuestas] = useState<{ c: Consigna; texto: string }[]>([])
   const [estado, setEstado] = useState<Estado>('leyendo')
@@ -66,16 +71,23 @@ export default function Cierre({
   return (
     <>
       <h1 className="display text-[32px] md:text-[42px] text-dom mt-3">
-        {respuestas.length > 0 ? 'Lo que escribiste' : `Terminaste ${nombre}`}
+        {respuestas.length > 0 ? 'Lo que escribiste' : completo ? `Terminaste ${nombre}` : 'Lo que llevas hasta ahora'}
       </h1>
 
       {respuestas.length === 0 ? (
-        // NO SE REGAÑA A QUIEN NO ESCRIBIÓ. Sora lo dejó fijado para la sala:
-        // parar también es haber terminado, y el permiso de quedarse en la
-        // superficie hay que sostenerlo hasta el final, no solo ofrecerlo al
-        // principio. Sin el cuerpo del facilitador, aquí va por escrito.
+        // NO SE REGAÑA A QUIEN NO ESCRIBIÓ, Y NO SE AFIRMA UN FINAL QUE NO
+        // OCURRIÓ. Sora lo dejó fijado para la sala: parar también es haber
+        // terminado, y el permiso de quedarse en la superficie hay que
+        // sostenerlo hasta el final, no solo ofrecerlo al principio — pero
+        // eso vale cuando SÍ se llegó al final. Si `completo` es falso (se
+        // entró a `/cierre` por URL directa sin recorrer las bisagras), la
+        // frase reusa "lo que sigue aparece cuando llegues" de
+        // `PisoDeTiempo.tsx`, la misma voz para la misma idea: no hay nada
+        // que ver todavía, no un error.
         <p className="mt-6 text-[17px] leading-[1.65] font-light text-ink/90">
-          No escribiste nada, y está bien. Atravesarlo ya fue hacerlo.
+          {completo
+            ? 'No escribiste nada, y está bien. Atravesarlo ya fue hacerlo.'
+            : 'Todavía no llegaste al final. Lo que sigue aparece cuando llegues.'}
         </p>
       ) : (
         <>
