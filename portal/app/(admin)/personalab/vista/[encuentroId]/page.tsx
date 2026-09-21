@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import {
-  corrida, experiencia, capitulo, moderador, fecha, ETIQUETA_TIEMPO,
+  encuentro, experiencia, grupo, moderador, fecha, ETIQUETA_TIEMPO,
   type Tiempo,
 } from '../../dominio'
 import { tieneContenido } from '../../contenido'
@@ -11,14 +11,14 @@ const TIEMPOS: Tiempo[] = ['vispera', 'ignicion', 'retorno']
 export default function PortadaPage({
   params, searchParams,
 }: {
-  params: { corridaId: string }
+  params: { encuentroId: string }
   searchParams: { lente?: string }
 }) {
-  const c = corrida(params.corridaId)
+  const c = encuentro(params.encuentroId)
   if (!c) notFound()
 
   const e = experiencia(c.experienciaId)!
-  const cap = capitulo(c.capituloId)!
+  const grp = grupo(c.grupoId)!
   const mod = moderador(c.moderadorId)!
   const esModerador = searchParams.lente === 'moderador'
   const q = esModerador ? '?lente=moderador' : ''
@@ -42,7 +42,7 @@ export default function PortadaPage({
             </p>
           )}
           <div className="mt-10 pt-6 border-t border-white/15 flex flex-wrap gap-x-8 gap-y-2 text-[12.5px] font-light text-white/60">
-            <span>{cap.nombre}</span>
+            <span>{grp.nombre}</span>
             <span>{fecha(c.fecha)}</span>
             {esModerador && <span>Conduce {mod.nombre}</span>}
           </div>

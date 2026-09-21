@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { MODERADORES, EXPERIENCIAS, CORRIDAS, capitulo } from '../dominio'
+import { MODERADORES, EXPERIENCIAS, ENCUENTROS, grupo } from '../dominio'
 import { Titulo, Tabla, Explicativo, BotonPronto } from '../ui'
 import { TD } from '../tokens'
 
@@ -14,21 +14,21 @@ export default function ModeradoresPage() {
       </Titulo>
 
       <Explicativo titulo="La formación no se sustituye con video">
-        Un moderador sin formación en una experiencia no puede correrla, aunque su capítulo tenga
+        Un moderador sin formación en una experiencia no puede realizarla, aunque su grupo tenga
         licencia. La formación es presencial y no tiene versión grabada.
       </Explicativo>
 
-      <Tabla cabeceras={['Moderador', 'Capítulo', 'Formado en', 'Corridas', 'Desde']}>
+      <Tabla cabeceras={['Moderador', 'Grupo', 'Formado en', 'Encuentros', 'Desde']}>
         {MODERADORES.map(m => {
-          const cap = capitulo(m.capituloId)!
-          const suyas = CORRIDAS.filter(c => c.moderadorId === m.id)
+          const grp = grupo(m.grupoId)!
+          const suyos = ENCUENTROS.filter(c => c.moderadorId === m.id)
           return (
             <tr key={m.id} className="hover:bg-slate-50 transition-colors">
               <td className={TD}>
                 <div className="font-medium text-slate-900">{m.nombre}</div>
                 <div className="text-xs text-slate-500 mt-0.5">{m.email}</div>
               </td>
-              <td className={`${TD} text-slate-500`}>{cap.nombre}</td>
+              <td className={`${TD} text-slate-500`}>{grp.nombre}</td>
               <td className={TD}>
                 {m.formadoEn.length === 0 ? (
                   <span className="text-xs text-amber-700">Sin formación todavía</span>
@@ -49,7 +49,7 @@ export default function ModeradoresPage() {
                   </div>
                 )}
               </td>
-              <td className={`${TD} tabular-nums`}>{suyas.length}</td>
+              <td className={`${TD} tabular-nums`}>{suyos.length}</td>
               <td className={`${TD} text-slate-500`}>{m.desde}</td>
             </tr>
           )

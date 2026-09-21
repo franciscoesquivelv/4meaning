@@ -8,7 +8,7 @@ import { TONO } from '@/lib/estilos/oficina'
 // `dominio.ts`, el catálogo escrito a mano. Ver `lib/personalab/catalogo.ts`
 // para qué tan real es la base debajo de cada fila: bisagras y kit de
 // Metamorfosis y El Presente como Regalo son reales; el kit de El
-// Agradecimiento y cinco de las seis corridas del catálogo viejo, no.
+// Agradecimiento y cinco de los seis encuentros del catálogo viejo, no.
 
 // El enum real (`pl_maduracion`) no lleva tilde: 'diseno', no 'diseño'. El
 // mapa de `dominio.ts`/`tokens.ts` sí la lleva, así que no sirve aquí.
@@ -86,7 +86,7 @@ export default async function ExperienciasPage() {
           Todavía no hay ninguna experiencia en el catálogo.
         </Vacio>
       ) : (
-        <Tabla cabeceras={['Experiencia', 'Estado', 'Duración', 'Bisagras', 'Corridas', 'Espacio al foro']}>
+        <Tabla cabeceras={['Experiencia', 'Estado', 'Duración', 'Bisagras', 'Encuentros', 'Espacio al foro']}>
           {experiencias.map(e => (
             <tr key={e.id} className="hover:bg-paper-2 transition-colors">
               <td className={TD}>
@@ -112,7 +112,7 @@ export default async function ExperienciasPage() {
                 )}
               </td>
               <td className={`${TD} tabular-nums`}>
-                {e.corridas === 0 ? <span className="text-terra-ui">nunca</span> : e.corridas}
+                {e.encuentros === 0 ? <span className="text-terra-ui">nunca</span> : e.encuentros}
               </td>
               <td className={`${TD} text-gray-ui`}>
                 {e.abreEspacioAlForo ? 'Sí, si el moderador lo abre' : 'No, todo pasa por el moderador'}

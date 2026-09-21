@@ -58,7 +58,7 @@ export async function resolverCuentaPorCorreo(
 // Extraído tal cual de `/api/admin/invite/route.ts`. La razón de no usar
 // `upsert`+`onConflict` sigue siendo la misma: la restricción única de
 // `grants` es `(profile_id, experience_id, run_id)`, y aquí `run_id` va
-// nulo porque esto no es una corrida presencial. Postgres no considera
+// nulo porque esto no es un encuentro presencial. Postgres no considera
 // iguales dos NULL para una restricción única, así que el `onConflict`
 // nunca dispara sobre estas filas: cada intento repetido crearía OTRO
 // grant en vez de reactivar el que ya existe.

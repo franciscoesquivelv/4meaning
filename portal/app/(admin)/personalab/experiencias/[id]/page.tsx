@@ -7,7 +7,7 @@ import { TONO } from '@/lib/estilos/oficina'
 
 // ETAPA "SECCIÓN DE EXPERIENCIAS". Antes leía `dominio.ts`. Ver
 // `lib/personalab/catalogo.ts` para el detalle exacto de qué tan real es
-// cada sección de esta ficha (bisagras, kit, corridas).
+// cada sección de esta ficha (bisagras, kit, encuentros).
 
 const ETIQUETA_TIEMPO: Record<string, string> = {
   vispera: 'Víspera', ignicion: 'Ignición', retorno: 'Retorno',
@@ -36,11 +36,14 @@ const COLUMNA_KIT: Record<string, { titulo: string; regla: string }> = {
   humano: { titulo: 'Pieza humana', regla: 'Solo se transmite en formación presencial. Jamás por video.' },
   administrativo: { titulo: 'Capa administrativa', regla: 'Aquí sí, software. Inventario, versiones, fechas, accesos.' },
 }
-const ETIQUETA_ESTADO_CORRIDA: Record<string, string> = {
-  prospecto: 'Prospecto', confirmada: 'Confirmada', en_preparacion: 'En preparación',
-  corrida: 'Corrida', cancelada: 'Cancelada',
+// Las claves son las del enum real de la base (`pl_estado_corrida`), que
+// no se tocan aquí -- renombrarlas es una migración aparte, no un cambio
+// de etiqueta. Lo que sí cambia es lo que se muestra.
+const ETIQUETA_ESTADO_ENCUENTRO: Record<string, string> = {
+  prospecto: 'Prospecto', confirmada: 'Confirmado', en_preparacion: 'En preparación',
+  corrida: 'Realizado', cancelada: 'Cancelado',
 }
-const TONO_ESTADO_CORRIDA: Record<string, string> = {
+const TONO_ESTADO_ENCUENTRO: Record<string, string> = {
   prospecto: TONO.neutro, confirmada: TONO.marca, en_preparacion: TONO.curso,
   corrida: TONO.bien, cancelada: TONO.alerta,
 }
@@ -99,7 +102,7 @@ export default async function ExperienciaPage({ params }: { params: { id: string
 
       <div className="flex flex-wrap gap-x-8 gap-y-2 text-xs text-gray-ui pb-5 mb-6 border-b border-line">
         <span>Duración <b className="text-ink font-medium">{e.duracion ?? 'Por definir'}</b></span>
-        <span>Ha corrido <b className="text-ink font-medium">{e.corridas.length === 0 ? 'nunca' : `${e.corridas.length} vez${e.corridas.length > 1 ? 'ces' : ''}`}</b></span>
+        <span>Se ha realizado <b className="text-ink font-medium">{e.encuentros.length === 0 ? 'nunca' : `${e.encuentros.length} ${e.encuentros.length === 1 ? 'vez' : 'veces'}`}</b></span>
         <span>Espacio al foro <b className="text-ink font-medium">{e.abreEspacioAlForo ? 'sí' : 'no'}</b></span>
         <span>Bisagras <b className="text-ink font-medium tabular-nums">{listas} de {e.bisagras.length}</b></span>
       </div>
@@ -211,16 +214,16 @@ export default async function ExperienciaPage({ params }: { params: { id: string
             )}
           </div>
 
-          <TarjetaLista titulo="Corridas">
-            {e.corridas.length === 0 ? (
-              <div className="px-5 py-5 text-sm text-gray-ui">Nunca se ha corrido.</div>
+          <TarjetaLista titulo="Encuentros">
+            {e.encuentros.length === 0 ? (
+              <div className="px-5 py-5 text-sm text-gray-ui">Nunca se ha realizado.</div>
             ) : (
-              e.corridas.map(c => (
+              e.encuentros.map(c => (
                 <Fila
                   key={c.id}
-                  titulo={c.capituloNombre}
+                  titulo={c.grupoNombre}
                   sub={`${formatoFecha(c.fecha)} · ${c.personasEnElForo || 'sin'} personas${c.moderadorNombre ? ` · ${c.moderadorNombre}` : ''}`}
-                  derecha={<Badge label={ETIQUETA_ESTADO_CORRIDA[c.estado] ?? c.estado} cls={TONO_ESTADO_CORRIDA[c.estado] ?? TONO.neutro} />}
+                  derecha={<Badge label={ETIQUETA_ESTADO_ENCUENTRO[c.estado] ?? c.estado} cls={TONO_ESTADO_ENCUENTRO[c.estado] ?? TONO.neutro} />}
                 />
               ))
             )}

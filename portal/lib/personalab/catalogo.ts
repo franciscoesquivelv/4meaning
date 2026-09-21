@@ -22,9 +22,9 @@ import type { Resultado } from './lectura'
 //     reales y coinciden con el texto de `dominio.ts`.
 //   - El Nido Vacío y Propósito de Vida: sin bisagras en ninguno de los
 //     dos lados. No hay nada que perder ahí.
-//   - Corridas: `dominio.ts` inventa seis, con capítulos y moderadores
+//   - Encuentros: `dominio.ts` inventa seis, con grupos y moderadores
 //     que no existen como filas reales (sus ids son literales como
-//     'rodrigo' o 'anahuac'). La base real tiene UNA corrida, de verdad,
+//     'rodrigo' o 'anahuac'). La base real tiene UN encuentro, de verdad,
 //     para El Presente como Regalo.
 // Esta pantalla no rellena esos huecos con el texto del catálogo viejo:
 // eso sería inventar una decisión de contenido que no es mía. Muestra lo
@@ -41,7 +41,7 @@ export interface ExperienciaResumen {
   abreEspacioAlForo: boolean
   bisagrasListas: number
   bisagrasTotal: number
-  corridas: number
+  encuentros: number
 }
 
 function unaFila<T>(v: T[] | T | null): T | null {
@@ -100,9 +100,9 @@ export async function listarExperiencias(): Promise<Resultado<ExperienciaResumen
     conteoPorVersion.set(h.version_id, c)
   }
 
-  const corridasPorExp = new Map<string, number>()
+  const encuentrosPorExp = new Map<string, number>()
   for (const r of runsRes.data ?? []) {
-    corridasPorExp.set(r.experience_id, (corridasPorExp.get(r.experience_id) ?? 0) + 1)
+    encuentrosPorExp.set(r.experience_id, (encuentrosPorExp.get(r.experience_id) ?? 0) + 1)
   }
 
   const experiencias: ExperienciaResumen[] = (expRes.data ?? []).map(e => {
@@ -118,7 +118,7 @@ export async function listarExperiencias(): Promise<Resultado<ExperienciaResumen
       abreEspacioAlForo: e.abre_espacio_al_foro,
       bisagrasListas: conteo?.listas ?? 0,
       bisagrasTotal: conteo?.total ?? 0,
-      corridas: corridasPorExp.get(e.id) ?? 0,
+      encuentros: encuentrosPorExp.get(e.id) ?? 0,
     }
   })
 
@@ -146,9 +146,9 @@ export interface PiezaKitFicha {
   disponible: boolean
 }
 
-export interface CorridaFicha {
+export interface EncuentroFicha {
   id: string
-  capituloNombre: string
+  grupoNombre: string
   moderadorNombre: string | null
   fecha: string | null
   estado: string
@@ -168,7 +168,7 @@ export interface FichaExperiencia {
   notaDiseno: string | null
   bisagras: BisagraFicha[]
   kit: PiezaKitFicha[]
-  corridas: CorridaFicha[]
+  encuentros: EncuentroFicha[]
 }
 
 export async function cargarFichaExperiencia(slug: string): Promise<Resultado<FichaExperiencia>> {
@@ -228,7 +228,7 @@ export async function cargarFichaExperiencia(slug: string): Promise<Resultado<Fi
   if (chaptersRes.error) return { estado: 'fallo', motivo: chaptersRes.error.message }
   if (moderadoresRes.error) return { estado: 'fallo', motivo: moderadoresRes.error.message }
 
-  const capituloPorId = new Map((chaptersRes.data ?? []).map(c => [c.id, c.nombre]))
+  const grupoPorId = new Map((chaptersRes.data ?? []).map(c => [c.id, c.nombre]))
   const moderadorPorId = new Map((moderadoresRes.data ?? []).map(m => [m.id, m.full_name ?? m.email]))
 
   return {
@@ -248,9 +248,9 @@ export async function cargarFichaExperiencia(slug: string): Promise<Resultado<Fi
         id: k.id, columna: k.columna, nombre: k.nombre, detalle: k.detalle,
         porPersona: k.por_persona, disponible: k.disponible,
       })),
-      corridas: (runsRes.data ?? []).map(r => ({
+      encuentros: (runsRes.data ?? []).map(r => ({
         id: r.id,
-        capituloNombre: capituloPorId.get(r.chapter_id) ?? '(capítulo borrado)',
+        grupoNombre: grupoPorId.get(r.chapter_id) ?? '(grupo borrado)',
         moderadorNombre: moderadorPorId.get(r.moderador_id) ?? null,
         fecha: r.fecha,
         estado: r.estado,

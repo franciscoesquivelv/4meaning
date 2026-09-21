@@ -1,37 +1,37 @@
 import Link from 'next/link'
 import {
-  EXPERIENCIAS, CORRIDAS, CAPITULOS, MODERADORES,
-  ESTADO_CORRIDA, MADURACION, experiencia, capitulo, fecha,
+  EXPERIENCIAS, ENCUENTROS, GRUPOS, MODERADORES,
+  ESTADO_ENCUENTRO, MADURACION, experiencia, grupo, fecha,
 } from './dominio'
 import { Badge, Titulo, Etiqueta, FilaMetricas, TarjetaLista, Fila, Panel } from './ui'
 import { AVISO, BTN_PRIMARIO, BTN_SECUNDARIO, COLOR_ESTADO, COLOR_MADURACION, VACIO_NEUTRO } from './tokens'
 
 export default function ResumenPage() {
-  const activas = CORRIDAS.filter(c => ['confirmada', 'en_preparacion'].includes(c.estado))
-  const proximas = [...activas].sort((a, b) => a.fecha.localeCompare(b.fecha))
-  const enRetorno = CORRIDAS.filter(c => c.estado === 'corrida' && (c.mesDeRetorno ?? 0) < 6)
+  const activos = ENCUENTROS.filter(c => ['confirmado', 'en_preparacion'].includes(c.estado))
+  const proximos = [...activos].sort((a, b) => a.fecha.localeCompare(b.fecha))
+  const enRetorno = ENCUENTROS.filter(c => c.estado === 'realizado' && (c.mesDeRetorno ?? 0) < 6)
   const personasEnRetorno = enRetorno.reduce((s, c) => s + c.personasEnElForo, 0)
   const faltantes = EXPERIENCIAS.flatMap(e => e.bisagras.filter(b => !b.listo))
   const sinDiseño = EXPERIENCIAS.filter(e => e.bisagras.length === 0)
 
-  // Lo que hay que atender antes de la proxima corrida, al estilo del
+  // Lo que hay que atender antes del proximo encuentro, al estilo del
   // dashboard de Trascendencia: alertas con borde izquierdo ambar.
   const alertas = [
-    ...proximas
+    ...proximos
       .filter(c => c.preparacion.some(p => !p.hecho))
       .map(c => {
         const n = c.preparacion.filter(p => !p.hecho).length
         return {
           titulo: `${n} pendiente${n > 1 ? 's' : ''} de preparación`,
-          sub: `${experiencia(c.experienciaId)!.nombre} · ${capitulo(c.capituloId)!.nombre}`,
-          href: `/personalab/corridas/${c.id}`,
-          accion: 'Ver corrida',
+          sub: `${experiencia(c.experienciaId)!.nombre} · ${grupo(c.grupoId)!.nombre}`,
+          href: `/personalab/encuentros/${c.id}`,
+          accion: 'Ver encuentro',
         }
       }),
     ...(faltantes.length
       ? [{
           titulo: `${faltantes.length} bisagras sin diseñar`,
-          sub: 'No es captura pendiente: falta trabajo de diseño antes de poder correr',
+          sub: 'No es captura pendiente: falta trabajo de diseño antes de poder realizarla',
           href: '/personalab/experiencias',
           accion: 'Ver experiencias',
         }]
@@ -40,12 +40,12 @@ export default function ResumenPage() {
 
   return (
     <>
-      <Titulo sub="Lo que está corriendo, lo que viene y dónde falta diseño.">PersonaLab</Titulo>
+      <Titulo sub="Lo que está en curso, lo que viene y dónde falta diseño.">PersonaLab</Titulo>
 
       <FilaMetricas
         items={[
-          { v: String(activas.length), k: 'Corridas por delante', href: '/personalab/corridas' },
-          { v: String(CAPITULOS.length), k: 'Capítulos', href: '/personalab/capitulos' },
+          { v: String(activos.length), k: 'Encuentros por delante', href: '/personalab/encuentros' },
+          { v: String(GRUPOS.length), k: 'Grupos', href: '/personalab/grupos' },
           { v: String(MODERADORES.length), k: 'Moderadores', href: '/personalab/moderadores' },
           { v: String(personasEnRetorno), k: 'Personas en retorno', href: '/personalab/retorno' },
         ]}
@@ -53,7 +53,7 @@ export default function ResumenPage() {
 
       {alertas.length > 0 && (
         <div className="mb-8">
-          <Etiqueta>Pendiente antes de la próxima corrida</Etiqueta>
+          <Etiqueta>Pendiente antes del próximo encuentro</Etiqueta>
           {/* Esta pantalla no tenía ninguna acción destacada: cuatro
               métricas, hasta cinco alertas y cuatro tarjetas, todo del mismo
               peso. La acción real es la primera alerta, así que esa lleva el
@@ -84,20 +84,20 @@ export default function ResumenPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] gap-5">
         <div className="flex flex-col gap-5">
-          <TarjetaLista titulo="Próximas corridas" verTodo={{ href: '/personalab/corridas', label: 'Ver todas' }}>
-            {proximas.length === 0 ? (
+          <TarjetaLista titulo="Próximos encuentros" verTodo={{ href: '/personalab/encuentros', label: 'Ver todos' }}>
+            {proximos.length === 0 ? (
               <div className={VACIO_NEUTRO}>Nada agendado por ahora.</div>
             ) : (
-              proximas.map(c => {
+              proximos.map(c => {
                 const e = experiencia(c.experienciaId)!
-                const cap = capitulo(c.capituloId)!
+                const grp = grupo(c.grupoId)!
                 return (
                   <Fila
                     key={c.id}
-                    href={`/personalab/corridas/${c.id}`}
+                    href={`/personalab/encuentros/${c.id}`}
                     titulo={e.nombre}
-                    sub={`${cap.nombre} · ${fecha(c.fecha)} · ${c.personasEnElForo || 'sin'} personas`}
-                    derecha={<Badge label={ESTADO_CORRIDA[c.estado].etiqueta} cls={COLOR_ESTADO[c.estado]} />}
+                    sub={`${grp.nombre} · ${fecha(c.fecha)} · ${c.personasEnElForo || 'sin'} personas`}
+                    derecha={<Badge label={ESTADO_ENCUENTRO[c.estado].etiqueta} cls={COLOR_ESTADO[c.estado]} />}
                   />
                 )
               })
@@ -141,7 +141,7 @@ export default function ResumenPage() {
                   titulo={e.nombre}
                   sub={
                     (e.bisagras.length === 0 ? 'Sin bisagras' : `${listas} de ${e.bisagras.length} bisagras listas`) +
-                    ' · ' + (e.corridas === 0 ? 'nunca ha corrido' : `${e.corridas} corrida${e.corridas > 1 ? 's' : ''}`)
+                    ' · ' + (e.encuentros === 0 ? 'nunca se ha realizado' : `${e.encuentros} encuentro${e.encuentros > 1 ? 's' : ''}`)
                   }
                   derecha={<Badge label={MADURACION[e.maduracion].etiqueta} cls={COLOR_MADURACION[e.maduracion]} />}
                 />
@@ -156,9 +156,9 @@ export default function ResumenPage() {
               enRetorno.map(c => (
                 <Fila
                   key={c.id}
-                  href={`/personalab/corridas/${c.id}`}
+                  href={`/personalab/encuentros/${c.id}`}
                   titulo={experiencia(c.experienciaId)!.nombre}
-                  sub={`${capitulo(c.capituloId)!.nombre} · ${c.personasEnElForo} personas`}
+                  sub={`${grupo(c.grupoId)!.nombre} · ${c.personasEnElForo} personas`}
                   derecha={
                     <span className="text-xs text-slate-500 tabular-nums whitespace-nowrap">
                       Mes {c.mesDeRetorno} de 6

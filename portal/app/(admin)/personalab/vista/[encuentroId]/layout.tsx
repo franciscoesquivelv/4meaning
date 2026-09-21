@@ -17,7 +17,7 @@ export default function VistaLayout({
   children, params,
 }: {
   children: React.ReactNode
-  params: { corridaId: string }
+  params: { encuentroId: string }
 }) {
   return (
     <div className="max-w-[560px] mx-auto">
@@ -31,10 +31,10 @@ export default function VistaLayout({
           </p>
         </div>
         <Link
-          href={`/personalab/corridas/${params.corridaId}`}
+          href={`/personalab/encuentros/${params.encuentroId}`}
           className="text-xs text-slate-500 hover:text-slate-900 transition-colors whitespace-nowrap flex-shrink-0 underline underline-offset-2"
         >
-          Volver a la corrida
+          Volver al encuentro
         </Link>
       </div>
 

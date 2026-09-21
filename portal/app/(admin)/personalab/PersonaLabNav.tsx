@@ -14,15 +14,18 @@ import {
 // la sesion de verdad. Esta barra es hermana de EventSubNav.tsx: misma
 // altura, mismo sticky top-14, mismo borde.
 
+// Kit salió de aquí el 2026-09-21 (docs/PENDIENTES.md #P-004): es un
+// documento de planeación interna ("qué se replica en software y qué no"),
+// no una herramienta operativa, y mezclado aquí parecía una más. Su
+// contenido real sigue en `Experiencia.kit`, sin pantalla propia todavía.
 const SECCIONES = [
   { href: '/personalab',              label: 'Resumen', exacto: true },
   { href: '/personalab/experiencias', label: 'Experiencias' },
   { href: '/personalab/compras',      label: 'Compras' },
   { href: '/personalab/progreso',     label: 'Progreso' },
-  { href: '/personalab/corridas',     label: 'Corridas' },
-  { href: '/personalab/capitulos',    label: 'Capítulos' },
+  { href: '/personalab/encuentros',   label: 'Encuentros' },
+  { href: '/personalab/grupos',       label: 'Grupos' },
   { href: '/personalab/moderadores',  label: 'Moderadores' },
-  { href: '/personalab/kit',          label: 'Kit' },
   { href: '/personalab/retorno',      label: 'Retorno' },
 ]
 
@@ -42,7 +45,7 @@ export default function PersonaLabNav() {
           variante de interfaz: 4.93 sobre papel. */}
       <span
         className={`${PASTILLA_CURSO} flex-shrink-0`}
-        title="El catálogo, las corridas y los moderadores son de ejemplo. Nada de esto sale de tu navegador."
+        title="El catálogo, los encuentros y los moderadores son de ejemplo. Nada de esto sale de tu navegador."
       >
         Datos de ejemplo
       </span>

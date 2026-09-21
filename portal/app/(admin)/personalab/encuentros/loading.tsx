@@ -5,8 +5,8 @@ export default function Cargando() {
     <>
       {/* El título ya se sabe, así que se pinta desde el primer frame. Un
           encabezado que parpadea se siente peor que una espera. */}
-      <Titulo>Capítulos</Titulo>
-      <EsqueletoTabla columnas={5} />
+      <Titulo>Encuentros</Titulo>
+      <EsqueletoTabla columnas={4} />
     </>
   )
 }

@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import {
-  corrida, experiencia, ETIQUETA_TIEMPO,
+  encuentro, experiencia, ETIQUETA_TIEMPO,
 } from '../../../dominio'
 import { bloquesDe, tieneContenido } from '../../../contenido'
 import BloqueLector from '../../../Bloques'
@@ -9,10 +9,10 @@ import BloqueLector from '../../../Bloques'
 export default function BisagraPage({
   params, searchParams,
 }: {
-  params: { corridaId: string; bisagraId: string }
+  params: { encuentroId: string; bisagraId: string }
   searchParams: { lente?: string }
 }) {
-  const c = corrida(params.corridaId)
+  const c = encuentro(params.encuentroId)
   if (!c) notFound()
   const e = experiencia(c.experienciaId)!
   const bi = e.bisagras.find(b => b.id === params.bisagraId)

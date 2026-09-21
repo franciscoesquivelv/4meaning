@@ -1,6 +1,15 @@
 // ── DOMINIO DE PERSONALAB ───────────────────────────────────────
-// Equivalencia con Trascendencia:
-//   evento    → corrida   (una experiencia, un capítulo, un moderador, una fecha)
+// "Capítulo" y "corrida" eran el léxico de Trascendencia (evento→corrida,
+// familia→foro), calcado aquí sin que nadie lo hubiera decidido para el
+// producto digital. Renombrado el 2026-09-21, a pedido explícito de
+// Francisco ("cambia los nombres"): capítulo → grupo, corrida → encuentro.
+// Esto es la palabra, no la estructura entera: "foro" como nombre propio de
+// cada grupo (`nombre: 'Foro Anáhuac'`) sigue como está, porque repensar
+// ESE vocabulario para las dos líneas es un frente aparte (docs/PENDIENTES.md
+// #P-001), no algo que se decide relabeleando una pantalla.
+//
+// Equivalencia con Trascendencia, ya solo de referencia:
+//   evento    → encuentro (una experiencia, un grupo, un moderador, una fecha)
 //   familia   → foro      (el grupo que el moderador convoca)
 //   itinerario→ guion     (las bisagras de la ignición, en orden)
 //   materiales→ kit       (físico, humano, administrativo)
@@ -11,7 +20,7 @@
 
 export type Tiempo = 'vispera' | 'ignicion' | 'retorno'
 export type Soporte = 'sala' | 'objeto' | 'pantalla'
-export type EstadoCorrida = 'prospecto' | 'confirmada' | 'en_preparacion' | 'corrida' | 'cancelada'
+export type EstadoEncuentro = 'prospecto' | 'confirmado' | 'en_preparacion' | 'realizado' | 'cancelado'
 export type MaduracionExp = 'diseño' | 'piloto' | 'lista' | 'retirada'
 
 export const TEAL = '#002B34'
@@ -87,15 +96,15 @@ export interface Experiencia {
   maduracion: MaduracionExp
   abreEspacioAlForo: boolean
   duracion: string
-  // Cuántas veces ha corrido de verdad.
-  corridas: number
+  // Cuántas veces se ha realizado de verdad.
+  encuentros: number
   bisagras: Bisagra[]
   kit: PiezaKit[]
   notaDiseño?: string
 }
 
-// ── Capítulo, moderador, corrida ────────────────────────────────
-export interface Capitulo {
+// ── Grupo, moderador, encuentro ──────────────────────────────────
+export interface Grupo {
   id: string
   nombre: string
   ciudad: string
@@ -106,23 +115,23 @@ export interface Moderador {
   id: string
   nombre: string
   email: string
-  capituloId: string
+  grupoId: string
   formadoEn: string[]      // ids de experiencias en las que está formado
   desde: string
 }
 
-export interface Corrida {
+export interface Encuentro {
   id: string
   experienciaId: string
-  capituloId: string
+  grupoId: string
   moderadorId: string
   fecha: string
-  estado: EstadoCorrida
+  estado: EstadoEncuentro
   personasEnElForo: number
   sede?: string
-  // Preparación: qué falta antes de correr.
+  // Preparación: qué falta antes de realizarlo.
   preparacion: { titulo: string; hecho: boolean; fase: string }[]
-  // Retorno: en qué mes va, si ya corrió.
+  // Retorno: en qué mes va, si ya se realizó.
   mesDeRetorno?: number
   notas?: string
 }
@@ -138,7 +147,7 @@ export const EXPERIENCIAS: Experiencia[] = [
     maduracion: 'piloto',
     abreEspacioAlForo: false,
     duracion: 'Un día completo',
-    corridas: 1,
+    encuentros: 1,
     notaDiseño: 'Sobre-desarrollada en lo conceptual, sub-desarrollada en lo vivencial. El retorno está entero sin diseñar.',
     bisagras: [
       { id: 'm1', tiempo: 'vispera', orden: 1, titulo: 'La carta de convocatoria', descripcion: 'Lo que reciben los miembros del foro dos semanas antes. Define el tono con el que llegan.', soporte: 'pantalla', listo: true, requiere: ['Lista del foro'] },
@@ -157,10 +166,10 @@ export const EXPERIENCIAS: Experiencia[] = [
       { id: 'k2', columna: 'objeto', nombre: 'Vela de cierre', detalle: 'Para el ritual de Vuelo.', porPersona: true, disponible: true },
       { id: 'k3', columna: 'objeto', nombre: 'Caja de la crisálida', detalle: 'Sin definir. Depende del diseño de la bisagra, que falta.', porPersona: true, disponible: false },
       { id: 'k4', columna: 'humano', nombre: 'Formación del moderador', detalle: 'Dos sesiones presenciales. No existe versión en video ni la va a haber.', disponible: true },
-      { id: 'k5', columna: 'humano', nombre: 'Acompañamiento de la primera corrida', detalle: 'Alguien de 4 Meaning en la sala la primera vez que un capítulo lo corre.', disponible: true },
+      { id: 'k5', columna: 'humano', nombre: 'Acompañamiento del primer encuentro', detalle: 'Alguien de 4 Meaning en la sala la primera vez que un grupo lo realiza.', disponible: true },
       { id: 'k6', columna: 'administrativo', nombre: 'Guion del moderador', detalle: 'Versión 1.2. Vive en el portal.', disponible: true },
-      { id: 'k7', columna: 'administrativo', nombre: 'Inventario de objetos por capítulo', detalle: 'Qué tiene cada capítulo y qué hay que reponer.', disponible: false },
-      { id: 'k8', columna: 'administrativo', nombre: 'Licencia del capítulo', detalle: 'Vigencia y alcance de lo que el capítulo puede correr.', disponible: false },
+      { id: 'k7', columna: 'administrativo', nombre: 'Inventario de objetos por grupo', detalle: 'Qué tiene cada grupo y qué hay que reponer.', disponible: false },
+      { id: 'k8', columna: 'administrativo', nombre: 'Licencia del grupo', detalle: 'Vigencia y alcance de lo que el grupo puede realizar.', disponible: false },
     ],
   },
   {
@@ -170,7 +179,7 @@ export const EXPERIENCIAS: Experiencia[] = [
     maduracion: 'lista',
     abreEspacioAlForo: true,
     duracion: 'Media jornada',
-    corridas: 4,
+    encuentros: 4,
     bisagras: [
       { id: 'p1', tiempo: 'vispera', orden: 1, titulo: 'Invitación al foro', descripcion: 'Convocatoria breve, una semana antes.', soporte: 'pantalla', listo: true },
       { id: 'p2', tiempo: 'ignicion', orden: 1, titulo: 'El inventario del hoy', descripcion: 'Qué hay de valioso en el presente que no se está mirando.', soporte: 'sala', duracion: '60 min', listo: true },
@@ -192,8 +201,8 @@ export const EXPERIENCIAS: Experiencia[] = [
     maduracion: 'diseño',
     abreEspacioAlForo: true,
     duracion: 'Por definir',
-    corridas: 0,
-    notaDiseño: 'Su unidad de participación está sin resolver: el capítulo base es individual pero admite variante en pareja, y eso rompe el modelo.',
+    encuentros: 0,
+    notaDiseño: 'Su unidad de participación está sin resolver: el grupo base es individual pero admite variante en pareja, y eso rompe el modelo.',
     bisagras: [],
     kit: [],
   },
@@ -204,7 +213,7 @@ export const EXPERIENCIAS: Experiencia[] = [
     maduracion: 'diseño',
     abreEspacioAlForo: false,
     duracion: 'Por definir',
-    corridas: 0,
+    encuentros: 0,
     notaDiseño: 'Se vende en la landing y no tiene diseño detrás. Es el hueco más urgente del catálogo.',
     bisagras: [],
     kit: [],
@@ -232,7 +241,7 @@ export const EXPERIENCIAS: Experiencia[] = [
     maduracion: 'piloto',
     abreEspacioAlForo: true,
     duracion: 'Un día, más seis meses de retorno',
-    corridas: 0,
+    encuentros: 0,
     notaDiseño:
       'El día siembra la virtud, no la completa. Y nada se fuerza: la autenticidad es condición, no adorno. Forzar el agradecimiento en alguien que llega en su peor día hace daño en vez de bien, y por eso cada bisagra honda lleva su salida.',
     bisagras: [
@@ -423,7 +432,7 @@ export const EXPERIENCIAS: Experiencia[] = [
   },
 ]
 
-export const CAPITULOS: Capitulo[] = [
+export const GRUPOS: Grupo[] = [
   { id: 'anahuac', nombre: 'Foro Anáhuac', ciudad: 'Ciudad de México', moderadorId: 'rodrigo' },
   { id: 'monterrey', nombre: 'Foro Monterrey Norte', ciudad: 'Monterrey', moderadorId: 'ines' },
   { id: 'guadalajara', nombre: 'Foro Guadalajara', ciudad: 'Guadalajara', moderadorId: 'tomas' },
@@ -432,18 +441,18 @@ export const CAPITULOS: Capitulo[] = [
 ]
 
 export const MODERADORES: Moderador[] = [
-  { id: 'rodrigo', nombre: 'Rodrigo Lemus', email: 'rodrigo@ejemplo.mx', capituloId: 'anahuac', formadoEn: ['metamorfosis', 'presente-regalo'], desde: '2025-11' },
-  { id: 'ines', nombre: 'Inés Corral', email: 'ines@ejemplo.mx', capituloId: 'monterrey', formadoEn: ['presente-regalo', 'agradecimiento'], desde: '2026-02' },
-  { id: 'tomas', nombre: 'Tomás Bahena', email: 'tomas@ejemplo.mx', capituloId: 'guadalajara', formadoEn: ['presente-regalo'], desde: '2026-03' },
-  { id: 'claudia', nombre: 'Claudia Merino', email: 'claudia@ejemplo.sv', capituloId: 'sansalvador', formadoEn: [], desde: '2026-06' },
-  { id: 'esteban', nombre: 'Esteban Ruiz', email: 'esteban@ejemplo.co', capituloId: 'bogota', formadoEn: ['presente-regalo'], desde: '2026-01' },
+  { id: 'rodrigo', nombre: 'Rodrigo Lemus', email: 'rodrigo@ejemplo.mx', grupoId: 'anahuac', formadoEn: ['metamorfosis', 'presente-regalo'], desde: '2025-11' },
+  { id: 'ines', nombre: 'Inés Corral', email: 'ines@ejemplo.mx', grupoId: 'monterrey', formadoEn: ['presente-regalo', 'agradecimiento'], desde: '2026-02' },
+  { id: 'tomas', nombre: 'Tomás Bahena', email: 'tomas@ejemplo.mx', grupoId: 'guadalajara', formadoEn: ['presente-regalo'], desde: '2026-03' },
+  { id: 'claudia', nombre: 'Claudia Merino', email: 'claudia@ejemplo.sv', grupoId: 'sansalvador', formadoEn: [], desde: '2026-06' },
+  { id: 'esteban', nombre: 'Esteban Ruiz', email: 'esteban@ejemplo.co', grupoId: 'bogota', formadoEn: ['presente-regalo'], desde: '2026-01' },
 ]
 
-export const CORRIDAS: Corrida[] = [
+export const ENCUENTROS: Encuentro[] = [
   {
     id: 'c1',
     experienciaId: 'metamorfosis',
-    capituloId: 'anahuac',
+    grupoId: 'anahuac',
     moderadorId: 'rodrigo',
     fecha: '2026-08-15',
     estado: 'en_preparacion',
@@ -454,19 +463,19 @@ export const CORRIDAS: Corrida[] = [
       { titulo: 'Acuerdo de licencia firmado', hecho: true, fase: 'Antes de confirmar' },
       { titulo: 'Lista del foro cargada', hecho: true, fase: 'Cuatro semanas antes' },
       { titulo: 'Carta de convocatoria enviada', hecho: true, fase: 'Dos semanas antes' },
-      { titulo: 'Objetos del kit en sede', hecho: false, fase: 'Semana de la corrida' },
-      { titulo: 'Guion de sala revisado con el moderador', hecho: false, fase: 'Semana de la corrida' },
-      { titulo: 'Acompañante de 4 Meaning confirmado', hecho: false, fase: 'Semana de la corrida' },
+      { titulo: 'Objetos del kit en sede', hecho: false, fase: 'Semana del encuentro' },
+      { titulo: 'Guion de sala revisado con el moderador', hecho: false, fase: 'Semana del encuentro' },
+      { titulo: 'Acompañante de 4 Meaning confirmado', hecho: false, fase: 'Semana del encuentro' },
     ],
-    notas: 'Primera corrida de Metamorfosis con un capítulo externo. Crisálida y Eclosión siguen sin diseño cerrado.',
+    notas: 'Primer encuentro de Metamorfosis con un grupo externo. Crisálida y Eclosión siguen sin diseño cerrado.',
   },
   {
     id: 'c2',
     experienciaId: 'presente-regalo',
-    capituloId: 'anahuac',
+    grupoId: 'anahuac',
     moderadorId: 'rodrigo',
     fecha: '2026-03-07',
-    estado: 'corrida',
+    estado: 'realizado',
     personasEnElForo: 11,
     sede: 'Oficinas del foro',
     mesDeRetorno: 5,
@@ -475,29 +484,29 @@ export const CORRIDAS: Corrida[] = [
       { titulo: 'Acuerdo de licencia firmado', hecho: true, fase: 'Antes de confirmar' },
       { titulo: 'Lista del foro cargada', hecho: true, fase: 'Cuatro semanas antes' },
       { titulo: 'Carta de convocatoria enviada', hecho: true, fase: 'Dos semanas antes' },
-      { titulo: 'Objetos del kit en sede', hecho: true, fase: 'Semana de la corrida' },
+      { titulo: 'Objetos del kit en sede', hecho: true, fase: 'Semana del encuentro' },
     ],
   },
   {
     id: 'c3',
     experienciaId: 'presente-regalo',
-    capituloId: 'monterrey',
+    grupoId: 'monterrey',
     moderadorId: 'ines',
     fecha: '2026-09-19',
-    estado: 'confirmada',
+    estado: 'confirmado',
     personasEnElForo: 9,
     preparacion: [
       { titulo: 'Moderador formado', hecho: true, fase: 'Antes de confirmar' },
       { titulo: 'Acuerdo de licencia firmado', hecho: false, fase: 'Antes de confirmar' },
       { titulo: 'Lista del foro cargada', hecho: false, fase: 'Cuatro semanas antes' },
       { titulo: 'Carta de convocatoria enviada', hecho: false, fase: 'Dos semanas antes' },
-      { titulo: 'Objetos del kit en sede', hecho: false, fase: 'Semana de la corrida' },
+      { titulo: 'Objetos del kit en sede', hecho: false, fase: 'Semana del encuentro' },
     ],
   },
   {
     id: 'c4',
     experienciaId: 'presente-regalo',
-    capituloId: 'bogota',
+    grupoId: 'bogota',
     moderadorId: 'esteban',
     fecha: '2026-10-24',
     estado: 'prospecto',
@@ -510,10 +519,10 @@ export const CORRIDAS: Corrida[] = [
   {
     id: 'c5',
     experienciaId: 'presente-regalo',
-    capituloId: 'guadalajara',
+    grupoId: 'guadalajara',
     moderadorId: 'tomas',
     fecha: '2026-05-30',
-    estado: 'corrida',
+    estado: 'realizado',
     personasEnElForo: 14,
     mesDeRetorno: 2,
     preparacion: [
@@ -521,13 +530,13 @@ export const CORRIDAS: Corrida[] = [
       { titulo: 'Acuerdo de licencia firmado', hecho: true, fase: 'Antes de confirmar' },
       { titulo: 'Lista del foro cargada', hecho: true, fase: 'Cuatro semanas antes' },
       { titulo: 'Carta de convocatoria enviada', hecho: true, fase: 'Dos semanas antes' },
-      { titulo: 'Objetos del kit en sede', hecho: true, fase: 'Semana de la corrida' },
+      { titulo: 'Objetos del kit en sede', hecho: true, fase: 'Semana del encuentro' },
     ],
   },
 {
     id: 'c6',
     experienciaId: 'agradecimiento',
-    capituloId: 'monterrey',
+    grupoId: 'monterrey',
     moderadorId: 'ines',
     fecha: '2026-09-26',
     estado: 'en_preparacion',
@@ -538,22 +547,22 @@ export const CORRIDAS: Corrida[] = [
       { titulo: 'Acuerdo de licencia firmado', hecho: true, fase: 'Antes de confirmar' },
       { titulo: 'Lista del foro cargada', hecho: true, fase: 'Cuatro semanas antes' },
       { titulo: 'Carta de convocatoria enviada', hecho: true, fase: 'Dos semanas antes' },
-      { titulo: 'Libretas del ancla en sede', hecho: false, fase: 'Semana de la corrida' },
-      { titulo: 'Guion de sala impreso', hecho: false, fase: 'Semana de la corrida' },
-      { titulo: 'Sala en círculo, sin mesas', hecho: false, fase: 'Semana de la corrida' },
+      { titulo: 'Libretas del ancla en sede', hecho: false, fase: 'Semana del encuentro' },
+      { titulo: 'Guion de sala impreso', hecho: false, fase: 'Semana del encuentro' },
+      { titulo: 'Sala en círculo, sin mesas', hecho: false, fase: 'Semana del encuentro' },
     ],
-    notas: 'Primera corrida de El Agradecimiento. Es la primera experiencia donde cada participante necesita su propio acceso para los seis meses de retorno.',
+    notas: 'Primer encuentro de El Agradecimiento. Es la primera experiencia donde cada participante necesita su propio acceso para los seis meses de retorno.',
   },
 ]
 
 // ── Ayudas ──────────────────────────────────────────────────────
 
-export const ESTADO_CORRIDA: Record<EstadoCorrida, { etiqueta: string; fondo: string; texto: string }> = {
+export const ESTADO_ENCUENTRO: Record<EstadoEncuentro, { etiqueta: string; fondo: string; texto: string }> = {
   prospecto:      { etiqueta: 'Prospecto',      fondo: 'rgba(111,119,119,.14)', texto: '#4B5563' },
-  confirmada:     { etiqueta: 'Confirmada',     fondo: 'rgba(0,43,52,.12)',     texto: '#00404F' },
+  confirmado:     { etiqueta: 'Confirmado',     fondo: 'rgba(0,43,52,.12)',     texto: '#00404F' },
   en_preparacion: { etiqueta: 'En preparación', fondo: 'rgba(185,115,90,.18)',  texto: '#8F5341' },
-  corrida:        { etiqueta: 'Corrida',        fondo: 'rgba(47,93,74,.14)',    texto: '#2F5D4A' },
-  cancelada:      { etiqueta: 'Cancelada',      fondo: 'rgba(122,18,32,.10)',   texto: '#7A1220' },
+  realizado:      { etiqueta: 'Realizado',      fondo: 'rgba(47,93,74,.14)',    texto: '#2F5D4A' },
+  cancelado:      { etiqueta: 'Cancelado',      fondo: 'rgba(122,18,32,.10)',   texto: '#7A1220' },
 }
 
 export const MADURACION: Record<MaduracionExp, { etiqueta: string; fondo: string; texto: string }> = {
@@ -566,14 +575,14 @@ export const MADURACION: Record<MaduracionExp, { etiqueta: string; fondo: string
 export function experiencia(id: string) {
   return EXPERIENCIAS.find(e => e.id === id)
 }
-export function capitulo(id: string) {
-  return CAPITULOS.find(c => c.id === id)
+export function grupo(id: string) {
+  return GRUPOS.find(c => c.id === id)
 }
 export function moderador(id: string) {
   return MODERADORES.find(m => m.id === id)
 }
-export function corrida(id: string) {
-  return CORRIDAS.find(c => c.id === id)
+export function encuentro(id: string) {
+  return ENCUENTROS.find(c => c.id === id)
 }
 export function fecha(iso: string) {
   return new Date(iso + 'T12:00:00').toLocaleDateString('es-MX', {

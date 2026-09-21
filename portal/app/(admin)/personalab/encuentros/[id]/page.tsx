@@ -1,8 +1,8 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import {
-  corrida, experiencia, capitulo, moderador, fecha,
-  ESTADO_CORRIDA, SOPORTE_NOTA,
+  encuentro, experiencia, grupo, moderador, fecha,
+  ESTADO_ENCUENTRO, SOPORTE_NOTA,
 } from '../../dominio'
 import { Badge, Etiqueta, Panel, Vacio, TarjetaLista, FilaMetricas, BotonPronto } from '../../ui'
 import {
@@ -21,16 +21,16 @@ const ACCIONES = [
   'Cargar lista del foro',
   'Enviar convocatoria',
   'Imprimir guion de sala',
-  'Marcar como corrida',
+  'Marcar como realizado',
   'Ver el kit',
 ]
 
-export default function CorridaPage({ params }: { params: { id: string } }) {
-  const c = corrida(params.id)
+export default function EncuentroPage({ params }: { params: { id: string } }) {
+  const c = encuentro(params.id)
   if (!c) notFound()
 
   const e = experiencia(c.experienciaId)!
-  const cap = capitulo(c.capituloId)!
+  const grp = grupo(c.grupoId)!
   const mod = moderador(c.moderadorId)!
   const foro = FORO_EJEMPLO.slice(0, c.personasEnElForo)
   const fases = Array.from(new Set(c.preparacion.map(p => p.fase)))
@@ -42,16 +42,16 @@ export default function CorridaPage({ params }: { params: { id: string } }) {
   return (
     <>
       <Link
-        href="/personalab/corridas"
+        href="/personalab/encuentros"
         className="text-xs text-slate-400 hover:text-slate-600 transition-colors"
       >
-        ← Corridas
+        ← Encuentros
       </Link>
 
       <div className="flex items-start justify-between gap-6 mt-4 mb-4">
         <div className="flex items-center gap-3 flex-wrap">
           <h1 className="text-2xl font-semibold tracking-tight text-slate-900">{e.nombre}</h1>
-          <Badge label={ESTADO_CORRIDA[c.estado].etiqueta} cls={COLOR_ESTADO[c.estado]} />
+          <Badge label={ESTADO_ENCUENTRO[c.estado].etiqueta} cls={COLOR_ESTADO[c.estado]} />
         </div>
         <div className="flex gap-2 flex-shrink-0">
           <BotonPronto>Editar</BotonPronto>
@@ -60,7 +60,7 @@ export default function CorridaPage({ params }: { params: { id: string } }) {
       </div>
 
       <div className="flex flex-wrap gap-x-8 gap-y-2 text-xs text-slate-500 pb-5 mb-6 border-b border-slate-200">
-        <span>Capítulo <b className="text-slate-900 font-medium">{cap.nombre}</b></span>
+        <span>Grupo <b className="text-slate-900 font-medium">{grp.nombre}</b></span>
         <span>Moderador <b className="text-slate-900 font-medium">{mod.nombre}</b></span>
         <span>Fecha <b className="text-slate-900 font-medium">{fecha(c.fecha)}</b></span>
         {c.sede && <span>Sede <b className="text-slate-900 font-medium">{c.sede}</b></span>}
@@ -71,7 +71,7 @@ export default function CorridaPage({ params }: { params: { id: string } }) {
           { v: String(c.personasEnElForo || 0), k: 'En el foro' },
           { v: `${hechos} / ${c.preparacion.length}`, k: 'Preparación' },
           { v: String(guion.length), k: 'Bisagras de sala' },
-          { v: c.estado === 'corrida' ? `${c.mesDeRetorno} / 6` : 'sin retorno', k: 'Mes de retorno' },
+          { v: c.estado === 'realizado' ? `${c.mesDeRetorno} / 6` : 'sin retorno', k: 'Mes de retorno' },
         ]}
       />
 
@@ -79,7 +79,7 @@ export default function CorridaPage({ params }: { params: { id: string } }) {
         <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 mb-6">
           <p className="text-sm text-red-700">
             <b className="font-semibold">{mod.nombre} no está formado en esta experiencia.</b>{' '}
-            La formación es presencial y no tiene sustituto en video, así que esta corrida no puede
+            La formación es presencial y no tiene sustituto en video, así que este encuentro no puede
             confirmarse todavía.
           </p>
           {/* Un aviso que no dice qué hacer es un muro sin puerta. */}
@@ -128,7 +128,7 @@ export default function CorridaPage({ params }: { params: { id: string } }) {
           <TarjetaLista titulo="Guion de sala">
             <div className="px-5 py-3 border-b border-slate-100">
               <p className="text-xs text-slate-500 leading-relaxed">
-                Lo que el moderador conduce el día de la corrida. Software mudo: el portal solo muestra el
+                Lo que el moderador conduce el día del encuentro. Software mudo: el portal solo muestra el
                 orden, no acompaña al participante.
               </p>
             </div>

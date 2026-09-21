@@ -51,7 +51,7 @@ const MARCAS: Marca[] = [
   {
     id: 'personalab',
     nombre: 'PersonaLab',
-    descripcion: 'Experiencias para foros. Catálogo, corridas, capítulos, moderadores y kit.',
+    descripcion: 'Experiencias para foros. Catálogo, encuentros, grupos y moderadores.',
     estado: 'Prototipo',
     href: '/personalab',
     marca: 'marca-personalab',

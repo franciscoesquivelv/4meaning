@@ -1,25 +1,25 @@
 import Link from 'next/link'
-import { CAPITULOS, CORRIDAS, moderador, experiencia, fecha } from '../dominio'
+import { GRUPOS, ENCUENTROS, moderador, experiencia, fecha } from '../dominio'
 import { Titulo, Tabla, BotonPronto } from '../ui'
 import { TD } from '../tokens'
 
-export default function CapitulosPage() {
+export default function GruposPage() {
   return (
     <>
       <Titulo
-        sub="Cada grupo que adopta y corre una experiencia con un moderador propio. Es la unidad de replicabilidad."
-        accion={<BotonPronto>+ Nuevo capítulo</BotonPronto>}
+        sub="Cada grupo que adopta y realiza una experiencia con un moderador propio. Es la unidad de replicabilidad."
+        accion={<BotonPronto>+ Nuevo grupo</BotonPronto>}
       >
-        Capítulos
+        Grupos
       </Titulo>
 
-      <Tabla cabeceras={['Capítulo', 'Ciudad', 'Moderador', 'Ha corrido', 'Siguiente']}>
-        {CAPITULOS.map(c => {
+      <Tabla cabeceras={['Grupo', 'Ciudad', 'Moderador', 'Realizados', 'Siguiente']}>
+        {GRUPOS.map(c => {
           const mod = moderador(c.moderadorId)!
-          const suyas = CORRIDAS.filter(x => x.capituloId === c.id)
-          const corridas = suyas.filter(x => x.estado === 'corrida')
-          const siguiente = suyas
-            .filter(x => ['confirmada', 'en_preparacion', 'prospecto'].includes(x.estado))
+          const suyos = ENCUENTROS.filter(x => x.grupoId === c.id)
+          const realizados = suyos.filter(x => x.estado === 'realizado')
+          const siguiente = suyos
+            .filter(x => ['confirmado', 'en_preparacion', 'prospecto'].includes(x.estado))
             .sort((a, b) => a.fecha.localeCompare(b.fecha))[0]
           return (
             <tr key={c.id} className="hover:bg-slate-50 transition-colors">
@@ -27,12 +27,12 @@ export default function CapitulosPage() {
               <td className={`${TD} text-slate-500`}>{c.ciudad}</td>
               <td className={`${TD} text-slate-500`}>{mod.nombre}</td>
               <td className={`${TD} tabular-nums`}>
-                {corridas.length === 0 ? <span className="text-amber-700">nunca</span> : corridas.length}
+                {realizados.length === 0 ? <span className="text-amber-700">nunca</span> : realizados.length}
               </td>
               <td className={TD}>
                 {siguiente ? (
                   <Link
-                    href={`/personalab/corridas/${siguiente.id}`}
+                    href={`/personalab/encuentros/${siguiente.id}`}
                     className="text-slate-900 hover:underline"
                   >
                     {experiencia(siguiente.experienciaId)!.nombre}
