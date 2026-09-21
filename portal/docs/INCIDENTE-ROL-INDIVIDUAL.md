@@ -109,3 +109,28 @@ resuelto a medias sin que se note.
 
 Se cierra este documento cuando la Etapa 4 entregue las tres correcciones
 juntas, verificadas contra código real.
+
+## CERRADO — 2026-09-21
+
+Las tres correcciones están aplicadas, verificadas contra código real, no
+contra memoria:
+
+1. `profiles.role` acepta `'individual'` — `supabase/migrations/20260911_0945_incidente_rol_individual.sql`,
+   confirmado con `select conname, pg_get_constraintdef(oid)...` real.
+2. `ROLES_VALIDOS` en `app/(admin)/usuarios/actions.ts:9` incluye `'individual'`.
+3. `ROLES` en `app/(admin)/usuarios/EditRoleSelect.tsx:24` incluye `'individual'`.
+
+Este documento estuvo resuelto y sin cerrar por diez días. Es el mismo
+patrón que el consejo (Daniel, Hugo, Leo) señaló hoy, 2026-09-21, al
+discutir por qué las cosas que se verifican no se dan por terminadas: se
+diagnostica bien, se corrige bien, y nadie vuelve a marcar el cierre. Ver
+`docs/PENDIENTES.md`, que existe desde hoy por esa misma razón.
+
+Nota aparte, sin relación con este incidente: el mismo día se encontró un
+bug DISTINTO en el mismo terreno — `asegurarPerfilIndividual` dejaba una
+cuenta genuinamente nueva en `role='participant'` (el default de
+`handle_new_user()`) en vez de `'individual'`, porque el trigger crea la
+fila antes de que el código mire si ya existe. Corregido el mismo día,
+commit `0aa4dd7`. No es el mismo incidente que este documento describe
+(este era de restricciones que rechazaban el valor; aquel era de un default
+que nadie corregía), pero comparten síntoma y zona de código.
