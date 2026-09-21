@@ -34,6 +34,24 @@ la base) igual que exige el resto del protocolo de este portal.
 
 ## Abiertos / decididos
 
+### P-007 — Rediseño real del lector de participante y del editor, sección por sección
+- Estado: **abierto**
+- Origen: Francisco, 2026-09-21. "Necesito que sigamos mejorando el diseño
+  de lo que ve el participante... que no sean cambios que prácticamente ni
+  se notan, como siempre hacen... sección por sección, imposibilitando
+  cualquier atajo... Quiero que hagan lo mismo con el editor."
+- Qué se sabe: hay trabajo local sin commitear en `Bloques.tsx` y
+  `[bisagra]/page.tsx` (tokens de marca en vez de hex, cita con más peso
+  editorial, imagen contenida a banner 2:1) que Julian y Leo van a auditar
+  como punto de partida, no como propuesta cerrada. Convocados también a
+  consultar al resto del consejo por sección (Nora para copy, Sora para
+  dignidad del participante, Daniel/Hugo según haga falta).
+- Dueño: Claude, una vez Julian y Leo entreguen su revisión sección por
+  sección de las dos superficies (lector participante + editor admin).
+- Criterio de cierre: cambios ejecutados, verificados en el navegador real
+  (no solo compilados), y con una nota explícita de cuál cambio es el más
+  notorio — para que no repita el patrón que Francisco describe.
+
 ### P-001 — Vocabulario propio, sin YPO, para las dos líneas
 - Estado: **abierto**
 - Origen: Francisco, 2026-09-21. "Esas palabras tampoco me gustan para
