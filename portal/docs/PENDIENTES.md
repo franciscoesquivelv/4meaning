@@ -34,24 +34,6 @@ la base) igual que exige el resto del protocolo de este portal.
 
 ## Abiertos / decididos
 
-### P-007 — Rediseño real del lector de participante y del editor, sección por sección
-- Estado: **abierto**
-- Origen: Francisco, 2026-09-21. "Necesito que sigamos mejorando el diseño
-  de lo que ve el participante... que no sean cambios que prácticamente ni
-  se notan, como siempre hacen... sección por sección, imposibilitando
-  cualquier atajo... Quiero que hagan lo mismo con el editor."
-- Qué se sabe: hay trabajo local sin commitear en `Bloques.tsx` y
-  `[bisagra]/page.tsx` (tokens de marca en vez de hex, cita con más peso
-  editorial, imagen contenida a banner 2:1) que Julian y Leo van a auditar
-  como punto de partida, no como propuesta cerrada. Convocados también a
-  consultar al resto del consejo por sección (Nora para copy, Sora para
-  dignidad del participante, Daniel/Hugo según haga falta).
-- Dueño: Claude, una vez Julian y Leo entreguen su revisión sección por
-  sección de las dos superficies (lector participante + editor admin).
-- Criterio de cierre: cambios ejecutados, verificados en el navegador real
-  (no solo compilados), y con una nota explícita de cuál cambio es el más
-  notorio — para que no repita el patrón que Francisco describe.
-
 ### P-001 — Vocabulario propio, sin YPO, para las dos líneas
 - Estado: **abierto**
 - Origen: Francisco, 2026-09-21. "Esas palabras tampoco me gustan para
@@ -147,6 +129,42 @@ la base) igual que exige el resto del protocolo de este portal.
 *(vacío por ahora)*
 
 ## Hecho
+
+### H-005 — Rediseño real del lector de participante y del editor, sección por sección
+- Estado: **hecho** — verificado 2026-09-21
+- Origen: Francisco, 2026-09-21. "Necesito que sigamos mejorando el diseño
+  de lo que ve el participante... que no sean cambios que prácticamente ni
+  se notan, como siempre hacen... sección por sección, imposibilitando
+  cualquier atajo... Quiero que hagan lo mismo con el editor."
+- Julian y Leo revisaron las dos superficies bloque por bloque, cada uno
+  consultando a Sora y Daniel donde el terreno no era el suyo (documentado
+  con cita literal en sus memorias). Ejecutado en cuatro commits
+  (`bfbd2b6`, `5b94733`, `199d11c`, `e7f3a22`), cada uno verificado con
+  ejecución real, no lectura de código:
+  - **Lector**: tokens reales en objeto/nota/archivo/video (antes hex
+    vivo, uno con radio de 12px contra el mandato de BRAND.md de 10px);
+    alt no vacío en imagen; gesto con `aplicaDigital` (falla cerrado —
+    tres bloques reales de El Agradecimiento, "escríbelo a mano en tu
+    libreta", dejan de pintarse en el lector digital hasta que alguien
+    los marque); se revirtió la cejilla de tiempo que yo mismo había
+    agregado antes en esta misma sesión, por hallazgo cruzado de Julian
+    y Sora.
+  - **Editor**: tarjetas colapsables + botón flotante de agregar (el
+    cambio más notorio, según los dos); etiqueta de campo duplicada
+    corregida derivándola del contrato; selector de audiencia sin peso
+    visual en su default; grid de tres columnas desde 1024px en vez de
+    1280px; aviso cuando "segundos de pausa" supera el techo real;
+    "Quitar archivo" ahora pide confirmar, igual que borrar un bloque.
+  - **TopNav**: colapsa a menú bajo 640px — antes desbordaba 19px a
+    375px, con "Cerrar sesión" cortado fuera del borde.
+  - **Cierre y acceso**: `Cierre.tsx` ya no afirma "Terminaste" sin haber
+    llegado al final (hallazgo de Hugo, re-verificado vivo); `sin-acceso`
+    se separó de un nuevo `sin-contenido` para no decirle a un comprador
+    real que quizás se equivocó de cuenta.
+  Verificado en un deploy real (no solo local): login, lector sin cejilla
+  ni gesto no marcado, editor con tarjetas colapsables, checkbox de
+  gesto guardando de verdad contra la base, menú móvil funcionando a
+  375px.
 
 ### H-001 — El rol 'individual' no existía para la base de datos
 - Estado: **hecho** — verificado 2026-09-21
