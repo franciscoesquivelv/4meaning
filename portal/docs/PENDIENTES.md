@@ -112,20 +112,17 @@ la base) igual que exige el resto del protocolo de este portal.
 - Criterio de cierre: un envío programado se dispara solo, sin acción manual,
   verificado con un envío real de prueba una vez Resend esté configurado.
 
-### P-006 — Todo staff aterriza en Trascendencia al entrar, siempre
+### P-006b — La causa de fondo: no existe "staff solo de PersonaLab"
 - Estado: **abierto**
-- Origen: Francisco, 2026-09-21 ("sigue abriéndome el login dentro de
-  trascendencia"). Verificado en vivo: `inicioDe()` manda a cualquier
-  super_admin/admin/staff a `/hoy`, que es 100% Trascendencia.
-- Qué se sabe: Daniel señala que esta es la TERCERA vez que este mismo hueco
-  aparece (Consejo #002, su auditoría del 13-sep, y ahora) — falta una tabla
-  de membresías persona×marca×rol, ya especificada según él, pendiente de
-  construir, no de diseñar. `/workspaces` ya existe como pantalla neutral
-  ("¿Dónde vas a trabajar?") pero nadie la usa como entrada real.
-- Dueño: Claude.
-- Criterio de cierre: una cuenta de staff nueva, sin historial, no aterriza
-  en ninguna de las dos marcas por defecto — aterriza en una elección neutral
-  o en la última que usó. Probado con cuenta nueva real, no leído en código.
+- Origen: Daniel, 2026-09-21. Es la TERCERA vez que señala este mismo hueco
+  (Consejo #002, su auditoría del 13-sep, y ahora): falta una tabla de
+  membresías persona×marca×rol. Hoy el rol es un campo único y global en
+  `profiles`, así que no puede distinguir "esta cuenta es staff de
+  PersonaLab" de "esta cuenta es staff de Trascendencia". H-004 (abajo, en
+  Hecho) corrigió el síntoma sin tocar esto.
+- Dueño: sin asignar todavía.
+- Criterio de cierre: Daniel dice que ya está especificada, pendiente de
+  construir. Falta traer esa especificación antes de empezar.
 
 ## Rechazados
 
@@ -151,6 +148,17 @@ la base) igual que exige el resto del protocolo de este portal.
   Verificado por la UI real de Compras dos veces: una cuenta nueva quedó en
   `individual`; una cuenta ya confirmada como Trascendencia conservó su rol
   y de todas formas recibió su grant.
+
+### H-004 — Todo staff aterrizaba en Trascendencia al entrar, siempre
+- Estado: **hecho** — verificado 2026-09-21
+- Origen: Francisco, 2026-09-21 ("sigue abriéndome el login dentro de
+  trascendencia"). `inicioDe()` mandaba a cualquier super_admin/admin/staff
+  a `/hoy`, que es 100% Trascendencia, sin excepción.
+- Corregido en `lib/rutas/porRol.ts` (commit `6fe59e6`): el staff entra por
+  `/workspaces`, la pantalla neutral que ya existía. Verificado con una
+  cuenta nueva real, en producción, en una pestaña sin sesión previa:
+  aterriza en "¿Dónde vas a trabajar?", no en ninguna marca.
+- Esto es el SÍNTOMA. La causa de fondo sigue abierta en P-006b.
 
 ### H-003 — El portal entero se llamaba y se veía "Trascendencia"
 - Estado: **hecho** — verificado 2026-09-21
