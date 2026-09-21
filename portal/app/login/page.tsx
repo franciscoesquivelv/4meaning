@@ -76,9 +76,14 @@ function LoginForm() {
     window.location.href = destinoSeguro(params.get('next'))
   }
 
-  // El umbral es la portada, y una portada de Trascendencia es vino profundo:
-  // es el hero del sitio real, no una decision de esta pantalla. El cuerpo de
-  // la app aterriza en papel, igual que el sitio pasa del hero al texto.
+  // Este umbral es de la CASA, no de Trascendencia: lo cruza cualquier
+  // cuenta, incluidas las de PersonaLab, así que el rotulo dice "Portal de
+  // gestión" y no el nombre de una sub-marca (corregido 2026-09-21, para que
+  // dejara de decir "Portal Trascendencia" tal como ya decían
+  // /recuperar-contrasena y /nueva-contrasena, sus mismas dos pantallas
+  // hermanas). El fondo vino profundo, en cambio, sigue siendo herencia de
+  // cuando esta pantalla era solo de Trascendencia: sigue sin existir un
+  // "vino de la casa" medido y propio, así que de momento sigue aquí.
   //
   // Antes esta pantalla era negro con crema y el dorado fantasma, tres colores
   // que no estan en ninguna paleta de 4 Meaning, y escribia el
@@ -93,7 +98,7 @@ function LoginForm() {
             marca, no por negritas. Contraste medido: 15.96 a 1. */}
         <h1 className="display text-[34px] text-paper">4 Meaning</h1>
         <p className="cejilla cejilla-claro mt-3">
-          Portal Trascendencia
+          Portal de gestión
         </p>
       </div>
 
