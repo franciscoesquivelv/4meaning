@@ -26,7 +26,17 @@ export function inicioDe(role: string | null | undefined): string {
     case 'super_admin':
     case 'admin':
     case 'staff':
-      return '/hoy'
+      // Antes mandaba directo a `/hoy`, que es 100% Trascendencia: cualquier
+      // cuenta de equipo entraba ahí sin excepción, sin importar si ese día
+      // iba a trabajar en PersonaLab. Hoy el rol es un campo único y global
+      // (no existe todavía "staff solo de PersonaLab", ver
+      // docs/PENDIENTES.md#P-006), así que la corrección de fondo — una
+      // membresía real por marca — no cabe aquí todavía. Lo que sí cabe:
+      // no decidir por la cuenta cuál marca le toca hoy. `/workspaces` ya
+      // existe para exactamente esto y ya sabe mostrar solo Trascendencia a
+      // quien no es super_admin, así que a nadie se le oculta nada que ya
+      // no viera.
+      return '/workspaces'
     default:
       // Sin perfil reconocible no hay a dónde mandarlo que no sea
       // preguntarle quién es. Este es el único caso legítimo de /login
