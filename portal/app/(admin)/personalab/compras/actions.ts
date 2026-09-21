@@ -84,7 +84,11 @@ export async function canjearCompra(purchaseId: string): Promise<{ error: string
   const cuenta = await resolverCuentaPorCorreo(compra.email, null)
   if (cuenta.estado === 'fallo') return { error: cuenta.motivo }
 
-  const perfil = await asegurarPerfilIndividual({ userId: cuenta.userId, email: compra.email })
+  const perfil = await asegurarPerfilIndividual({
+    userId: cuenta.userId,
+    email: compra.email,
+    cuentaEsNueva: cuenta.correoEnviado,
+  })
   if (perfil.estado === 'fallo') {
     return { error: `La cuenta se resolvió, pero no se pudo escribir su perfil: ${perfil.motivo}` }
   }

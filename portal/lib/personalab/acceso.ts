@@ -105,28 +105,53 @@ export async function otorgarAccesoExperiencia(params: {
   return { estado: 'ok', grantId: creado.id }
 }
 
-// Crea el perfil si el correo nunca había tocado el portal. Si ya existía
-// (por ejemplo, alguien que ya era participante de Trascendencia y ahora
-// también compra en PersonaLab), su rol NO se toca: pisarlo con
-// 'individual' le podría cerrar pantallas que ya tenía por su rol anterior,
-// y nadie pidió resolver esa mezcla aquí.
+// Deja el perfil como 'individual'. Si ya existía (por ejemplo, alguien que
+// ya era participante de Trascendencia y ahora también compra en
+// PersonaLab), su rol NO se toca: pisarlo con 'individual' le podría cerrar
+// pantallas que ya tenía por su rol anterior, y nadie pidió resolver esa
+// mezcla aquí.
+//
+// EL BUG QUE ESTO CORRIGE. `handle_new_user()`, el trigger que crea la fila
+// de `profiles` en cuanto nace la cuenta en `auth.users`, la deja en
+// `role = 'participant'` siempre: es el default de la columna, documentado
+// en la migración `20260911_1000_corrige_bypass_service_role.sql`. Ese
+// trigger corre ANTES de que este código llegue a mirar si `perfil` ya
+// existe, así que para una cuenta genuinamente nueva la fila YA está ahí
+// cuando se hace el `select` de abajo — con el rol equivocado. La versión
+// vieja de esta función leía "la fila existe" como "hay un rol anterior que
+// proteger" y no tocaba nada, así que una cuenta que nunca había pisado el
+// portal quedaba de 'participant' para siempre: al entrar, caía en
+// `/mi-retiro` (Trascendencia), no en `/mis-experiencias` (PersonaLab).
+// Reproducido en vivo el 2026-09-21 con una cuenta de prueba creada por el
+// mismo camino que usa el canje de una compra.
+//
+// LA DISTINCIÓN CORRECTA no es "¿existe la fila?", es "¿esta cuenta ya
+// tenía una vida en el portal ANTES de este flujo?". Esa es exactamente la
+// pregunta que `resolverCuentaPorCorreo` ya contesta con `correoEnviado`:
+// `true` es cuenta nueva o invitación reenviada (nada que proteger, el
+// 'participant' que tiene es el default del trigger, no una decisión de
+// nadie); `false` es una cuenta YA CONFIRMADA de antes (`email_exists`),
+// donde si puede haber un rol real que no se debe pisar.
 export async function asegurarPerfilIndividual(params: {
   userId: string
   email: string
+  cuentaEsNueva: boolean
 }): Promise<{ estado: 'ok' } | { estado: 'fallo'; motivo: string }> {
   const service = createServiceClient()
 
-  const { data: perfil } = await service
-    .from('profiles')
-    .select('id')
-    .eq('id', params.userId)
-    .maybeSingle()
+  if (!params.cuentaEsNueva) {
+    const { data: perfil } = await service
+      .from('profiles')
+      .select('id')
+      .eq('id', params.userId)
+      .maybeSingle()
 
-  if (perfil) return { estado: 'ok' }
+    if (perfil) return { estado: 'ok' }
+  }
 
   const { error } = await service
     .from('profiles')
-    .insert({ id: params.userId, email: params.email, role: 'individual' })
+    .upsert({ id: params.userId, email: params.email, role: 'individual' }, { onConflict: 'id' })
 
   if (error) return { estado: 'fallo', motivo: error.message }
   return { estado: 'ok' }
