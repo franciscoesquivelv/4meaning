@@ -18,6 +18,7 @@ import type { ExperienciaEditable, BloqueEditable } from '@/lib/personalab/edito
 import { ETIQUETA_TIEMPO, type Tiempo } from '../../../dominio'
 import { BTN_PRIMARIO, BTN_SECUNDARIO, BTN_FILA, BTN_PELIGRO, TARJETA } from '../../../tokens'
 import { Boton, Girador } from '../../../ui'
+import { PASTILLA_CURSO } from '@/lib/estilos/oficina'
 
 // ETAPA 3. Este componente ya no guarda en localStorage: cada acción
 // (agregar, editar, mover, borrar un bloque) escribe a la base real, contra
@@ -61,12 +62,14 @@ function idLocal(): string {
   return PREFIJO_LOCAL + Math.random().toString(36).slice(2) + Date.now().toString(36)
 }
 
+// Los cuatro tonos ya existen en `lib/estilos/oficina.ts` (TONO), en uso en
+// el resto de PersonaLab: cero token nuevo, cero contraste sin medir.
 const CHIP: Record<EstadoBloque, { texto: string; clase: string }> = {
-  limpio:    { texto: 'Todo guardado',       clase: 'text-slate-400' },
-  pendiente: { texto: 'Cambios sin guardar', clase: 'text-amber-600' },
-  guardando: { texto: 'Guardando',           clase: 'text-slate-400' },
-  guardado:  { texto: 'Guardado',            clase: 'text-emerald-600' },
-  error:     { texto: 'No se pudo guardar',  clase: 'text-red-600' },
+  limpio:    { texto: 'Todo guardado',       clase: 'text-gray-ui' },
+  pendiente: { texto: 'Cambios sin guardar', clase: 'text-terra-ui' },
+  guardando: { texto: 'Guardando',           clase: 'text-gray-ui' },
+  guardado:  { texto: 'Guardado',            clase: 'text-bien' },
+  error:     { texto: 'No se pudo guardar',  clase: 'text-alerta' },
 }
 
 // El orden importa: si un bloque está en error, eso manda sobre cualquier
@@ -115,6 +118,24 @@ export default function Editor({
   const [errorGlobal, setErrorGlobal] = useState<string | null>(null)
   const [conflicto, setConflicto] = useState<string | null>(null)
   const [recienCreado, setRecienCreado] = useState<string | null>(null)
+  // COLAPSAR ES UNA PREFERENCIA, NO UN ESTADO INICIAL. Vacío por defecto:
+  // toda tarjeta nace expandida, igual que se veía antes de que existiera
+  // este mecanismo, así que abrir una bisagra que ya tiene 10 bloques no
+  // cambia nada a primera vista. Colapsar una la vuelve compacta hasta que
+  // alguien la vuelva a abrir; sirve para escanear una bisagra larga sin
+  // perder la que se está editando. Hallazgo de Julian, verificado por Leo
+  // contra el mecanismo de autoguardado: envolver solo el cuerpo de la
+  // tarjeta (`<div className="p-4">`, no la cabecera) no toca `bloquesRef`,
+  // `estadosPorBloque` ni el `scrollIntoView` de `recienCreado`.
+  const [colapsados, setColapsados] = useState<Set<string>>(new Set())
+  function alternarColapso(clave: string) {
+    setColapsados(prev => {
+      const copia = new Set(prev)
+      if (copia.has(clave)) copia.delete(clave)
+      else copia.add(clave)
+      return copia
+    })
+  }
   const enfocarAlResaltar = useRef(false)
   const temporizadores = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map())
   // BUG REAL, ENCONTRADO PROBANDO EN EL NAVEGADOR, NO LEYENDO EL CÓDIGO:
@@ -604,9 +625,23 @@ export default function Editor({
         )}
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-[210px_minmax(0,1fr)_375px] gap-6 items-start">
+      {/* "Agregar bloque" siempre alcanzable, sin buscar el final de la
+          lista. Hace scroll suave al panel que ya existe, no lo duplica.
+          Hallazgo de Julian: el cambio que más se nota de todo el editor. */}
+      {bisagraActiva && (
+        <button
+          onClick={() => document.getElementById('agregar-bloque')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
+          className="fixed bottom-6 right-6 z-40 min-h-toque min-w-toque rounded-full bg-dom text-paper shadow-lg hover:bg-dom-deep transition-colors flex items-center justify-center text-2xl font-light"
+          title="Agregar bloque"
+          aria-label="Agregar bloque"
+        >
+          +
+        </button>
+      )}
+
+      <div className="grid grid-cols-1 lg:grid-cols-[180px_minmax(0,1fr)_320px] gap-6 items-start">
         {/* Riel de bisagras */}
-        <nav className="xl:sticky xl:top-[164px]">
+        <nav className="lg:sticky lg:top-[164px]">
           {TIEMPOS.map(t => {
             const bs = bisagras.filter(b => b.tiempo === t)
             if (bs.length === 0) return null
@@ -694,6 +729,8 @@ export default function Editor({
                 porBorrar={porBorrar === b.id}
                 borrando={borrando === b.id}
                 resaltado={recienCreado === b.id}
+                expandido={!colapsados.has(claveDe(b.id))}
+                onToggleExpandido={() => alternarColapso(claveDe(b.id))}
                 estado={estadosPorBloque.get(claveDe(b.id)) ?? 'limpio'}
                 onCambio={campos => actualizar(b.id, campos)}
                 onMover={d => mover(b.id, d)}
@@ -705,7 +742,7 @@ export default function Editor({
           </div>
 
           {bisagraActiva && (
-            <div className={`${TARJETA} p-4 mt-4`}>
+            <div id="agregar-bloque" className={`${TARJETA} p-4 mt-4 scroll-mt-24`}>
               <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-3">
                 Agregar bloque
               </div>
@@ -724,7 +761,7 @@ export default function Editor({
         </div>
 
         {/* Vista previa en teléfono */}
-        <div className="xl:sticky xl:top-[164px]">
+        <div className="lg:sticky lg:top-[164px]">
           <div className={`${TARJETA} p-3 mb-3`}>
             <div className="flex bg-slate-100 rounded-lg p-1">
               {(['participante', 'moderador'] as const).map(l => (
@@ -741,7 +778,7 @@ export default function Editor({
             </div>
           </div>
 
-          <div className="relative mx-auto" style={{ width: 375 }}>
+          <div className="relative mx-auto w-[375px] lg:w-[320px]">
             <div
               className="relative bg-[#FAF8F4] rounded-[40px] border-4 border-slate-800 overflow-hidden shadow-xl"
               style={{ height: 620 }}
@@ -793,7 +830,7 @@ function BotonTipo({ t, onClick, tenue = false }: { t: TipoBloque; onClick: () =
     <button
       onClick={onClick}
       title={definicion(t).ayuda}
-      className={`text-xs px-3 py-1.5 rounded-lg border transition-[background-color,border-color,transform] duration-100 active:scale-[0.97] hover:bg-slate-900 hover:text-white hover:border-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900/25 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-50 ${
+      className={`text-xs px-3 py-1.5 rounded-lg border transition-[background-color,border-color,transform] duration-100 active:scale-[0.97] hover:bg-dom hover:text-paper hover:border-dom focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dom/25 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-50 ${
         tenue ? 'border-slate-200 text-slate-500' : 'border-slate-300 text-slate-800 font-medium'
       }`}
     >
@@ -805,7 +842,7 @@ function BotonTipo({ t, onClick, tenue = false }: { t: TipoBloque; onClick: () =
 // ── Tarjeta de un bloque ────────────────────────────────────────
 
 function TarjetaBloque({
-  b, primero, ultimo, porBorrar, borrando, resaltado, estado,
+  b, primero, ultimo, porBorrar, borrando, resaltado, expandido, onToggleExpandido, estado,
   onCambio, onMover, onPedirBorrar, onCancelarBorrar, onBorrar,
 }: {
   b: Bloque
@@ -814,6 +851,8 @@ function TarjetaBloque({
   porBorrar: boolean
   borrando: boolean
   resaltado: boolean
+  expandido: boolean
+  onToggleExpandido: () => void
   estado: EstadoBloque
   onCambio: (campos: Partial<Bloque>) => void
   onMover: (delta: number) => void
@@ -822,6 +861,14 @@ function TarjetaBloque({
   onBorrar: () => void
 }) {
   const esNota = b.tipo === 'nota'
+  // La etiqueta del campo principal ya la declara el contrato, por tipo
+  // (bloques.ts). Mostrarla solo cuando de verdad agrega algo que el badge
+  // de arriba no dice: para los seis tipos de solo texto (texto/cita/
+  // consigna/aviso/nota/gesto) la etiqueta del campo y el nombre del tipo
+  // son la misma palabra, así que repetirla es ruido, no aclaración.
+  // Hallazgo de Leo, confirmado por Julian con la misma cita de línea.
+  const etiquetaCampoPrincipal = definicion(b.tipo).campos.texto?.etiqueta
+  const previa = typeof b.texto === 'string' && b.texto.trim() ? b.texto.trim() : null
 
   return (
     <div
@@ -831,59 +878,93 @@ function TarjetaBloque({
       } ${estado === 'error' ? 'ring-2 ring-red-300' : ''}`}
     >
       <div className="flex items-center justify-between gap-3 px-4 py-2.5 border-b border-slate-100 bg-slate-50/60">
-        <div className="flex items-center gap-2.5 min-w-0">
-          <span className="text-xs font-semibold text-slate-700">{definicion(b.tipo).nombre}</span>
+        <button
+          onClick={onToggleExpandido}
+          className="flex items-center gap-2.5 min-w-0 text-left"
+          title={expandido ? 'Colapsar' : 'Expandir'}
+        >
+          <span className="text-slate-400 text-[10px] flex-shrink-0 w-3">{expandido ? '▾' : '▸'}</span>
+          <span className="text-xs font-semibold text-slate-700 flex-shrink-0">{definicion(b.tipo).nombre}</span>
+          {!expandido && previa && (
+            <span className="text-xs text-slate-400 truncate">{previa}</span>
+          )}
+        </button>
+        <div className="flex items-center gap-2.5 flex-shrink-0">
+          {/* La audiencia casi siempre es "Todos": el valor con el que nace
+              todo bloque nuevo. Lo que está en su default no necesita caja;
+              solo "Solo moderador" pesa como una decisión real. Hallazgo de
+              Julian, confirmado por Leo contra el elemento HTML real (sigue
+              siendo el mismo `<select>`, solo cambia su clase). */}
           <select
             value={b.audiencia}
             onChange={e => onCambio({ audiencia: cambiarAudiencia(b.tipo, e.target.value as Audiencia) })}
             disabled={esNota}
-            className="text-[11px] border border-slate-200 rounded-md px-1.5 py-0.5 bg-white text-slate-600 disabled:opacity-60 disabled:cursor-not-allowed"
+            className={
+              b.audiencia === 'moderador'
+                ? `${PASTILLA_CURSO} pr-1 disabled:opacity-60 disabled:cursor-not-allowed`
+                : 'text-[11px] text-gray-ui bg-transparent border-none disabled:opacity-60 disabled:cursor-not-allowed'
+            }
             title={esNota ? 'Una nota nunca es pública: es su definición.' : 'Quién puede ver este bloque'}
           >
             <option value="todos">Todos</option>
             <option value="moderador">Solo moderador</option>
           </select>
           {estado === 'error' && (
-            <span className="text-[11px] text-red-600 font-medium">No se guardó</span>
+            <span className="text-[11px] text-alerta font-medium">No se guardó</span>
           )}
-        </div>
-        <div className="flex items-center gap-1 flex-shrink-0">
-          <button onClick={() => onMover(-1)} disabled={primero} className={BTN_FILA} title="Subir">↑</button>
-          <button onClick={() => onMover(1)} disabled={ultimo} className={BTN_FILA} title="Bajar">↓</button>
-          {porBorrar ? (
-            <>
-              <button onClick={onBorrar} disabled={borrando} className={BTN_PELIGRO}>
-                {borrando ? 'Quitando…' : 'Confirmar'}
+          <div className="flex items-center gap-1">
+            <button onClick={() => onMover(-1)} disabled={primero} className={BTN_FILA} title="Subir">↑</button>
+            <button onClick={() => onMover(1)} disabled={ultimo} className={BTN_FILA} title="Bajar">↓</button>
+            {porBorrar ? (
+              <>
+                <button onClick={onBorrar} disabled={borrando} className={BTN_PELIGRO}>
+                  {borrando ? 'Quitando…' : 'Confirmar'}
+                </button>
+                <button onClick={onCancelarBorrar} disabled={borrando} className={BTN_FILA}>Cancelar</button>
+              </>
+            ) : (
+              <button onClick={onPedirBorrar} className={`${BTN_FILA} hover:text-red-600 hover:border-red-200`}>
+                Quitar
               </button>
-              <button onClick={onCancelarBorrar} disabled={borrando} className={BTN_FILA}>Cancelar</button>
-            </>
-          ) : (
-            <button onClick={onPedirBorrar} className={`${BTN_FILA} hover:text-red-600 hover:border-red-200`}>
-              Quitar
-            </button>
-          )}
+            )}
+          </div>
         </div>
       </div>
 
+      {expandido && (
       <div className="p-4">
         {b.tipo === 'pausa' ? (
           <>
             <p className="text-sm text-slate-400">Un respiro. Nadie ve texto aquí.</p>
             <div className="mt-3">
-              <label className={ETIQUETA_INPUT}>Segundos de espera (máximo 30)</label>
+              <label className={ETIQUETA_INPUT}>
+                Segundos de espera (máximo {definicion('pausa').campos.segundos.max})
+              </label>
               <input
                 type="number"
-                min={0}
-                max={30}
+                min={definicion('pausa').campos.segundos.min}
+                max={definicion('pausa').campos.segundos.max}
                 value={b.segundos ?? ''}
                 onChange={e => onCambio({ segundos: e.target.value === '' ? undefined : Number(e.target.value) })}
                 placeholder="0"
                 className={`${INPUT} w-24`}
               />
-              <p className="text-[11px] text-slate-400 mt-1.5 leading-relaxed">
-                Cuánto espera la persona antes de que aparezca el botón para seguir. Sin este campo,
-                la pausa no detiene nada.
-              </p>
+              {/* `max` en un input numérico no bloquea teclear un número
+                  mayor, solo limita las flechitas. El lector SÍ recorta en
+                  silencio al techo (`PisoDeTiempo.tsx`, CEILING), así que
+                  sin este aviso alguien podía escribir 600 sin enterarse de
+                  que el participante nunca ve más de 30. Hallazgo de Leo. */}
+              {(b.segundos ?? 0) > definicion('pausa').campos.segundos.max! ? (
+                <p className="text-[11px] text-alerta mt-1.5 leading-relaxed">
+                  Se va a mostrar como {definicion('pausa').campos.segundos.max} segundos, el techo del
+                  sistema. La persona nunca espera más que eso.
+                </p>
+              ) : (
+                <p className="text-[11px] text-slate-400 mt-1.5 leading-relaxed">
+                  Cuánto espera la persona antes de que aparezca el botón para seguir. Sin este campo,
+                  la pausa no detiene nada.
+                </p>
+              )}
             </div>
           </>
         ) : CON_MEDIO.includes(b.tipo) ? (
@@ -972,9 +1053,9 @@ function TarjetaBloque({
           </>
         ) : (
           <>
-            <label className={ETIQUETA_INPUT}>
-              {b.tipo === 'objeto' ? 'Qué se tiene en la mano' : 'Texto'}
-            </label>
+            {etiquetaCampoPrincipal !== definicion(b.tipo).nombre && (
+              <label className={ETIQUETA_INPUT}>{etiquetaCampoPrincipal}</label>
+            )}
             {b.tipo === 'texto' || b.tipo === 'nota' ? (
               <textarea
                 value={b.texto ?? ''}
@@ -1016,9 +1097,30 @@ function TarjetaBloque({
               </div>
             )}
 
+            {/* UN GESTO DE SALA NO ES AUTOMÁTICAMENTE UN GESTO DIGITAL. Sin
+                marcar, el lector digital no lo pinta (falla cerrado, ver
+                lib/personalab/bloques.ts). Hallazgo de Daniel: bisagras
+                reales dicen "escríbelo a mano en tu libreta" a un comprador
+                digital-solo que nunca tuvo una libreta. */}
+            {b.tipo === 'gesto' && (
+              <label className="flex items-center gap-2 mt-3 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={b.aplicaDigital ?? false}
+                  onChange={e => onCambio({ aplicaDigital: e.target.checked })}
+                  className="w-4 h-4 rounded border-slate-300 accent-slate-900"
+                />
+                <span className="text-xs text-slate-600">Aplica al modo digital</span>
+                <span className="text-xs text-slate-400">
+                  Sin marcar, quien compra la experiencia por su cuenta no ve este gesto.
+                </span>
+              </label>
+            )}
+
           </>
         )}
       </div>
+      )}
     </div>
   )
 }

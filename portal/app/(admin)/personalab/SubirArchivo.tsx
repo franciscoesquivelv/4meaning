@@ -67,6 +67,13 @@ export default function SubirArchivo({
   const [avance, setAvance] = useState(0)
   const [motivo, setMotivo] = useState('')
   const [pendiente, setPendiente] = useState<File | null>(null)
+  // "Quitar" borra el archivo de verdad, 700ms después, en automático
+  // (`Editor.tsx`, `mediosAReemplazar` → `borrarMedio`). Un click sin
+  // confirmar tenía la misma severidad que borrar un bloque completo, que
+  // SÍ pide confirmar — dos niveles de fricción distintos para la misma
+  // pérdida real, a un click de distancia. Hallazgo de Leo, mismo patrón
+  // que ya usa `TarjetaBloque` (porBorrar/Confirmar/Cancelar).
+  const [confirmandoQuitar, setConfirmandoQuitar] = useState(false)
 
   function elegir() {
     const entrada = document.createElement('input')
@@ -182,13 +189,27 @@ export default function SubirArchivo({
           )}
           <span className="text-sm text-slate-700 truncate flex-1 min-w-0">{nombre ?? 'archivo'}</span>
           <div className="flex items-center gap-1.5 flex-shrink-0">
-            <button onClick={elegir} className={BTN_FILA}>Reemplazar</button>
-            <button
-              onClick={() => { setEstado('vacio'); setPendiente(null); onQuitar() }}
-              className={BTN_FILA}
-            >
-              Quitar
-            </button>
+            {confirmandoQuitar ? (
+              <>
+                <button
+                  onClick={() => { setConfirmandoQuitar(false); setEstado('vacio'); setPendiente(null); onQuitar() }}
+                  className={BTN_PELIGRO}
+                >
+                  Confirmar
+                </button>
+                <button onClick={() => setConfirmandoQuitar(false)} className={BTN_FILA}>Cancelar</button>
+              </>
+            ) : (
+              <>
+                <button onClick={elegir} className={BTN_FILA}>Reemplazar</button>
+                <button
+                  onClick={() => setConfirmandoQuitar(true)}
+                  className={`${BTN_FILA} hover:text-red-600 hover:border-red-200`}
+                >
+                  Quitar
+                </button>
+              </>
+            )}
           </div>
         </div>
       )}
