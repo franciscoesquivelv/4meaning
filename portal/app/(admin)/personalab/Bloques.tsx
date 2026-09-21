@@ -9,7 +9,7 @@ import { definicion, type Bloque } from '@/lib/personalab/bloques'
 // sistema, ampliado el 2026-09-11 por Elena para que se sienta como un corte
 // real y no un adorno entre párrafos.
 
-const ROTULO = 'text-[10px] font-semibold uppercase tracking-[0.16em] text-[#8F5341]'
+const ROTULO = 'text-[10px] font-semibold uppercase tracking-[0.16em] text-terra-ui'
 
 // UN ENLACE DE VIMEO/YOUTUBE NO ES UN ARCHIVO DE VIDEO. `revision.ts` y el
 // campo "O pega un enlace" del editor prometen los dos por igual ("Vimeo,
@@ -46,13 +46,16 @@ export default function BloqueLector({ b }: { b: Bloque }) {
       )
 
     case 'cita':
+      // Peso editorial sin serif: la marca descartó Cormorant para el sitio
+      // ("se descartó la capa serif editorial en el sitio", BRAND.md §5), así
+      // que la cita gana presencia por escala y aire, no por familia tipográfica.
       return (
         <figure className={mt}>
-          <blockquote className="text-[21px] md:text-[26px] leading-[1.5] md:leading-[1.45] font-extralight tracking-[-0.015em] text-[#002B34] border-l-2 border-[#D8AC96] pl-5 md:pl-7">
+          <blockquote className="text-[24px] md:text-[32px] leading-[1.42] md:leading-[1.36] font-extralight tracking-[-0.02em] text-dom border-l-[3px] border-terra-ui pl-6 md:pl-8">
             {b.texto}
           </blockquote>
           {b.autor && (
-            <figcaption className="mt-3 pl-5 md:pl-7 text-[12.5px] font-light text-[#676E6E]">
+            <figcaption className="mt-4 pl-6 md:pl-8 text-[12.5px] font-light text-gray-ui">
               {b.autor}
             </figcaption>
           )}
@@ -61,9 +64,9 @@ export default function BloqueLector({ b }: { b: Bloque }) {
 
     case 'consigna':
       return (
-        <div className={`${mt} border-t border-b border-[#E7E1D8] py-6 md:py-7`}>
+        <div className={`${mt} border-t border-b border-line py-6 md:py-7`}>
           <div className={ROTULO}>Consigna</div>
-          <p className="mt-3 text-[19px] md:text-[21px] leading-[1.55] font-light text-[#002B34]">
+          <p className="mt-3 text-[19px] md:text-[21px] leading-[1.55] font-light text-dom">
             {b.texto}
           </p>
         </div>
@@ -73,27 +76,27 @@ export default function BloqueLector({ b }: { b: Bloque }) {
       return (
         <div className={`${mt} flex gap-3.5 items-start`}>
           {/* Pluma: lo escrito a mano no se sube ni se transcribe */}
-          <svg className="w-4 h-4 text-[#8F5341] mt-1 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.6}>
+          <svg className="w-4 h-4 text-terra-ui mt-1 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.6}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 20h9M16.5 3.5a2.12 2.12 0 013 3L7 19l-4 1 1-4L16.5 3.5z" />
           </svg>
-          <p className="text-[15px] leading-[1.7] font-light text-[#676E6E] italic">{b.texto}</p>
+          <p className="text-[15px] leading-[1.7] font-light text-gray-ui italic">{b.texto}</p>
         </div>
       )
 
     case 'aviso':
       return (
-        <div className={`${mt} bg-[#F3EEE6] border-l-[3px] border-[#B9735A] rounded-r-lg px-5 py-4`}>
-          <p className="text-[15px] md:text-[16px] leading-[1.65] font-light text-[#14181B]">{b.texto}</p>
+        <div className={`${mt} bg-paper-2 border-l-[3px] border-terra-ui rounded-r-[10px] px-5 py-4`}>
+          <p className="text-[15px] md:text-[16px] leading-[1.65] font-light text-ink">{b.texto}</p>
         </div>
       )
 
     case 'objeto':
       return (
-        <div className={`${mt} border border-[#E7E1D8] rounded-xl px-5 py-5 bg-white/50`}>
+        <div className={`${mt} border border-line rounded-[10px] px-5 py-5 bg-paper-2`}>
           <div className={ROTULO}>En la mano</div>
-          <p className="mt-2.5 text-[17px] md:text-[18px] font-light text-[#002B34]">{b.texto}</p>
+          <p className="mt-2.5 text-[17px] md:text-[18px] font-light text-dom">{b.texto}</p>
           {b.pie && (
-            <p className="mt-2 text-[12.5px] leading-[1.6] font-light text-[#676E6E]">{b.pie}</p>
+            <p className="mt-2 text-[12.5px] leading-[1.6] font-light text-gray-ui">{b.pie}</p>
           )}
         </div>
       )
@@ -117,45 +120,54 @@ export default function BloqueLector({ b }: { b: Bloque }) {
     // ── Solo moderador ──
     case 'nota':
       return (
-        <div className={`${mt} bg-[#EFF3F4] border border-[#D5DEE0] rounded-xl px-5 py-4`}>
-          <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#4B6B72]">
+        <div className={`${mt} bg-paper-2 border border-line rounded-[10px] px-5 py-4`}>
+          <div className={ROTULO}>
             Para ti, no para el foro
           </div>
-          <p className="mt-2 text-[15px] leading-[1.65] font-light text-[#14181B]">{b.texto}</p>
+          <p className="mt-2 text-[15px] leading-[1.65] font-light text-ink">{b.texto}</p>
         </div>
       )
 
     case 'archivo':
       return (
-        <div className={`${mt} border border-[#E7E1D8] rounded-xl px-5 py-4 bg-white flex items-center gap-4`}>
-          <svg className="w-5 h-5 text-[#8F5341] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <div className={`${mt} border border-line rounded-[10px] px-5 py-4 bg-paper-2 flex items-center gap-4`}>
+          <svg className="w-5 h-5 text-terra-ui flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
             <path strokeLinecap="round" strokeLinejoin="round" d="M14 2v6h6" />
           </svg>
           <div className="min-w-0 flex-1">
-            <div className="text-[15px] font-light text-[#002B34] truncate">{b.nombreArchivo}</div>
-            {b.pie && <div className="text-[12.5px] font-light text-[#676E6E] mt-0.5">{b.pie}</div>}
+            <div className="text-[15px] font-light text-dom truncate">{b.nombreArchivo}</div>
+            {b.pie && <div className="text-[12.5px] font-light text-gray-ui mt-0.5">{b.pie}</div>}
           </div>
           <div className="flex items-center gap-3 flex-shrink-0">
-            {b.peso && <span className="text-[12px] text-[#676E6E] tabular-nums">{b.peso}</span>}
+            {b.peso && <span className="text-[12px] text-gray-ui tabular-nums">{b.peso}</span>}
             {b.descargable && b.medioId && <BotonDescargar medioId={b.medioId} />}
           </div>
         </div>
       )
 
     case 'imagen':
+      // Banner de apoyo, no fotografía dominante: proporción 2:1 fija en vez
+      // de la altura libre de antes, para que una foto vertical o muy grande
+      // no crezca a ocupar la pantalla. Es la instrucción explícita de
+      // Francisco del 2026-09-21: la imagen acompaña al título o al
+      // contenido, nunca lo reemplaza ni lo satura.
       return (
         <figure className={mt}>
           {b.url ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={b.url} alt={b.pie ?? ''} className="rounded-xl w-full object-cover" />
+            <img
+              src={b.url}
+              alt={b.pie ?? 'Imagen de apoyo'}
+              className="rounded-[10px] w-full aspect-[2/1] object-cover"
+            />
           ) : (
-            <div className="rounded-xl bg-[#EFE9E0] aspect-[3/2] flex items-center justify-center">
-              <span className="text-[12px] text-[#A69C90]">sin imagen</span>
+            <div className="rounded-[10px] bg-paper-2 aspect-[2/1] flex items-center justify-center">
+              <span className="text-[12px] text-gray-ui">sin imagen</span>
             </div>
           )}
           {b.pie && (
-            <figcaption className="mt-2.5 text-[12.5px] leading-[1.6] font-light text-[#676E6E]">
+            <figcaption className="mt-2.5 text-[12.5px] leading-[1.6] font-light text-gray-ui">
               {b.pie}
             </figcaption>
           )}
@@ -169,14 +181,14 @@ export default function BloqueLector({ b }: { b: Bloque }) {
           {incrustable ? (
             <iframe
               src={incrustable}
-              className="rounded-xl w-full aspect-video bg-[#1A2426]"
+              className="rounded-[10px] w-full aspect-video bg-ink"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
             />
           ) : b.url ? (
-            <video src={b.url} controls className="rounded-xl w-full bg-[#1A2426]" />
+            <video src={b.url} controls className="rounded-[10px] w-full bg-ink" />
           ) : (
-            <div className="rounded-xl bg-[#1A2426] aspect-video flex items-center justify-center relative">
+            <div className="rounded-[10px] bg-ink aspect-video flex items-center justify-center relative">
               <span className="w-12 h-12 rounded-full bg-white/15 flex items-center justify-center">
                 <svg className="w-4 h-4 text-white ml-0.5" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M8 5v14l11-7z" />
@@ -190,7 +202,7 @@ export default function BloqueLector({ b }: { b: Bloque }) {
             </div>
           )}
           {b.pie && (
-            <figcaption className="mt-2.5 text-[12.5px] leading-[1.6] font-light text-[#676E6E]">
+            <figcaption className="mt-2.5 text-[12.5px] leading-[1.6] font-light text-gray-ui">
               {b.pie}
             </figcaption>
           )}
@@ -218,15 +230,15 @@ export default function BloqueLector({ b }: { b: Bloque }) {
               className="w-full"
             />
           ) : (
-            <div className="rounded-xl bg-[#F3EEE6] border border-[#E7E1D8] px-5 py-4 flex items-center gap-3.5">
-              <svg className="w-5 h-5 text-[#8F5341] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <div className="rounded-[10px] bg-paper-2 border border-line px-5 py-4 flex items-center gap-3.5">
+              <svg className="w-5 h-5 text-terra-ui flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 18.5a6.5 6.5 0 006.5-6.5M12 18.5A6.5 6.5 0 015.5 12M12 18.5V22M12 2a3 3 0 013 3v7a3 3 0 11-6 0V5a3 3 0 013-3z" />
               </svg>
-              <span className="text-[13px] text-[#A69C90]">sin audio todavía</span>
+              <span className="text-[13px] text-gray-ui">sin audio todavía</span>
             </div>
           )}
           {(b.pie || b.duracion) && (
-            <figcaption className="mt-2.5 text-[12.5px] leading-[1.6] font-light text-[#676E6E] flex items-center gap-3">
+            <figcaption className="mt-2.5 text-[12.5px] leading-[1.6] font-light text-gray-ui flex items-center gap-3">
               {b.pie && <span>{b.pie}</span>}
               {b.duracion && <span className="tabular-nums">{b.duracion}</span>}
             </figcaption>

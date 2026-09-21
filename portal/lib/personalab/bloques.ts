@@ -270,6 +270,24 @@ export const CONTRATO = {
     margen: 'mt-8 md:mt-10',
     campos: {
       texto: { clase: 'texto', etiqueta: 'Gesto', exigencia: 'impide', ...FALTA_TEXTO },
+      // UN GESTO DE SALA NO ES AUTOMÁTICAMENTE UN GESTO DIGITAL. Hallazgo de
+      // Daniel, 2026-09-21: bisagras reales de "El Agradecimiento" y de "El
+      // Presente como Regalo" (esta última, la única que se vende hoy) dicen
+      // "escríbelo a mano en tu libreta" a un comprador digital-solo que
+      // nunca tuvo una libreta. El contrato no tenía ningún campo que
+      // declarara si ese gesto aplica al modo digital o depende de un
+      // objeto físico enviado por adelantado.
+      //
+      // Falla cerrado, como el resto de lo nuevo en este archivo: sin
+      // marcar, el gesto NO aparece en el lector digital. Quien construyó
+      // ese contenido para sala tiene que decidir, bloque por bloque, si
+      // aplica tal cual o si necesita reescribirse — no hereda una respuesta
+      // por defecto que nadie eligió.
+      aplicaDigital: {
+        clase: 'booleano',
+        etiqueta: 'Aplica al modo digital',
+        exigencia: 'opcional',
+      },
     },
   },
 
@@ -446,6 +464,7 @@ export interface Bloque {
   descargable?: boolean
   duracion?: string
   segundos?: number
+  aplicaDigital?: boolean
 }
 
 // ── La traducción, que vive aquí y en ningún otro sitio ─────────────────

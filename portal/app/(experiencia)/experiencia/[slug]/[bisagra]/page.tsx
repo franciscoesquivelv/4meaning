@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { cargarBisagra } from '@/lib/personalab/lectura'
 import BloqueLector from '@/app/(admin)/personalab/Bloques'
 import SinAcceso from '../../SinAcceso'
+import SinContenido from '../../SinContenido'
 import Fallo from '../../Fallo'
 import Escritura from '../../Escritura'
 import MarcarVisto from './MarcarVisto'
@@ -23,6 +24,7 @@ export default async function LeerBisagra({
 
   if (r.estado === 'fallo') return <Fallo motivo={r.motivo} />
   if (r.estado === 'sin-acceso') return <SinAcceso />
+  if (r.estado === 'sin-contenido') return <SinContenido />
 
   const { experiencia, bisagra, bloques, anterior, siguiente, primeraVez } = r.datos
 
@@ -32,6 +34,14 @@ export default async function LeerBisagra({
   const piso = primeraVez
     ? bloques.reduce((may, b) => (b.tipo === 'pausa' ? Math.max(may, b.segundos ?? 0) : may), 0)
     : 0
+
+  // UN GESTO DE SALA NO ES AUTOMÁTICAMENTE UN GESTO DIGITAL. Falla cerrado:
+  // sin marcar `aplicaDigital`, el gesto no se pinta aquí. Hallazgo de
+  // Daniel, 2026-09-21 — ver el comentario en `lib/personalab/bloques.ts`.
+  // Se filtra ANTES del vacío de abajo, no en el `.map`, para que una
+  // bisagra que se queda sin nada después de filtrar diga "sin contenido"
+  // en vez de dejar un hueco mudo entre el título y el paso siguiente.
+  const bloquesDigitales = bloques.filter(b => b.tipo !== 'gesto' || b.aplicaDigital === true)
 
   return (
     <main className="max-w-[620px] mx-auto px-6 py-12 md:py-16">
@@ -45,6 +55,15 @@ export default async function LeerBisagra({
         {experiencia.nombre}
       </Link>
 
+      {/* NO HAY CEJILLA DE TIEMPO AQUÍ, A PROPÓSITO. Se probó (2026-09-21) y
+          se quitó el mismo día: `bisagra.tiempo` no varía dentro de una
+          experiencia como "El Presente como Regalo" (sus cuatro bisagras
+          son todas 'ignicion'), así que se habría leído "IGNICIÓN" cuatro
+          veces seguidas — cero información, chrome que se repite igual
+          siempre. Julian y Sora coincidieron, por caminos separados, en que
+          esta pantalla no puede prometer algo que el calendario no sostiene.
+          El campo que sí varía y sí cumple ese rol es `tramo`, y ya se usa
+          así en el índice de la experiencia (`[slug]/page.tsx`). */}
       <h1 className="display text-[30px] md:text-[40px] text-dom mt-4">
         {bisagra.titulo}
       </h1>
@@ -61,7 +80,7 @@ export default async function LeerBisagra({
           que cambia es la entrega, que es justo la distinción sobre la que se
           armó el modo digital. */}
       <article className="mt-10">
-        {bloques.map(b =>
+        {bloquesDigitales.map(b =>
           b.tipo === 'consigna' ? (
             <Escritura key={b.id} bloqueId={b.id} consigna={b.texto ?? ''} />
           ) : (
@@ -70,7 +89,7 @@ export default async function LeerBisagra({
         )}
       </article>
 
-      {bloques.length === 0 && (
+      {bloquesDigitales.length === 0 && (
         <p className="text-[15px] text-gray-ui">
           Esta parte todavía no tiene contenido publicado.
         </p>
@@ -82,7 +101,7 @@ export default async function LeerBisagra({
         {anterior ? (
           <Link
             href={`/experiencia/${experiencia.slug}/${anterior.id}`}
-            className="text-[14px] text-gray-ui hover:text-dom transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dom rounded"
+            className="inline-flex min-h-toque items-center text-[14px] text-gray-ui hover:text-dom transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dom rounded"
           >
             Anterior
           </Link>
