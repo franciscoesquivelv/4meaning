@@ -34,27 +34,6 @@ la base) igual que exige el resto del protocolo de este portal.
 
 ## Abiertos / decididos
 
-### P-007 — Correr la migración que renombra las columnas reales de "foro"
-- Estado: **decidido, listo para correr**
-- Origen: parte de H-007 (2026-09-21). El código ya lee/escribe usando los
-  nombres viejos de columna (`abre_espacio_al_foro`, `personas_en_el_foro`)
-  detrás de campos de TypeScript ya renombrados (`abreEspacioAlGrupo`,
-  `personasEnElGrupo`) — funciona hoy sin la migración, así que esto no
-  bloquea nada, pero deja la base con nombres que ya no coinciden con el
-  código que la envuelve.
-- Qué se sabe: la migración está escrita y verificada por Daniel antes de
-  escribirse (cero RLS, cero vistas, cero funciones, cero CHECK, cero
-  índices dependen de estos dos nombres) —
-  `supabase/migrations/20260921_1900_foro_se_llama_grupo.sql`. No tengo
-  acceso directo a Postgres desde este worktree (`supabase link` no
-  encuentra el proyecto), así que no pude correrla yo mismo.
-- Dueño: Francisco (correrla en el editor SQL de Supabase) o dar acceso
-  para que Claude la corra directo.
-- Criterio de cierre: las dos columnas se llaman `abre_espacio_al_grupo` y
-  `personas_en_el_grupo`; los dos comentarios `TODO` en
-  `lib/personalab/catalogo.ts` y `experiencias/actions.ts` que referencian
-  esta migración se quitan en el mismo cambio.
-
 ### P-008 — `pl_titularidad.miembro_foro`, un valor de enum real
 - Estado: **abierto**
 - Origen: Daniel, 2026-09-21, al evaluar el alcance de H-007. Tiene la
@@ -123,6 +102,32 @@ la base) igual que exige el resto del protocolo de este portal.
 
 ## Hecho
 
+### H-009 — P-007 cerrado: la base ya se llama grupo, no foro
+- Estado: **hecho** — verificado 2026-09-21
+- Origen: Francisco corrió `supabase/migrations/20260921_1900_foro_se_llama_grupo.sql`
+  directo en el editor SQL del dashboard de Supabase (yo no tengo ni puedo
+  tener acceso para iniciar sesión ahí — es una de las cosas que tengo
+  prohibido hacer aunque se me autorice explícitamente).
+- Verificado con consulta real a la base (no lectura de código): las
+  columnas `experiences.abre_espacio_al_grupo` y `runs.personas_en_el_grupo`
+  existen y responden; los nombres viejos (`abre_espacio_al_foro`,
+  `personas_en_el_foro`) ya no existen, confirmado porque Postgres
+  devuelve "column does not exist" al pedirlos.
+- Quitadas las dos costuras de traducción que quedaban desde H-007:
+  `lib/personalab/catalogo.ts` (3 usos) y
+  `app/(admin)/personalab/experiencias/actions.ts` (2 usos) ya leen y
+  escriben directo `abre_espacio_al_grupo`/`personas_en_el_grupo`, sin el
+  comentario `TODO` que apuntaba a esta migración.
+- Verificado en el navegador con una cuenta desechable, contra la base
+  real (no datos de `dominio.ts`): la lista de Experiencias muestra bien
+  la columna "Espacio al grupo" para las seis experiencias reales; la
+  ficha de "El Presente como Regalo" la muestra bien; y el formulario de
+  editar la ficha SÍ escribe el valor nuevo en la base al guardar
+  (probado destildando el checkbox, confirmado `false` por consulta
+  directa, y restaurado a su valor original `true` de la misma forma,
+  también confirmado por consulta directa, para no dejar alterado un
+  dato real de producto).
+
 ### H-008 — P-001 cerrado: guion, kit y retorno se quedan igual
 - Estado: **hecho** — verificado 2026-09-21
 - Origen: continuación de P-001 sobre las tres palabras que quedaban
@@ -159,7 +164,7 @@ la base) igual que exige el resto del protocolo de este portal.
 
 ### H-007 — Foro se funde en grupo (código); migración lista, sin correr
 - Estado: **hecho** (código) — verificado 2026-09-21; migración de base
-  pendiente, ver P-007
+  corrida y verificada después, ver H-009
 - Origen: Francisco ("sigue con foro"), continuando H-006. Decisión de
   Nora: no es palabra nueva, es fundir dos etiquetas que ya nombraban lo
   mismo (el propio `dominio.ts` ya lo decía). Alcance verificado por

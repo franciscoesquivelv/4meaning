@@ -41,7 +41,7 @@ export async function crearExperiencia(
       nombre,
       subtitulo: input.subtitulo.trim() || null,
       duracion: input.duracion.trim() || null,
-      abre_espacio_al_foro: input.abreEspacioAlGrupo, // TODO: columna renombrada a abre_espacio_al_grupo -- ver supabase/migrations/20260921_1900_foro_se_llama_grupo.sql, pendiente de correr
+      abre_espacio_al_grupo: input.abreEspacioAlGrupo,
       created_by: guardia.user!.id,
     })
     .select('slug')
@@ -84,7 +84,7 @@ export async function actualizarFicha(
       narrativa: input.narrativa.trim() || null,
       duracion: input.duracion.trim() || null,
       nota_diseno: input.notaDiseno.trim() || null,
-      abre_espacio_al_foro: input.abreEspacioAlGrupo, // TODO: columna renombrada a abre_espacio_al_grupo -- ver supabase/migrations/20260921_1900_foro_se_llama_grupo.sql, pendiente de correr
+      abre_espacio_al_grupo: input.abreEspacioAlGrupo,
       updated_at: new Date().toISOString(),
     })
     .eq('id', experienceId)
