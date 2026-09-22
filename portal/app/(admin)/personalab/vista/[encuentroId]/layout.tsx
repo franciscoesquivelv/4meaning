@@ -5,9 +5,13 @@ import Link from 'next/link'
 // ANTES ERA UNA URL PUBLICA (/prototipo/lector). Cualquiera con el enlace
 // leia el contenido de una experiencia sin sesion. Ahora vive detras del
 // gate, y por eso deja de ser "el lector" para ser lo que de verdad es: una
-// PREVIA que mira el equipo. El lector del participante llegara cuando los
-// grants y la sesion de participante esten cableados, y entonces sera otra
-// ruta con otra puerta.
+// PREVIA que mira el equipo, con datos de muestra de `dominio.ts`/
+// `contenido.ts`. El lector real del participante YA EXISTE, en
+// app/(experiencia)/experiencia/[slug]/ -- gateado por sesion y por grant
+// real, no por esta previa. Las dos rutas comparten el mismo `BloqueLector`
+// (Bloques.tsx), así que un bloque se ve igual en las dos; el encabezado,
+// el pie y la paleta de esta previa NO son los de la ruta real (hallazgo
+// de Julian y Claude, 2026-09-21, docs/PENDIENTES.md P-009).
 //
 // Se enmarca en vez de ocupar la pantalla entera: dentro del portal, una
 // pantalla que finge ser el telefono de otra persona confunde sobre quien

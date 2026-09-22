@@ -34,6 +34,138 @@ la base) igual que exige el resto del protocolo de este portal.
 
 ## Abiertos / decididos
 
+### P-011 — Cinco cambios estructurales para que el lector deje de sentirse "muy sutil"
+- Estado: **abierto**
+- Origen: Julian, 2026-09-21, segunda vuelta después de que Francisco
+  repitiera la misma crítica tras H-005. Julian ya no sostiene su propio
+  veredicto anterior ("bien logrados"): dice que auditó cumplimiento de
+  marca, no si el conjunto se siente producido, y que su propia
+  unificación de tokens en H-005 (objeto/archivo/nota a un solo
+  contenedor) empeoró la monotonía que Francisco denuncia, porque antes
+  tres siluetas distintas rompían por accidente el patrón que hoy se ve
+  parejo. Nada de esto es copy ni contenido nuevo -- es forma, jurisdicción
+  de Julian, y él la respeta explícitamente (no decidió secuencia ni
+  contenido, eso es de Sora).
+- Los cinco, en el orden de apalancamiento que Julian dio:
+  1. Construir el cruce de tramo en el encabezado de bisagra -- decisión
+     YA APROBADA por el propio Julian el 2026-09-12 (su Consejo del
+     mismo día) y nunca construida. El dato ya existe (`Bisagra.tramo`),
+     la lógica de detección ya está escrita en el índice
+     (`[slug]/page.tsx:100`), solo falta aplicarla al vecino anterior en
+     `[bisagra]/page.tsx`.
+  2. Revisar con Sora el techo de frecuencia del umbral oscuro a pantalla
+     completa (`UmbralBienvenida.tsx`): hoy aparece UNA sola vez por
+     cuenta para siempre; la doctrina de Julian pide 2-3. No decide él
+     dónde, decide que la forma ya existe y está subusada.
+  3. Diferenciar SILUETA, no color, de los seis tipos de bloque
+     (consigna, aviso, nota, gesto, objeto, archivo) que hoy comparten
+     margen y contenedor casi idénticos (`mt-8 md:mt-10`,
+     `bg-paper-2 border border-line rounded-[10px]`), distinguidos solo
+     por el texto de un rótulo de 10px.
+  4. Aplicar degradado+grano al umbral y al nuevo encabezado de cruce de
+     tramo -- ya autorizado por BRAND.md §9, ya implementado en
+     `assets/brand.css:70-81` para el sitio público, con CERO uso en
+     todo PersonaLab (grep verificado). Cero token nuevo, cero hex nuevo.
+  5. Generalizar el patrón de `gesto` (ícono + tratamiento propio sin
+     imagen) a los demás tipos de bloque sin imagen, que hoy caen a
+     rótulo + texto plano sin ningún dispositivo visual.
+- Tensión sin resolver que Julian marcó y no decidió: `font-mono` en los
+  números del índice (`[slug]/page.tsx:110`) ya rompe BRAND.md §5 ("100%
+  sans, sin excepción") como precedente real -- punto para Marcus o
+  Francisco, no de Julian.
+- Dueño: sin asignar -- necesita que Francisco decida si esto se
+  construye ahora (es una vuelta de trabajo real, no un ajuste rápido) y,
+  si sí, con qué alcance de los cinco.
+- Criterio de cierre: cada uno de los cinco puntos que se decida
+  construir, verificado con ejecución real (captura de la bisagra real,
+  no de la previa de equipo) contra "El Presente como Regalo".
+
+### P-010 — El Presente como Regalo se ve vacío para cualquier comprador digital real
+- Estado: **abierto, urgente**
+- Origen: Claude, 2026-09-21, verificando con una cuenta real de comprador
+  individual (grant real, no cuenta de equipo) por qué el lector se sentía
+  "muy sutil". No es un problema de diseño: es que no hay nada que ver.
+  `/experiencia/presente-regalo` (la ruta real, verificada con sesión real,
+  no la previa de equipo) muestra "Son 0 pasos. Esta experiencia todavía no
+  tiene contenido publicado para leer en línea."
+- Qué se sabe, verificado con consulta directa a la base: la versión
+  publicada (`fc912c8a...`, número 2) SÍ tiene 9 bisagras reales y 19
+  bloques reales de contenido, 5 de las 9 bisagras marcadas `listo: true`.
+  Pero `cargarExperiencia()` (`lib/personalab/lectura.ts:160-166`) filtra
+  por `modo in ('digital','ambos')` ADEMÁS de `listo = true` -- un diseño
+  deliberado de Leo (Consejo del 2026-09-12, evitar bisagras vacías en el
+  lector) que falla cerrado a propósito. El problema es el dato: las 5
+  bisagras `listo: true` (Invitación al grupo, El inventario del hoy, La
+  carta al futuro, Capa mensual, Entrega de la carta) están TODAS en
+  `modo: 'presencial'` (el default de la columna); las 4 que sí están en
+  `modo: 'digital'` (Finitud, Gratitud, Silencio, Perdón) NO están
+  `listo`. Cero intersección → cero bisagras → "0 pasos" para cualquier
+  comprador digital real, hoy, en producción.
+- No hay control en el editor para esto: `Editor.tsx` no tiene ningún
+  campo que toque `hinges.modo` (grep verificado). Solo existe el
+  checkbox "Aplica al modo digital" que agregué hoy a nivel de BLOQUE
+  `gesto` (H-005) -- eso es un campo distinto, no ayuda aquí. Arreglar
+  esto hoy requiere escribir directo a la base, o construir el control
+  que falta en el editor.
+- Por qué no lo ejecuté solo: cuáles de las 5 bisagras terminadas deben
+  quedar `modo: digital` o `ambos` es una decisión de producto, no
+  técnica. Al menos una ("La carta al futuro") involucra un objeto físico
+  real (la carta se sella a mano, `contenido.ts:96-98`) y puede que a
+  propósito no deba abrirse igual sin ese objeto -- exactamente el tipo
+  de decisión que el campo `aplicaDigital` de H-005 existe para resolver
+  bloque por bloque, no experiencia por experiencia con un flip ciego.
+- Dueño: Francisco decide qué bisagras abren en digital; Claude ejecuta
+  en cuanto haya respuesta.
+- Criterio de cierre: una cuenta de comprador individual real ve al menos
+  una bisagra al entrar a `/experiencia/presente-regalo`, verificado con
+  sesión real, no con la previa de equipo.
+
+### P-009 — El lector no distingue peso: el sellado de la carta se ve igual que un calentamiento
+- Estado: **abierto**
+- Origen: Sora, 2026-09-21, juicio de sensación pedido por Francisco después
+  de repetir su crítica de UX/UI en producción real, tras la revisión de
+  Julian (H-005) que calificó los doce tipos de bloque como "bien logrados"
+  sin abrir el navegador. Corrección a la nota que Sora dejó aquí sobre la
+  cejilla "IGNICIÓN": Francisco la vio en `/personalab/vista/c3`, que
+  Claude confirmó después (y Julian, por separado, también) que es una
+  previa de EQUIPO con datos de muestra (`dominio.ts`/`contenido.ts`), un
+  árbol de código distinto de la ruta real del comprador
+  (`app/(experiencia)/experiencia/[slug]/[bisagra]/page.tsx`, sin rastro
+  de `ETIQUETA_TIEMPO`, confirmado por grep). La cejilla SÍ sigue viva en
+  `app/(admin)/personalab/vista/[encuentroId]/[bisagraId]/page.tsx:60,94`,
+  con su propia paleta hex suelta (`#002B34`, `#8F5341`, `#676E6E`) sin
+  tocar desde antes de H-005 -- es un hallazgo real, aparte, sin dueño
+  todavía (ver higiene fuera de encargo en la memoria de Julian,
+  interacción 22).
+- Qué se sabe: el contenedor (rótulo pequeño + línea `border-line` +
+  texto) es el mismo para TODO bloque de un mismo tipo, sin importar lo que
+  pide. En "El inventario del hoy" (p2), la consigna `b6` ("escribe cinco
+  cosas...", `Escritura.tsx`) es un calentamiento reversible: se puede
+  reescribir hasta cerrar la pestaña y no vuelve en ningún lado. En "La
+  carta al futuro" (p3), la consigna `b13` ("escribe tu nombre en el sobre
+  y ciérralo... vuelve a tus manos en seis meses", `contenido.ts:96-98`) es
+  el único gesto irreversible de todo el producto digital, el que sostiene
+  el arco de seis meses hasta `p5`. Las dos consignas usan exactamente el
+  mismo componente, con el mismo margen, el mismo rótulo. El bloque
+  `aviso` que sigue ("no se digitaliza, no se fotografía... te la
+  devolvemos cerrada", `b14`) también comparte molde con cualquier aviso
+  rutinario del sistema. El único bloque con margen distinto hoy es
+  `pausa` (`Bloques.tsx`, comentario de Elena del 2026-09-11: "el mayor
+  del sistema, para que se sienta como un corte real"), es decir que un
+  silencio de veinte segundos pesa hoy más, visualmente, que sellar una
+  carta a mano.
+- No es un hallazgo de forma (eso ya lo tiene Julian y no se re-litiga
+  aquí): es que ni un solo lugar del sistema marca, con espacio o con
+  quietud, que el sellado es distinto de los demás. No se propone copy
+  nuevo ni componente nuevo; el juicio completo, con las tres preguntas
+  contestadas, vive en la sesión de Sora del 2026-09-21.
+- Dueño: sin asignar — es alcance de producto (cuánto se invierte en un
+  solo momento) antes que decisión técnica.
+- Criterio de cierre: decisión explícita de si el sellado de `p3`
+  (consigna + objeto + aviso) recibe tratamiento sensorial distinto del
+  resto de las consignas del sistema, o si se decide a propósito que no lo
+  necesita. No cuenta como cerrado un cambio que solo reordene texto.
+
 ### P-008 — `pl_titularidad.miembro_foro`, un valor de enum real
 - Estado: **abierto**
 - Origen: Daniel, 2026-09-21, al evaluar el alcance de H-007. Tiene la
@@ -206,7 +338,16 @@ la base) igual que exige el resto del protocolo de este portal.
   la página de detalle de grupo donde debería anidarse).
 
 ### H-005 — Rediseño real del lector de participante y del editor, sección por sección
-- Estado: **hecho** — verificado 2026-09-21
+- Estado: **hecho para lo que cubrió** — verificado 2026-09-21, pero la
+  fila se queda corta del encargo original. Francisco vio el resultado en
+  producción el mismo día y repitió su crítica de siempre ("muy sutil").
+  Julian reabrió su propio veredicto (interacción 22 de su memoria): su
+  revisión (abajo) auditó cumplimiento de marca (tokens, radios, sans),
+  no si el CONJUNTO se siente producido, y son preguntas distintas que
+  pueden dar resultados opuestos sobre el mismo código. Lo que falta,
+  estructural y con dueño, sigue en P-011. Esta fila no se borra ni se
+  pasa a `abierto` -- lo que dice que se hizo, se hizo y se verificó; lo
+  que faltó, está en P-011, no aquí.
 - Origen: Francisco, 2026-09-21. "Necesito que sigamos mejorando el diseño
   de lo que ve el participante... que no sean cambios que prácticamente ni
   se notan, como siempre hacen... sección por sección, imposibilitando
