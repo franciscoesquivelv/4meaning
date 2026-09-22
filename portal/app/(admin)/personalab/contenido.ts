@@ -35,10 +35,10 @@ export const VERSIONES: Version[] = [
 
 // ── Semilla real, no lorem ──────────────────────────────────────
 // El Presente como Regalo, la unica experiencia del catalogo con bisagras
-// disenadas y con abreEspacioAlForo en true.
+// disenadas y con abreEspacioAlGrupo en true.
 
 export const BLOQUES: Bloque[] = [
-  // ── p1 · Invitacion al foro (vispera) ──
+  // ── p1 · Invitacion al grupo (vispera) ──
   {
     id: 'b1', bisagraId: 'p1', orden: 1, tipo: 'texto', audiencia: 'todos',
     texto: 'Dentro de una semana vamos a sentarnos juntos una tarde. No hace falta que prepares nada, ni que leas nada antes. Solo que vengas.\n\nLo único que te pedimos es que llegues sin prisa. Si puedes, deja libre lo que sigue después.',
@@ -268,7 +268,7 @@ export const BLOQUES: Bloque[] = [
   },
   {
     id: 'g24', bisagraId: 'ag5', orden: 6, tipo: 'nota', audiencia: 'moderador',
-    texto: 'NO cortes aquí. La siguiente bisagra va pegada a esta, sin descanso en medio. La grieta abre y la historia contiene lo que se abrió; si mandas al foro a un café en este punto, la gente sale cruda y no vuelve igual.',
+    texto: 'NO cortes aquí. La siguiente bisagra va pegada a esta, sin descanso en medio. La grieta abre y la historia contiene lo que se abrió; si mandas al grupo a un café en este punto, la gente sale cruda y no vuelve igual.',
   },
   {
     id: 'g25', bisagraId: 'ag5', orden: 7, tipo: 'video', audiencia: 'moderador',
@@ -433,7 +433,7 @@ export const BLOQUES: Bloque[] = [
   },
   {
     id: 'g60', bisagraId: 'ag12', orden: 3, tipo: 'nota', audiencia: 'moderador',
-    texto: 'El libro no se manda y no se descarga: se entrega, uno por uno, diciendo el nombre. Convoca al foro para esto aunque hayan pasado seis meses y cueste juntarlos.\n\nLa palabra de cierre retoma la del día cero. Quien no la recuerde, que no improvise: pídesela a quien lo formó.',
+    texto: 'El libro no se manda y no se descarga: se entrega, uno por uno, diciendo el nombre. Convoca al grupo para esto aunque hayan pasado seis meses y cueste juntarlos.\n\nLa palabra de cierre retoma la del día cero. Quien no la recuerde, que no improvise: pídesela a quien lo formó.',
   },
   {
     id: 'g61', bisagraId: 'ag12', orden: 4, tipo: 'imagen', audiencia: 'moderador',

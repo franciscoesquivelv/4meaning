@@ -7,7 +7,7 @@ export default function RetornoPage() {
   const enCurso = ENCUENTROS
     .filter(c => c.estado === 'realizado' && (c.mesDeRetorno ?? 0) < 6)
     .sort((a, b) => (b.mesDeRetorno ?? 0) - (a.mesDeRetorno ?? 0))
-  const personas = enCurso.reduce((s, c) => s + c.personasEnElForo, 0)
+  const personas = enCurso.reduce((s, c) => s + c.personasEnElGrupo, 0)
 
   return (
     <>
@@ -38,7 +38,7 @@ export default function RetornoPage() {
               </td>
               <td className={`${TD} text-slate-500`}>{grupo(c.grupoId)!.nombre}</td>
               <td className={`${TD} whitespace-nowrap`}>{fecha(c.fecha)}</td>
-              <td className={`${TD} tabular-nums`}>{c.personasEnElForo}</td>
+              <td className={`${TD} tabular-nums`}>{c.personasEnElGrupo}</td>
               <td className={`${TD} tabular-nums`}>{c.mesDeRetorno} de 6</td>
             </tr>
           ))}

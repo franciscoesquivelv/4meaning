@@ -22,7 +22,7 @@ export default function EditarFichaClient({ experiencia }: { experiencia: FichaE
     narrativa: experiencia.narrativa ?? '',
     duracion: experiencia.duracion ?? '',
     notaDiseno: experiencia.notaDiseno ?? '',
-    abreEspacioAlForo: experiencia.abreEspacioAlForo,
+    abreEspacioAlGrupo: experiencia.abreEspacioAlGrupo,
   })
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
@@ -104,11 +104,11 @@ export default function EditarFichaClient({ experiencia }: { experiencia: FichaE
           <label className="flex items-center gap-2.5 text-sm text-ink cursor-pointer">
             <input
               type="checkbox"
-              checked={form.abreEspacioAlForo}
-              onChange={e => setForm(f => ({ ...f, abreEspacioAlForo: e.target.checked }))}
+              checked={form.abreEspacioAlGrupo}
+              onChange={e => setForm(f => ({ ...f, abreEspacioAlGrupo: e.target.checked }))}
               className="w-4 h-4"
             />
-            Admite abrir acceso individual al foro, además del moderador
+            Admite abrir acceso individual al grupo, además del moderador
           </label>
 
           {error && <p className="text-sm text-alerta">{error}</p>}

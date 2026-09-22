@@ -7,7 +7,7 @@ export default function ModeradoresPage() {
   return (
     <>
       <Titulo
-        sub="Quiénes tienen acceso y en qué están formados. El acceso a una experiencia se le otorga al moderador, no al foro."
+        sub="Quiénes tienen acceso y en qué están formados. El acceso a una experiencia se le otorga al moderador, no al grupo."
         accion={<BotonPronto>+ Dar acceso</BotonPronto>}
       >
         Moderadores

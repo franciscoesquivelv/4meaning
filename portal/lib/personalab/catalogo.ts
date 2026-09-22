@@ -38,7 +38,7 @@ export interface ExperienciaResumen {
   subtitulo: string | null
   maduracion: string
   duracion: string | null
-  abreEspacioAlForo: boolean
+  abreEspacioAlGrupo: boolean
   bisagrasListas: number
   bisagrasTotal: number
   encuentros: number
@@ -66,7 +66,10 @@ export async function listarExperiencias(): Promise<Resultado<ExperienciaResumen
 
   const [expRes, versRes, runsRes] = await Promise.all([
     service.from('experiences')
-      .select('id, slug, nombre, subtitulo, maduracion, duracion, abre_espacio_al_foro')
+      // La columna real sigue llamándose abre_espacio_al_foro hasta que corra
+    // supabase/migrations/20260921_1900_foro_se_llama_grupo.sql -- el campo que
+    // sale de aquí ya se llama como debe.
+    .select('id, slug, nombre, subtitulo, maduracion, duracion, abre_espacio_al_foro')
       .order('nombre'),
     service.from('experience_versions').select('id, experience_id, estado'),
     service.from('runs').select('experience_id'),
@@ -115,7 +118,7 @@ export async function listarExperiencias(): Promise<Resultado<ExperienciaResumen
       subtitulo: e.subtitulo,
       maduracion: e.maduracion,
       duracion: e.duracion,
-      abreEspacioAlForo: e.abre_espacio_al_foro,
+      abreEspacioAlGrupo: e.abre_espacio_al_foro,
       bisagrasListas: conteo?.listas ?? 0,
       bisagrasTotal: conteo?.total ?? 0,
       encuentros: encuentrosPorExp.get(e.id) ?? 0,
@@ -152,7 +155,7 @@ export interface EncuentroFicha {
   moderadorNombre: string | null
   fecha: string | null
   estado: string
-  personasEnElForo: number
+  personasEnElGrupo: number
   sede: string | null
 }
 
@@ -164,7 +167,7 @@ export interface FichaExperiencia {
   narrativa: string | null
   maduracion: string
   duracion: string | null
-  abreEspacioAlForo: boolean
+  abreEspacioAlGrupo: boolean
   notaDiseno: string | null
   bisagras: BisagraFicha[]
   kit: PiezaKitFicha[]
@@ -205,6 +208,7 @@ export async function cargarFichaExperiencia(slug: string): Promise<Resultado<Fi
       .select('id, columna, nombre, detalle, por_persona, disponible')
       .eq('experience_id', exp.id),
     service.from('runs')
+      // Misma nota: personas_en_el_foro es el nombre real de la columna hoy.
       .select('id, chapter_id, moderador_id, fecha, estado, personas_en_el_foro, sede')
       .eq('experience_id', exp.id)
       .order('fecha', { ascending: false }),
@@ -241,7 +245,7 @@ export async function cargarFichaExperiencia(slug: string): Promise<Resultado<Fi
       narrativa: exp.narrativa,
       maduracion: exp.maduracion,
       duracion: exp.duracion,
-      abreEspacioAlForo: exp.abre_espacio_al_foro,
+      abreEspacioAlGrupo: exp.abre_espacio_al_foro,
       notaDiseno: exp.nota_diseno,
       bisagras: (hingesRes.data ?? []) as BisagraFicha[],
       kit: (kitRes.data ?? []).map(k => ({
@@ -254,7 +258,7 @@ export async function cargarFichaExperiencia(slug: string): Promise<Resultado<Fi
         moderadorNombre: moderadorPorId.get(r.moderador_id) ?? null,
         fecha: r.fecha,
         estado: r.estado,
-        personasEnElForo: r.personas_en_el_foro,
+        personasEnElGrupo: r.personas_en_el_foro,
         sede: r.sede,
       })),
     },

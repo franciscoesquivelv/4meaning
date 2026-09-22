@@ -7,9 +7,14 @@ import { Titulo, Tabla, Vacio, Etiqueta } from '../ui'
 import { TD, PASTILLA, ETIQUETA } from '../tokens'
 import { TONO } from '@/lib/estilos/oficina'
 
+// La clave 'miembro_foro' es el valor real del enum de la base
+// (`pl_titularidad`) -- no se toca aquí, es la misma categoría que
+// `pl_estado_corrida`: un valor de enum comparado en varios sitios, no
+// una etiqueta. Ver docs/PENDIENTES.md. Lo que sí cambia es lo que se
+// muestra.
 const ETIQUETA_TITULARIDAD: Record<string, string> = {
   moderador: 'Moderador',
-  miembro_foro: 'Miembro de foro',
+  miembro_foro: 'Miembro de grupo',
   individual: 'Cliente individual',
 }
 

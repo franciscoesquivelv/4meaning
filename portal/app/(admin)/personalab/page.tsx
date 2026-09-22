@@ -10,7 +10,7 @@ export default function ResumenPage() {
   const activos = ENCUENTROS.filter(c => ['confirmado', 'en_preparacion'].includes(c.estado))
   const proximos = [...activos].sort((a, b) => a.fecha.localeCompare(b.fecha))
   const enRetorno = ENCUENTROS.filter(c => c.estado === 'realizado' && (c.mesDeRetorno ?? 0) < 6)
-  const personasEnRetorno = enRetorno.reduce((s, c) => s + c.personasEnElForo, 0)
+  const personasEnRetorno = enRetorno.reduce((s, c) => s + c.personasEnElGrupo, 0)
   const faltantes = EXPERIENCIAS.flatMap(e => e.bisagras.filter(b => !b.listo))
   const sinDiseño = EXPERIENCIAS.filter(e => e.bisagras.length === 0)
 
@@ -96,7 +96,7 @@ export default function ResumenPage() {
                     key={c.id}
                     href={`/personalab/encuentros/${c.id}`}
                     titulo={e.nombre}
-                    sub={`${grp.nombre} · ${fecha(c.fecha)} · ${c.personasEnElForo || 'sin'} personas`}
+                    sub={`${grp.nombre} · ${fecha(c.fecha)} · ${c.personasEnElGrupo || 'sin'} personas`}
                     derecha={<Badge label={ESTADO_ENCUENTRO[c.estado].etiqueta} cls={COLOR_ESTADO[c.estado]} />}
                   />
                 )
@@ -151,14 +151,14 @@ export default function ResumenPage() {
 
           <TarjetaLista titulo="En retorno" verTodo={{ href: '/personalab/retorno', label: 'Ver todo' }}>
             {enRetorno.length === 0 ? (
-              <div className={VACIO_NEUTRO}>Ningún foro está en retorno ahora mismo.</div>
+              <div className={VACIO_NEUTRO}>Ningún grupo está en retorno ahora mismo.</div>
             ) : (
               enRetorno.map(c => (
                 <Fila
                   key={c.id}
                   href={`/personalab/encuentros/${c.id}`}
                   titulo={experiencia(c.experienciaId)!.nombre}
-                  sub={`${grupo(c.grupoId)!.nombre} · ${c.personasEnElForo} personas`}
+                  sub={`${grupo(c.grupoId)!.nombre} · ${c.personasEnElGrupo} personas`}
                   derecha={
                     <span className="text-xs text-slate-500 tabular-nums whitespace-nowrap">
                       Mes {c.mesDeRetorno} de 6

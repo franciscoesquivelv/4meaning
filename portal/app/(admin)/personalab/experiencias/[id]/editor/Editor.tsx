@@ -1061,7 +1061,7 @@ function TarjetaBloque({
                 value={b.texto ?? ''}
                 onChange={e => onCambio({ texto: e.target.value })}
                 rows={b.tipo === 'texto' ? 6 : 3}
-                placeholder={b.tipo === 'texto' ? 'Escribe. Admite **negrita**, *cursiva* y ## subtítulos.' : 'Lo que el moderador necesita saber y el foro no.'}
+                placeholder={b.tipo === 'texto' ? 'Escribe. Admite **negrita**, *cursiva* y ## subtítulos.' : 'Lo que el moderador necesita saber y el grupo no.'}
                 className={`${INPUT} resize-y leading-relaxed`}
               />
             ) : (

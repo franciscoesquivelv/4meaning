@@ -21,7 +21,7 @@ export default function EncuentrosPage() {
   return (
     <>
       <Titulo
-        sub="Cada vez que un moderador realiza una experiencia con su foro. Es la unidad de operación de PersonaLab, el equivalente al evento en Trascendencia."
+        sub="Cada vez que un moderador realiza una experiencia con su grupo. Es la unidad de operación de PersonaLab, el equivalente al evento en Trascendencia."
         accion={<BotonPronto>+ Nuevo encuentro</BotonPronto>}
       >
         Encuentros
@@ -64,9 +64,9 @@ export default function EncuentrosPage() {
                         <div className="text-xs text-slate-400 mt-0.5">{mod.nombre}</div>
 
                         <div className="flex flex-wrap items-center gap-1.5 mt-3">
-                          {c.personasEnElForo > 0 && (
+                          {c.personasEnElGrupo > 0 && (
                             <span className={`${PASTILLA} bg-slate-100 text-slate-600`}>
-                              {c.personasEnElForo} personas
+                              {c.personasEnElGrupo} personas
                             </span>
                           )}
                           {pendientes > 0 && (

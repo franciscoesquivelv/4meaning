@@ -59,7 +59,7 @@ export async function cargarProgreso(experienciaPedida?: string): Promise<Result
   const service = createServiceClient()
 
   // Un grant por experiencia basta para que aparezca en el selector, sin
-  // importar la titularidad: moderador, foro o cliente individual todos
+  // importar la titularidad: moderador, grupo o cliente individual todos
   // tienen una posición (o no) que dar seguimiento.
   const { data: grantsFilas, error: errGrants } = await service
     .from('grants')

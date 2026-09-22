@@ -10,7 +10,7 @@ import {
   COLOR_ESTADO, COLOR_SOPORTE, AVISO,
 } from '../../tokens'
 
-const FORO_EJEMPLO = [
+const GRUPO_EJEMPLO = [
   'Alejandro Vidal', 'Bárbara Nuño', 'Carlos Iturbe', 'Daniela Sosa',
   'Emilio Cantú', 'Fernanda Ríos', 'Gonzalo Peña', 'Helena Márquez',
   'Ignacio Robles', 'Julia Sandoval', 'Karim Nasser', 'Lorena Bustos',
@@ -18,7 +18,7 @@ const FORO_EJEMPLO = [
 ]
 
 const ACCIONES = [
-  'Cargar lista del foro',
+  'Cargar lista del grupo',
   'Enviar convocatoria',
   'Imprimir guion de sala',
   'Marcar como realizado',
@@ -32,7 +32,7 @@ export default function EncuentroPage({ params }: { params: { id: string } }) {
   const e = experiencia(c.experienciaId)!
   const grp = grupo(c.grupoId)!
   const mod = moderador(c.moderadorId)!
-  const foro = FORO_EJEMPLO.slice(0, c.personasEnElForo)
+  const integrantes = GRUPO_EJEMPLO.slice(0, c.personasEnElGrupo)
   const fases = Array.from(new Set(c.preparacion.map(p => p.fase)))
   const hechos = c.preparacion.filter(p => p.hecho).length
   const guion = e.bisagras.filter(b => b.tiempo === 'ignicion').sort((a, b) => a.orden - b.orden)
@@ -59,8 +59,12 @@ export default function EncuentroPage({ params }: { params: { id: string } }) {
         </div>
       </div>
 
+      {/* Sin la etiqueta "Grupo" delante: el nombre de cada grupo ya se
+          presenta a sí mismo ("Grupo Anáhuac"), repetirla aquí sonaba a
+          "Grupo Grupo Anáhuac". Las demás sí necesitan su etiqueta porque
+          su valor no se explica solo. */}
       <div className="flex flex-wrap gap-x-8 gap-y-2 text-xs text-slate-500 pb-5 mb-6 border-b border-slate-200">
-        <span>Grupo <b className="text-slate-900 font-medium">{grp.nombre}</b></span>
+        <span className="text-slate-900 font-medium">{grp.nombre}</span>
         <span>Moderador <b className="text-slate-900 font-medium">{mod.nombre}</b></span>
         <span>Fecha <b className="text-slate-900 font-medium">{fecha(c.fecha)}</b></span>
         {c.sede && <span>Sede <b className="text-slate-900 font-medium">{c.sede}</b></span>}
@@ -68,7 +72,7 @@ export default function EncuentroPage({ params }: { params: { id: string } }) {
 
       <FilaMetricas
         items={[
-          { v: String(c.personasEnElForo || 0), k: 'En el foro' },
+          { v: String(c.personasEnElGrupo || 0), k: 'En el grupo' },
           { v: `${hechos} / ${c.preparacion.length}`, k: 'Preparación' },
           { v: String(guion.length), k: 'Bisagras de sala' },
           { v: c.estado === 'realizado' ? `${c.mesDeRetorno} / 6` : 'sin retorno', k: 'Mes de retorno' },
@@ -193,18 +197,18 @@ export default function EncuentroPage({ params }: { params: { id: string } }) {
             </div>
           </div>
 
-          <TarjetaLista titulo="El foro">
+          <TarjetaLista titulo="El grupo">
             <div className="px-5 py-4">
               <p className="text-xs text-slate-500 leading-relaxed mb-3">
-                {e.abreEspacioAlForo
-                  ? 'Esta experiencia admite abrir acceso individual. Hoy nadie del foro lo tiene.'
+                {e.abreEspacioAlGrupo
+                  ? 'Esta experiencia admite abrir acceso individual. Hoy nadie del grupo lo tiene.'
                   : 'Esta experiencia no abre acceso individual. Nadie de esta lista necesita cuenta: todo pasa por el moderador.'}
               </p>
-              {foro.length === 0 ? (
-                <Vacio>La lista del foro todavía no se ha cargado.</Vacio>
+              {integrantes.length === 0 ? (
+                <Vacio>La lista del grupo todavía no se ha cargado.</Vacio>
               ) : (
                 <div className="flex flex-wrap gap-1.5">
-                  {foro.map(n => (
+                  {integrantes.map(n => (
                     <span key={n} className="text-xs px-2.5 py-1 rounded-full bg-slate-100 text-slate-700">
                       {n}
                     </span>

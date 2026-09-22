@@ -103,7 +103,7 @@ export default async function ExperienciaPage({ params }: { params: { id: string
       <div className="flex flex-wrap gap-x-8 gap-y-2 text-xs text-gray-ui pb-5 mb-6 border-b border-line">
         <span>Duración <b className="text-ink font-medium">{e.duracion ?? 'Por definir'}</b></span>
         <span>Se ha realizado <b className="text-ink font-medium">{e.encuentros.length === 0 ? 'nunca' : `${e.encuentros.length} ${e.encuentros.length === 1 ? 'vez' : 'veces'}`}</b></span>
-        <span>Espacio al foro <b className="text-ink font-medium">{e.abreEspacioAlForo ? 'sí' : 'no'}</b></span>
+        <span>Espacio al grupo <b className="text-ink font-medium">{e.abreEspacioAlGrupo ? 'sí' : 'no'}</b></span>
         <span>Bisagras <b className="text-ink font-medium tabular-nums">{listas} de {e.bisagras.length}</b></span>
       </div>
 
@@ -126,7 +126,7 @@ export default async function ExperienciaPage({ params }: { params: { id: string
               }
             >
               Esta experiencia no tiene ninguna bisagra definida todavía. No es que falte capturarla: es que
-              no está diseñada. Mientras siga así, no se puede correr ni licenciar a un capítulo.
+              no está diseñada. Mientras siga así, no se puede realizar ni licenciar a un grupo.
             </Vacio>
           ) : (
             TIEMPOS.map(t => {
@@ -222,7 +222,7 @@ export default async function ExperienciaPage({ params }: { params: { id: string
                 <Fila
                   key={c.id}
                   titulo={c.grupoNombre}
-                  sub={`${formatoFecha(c.fecha)} · ${c.personasEnElForo || 'sin'} personas${c.moderadorNombre ? ` · ${c.moderadorNombre}` : ''}`}
+                  sub={`${formatoFecha(c.fecha)} · ${c.personasEnElGrupo || 'sin'} personas${c.moderadorNombre ? ` · ${c.moderadorNombre}` : ''}`}
                   derecha={<Badge label={ETIQUETA_ESTADO_ENCUENTRO[c.estado] ?? c.estado} cls={TONO_ESTADO_ENCUENTRO[c.estado] ?? TONO.neutro} />}
                 />
               ))

@@ -58,7 +58,7 @@ export default function PortadaPage({
                 Estás viendo como moderador
               </div>
               <p className="mt-1.5 text-[14px] leading-[1.6] font-light text-[#14181B]">
-                Ves las notas de sala y los archivos que el foro no ve.{' '}
+                Ves las notas de sala y los archivos que el grupo no ve.{' '}
                 <Link href={`/personalab/vista/${c.id}`} className="underline underline-offset-2">
                   Ver como participante
                 </Link>

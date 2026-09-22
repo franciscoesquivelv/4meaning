@@ -184,7 +184,7 @@ export function revisar(experiencia: Experiencia, bloques: Bloque[]): Revision {
 
       // NO HAY REGLA SOBRE `descargable`, Y ESO ES UNA DECISIÓN.
       //
-      // Había una que avisaba cuando un descargable lo veía todo el foro,
+      // Había una que avisaba cuando un descargable lo veía todo el grupo,
       // porque descargable significaba guion de sala del moderador. Francisco
       // jubiló esa regla el 2026-09-13: al participante digital sí se le puede
       // pedir que imprima o descargue su hoja de trabajo.

@@ -28,7 +28,7 @@ export default function NuevaExperienciaPage() {
   const [slugTocado, setSlugTocado] = useState(false)
   const [subtitulo, setSubtitulo] = useState('')
   const [duracion, setDuracion] = useState('')
-  const [abreEspacioAlForo, setAbreEspacioAlForo] = useState(false)
+  const [abreEspacioAlGrupo, setAbreEspacioAlGrupo] = useState(false)
   const [pending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
 
@@ -41,7 +41,7 @@ export default function NuevaExperienciaPage() {
         slug: slug || aSlugVista(nombre),
         subtitulo,
         duracion,
-        abreEspacioAlForo,
+        abreEspacioAlGrupo,
       })
       if ('error' in r) { setError(r.error); return }
       router.push(`/personalab/experiencias/${r.slug}`)
@@ -109,11 +109,11 @@ export default function NuevaExperienciaPage() {
           <label className="flex items-center gap-2.5 text-sm text-ink cursor-pointer">
             <input
               type="checkbox"
-              checked={abreEspacioAlForo}
-              onChange={e => setAbreEspacioAlForo(e.target.checked)}
+              checked={abreEspacioAlGrupo}
+              onChange={e => setAbreEspacioAlGrupo(e.target.checked)}
               className="w-4 h-4"
             />
-            Admite abrir acceso individual al foro, además del moderador
+            Admite abrir acceso individual al grupo, además del moderador
           </label>
 
           {error && <p className="text-sm text-alerta">{error}</p>}

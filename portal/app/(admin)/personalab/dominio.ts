@@ -1,16 +1,24 @@
 // ── DOMINIO DE PERSONALAB ───────────────────────────────────────
-// "Capítulo" y "corrida" eran el léxico de Trascendencia (evento→corrida,
-// familia→foro), calcado aquí sin que nadie lo hubiera decidido para el
-// producto digital. Renombrado el 2026-09-21, a pedido explícito de
-// Francisco ("cambia los nombres"): capítulo → grupo, corrida → encuentro.
-// Esto es la palabra, no la estructura entera: "foro" como nombre propio de
-// cada grupo (`nombre: 'Foro Anáhuac'`) sigue como está, porque repensar
-// ESE vocabulario para las dos líneas es un frente aparte (docs/PENDIENTES.md
-// #P-001), no algo que se decide relabeleando una pantalla.
+// "Capítulo", "corrida" y "foro" eran el léxico de Trascendencia
+// (evento→corrida, familia→foro), calcado aquí sin que nadie lo hubiera
+// decidido para el producto digital. Renombrado el 2026-09-21, a pedido
+// explícito de Francisco ("cambia los nombres"): capítulo → grupo,
+// corrida → encuentro, y foro → grupo también — no es una tercera
+// palabra, es fundir dos etiquetas que ya nombraban lo mismo (decisión de
+// Nora: el propio texto de aquí ya decía "foro (el grupo que el moderador
+// convoca)", así que dejarlas separadas repetía el defecto que capítulo→
+// grupo vino a corregir).
 //
-// Equivalencia con Trascendencia, ya solo de referencia:
+// Lo que sigue sin repensar, a propósito, es el resto del léxico
+// compartido con Trascendencia (guion, kit, retorno) — es un frente
+// aparte (docs/PENDIENTES.md #P-001), no algo que se decide relabeleando
+// una pantalla.
+//
+// Equivalencia con Trascendencia, ya solo de referencia histórica (la
+// columna de la izquierda es cómo LE LLAMA TRASCENDENCIA a lo mismo, no
+// cómo se llama aquí):
 //   evento    → encuentro (una experiencia, un grupo, un moderador, una fecha)
-//   familia   → foro      (el grupo que el moderador convoca)
+//   familia   → grupo     (el grupo que el moderador convoca)
 //   itinerario→ guion     (las bisagras de la ignición, en orden)
 //   materiales→ kit       (físico, humano, administrativo)
 //   entregas  → retorno   (lo que sostiene a seis meses)
@@ -94,7 +102,7 @@ export interface Experiencia {
   subtitulo: string
   narrativa?: string
   maduracion: MaduracionExp
-  abreEspacioAlForo: boolean
+  abreEspacioAlGrupo: boolean
   duracion: string
   // Cuántas veces se ha realizado de verdad.
   encuentros: number
@@ -127,7 +135,7 @@ export interface Encuentro {
   moderadorId: string
   fecha: string
   estado: EstadoEncuentro
-  personasEnElForo: number
+  personasEnElGrupo: number
   sede?: string
   // Preparación: qué falta antes de realizarlo.
   preparacion: { titulo: string; hecho: boolean; fase: string }[]
@@ -145,17 +153,17 @@ export const EXPERIENCIAS: Experiencia[] = [
     subtitulo: 'Cerrando círculos',
     narrativa: 'No estás roto, estás mudando.',
     maduracion: 'piloto',
-    abreEspacioAlForo: false,
+    abreEspacioAlGrupo: false,
     duracion: 'Un día completo',
     encuentros: 1,
     notaDiseño: 'Sobre-desarrollada en lo conceptual, sub-desarrollada en lo vivencial. El retorno está entero sin diseñar.',
     bisagras: [
-      { id: 'm1', tiempo: 'vispera', orden: 1, titulo: 'La carta de convocatoria', descripcion: 'Lo que reciben los miembros del foro dos semanas antes. Define el tono con el que llegan.', soporte: 'pantalla', listo: true, requiere: ['Lista del foro'] },
+      { id: 'm1', tiempo: 'vispera', orden: 1, titulo: 'La carta de convocatoria', descripcion: 'Lo que reciben los miembros del grupo dos semanas antes. Define el tono con el que llegan.', soporte: 'pantalla', listo: true, requiere: ['Lista del grupo'] },
       { id: 'm2', tiempo: 'vispera', orden: 2, titulo: 'Lo que hay que traer', descripcion: 'Un objeto propio que represente algo que no termina de cerrarse.', soporte: 'objeto', listo: true },
       { id: 'm3', tiempo: 'vispera', orden: 3, titulo: 'Preparación de sala', descripcion: 'Checklist de materiales y disposición del espacio.', soporte: 'pantalla', listo: false },
       { id: 'm4', tiempo: 'ignicion', orden: 1, titulo: 'Muda', descripcion: 'Reconocer qué ya no sirve. Trabajo con el objeto que cada quien trajo.', soporte: 'sala', duracion: '90 min', listo: true, requiere: ['Objeto de cada participante', 'Círculo de sillas'] },
       { id: 'm5', tiempo: 'ignicion', orden: 2, titulo: 'Crisálida', descripcion: 'El tiempo intermedio. La parte más incómoda y la que no se puede acelerar.', soporte: 'sala', duracion: '120 min', listo: false },
-      { id: 'm6', tiempo: 'ignicion', orden: 3, titulo: 'Eclosión', descripcion: 'Lo que emerge. Se nombra en voz alta frente al foro.', soporte: 'sala', duracion: '75 min', listo: false },
+      { id: 'm6', tiempo: 'ignicion', orden: 3, titulo: 'Eclosión', descripcion: 'Lo que emerge. Se nombra en voz alta frente al grupo.', soporte: 'sala', duracion: '75 min', listo: false },
       { id: 'm7', tiempo: 'ignicion', orden: 4, titulo: 'Vuelo', descripcion: 'Ritual de cierre. Es lo único que sostiene el cuidado del participante.', soporte: 'objeto', duracion: '45 min', listo: true, requiere: ['Velas', 'Libreta de cada participante'] },
       { id: 'm8', tiempo: 'retorno', orden: 1, titulo: 'El gesto mínimo', descripcion: 'Lo que cada quien se comprometió a hacer, en una sola frase suya.', soporte: 'pantalla', listo: false },
       { id: 'm9', tiempo: 'retorno', orden: 2, titulo: 'Capa mensual', descripcion: 'Un solo puntero al mes. Nunca una racha, nunca un recordatorio de deuda.', soporte: 'pantalla', listo: false },
@@ -177,14 +185,14 @@ export const EXPERIENCIAS: Experiencia[] = [
     nombre: 'El Presente como Regalo',
     subtitulo: '',
     maduracion: 'lista',
-    abreEspacioAlForo: true,
+    abreEspacioAlGrupo: true,
     duracion: 'Media jornada',
     encuentros: 4,
     bisagras: [
-      { id: 'p1', tiempo: 'vispera', orden: 1, titulo: 'Invitación al foro', descripcion: 'Convocatoria breve, una semana antes.', soporte: 'pantalla', listo: true },
+      { id: 'p1', tiempo: 'vispera', orden: 1, titulo: 'Invitación al grupo', descripcion: 'Convocatoria breve, una semana antes.', soporte: 'pantalla', listo: true },
       { id: 'p2', tiempo: 'ignicion', orden: 1, titulo: 'El inventario del hoy', descripcion: 'Qué hay de valioso en el presente que no se está mirando.', soporte: 'sala', duracion: '60 min', listo: true },
       { id: 'p3', tiempo: 'ignicion', orden: 2, titulo: 'La carta al futuro', descripcion: 'Escrita a mano. No se sube ni se transcribe.', soporte: 'objeto', duracion: '45 min', listo: true },
-      { id: 'p4', tiempo: 'retorno', orden: 1, titulo: 'Capa mensual', descripcion: 'En curso con el foro Anáhuac. Mes 5 de 6.', soporte: 'pantalla', listo: true },
+      { id: 'p4', tiempo: 'retorno', orden: 1, titulo: 'Capa mensual', descripcion: 'En curso con el grupo Anáhuac. Mes 5 de 6.', soporte: 'pantalla', listo: true },
       { id: 'p5', tiempo: 'retorno', orden: 2, titulo: 'Entrega de la carta', descripcion: 'La carta escrita en la ignición vuelve a su autor a los seis meses. Se recibe, no se descarga.', soporte: 'objeto', listo: true },
     ],
     kit: [
@@ -199,7 +207,7 @@ export const EXPERIENCIAS: Experiencia[] = [
     nombre: 'El Nido Vacío',
     subtitulo: '',
     maduracion: 'diseño',
-    abreEspacioAlForo: true,
+    abreEspacioAlGrupo: true,
     duracion: 'Por definir',
     encuentros: 0,
     notaDiseño: 'Su unidad de participación está sin resolver: el grupo base es individual pero admite variante en pareja, y eso rompe el modelo.',
@@ -211,7 +219,7 @@ export const EXPERIENCIAS: Experiencia[] = [
     nombre: 'Propósito de Vida',
     subtitulo: '',
     maduracion: 'diseño',
-    abreEspacioAlForo: false,
+    abreEspacioAlGrupo: false,
     duracion: 'Por definir',
     encuentros: 0,
     notaDiseño: 'Se vende en la landing y no tiene diseño detrás. Es el hueco más urgente del catálogo.',
@@ -228,7 +236,7 @@ export const EXPERIENCIAS: Experiencia[] = [
   // descanso. La grieta abre y la historia contiene lo que se abrio. Cortar
   // entre las dos deja al participante crudo, que es el daño a evitar.
   //
-  // abreEspacioAlForo es true, y no por generosidad: el protocolo de retorno
+  // abreEspacioAlGrupo es true, y no por generosidad: el protocolo de retorno
   // es individual y dura seis meses, asi que cada persona necesita su propio
   // artefacto. Es la primera experiencia del catalogo donde el moderador no
   // puede ser el unico con acceso.
@@ -239,7 +247,7 @@ export const EXPERIENCIAS: Experiencia[] = [
     narrativa:
       'Nadie se dio a sí mismo la existencia. Este día no busca que salgas agradecido para siempre, sino que salgas con una historia tuya y con ganas de volver a ella.',
     maduracion: 'piloto',
-    abreEspacioAlForo: true,
+    abreEspacioAlGrupo: true,
     duracion: 'Un día, más seis meses de retorno',
     encuentros: 0,
     notaDiseño:
@@ -251,7 +259,7 @@ export const EXPERIENCIAS: Experiencia[] = [
         tiempo: 'vispera',
         orden: 1,
         titulo: 'La carta de convocatoria',
-        descripcion: 'Lo que recibe el foro dos semanas antes. Fija el tono y quita la tarea.',
+        descripcion: 'Lo que recibe el grupo dos semanas antes. Fija el tono y quita la tarea.',
         soporte: 'pantalla',
         listo: true,
       },
@@ -324,7 +332,7 @@ export const EXPERIENCIAS: Experiencia[] = [
           'Parejas armadas de antemano',
           'Espacio para separarlas, aunque sea en dos salas',
           'Círculo cerrado para la segunda mitad',
-          'Reloj a la vista del moderador, no del foro',
+          'Reloj a la vista del moderador, no del grupo',
         ],
       },
       {
@@ -417,7 +425,7 @@ export const EXPERIENCIAS: Experiencia[] = [
         columna: 'administrativo',
         nombre: 'Guion de sala, versión congelada',
         detalle:
-          'Cada foro corre sobre una versión que no cambia a mitad de los seis meses. Si el diseño se actualiza, el foro en curso termina con el que empezó.',
+          'Cada grupo corre sobre una versión que no cambia a mitad de los seis meses. Si el diseño se actualiza, el grupo en curso termina con el que empezó.',
         disponible: true,
       },
       {
@@ -433,11 +441,11 @@ export const EXPERIENCIAS: Experiencia[] = [
 ]
 
 export const GRUPOS: Grupo[] = [
-  { id: 'anahuac', nombre: 'Foro Anáhuac', ciudad: 'Ciudad de México', moderadorId: 'rodrigo' },
-  { id: 'monterrey', nombre: 'Foro Monterrey Norte', ciudad: 'Monterrey', moderadorId: 'ines' },
-  { id: 'guadalajara', nombre: 'Foro Guadalajara', ciudad: 'Guadalajara', moderadorId: 'tomas' },
-  { id: 'sansalvador', nombre: 'Foro San Salvador', ciudad: 'San Salvador', moderadorId: 'claudia' },
-  { id: 'bogota', nombre: 'Foro Bogotá', ciudad: 'Bogotá', moderadorId: 'esteban' },
+  { id: 'anahuac', nombre: 'Grupo Anáhuac', ciudad: 'Ciudad de México', moderadorId: 'rodrigo' },
+  { id: 'monterrey', nombre: 'Grupo Monterrey Norte', ciudad: 'Monterrey', moderadorId: 'ines' },
+  { id: 'guadalajara', nombre: 'Grupo Guadalajara', ciudad: 'Guadalajara', moderadorId: 'tomas' },
+  { id: 'sansalvador', nombre: 'Grupo San Salvador', ciudad: 'San Salvador', moderadorId: 'claudia' },
+  { id: 'bogota', nombre: 'Grupo Bogotá', ciudad: 'Bogotá', moderadorId: 'esteban' },
 ]
 
 export const MODERADORES: Moderador[] = [
@@ -456,12 +464,12 @@ export const ENCUENTROS: Encuentro[] = [
     moderadorId: 'rodrigo',
     fecha: '2026-08-15',
     estado: 'en_preparacion',
-    personasEnElForo: 12,
+    personasEnElGrupo: 12,
     sede: 'Casa de retiros Tepoztlán',
     preparacion: [
       { titulo: 'Moderador formado', hecho: true, fase: 'Antes de confirmar' },
       { titulo: 'Acuerdo de licencia firmado', hecho: true, fase: 'Antes de confirmar' },
-      { titulo: 'Lista del foro cargada', hecho: true, fase: 'Cuatro semanas antes' },
+      { titulo: 'Lista del grupo cargada', hecho: true, fase: 'Cuatro semanas antes' },
       { titulo: 'Carta de convocatoria enviada', hecho: true, fase: 'Dos semanas antes' },
       { titulo: 'Objetos del kit en sede', hecho: false, fase: 'Semana del encuentro' },
       { titulo: 'Guion de sala revisado con el moderador', hecho: false, fase: 'Semana del encuentro' },
@@ -476,13 +484,13 @@ export const ENCUENTROS: Encuentro[] = [
     moderadorId: 'rodrigo',
     fecha: '2026-03-07',
     estado: 'realizado',
-    personasEnElForo: 11,
-    sede: 'Oficinas del foro',
+    personasEnElGrupo: 11,
+    sede: 'Oficinas del grupo',
     mesDeRetorno: 5,
     preparacion: [
       { titulo: 'Moderador formado', hecho: true, fase: 'Antes de confirmar' },
       { titulo: 'Acuerdo de licencia firmado', hecho: true, fase: 'Antes de confirmar' },
-      { titulo: 'Lista del foro cargada', hecho: true, fase: 'Cuatro semanas antes' },
+      { titulo: 'Lista del grupo cargada', hecho: true, fase: 'Cuatro semanas antes' },
       { titulo: 'Carta de convocatoria enviada', hecho: true, fase: 'Dos semanas antes' },
       { titulo: 'Objetos del kit en sede', hecho: true, fase: 'Semana del encuentro' },
     ],
@@ -494,11 +502,11 @@ export const ENCUENTROS: Encuentro[] = [
     moderadorId: 'ines',
     fecha: '2026-09-19',
     estado: 'confirmado',
-    personasEnElForo: 9,
+    personasEnElGrupo: 9,
     preparacion: [
       { titulo: 'Moderador formado', hecho: true, fase: 'Antes de confirmar' },
       { titulo: 'Acuerdo de licencia firmado', hecho: false, fase: 'Antes de confirmar' },
-      { titulo: 'Lista del foro cargada', hecho: false, fase: 'Cuatro semanas antes' },
+      { titulo: 'Lista del grupo cargada', hecho: false, fase: 'Cuatro semanas antes' },
       { titulo: 'Carta de convocatoria enviada', hecho: false, fase: 'Dos semanas antes' },
       { titulo: 'Objetos del kit en sede', hecho: false, fase: 'Semana del encuentro' },
     ],
@@ -510,7 +518,7 @@ export const ENCUENTROS: Encuentro[] = [
     moderadorId: 'esteban',
     fecha: '2026-10-24',
     estado: 'prospecto',
-    personasEnElForo: 0,
+    personasEnElGrupo: 0,
     preparacion: [
       { titulo: 'Moderador formado', hecho: true, fase: 'Antes de confirmar' },
       { titulo: 'Acuerdo de licencia firmado', hecho: false, fase: 'Antes de confirmar' },
@@ -523,12 +531,12 @@ export const ENCUENTROS: Encuentro[] = [
     moderadorId: 'tomas',
     fecha: '2026-05-30',
     estado: 'realizado',
-    personasEnElForo: 14,
+    personasEnElGrupo: 14,
     mesDeRetorno: 2,
     preparacion: [
       { titulo: 'Moderador formado', hecho: true, fase: 'Antes de confirmar' },
       { titulo: 'Acuerdo de licencia firmado', hecho: true, fase: 'Antes de confirmar' },
-      { titulo: 'Lista del foro cargada', hecho: true, fase: 'Cuatro semanas antes' },
+      { titulo: 'Lista del grupo cargada', hecho: true, fase: 'Cuatro semanas antes' },
       { titulo: 'Carta de convocatoria enviada', hecho: true, fase: 'Dos semanas antes' },
       { titulo: 'Objetos del kit en sede', hecho: true, fase: 'Semana del encuentro' },
     ],
@@ -540,12 +548,12 @@ export const ENCUENTROS: Encuentro[] = [
     moderadorId: 'ines',
     fecha: '2026-09-26',
     estado: 'en_preparacion',
-    personasEnElForo: 10,
+    personasEnElGrupo: 10,
     sede: 'Casa de la colonia Obispado',
     preparacion: [
       { titulo: 'Moderador formado', hecho: true, fase: 'Antes de confirmar' },
       { titulo: 'Acuerdo de licencia firmado', hecho: true, fase: 'Antes de confirmar' },
-      { titulo: 'Lista del foro cargada', hecho: true, fase: 'Cuatro semanas antes' },
+      { titulo: 'Lista del grupo cargada', hecho: true, fase: 'Cuatro semanas antes' },
       { titulo: 'Carta de convocatoria enviada', hecho: true, fase: 'Dos semanas antes' },
       { titulo: 'Libretas del ancla en sede', hecho: false, fase: 'Semana del encuentro' },
       { titulo: 'Guion de sala impreso', hecho: false, fase: 'Semana del encuentro' },

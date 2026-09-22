@@ -70,7 +70,7 @@ export default async function ExperienciasPage() {
       </Titulo>
 
       <Explicativo titulo="¿A quién se le otorga el acceso?">
-        Siempre al <b>moderador</b>, que compra para su foro. La columna de espacio al foro dice si esa
+        Siempre al <b>moderador</b>, que compra para su grupo. La columna de espacio al grupo dice si esa
         experiencia además admite abrir acceso individual a cada persona. Se decide experiencia por
         experiencia, no como regla general.
       </Explicativo>
@@ -86,7 +86,7 @@ export default async function ExperienciasPage() {
           Todavía no hay ninguna experiencia en el catálogo.
         </Vacio>
       ) : (
-        <Tabla cabeceras={['Experiencia', 'Estado', 'Duración', 'Bisagras', 'Encuentros', 'Espacio al foro']}>
+        <Tabla cabeceras={['Experiencia', 'Estado', 'Duración', 'Bisagras', 'Encuentros', 'Espacio al grupo']}>
           {experiencias.map(e => (
             <tr key={e.id} className="hover:bg-paper-2 transition-colors">
               <td className={TD}>
@@ -115,7 +115,7 @@ export default async function ExperienciasPage() {
                 {e.encuentros === 0 ? <span className="text-terra-ui">nunca</span> : e.encuentros}
               </td>
               <td className={`${TD} text-gray-ui`}>
-                {e.abreEspacioAlForo ? 'Sí, si el moderador lo abre' : 'No, todo pasa por el moderador'}
+                {e.abreEspacioAlGrupo ? 'Sí, si el moderador lo abre' : 'No, todo pasa por el moderador'}
               </td>
             </tr>
           ))}

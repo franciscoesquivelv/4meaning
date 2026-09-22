@@ -122,7 +122,7 @@ export default function BloqueLector({ b }: { b: Bloque }) {
       return (
         <div className={`${mt} bg-paper-2 border border-line rounded-[10px] px-5 py-4`}>
           <div className={ROTULO}>
-            Para ti, no para el foro
+            Para ti, no para el grupo
           </div>
           <p className="mt-2 text-[15px] leading-[1.65] font-light text-ink">{b.texto}</p>
         </div>
