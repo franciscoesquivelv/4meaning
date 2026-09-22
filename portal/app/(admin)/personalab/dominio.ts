@@ -9,14 +9,21 @@
 // convoca)", así que dejarlas separadas repetía el defecto que capítulo→
 // grupo vino a corregir).
 //
-// Lo que sigue sin repensar, a propósito, es el resto del léxico
-// compartido con Trascendencia (guion, kit, retorno) — es un frente
-// aparte (docs/PENDIENTES.md #P-001), no algo que se decide relabeleando
-// una pantalla.
+// P-001 (docs/PENDIENTES.md) se cerró el 2026-09-21 para las tres
+// palabras que quedaban: guion, kit y retorno se quedan igual. No son
+// "léxico compartido con Trascendencia heredado de YPO" — esa frase,
+// escrita aquí antes de investigar, no se sostuvo. Nora verificó que
+// ninguna viene de YPO (nacieron dentro de la casa, antes de que
+// existiera esa pregunta: "retorno" es el nombre que Francisco le dio al
+// protocolo desde el consejo del 7 de julio, "kit" se acuñó ese mismo
+// día para el entregable de tres piezas, "guion" ya nombraba el runbook
+// del moderador desde entonces). Y la tabla de abajo lo prueba por su
+// cuenta: Trascendencia usa OTRAS palabras para lo mismo (itinerario,
+// materiales, entregas) — no comparten término, tienen equivalentes.
 //
-// Equivalencia con Trascendencia, ya solo de referencia histórica (la
-// columna de la izquierda es cómo LE LLAMA TRASCENDENCIA a lo mismo, no
-// cómo se llama aquí):
+// Equivalencia con Trascendencia, de referencia (la columna de la
+// izquierda es cómo LE LLAMA TRASCENDENCIA a lo mismo, no cómo se llama
+// aquí):
 //   evento    → encuentro (una experiencia, un grupo, un moderador, una fecha)
 //   familia   → grupo     (el grupo que el moderador convoca)
 //   itinerario→ guion     (las bisagras de la ignición, en orden)

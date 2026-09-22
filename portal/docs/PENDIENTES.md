@@ -68,26 +68,6 @@ la base) igual que exige el resto del protocolo de este portal.
   cambiada es suficiente y este valor se queda como deuda interna
   invisible para siempre.
 
-### P-001 — Vocabulario propio, sin YPO, para las dos líneas
-- Estado: **abierto** (tres palabras ya resueltas, ver H-006/H-007 en Hecho)
-- Origen: Francisco, 2026-09-21. "Esas palabras tampoco me gustan para
-  trascendencia... en general tienen que tener otro vocabulario. Ya te dije
-  que YPO tiene que quedar por aparte, no le estamos vendiendo a ellos."
-- Qué se sabe: `capítulo`→`grupo`, `corrida`→`encuentro` y `foro`→`grupo`
-  (el mismo grupo, fundidos en una sola palabra) ya se hicieron. Lo que
-  sigue abierto es `guion`, `kit`, `retorno` — el resto del "Léxico
-  vinculante del Consejo #002" (`dominio.ts:1-14`), heredado de la
-  estructura de YPO. Francisco pide repensarlo para AMBAS líneas, no solo
-  relabelear PersonaLab.
-- Dueño: Claude investiga alcance (dónde aparece cada término, en cuál línea,
-  en label vs. en dato vs. en nombre de columna) y lo trae al consejo
-  (Daniel ya lo señaló; falta Nora, que es quien piensa el copy) antes de
-  proponer nombres. No se inventa vocabulario sin pasar por el consejo:
-  es exactamente el atajo que Francisco pidió dejar de tomar.
-- Criterio de cierre: propuesta de vocabulario nueva, aprobada por Francisco,
-  aplicada en TODOS los lugares donde aparece el término viejo (label, dato,
-  y donde sea razonable, nombre de ruta) — no una parte.
-
 ### P-003 — Moderadores anidados dentro de su grupo
 - Estado: **decidido**
 - Origen: Francisco, 2026-09-21. Confirmado: un grupo tiene UN moderador
@@ -143,6 +123,40 @@ la base) igual que exige el resto del protocolo de este portal.
 
 ## Hecho
 
+### H-008 — P-001 cerrado: guion, kit y retorno se quedan igual
+- Estado: **hecho** — verificado 2026-09-21
+- Origen: continuación de P-001 sobre las tres palabras que quedaban
+  después de H-006/H-007. El propio archivo `dominio.ts` las llamaba
+  "léxico compartido con Trascendencia, heredado de YPO" sin haberlo
+  verificado nunca — este pendiente era exactamente para comprobar eso
+  antes de tocar nada.
+- Nora verificó (contra su propia memoria del proyecto, no por intuición)
+  que ninguna de las tres viene de YPO: las tres se acuñaron dentro de la
+  casa el 2026-07-07, en el consejo del protocolo de retorno, dos meses y
+  medio antes de que existiera la pregunta de vocabulario YPO. Y que
+  Trascendencia no comparte estas palabras — tiene las suyas propias para
+  lo mismo (itinerario, materiales, entregas; ver la tabla de
+  equivalencia en `dominio.ts`), así que "compartido" tampoco era cierto.
+  Decisión: no cambia ninguna etiqueta.
+- Daniel verificó el alcance técnico igual que para foro, por si acaso
+  algo sí cambiaba: `guion` no toca la base (cero objetos Postgres);
+  `kit` es una tabla real (`kit_pieces`) de un solo consumidor, de solo
+  lectura, sin FK/CHECK/vista — rename hubiera sido barato si hacía
+  falta; `retorno` es el más profundo de los tres, un valor de enum real
+  (`pl_tiempo`) cuyo ORDEN se usa estructuralmente en
+  `solo_avanza_marcador()`, más una tabla dormida (`public.returns`, cero
+  consumidores) y una capa TS activa. Hallazgo de Daniel para dejar
+  anotado aunque hoy no aplique: `lib/personalab/progreso.ts:147`
+  compara el string literal `'retorno'` a mano contra `hinge.tiempo` en
+  un diccionario de orden; si algún día se renombra ese valor de enum sin
+  tocar esa línea en el mismo cambio, la posición cae en silencio a `9`.
+- Corregido en `app/(admin)/personalab/dominio.ts`: el comentario que
+  encuadraba mal las tres palabras. Ningún otro archivo cambia — no hay
+  relabeling que aplicar porque no hay palabra nueva.
+- Con esto, P-001 queda completo: `capítulo`→`grupo` y `corrida`→
+  `encuentro` (H-006), `foro`→`grupo` (H-007), y `guion`/`kit`/`retorno`
+  confirmados como ya propios (H-008).
+
 ### H-007 — Foro se funde en grupo (código); migración lista, sin correr
 - Estado: **hecho** (código) — verificado 2026-09-21; migración de base
   pendiente, ver P-007
@@ -181,8 +195,8 @@ la base) igual que exige el resto del protocolo de este portal.
 - Kit ya no aparece en `PersonaLabNav.tsx`. Su contenido real sigue en
   `Experiencia.kit`, sin pantalla propia — migrarlo a un documento interno
   de verdad queda pendiente, no se inventó hoy.
-- Sin tocar, a propósito: `foro`, `guion`, `retorno` y el resto del léxico
-  compartido con Trascendencia — eso es P-001, sigue abierto. Moderadores
+- Sin tocar, a propósito: `foro` (resuelto después en H-007) y `guion`,
+  `kit`, `retorno` (resueltos después en H-008, sin cambio). Moderadores
   sigue como pestaña plana — eso es P-003, sigue abierto (falta construir
   la página de detalle de grupo donde debería anidarse).
 
