@@ -34,17 +34,51 @@ la base) igual que exige el resto del protocolo de este portal.
 
 ## Abiertos / decididos
 
+### P-007 — Correr la migración que renombra las columnas reales de "foro"
+- Estado: **decidido, listo para correr**
+- Origen: parte de H-007 (2026-09-21). El código ya lee/escribe usando los
+  nombres viejos de columna (`abre_espacio_al_foro`, `personas_en_el_foro`)
+  detrás de campos de TypeScript ya renombrados (`abreEspacioAlGrupo`,
+  `personasEnElGrupo`) — funciona hoy sin la migración, así que esto no
+  bloquea nada, pero deja la base con nombres que ya no coinciden con el
+  código que la envuelve.
+- Qué se sabe: la migración está escrita y verificada por Daniel antes de
+  escribirse (cero RLS, cero vistas, cero funciones, cero CHECK, cero
+  índices dependen de estos dos nombres) —
+  `supabase/migrations/20260921_1900_foro_se_llama_grupo.sql`. No tengo
+  acceso directo a Postgres desde este worktree (`supabase link` no
+  encuentra el proyecto), así que no pude correrla yo mismo.
+- Dueño: Francisco (correrla en el editor SQL de Supabase) o dar acceso
+  para que Claude la corra directo.
+- Criterio de cierre: las dos columnas se llaman `abre_espacio_al_grupo` y
+  `personas_en_el_grupo`; los dos comentarios `TODO` en
+  `lib/personalab/catalogo.ts` y `experiencias/actions.ts` que referencian
+  esta migración se quitan en el mismo cambio.
+
+### P-008 — `pl_titularidad.miembro_foro`, un valor de enum real
+- Estado: **abierto**
+- Origen: Daniel, 2026-09-21, al evaluar el alcance de H-007. Tiene la
+  misma forma que `pl_estado_corrida` (aplazado en H-006): es un VALOR de
+  enum, no un nombre de columna, comparado y renderizado en varios sitios.
+  Se dejó intacto a propósito — solo se cambió su etiqueta visible
+  ("Miembro de grupo" en `ProgresoClient.tsx`).
+- Dueño: sin asignar.
+- Criterio de cierre: decisión explícita de si vale la pena la migración
+  de enum (`alter type ... rename value`) o si con la etiqueta visible ya
+  cambiada es suficiente y este valor se queda como deuda interna
+  invisible para siempre.
+
 ### P-001 — Vocabulario propio, sin YPO, para las dos líneas
-- Estado: **abierto** (dos palabras ya resueltas, ver H-006 en Hecho)
+- Estado: **abierto** (tres palabras ya resueltas, ver H-006/H-007 en Hecho)
 - Origen: Francisco, 2026-09-21. "Esas palabras tampoco me gustan para
   trascendencia... en general tienen que tener otro vocabulario. Ya te dije
   que YPO tiene que quedar por aparte, no le estamos vendiendo a ellos."
-- Qué se sabe: `capítulo`→`grupo` y `corrida`→`encuentro` ya se hicieron
-  (H-006). Lo que sigue abierto es lo más grande: `foro` (todavía dice
-  "Foro Anáhuac", "El foro", en decenas de sitios, en las dos líneas),
-  `guion`, `kit`, `retorno` — el resto del "Léxico vinculante del Consejo
-  #002" (`dominio.ts:1-14`), heredado de la estructura de YPO. Francisco
-  pide repensarlo para AMBAS líneas, no solo relabelear PersonaLab.
+- Qué se sabe: `capítulo`→`grupo`, `corrida`→`encuentro` y `foro`→`grupo`
+  (el mismo grupo, fundidos en una sola palabra) ya se hicieron. Lo que
+  sigue abierto es `guion`, `kit`, `retorno` — el resto del "Léxico
+  vinculante del Consejo #002" (`dominio.ts:1-14`), heredado de la
+  estructura de YPO. Francisco pide repensarlo para AMBAS líneas, no solo
+  relabelear PersonaLab.
 - Dueño: Claude investiga alcance (dónde aparece cada término, en cuál línea,
   en label vs. en dato vs. en nombre de columna) y lo trae al consejo
   (Daniel ya lo señaló; falta Nora, que es quien piensa el copy) antes de
@@ -108,6 +142,26 @@ la base) igual que exige el resto del protocolo de este portal.
 *(vacío por ahora)*
 
 ## Hecho
+
+### H-007 — Foro se funde en grupo (código); migración lista, sin correr
+- Estado: **hecho** (código) — verificado 2026-09-21; migración de base
+  pendiente, ver P-007
+- Origen: Francisco ("sigue con foro"), continuando H-006. Decisión de
+  Nora: no es palabra nueva, es fundir dos etiquetas que ya nombraban lo
+  mismo (el propio `dominio.ts` ya lo decía). Alcance verificado por
+  Daniel antes de tocar nada: dos columnas reales (`abre_espacio_al_foro`,
+  `personas_en_el_foro`), y un valor de enum real
+  (`pl_titularidad.miembro_foro`) que se deja aparte, ver P-008.
+- 18 archivos de `app/(admin)/personalab` y `lib/personalab`: `dominio.ts`
+  (tipos, datos), `lib/personalab/catalogo.ts` y `experiencias/actions.ts`
+  (los campos de TS ya se llaman `abreEspacioAlGrupo`/`personasEnElGrupo`,
+  desacoplados de las columnas reales, que siguen con su nombre viejo
+  hasta que corra la migración), y todas las pantallas que muestran la
+  palabra. De paso, una redundancia real encontrada en el navegador
+  ("Grupo Grupo Anáhuac") corregida quitando la etiqueta repetida.
+- Verificado en un deploy real, sección por sección: Resumen, Encuentros,
+  Grupos, Moderadores, Retorno, Progreso, y el catálogo real de
+  Experiencias (lista, nueva, ficha, checkbox).
 
 ### H-006 — Capítulo → Grupo, Corrida → Encuentro; Kit fuera del nav
 - Estado: **hecho** — verificado 2026-09-21
