@@ -34,8 +34,18 @@ la base) igual que exige el resto del protocolo de este portal.
 
 ## Abiertos / decididos
 
-### P-012 — El Presente como Regalo, construido con la cronología real: falta correr la migración y publicar
-- Estado: **decidido, código listo, contenido escrito en borrador, bloqueado en la migración**
+### P-012 — El Presente como Regalo, construido con la cronología real: falta el pasaje del Dr. Alexander, lo de perdón, y publicar
+- Estado: **decidido, mecanismo verificado de punta a punta, falta contenido de Francisco y la decisión de publicar**
+- Actualización 2026-09-23: Francisco corrió la migración. Verificado con
+  ejecución real (no solo que la migración "corrió bien"): sesión real de
+  un comprador (no service role) contra `public.responses` -- guardar,
+  leer lo propio, y borrar, los tres correctos; y el caso negativo, ese
+  mismo comprador NO puede escribir una respuesta contra un bloque de una
+  experiencia donde no tiene grant (RLS lo rechazó, confirmado con el
+  mensaje de error real de Postgres). La prueba se hizo contra un bloque
+  YA PUBLICADO marcado `guarda` solo por un instante y revertido al
+  terminar, para no tocar ni exponer el contenido nuevo de "El Presente
+  como Regalo" todavía sin publicar.
 - Origen: Francisco, 2026-09-22 ("llena el Presente como Regalo... hazlo
   bien"), con el PDF de la cronología real del retiro presencial. Se cruzó
   contra las once decisiones de Francisco del 2026-09-13 (memoria de
