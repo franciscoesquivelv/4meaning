@@ -764,23 +764,26 @@ export default function Editor({
             </span>
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
-            {/* NO ES UN BOTÓN MUERTO -- adelanta el debounce de 700ms en
-                vez de esperarlo, y por eso ya nace deshabilitado salvo
-                cuando hay algo pendiente de verdad. La confusión que
-                encontró Francisco es de MODELO MENTAL, no de mecanismo
-                (Leo, 2026-09-23): al lado dice "Cambios sin guardar" y el
-                botón dice "Guardar", como si uno describiera un problema
-                que el otro resuelve por separado, cuando los dos vienen
-                del mismo estado. El título explica la diferencia real sin
-                rediseñar el flujo entero en esta pasada. */}
-            <Boton
-              variante="secundario"
-              onClick={guardarYa}
-              disabled={estadoGlobal !== 'pendiente'}
-              title="Guarda ya, sin esperar los segundos del autoguardado"
-            >
-              Guardar ahora
-            </Boton>
+            {/* SEGUNDA VUELTA, 2026-09-23. La primera corrección lo dejó
+                deshabilitado-pero-visible, con un título que explica la
+                diferencia -- y Francisco siguió sin entenderlo: "sigue
+                visible cuando se entra al editor y confunde". Tenía
+                razón: un botón gris apagado, al lado de uno negro sólido,
+                todavía SE LEE como un botón de verdad, solo que "menos
+                importante", no como "no hay nada que hacer aquí". La
+                corrección real no es explicarlo mejor, es que deje de
+                estar cuando no hace falta: aparece SOLO cuando hay algo
+                pendiente de guardar, que es el único momento en que
+                adelantar el debounce significa algo. */}
+            {estadoGlobal === 'pendiente' && (
+              <Boton
+                variante="secundario"
+                onClick={guardarYa}
+                title="Guarda ya, sin esperar los segundos del autoguardado"
+              >
+                Guardar ahora
+              </Boton>
+            )}
             <Link
               href={`/personalab/experiencias/${experiencia.slug}/publicar`}
               className={BTN_PRIMARIO}
@@ -823,6 +826,25 @@ export default function Editor({
         </button>
       )}
 
+      {/* "Nueva sección" FLOTANTE, no al fondo de una lista que puede
+          tener veinte filas. HALLAZGO REAL: el intento anterior (fuera
+          de la región que hace scroll, dentro de un `nav` con
+          `lg:h-[calc(100vh-164px)]`) no se quedaba fijo de verdad -- se
+          iba con el scroll de la PÁGINA completa, no del riel, así que
+          Francisco tenía que bajar por toda la lista para encontrarlo.
+          Mismo patrón ya probado que "agregar bloque": `position:
+          fixed`, siempre en pantalla, sin depender de dónde esté el
+          scroll de nada. A la izquierda para no pelear con el botón de
+          bloque, que vive a la derecha. */}
+      <button
+        onClick={agregarSeccion}
+        disabled={creandoSeccion}
+        className="fixed bottom-6 left-6 z-40 min-h-toque rounded-full bg-dom text-paper shadow-lg hover:bg-dom-deep disabled:opacity-60 transition-colors flex items-center gap-1.5 px-5 text-[14px] font-medium"
+        title="Agregar una sección nueva"
+      >
+        <span className="text-lg leading-none">+</span> {creandoSeccion ? 'Creando…' : 'Nueva sección'}
+      </button>
+
       {porBorrarSeccion && (
         <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center px-4">
           <div className="bg-white rounded-[10px] shadow-xl p-6 max-w-sm w-full">
@@ -846,15 +868,16 @@ export default function Editor({
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-[180px_minmax(0,1fr)_320px] gap-6 items-start">
-        {/* Riel de secciones. Scroll propio (Julian, 2026-09-23): antes
-            `sticky` la hacía viajar pegada a la página completa, peleando
-            con el scroll del lienzo y de la vista previa. "Nueva sección"
-            vive FUERA de la región que scrollea, para que nunca dependa
-            de bajar hasta el final para encontrarla -- con la barra ya
-            invisible (pedido de Francisco), esa era la única señal de que
-            había más lista debajo. */}
-        <nav className="lg:sticky lg:top-[164px] lg:h-[calc(100vh-164px)] flex flex-col">
-        <div className="flex-1 min-h-0 lg:overflow-y-auto scroll-sin-barra pr-1">
+        {/* Riel de secciones. Scroll propio (Julian, 2026-09-23), sin
+            barra visible (pedido de Francisco). "Nueva sección" YA NO
+            vive aquí dentro -- es el botón flotante de más arriba, fijo
+            de verdad en la pantalla. El primer intento de dejarlo "fuera
+            de la región que scrollea" no funcionaba: viajaba con el
+            scroll de la PÁGINA, no del riel, así que había que bajar por
+            toda la lista para encontrarlo. `pb-16` deja aire abajo para
+            que la última sección de una lista larga no quede tapada por
+            el botón flotante. */}
+        <nav className="lg:sticky lg:top-[164px] lg:h-[calc(100vh-164px)] lg:overflow-y-auto scroll-sin-barra pr-1 pb-16">
           <DndContext
             sensors={sensoresArrastre}
             collisionDetection={closestCenter}
@@ -896,15 +919,6 @@ export default function Editor({
               )
             })}
           </DndContext>
-        </div>
-
-        <button
-          onClick={agregarSeccion}
-          disabled={creandoSeccion}
-          className="w-full text-left px-2.5 py-2 rounded-[10px] text-[13px] text-dom hover:bg-paper-2 disabled:opacity-50 transition-colors flex items-center gap-1.5 mt-1 flex-shrink-0"
-        >
-          <span className="text-base leading-none">+</span> Nueva sección
-        </button>
         </nav>
 
         {/* Lienzo. Mismo arreglo de scroll que el riel, sin barra visible. */}
@@ -1141,7 +1155,13 @@ function FilaSeccion({
       <button
         {...attributes}
         {...listeners}
-        className="flex-shrink-0 px-1 py-2 text-gray-ui/50 hover:text-gray-ui cursor-grab active:cursor-grabbing touch-none"
+        // MEDIDO, NO ESTIMADO: al 50% de opacidad (como estaba antes de
+        // esta corrección) el contraste real contra el fondo crema es
+        // 1.94:1 -- muy por debajo del mínimo de 3:1 que pide WCAG para
+        // un control funcional (no es un adorno, es el asa real de
+        // arrastrar). Sin opacidad, `text-gray-ui` sólido da 4.52:1,
+        // igual que el resto de los textos secundarios del panel.
+        className="flex-shrink-0 px-1 py-2 text-gray-ui hover:text-ink cursor-grab active:cursor-grabbing touch-none"
         title="Arrastra para reordenar"
         aria-label={`Arrastrar ${b.titulo} para reordenar`}
       >

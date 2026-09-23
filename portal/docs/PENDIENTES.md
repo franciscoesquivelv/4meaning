@@ -113,7 +113,31 @@ la base) igual que exige el resto del protocolo de este portal.
   publicada.
 
 ### P-013 — El editor no es versátil: siete quejas de Francisco, auditadas por Julian/Daniel/Leo
-- Estado: **hecho, las siete quejas y lo que se encontró de más**
+- Estado: **cuarta vuelta: dos bugs reales corregidos, consulta abierta con Sora y Leo sobre el patrón de fondo**
+- Actualización 2026-09-23, cuarta vuelta: Francisco reportó, dos rondas
+  seguidas, no poder encontrar "agregar sección". Investigado en vivo, no
+  asumido: el botón SÍ existía y funcionaba, pero mi "fuera de la región
+  que hace scroll" (tercera vuelta) no estaba fijo de verdad -- viajaba
+  con el scroll de la PÁGINA completa, no del riel, así que había que
+  bajar por las 16 secciones para encontrarlo. Corregido con el mismo
+  patrón ya probado de "agregar bloque": botón flotante fijo de verdad
+  (`position: fixed`), abajo a la izquierda, con texto visible en vez de
+  un enlace pequeño al fondo de una lista.
+  También: "Guardar ahora" seguía visible (deshabilitado) al entrar al
+  editor sin nada pendiente, y confundía -- corregido para que solo
+  aparezca cuando hay algo de verdad sin guardar, no que aparezca
+  siempre y cambie de aspecto.
+  Contraste medido (no estimado) en los elementos nuevos de esta semana:
+  un fallo real encontrado y corregido -- el asa de arrastre `⠿` al 50%
+  de opacidad daba 1.94:1, muy por debajo del mínimo de 3:1 para un
+  control funcional; sólido da 4.52:1. El resto (botón flotante 13.09:1,
+  lápiz 4.93:1, input de título 14.71:1, toolbar de texto 4.93:1) ya
+  pasaba.
+  Despaché a Sora y a Leo con la pregunta de fondo que pidió Francisco:
+  no si el botón se ve, sino si "riel angosto con acción al fondo de la
+  lista" es el patrón correcto para algo que se va a hacer muchas veces,
+  bajo presión de tiempo. Respuesta pendiente -- lo que se decida ahí
+  puede reemplazar el arreglo técnico de hoy, no solo sumarse.
 - Actualización 2026-09-23, tercera y última ola: limpieza de tokens
   (58 líneas, hex vivo y `slate-*` fuera de marca dentro del propio
   `Editor.tsx`, cambiados a `text-ink`/`text-gray-ui`/`bg-paper(-2)`/
