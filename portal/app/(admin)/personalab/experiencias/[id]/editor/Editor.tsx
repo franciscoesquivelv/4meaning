@@ -99,9 +99,9 @@ async function conPisoPerceptible<T>(promesa: Promise<T>): Promise<T> {
   return resultado
 }
 
-const ETIQUETA_INPUT = 'block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1.5'
+const ETIQUETA_INPUT = 'block text-[11px] font-semibold uppercase tracking-wider text-gray-ui mb-1.5'
 const INPUT =
-  'w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder:text-slate-300 focus:outline-none focus:border-slate-400 transition-colors'
+  'w-full bg-white border border-line rounded-[10px] px-3 py-2 text-sm text-ink placeholder:text-gray-ui focus:outline-none focus:border-dom/40 transition-colors'
 
 const TIEMPOS: Tiempo[] = ['vispera', 'ignicion', 'retorno']
 
@@ -699,16 +699,16 @@ export default function Editor({
   return (
     <>
       {/* Cabecera del editor */}
-      <div className="sticky top-[104px] z-30 bg-slate-50/95 backdrop-blur-sm border-b border-slate-200 -mx-6 px-6 py-3 mb-6">
+      <div className="sticky top-[104px] z-30 bg-paper/95 backdrop-blur-sm border-b border-line -mx-6 px-6 py-3 mb-6">
         <div className="flex items-center justify-between gap-4 flex-wrap">
           <div className="flex items-baseline gap-3 min-w-0">
             <Link
               href={`/personalab/experiencias/${experiencia.slug}`}
-              className="text-xs text-slate-400 hover:text-slate-600 transition-colors whitespace-nowrap"
+              className="text-xs text-gray-ui hover:text-gray-ui transition-colors whitespace-nowrap"
             >
               ← {experiencia.nombre}
             </Link>
-            <span className="text-sm font-semibold text-slate-900 truncate">Editor</span>
+            <span className="text-sm font-semibold text-ink truncate">Editor</span>
             <span
               className={`text-xs ${CHIP[estadoGlobal].clase} whitespace-nowrap inline-flex items-center gap-1.5`}
               role="status"
@@ -746,7 +746,7 @@ export default function Editor({
         </div>
 
         {conflicto && (
-          <div className="mt-3 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 flex items-start justify-between gap-4 flex-wrap">
+          <div className="mt-3 bg-amber-50 border border-amber-200 rounded-[10px] px-4 py-3 flex items-start justify-between gap-4 flex-wrap">
             <p className="text-sm text-amber-900 leading-relaxed max-w-[70ch]">{conflicto}</p>
             <button
               onClick={() => { saltarConfirmacionSalida.current = true; window.location.reload() }}
@@ -758,7 +758,7 @@ export default function Editor({
         )}
 
         {errorGlobal && (
-          <div className="mt-3 bg-red-50 border border-red-200 rounded-lg px-4 py-3">
+          <div className="mt-3 bg-red-50 border border-red-200 rounded-[10px] px-4 py-3">
             <p className="text-sm text-red-800 leading-relaxed max-w-[70ch]">{errorGlobal}</p>
           </div>
         )}
@@ -780,11 +780,11 @@ export default function Editor({
 
       {porBorrarSeccion && (
         <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center px-4">
-          <div className="bg-white rounded-xl shadow-xl p-6 max-w-sm w-full">
-            <h3 className="text-base font-semibold text-slate-900">
+          <div className="bg-white rounded-[10px] shadow-xl p-6 max-w-sm w-full">
+            <h3 className="text-base font-semibold text-ink">
               ¿Estás seguro que quieres borrar esta sección?
             </h3>
-            <p className="text-sm text-slate-600 mt-2 leading-relaxed">
+            <p className="text-sm text-gray-ui mt-2 leading-relaxed">
               "{bisagras.find(s => s.id === porBorrarSeccion)?.titulo}" y todo lo que tenga
               escrito adentro se borran juntos. No vas a poder recuperar el contenido.
             </p>
@@ -815,7 +815,7 @@ export default function Editor({
             if (bs.length === 0) return null
             return (
               <div key={t} className="mb-5">
-                <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-2 px-2">
+                <div className="text-[10px] font-semibold uppercase tracking-wider text-gray-ui mb-2 px-2">
                   {ETIQUETA_TIEMPO[t]}
                 </div>
                 {bs.map((b, i) => {
@@ -830,18 +830,18 @@ export default function Editor({
                   return (
                     <div
                       key={b.id}
-                      className={`group flex items-center gap-1 rounded-lg mb-0.5 transition-colors ${
-                        act ? 'bg-slate-200/70' : 'hover:bg-slate-100'
+                      className={`group flex items-center gap-1 rounded-[10px] mb-0.5 transition-colors ${
+                        act ? 'bg-paper-2/70' : 'hover:bg-paper-2'
                       }`}
                     >
                       <button
                         onClick={() => setActiva(b.id)}
                         className="flex-1 min-w-0 text-left px-2.5 py-2"
                       >
-                        <span className={`block text-[13px] leading-snug truncate ${act ? 'text-slate-900 font-medium' : 'text-slate-600'}`}>
+                        <span className={`block text-[13px] leading-snug truncate ${act ? 'text-ink font-medium' : 'text-gray-ui'}`}>
                           {b.titulo}
                         </span>
-                        <span className="block text-[11px] text-slate-400 mt-0.5 tabular-nums">
+                        <span className="block text-[11px] text-gray-ui mt-0.5 tabular-nums">
                           {n === 0 ? 'vacía' : `${n} bloque${n > 1 ? 's' : ''}`}
                         </span>
                       </button>
@@ -849,7 +849,7 @@ export default function Editor({
                         <button
                           onClick={() => moverSeccion(b.id, -1)}
                           disabled={i === 0}
-                          className="text-slate-400 hover:text-slate-700 disabled:opacity-20 disabled:hover:text-slate-400 text-[10px] leading-none py-0.5"
+                          className="text-gray-ui hover:text-gray-ui disabled:opacity-20 disabled:hover:text-gray-ui text-[10px] leading-none py-0.5"
                           title="Subir"
                           aria-label={`Subir ${b.titulo}`}
                         >
@@ -858,7 +858,7 @@ export default function Editor({
                         <button
                           onClick={() => moverSeccion(b.id, 1)}
                           disabled={i === bs.length - 1}
-                          className="text-slate-400 hover:text-slate-700 disabled:opacity-20 disabled:hover:text-slate-400 text-[10px] leading-none py-0.5"
+                          className="text-gray-ui hover:text-gray-ui disabled:opacity-20 disabled:hover:text-gray-ui text-[10px] leading-none py-0.5"
                           title="Bajar"
                           aria-label={`Bajar ${b.titulo}`}
                         >
@@ -876,7 +876,7 @@ export default function Editor({
         <button
           onClick={agregarSeccion}
           disabled={creandoSeccion}
-          className="w-full text-left px-2.5 py-2 rounded-lg text-[13px] text-dom hover:bg-paper-2 disabled:opacity-50 transition-colors flex items-center gap-1.5 mt-1 flex-shrink-0"
+          className="w-full text-left px-2.5 py-2 rounded-[10px] text-[13px] text-dom hover:bg-paper-2 disabled:opacity-50 transition-colors flex items-center gap-1.5 mt-1 flex-shrink-0"
         >
           <span className="text-base leading-none">+</span> Nueva sección
         </button>
@@ -885,11 +885,11 @@ export default function Editor({
         {/* Lienzo. Mismo arreglo de scroll que el riel, sin barra visible. */}
         <div className="min-w-0 lg:h-[calc(100vh-164px)] lg:overflow-y-auto scroll-sin-barra lg:pr-1">
           {bisagras.length === 0 && (
-            <div className="border border-dashed border-slate-200 rounded-xl px-5 py-10 text-center">
-              <p className="text-sm text-slate-600">
+            <div className="border border-dashed border-line rounded-[10px] px-5 py-10 text-center">
+              <p className="text-sm text-gray-ui">
                 {experiencia.nombre} todavía no tiene secciones.
               </p>
-              <p className="text-xs text-slate-400 mt-2 leading-relaxed max-w-[46ch] mx-auto">
+              <p className="text-xs text-gray-ui mt-2 leading-relaxed max-w-[46ch] mx-auto">
                 Una sección es cada momento de la experiencia. El contenido se escribe dentro de
                 ellas, así que hay que crear una primero.
               </p>
@@ -902,12 +902,12 @@ export default function Editor({
           {bisagraActiva && (
             <div className="mb-5">
               <div className="flex items-center justify-between gap-3">
-                <div className="text-[10px] font-semibold uppercase tracking-wider text-[#8F5341]">
+                <div className="text-[10px] font-semibold uppercase tracking-wider text-terra-ui">
                   {ETIQUETA_TIEMPO[bisagraActiva.tiempo]}
                 </div>
                 <button
                   onClick={() => setPorBorrarSeccion(bisagraActiva.id)}
-                  className="text-[11px] text-slate-400 hover:text-alerta transition-colors"
+                  className="text-[11px] text-gray-ui hover:text-alerta transition-colors"
                 >
                   Borrar sección
                 </button>
@@ -925,10 +925,10 @@ export default function Editor({
                   placeholder="Título de la sección"
                   spellCheck
                   lang="es"
-                  className="w-full text-xl font-semibold tracking-tight text-slate-900 bg-transparent border-0 border-b border-transparent hover:border-slate-200 focus:border-slate-400 outline-none transition-colors pl-0 pr-7 py-1"
+                  className="w-full text-xl font-semibold tracking-tight text-ink bg-transparent border-0 border-b border-transparent hover:border-line focus:border-dom/40 outline-none transition-colors pl-0 pr-7 py-1"
                 />
                 <svg
-                  className="absolute right-0.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-300 group-hover/titulo:text-slate-400 pointer-events-none"
+                  className="absolute right-0.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-ui group-hover/titulo:text-gray-ui pointer-events-none"
                   fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487a2.06 2.06 0 112.914 2.914L8.5 18.677l-4 1 1-4L16.862 4.487z" />
@@ -940,15 +940,15 @@ export default function Editor({
                 placeholder="Una descripción breve (opcional, no la ve el participante)"
                 spellCheck
                 lang="es"
-                className="w-full text-sm text-slate-500 mt-1 bg-transparent border-0 border-b border-transparent hover:border-slate-200 focus:border-slate-400 outline-none transition-colors px-0 py-1"
+                className="w-full text-sm text-gray-ui mt-1 bg-transparent border-0 border-b border-transparent hover:border-line focus:border-dom/40 outline-none transition-colors px-0 py-1"
               />
             </div>
           )}
 
           <div className="flex flex-col gap-3">
             {bisagraActiva && delBloque.length === 0 && (
-              <div className="border border-dashed border-slate-200 rounded-xl px-5 py-8 text-center">
-                <p className="text-sm text-slate-500">
+              <div className="border border-dashed border-line rounded-[10px] px-5 py-8 text-center">
+                <p className="text-sm text-gray-ui">
                   {bisagraActiva.titulo} todavía no tiene nada escrito.
                 </p>
                 <button onClick={() => agregar('texto')} className={`${BTN_SECUNDARIO} mt-4`}>
@@ -980,7 +980,7 @@ export default function Editor({
 
           {bisagraActiva && (
             <div id="agregar-bloque" className={`${TARJETA} p-4 mt-4 scroll-mt-24`}>
-              <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-3">
+              <div className="text-[11px] font-semibold uppercase tracking-wider text-gray-ui mb-3">
                 Agregar bloque
               </div>
               <div className="flex flex-wrap gap-2">
@@ -988,7 +988,7 @@ export default function Editor({
                   <BotonTipo key={t} t={t} onClick={() => agregar(t)} />
                 ))}
               </div>
-              <div className="flex flex-wrap gap-2 mt-2 pt-2 border-t border-slate-100">
+              <div className="flex flex-wrap gap-2 mt-2 pt-2 border-t border-line">
                 {TIPOS_OCASIONALES.map(t => (
                   <BotonTipo key={t} t={t} onClick={() => agregar(t)} tenue />
                 ))}
@@ -1000,13 +1000,13 @@ export default function Editor({
         {/* Vista previa en teléfono */}
         <div className="lg:sticky lg:top-[164px]">
           <div className={`${TARJETA} p-3 mb-3`}>
-            <div className="flex bg-slate-100 rounded-lg p-1">
+            <div className="flex bg-paper-2 rounded-[10px] p-1">
               {(['participante', 'moderador'] as const).map(l => (
                 <button
                   key={l}
                   onClick={() => setLente(l)}
                   className={`flex-1 px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
-                    lente === l ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'
+                    lente === l ? 'bg-white text-ink shadow-sm' : 'text-gray-ui hover:text-gray-ui'
                   }`}
                 >
                   {l === 'participante' ? 'Como participante' : 'Como moderador'}
@@ -1017,27 +1017,27 @@ export default function Editor({
 
           <div className="relative mx-auto w-[375px] lg:w-[320px]">
             <div
-              className="relative bg-[#FAF8F4] rounded-[40px] border-4 border-slate-800 overflow-hidden shadow-xl"
+              className="relative bg-paper rounded-[40px] border-4 border-slate-800 overflow-hidden shadow-xl"
               style={{ height: 620 }}
             >
               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-7 bg-slate-800 rounded-b-2xl z-20" />
-              <div className="absolute top-9 left-1/2 -translate-x-1/2 z-30 text-[9px] font-semibold uppercase tracking-widest text-[#8F5341] bg-[#EFE9E0] px-2 py-0.5 rounded-full">
+              <div className="absolute top-9 left-1/2 -translate-x-1/2 z-30 text-[9px] font-semibold uppercase tracking-widest text-terra-ui bg-paper-2 px-2 py-0.5 rounded-full">
                 Vista previa
               </div>
               <div className="overflow-y-auto scroll-sin-barra h-full px-6 pt-16 pb-10">
                 {bisagraActiva && (
                   <header>
-                    <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#8F5341]">
+                    <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-terra-ui">
                       {ETIQUETA_TIEMPO[bisagraActiva.tiempo]}
                     </div>
-                    <h1 className="mt-3 text-[26px] leading-[1.12] font-extralight tracking-[-0.025em] text-[#002B34]">
+                    <h1 className="mt-3 text-[26px] leading-[1.12] font-extralight tracking-[-0.025em] text-dom">
                       {bisagraActiva.titulo}
                     </h1>
                   </header>
                 )}
                 <div className="mt-8">
                   {visiblesEnPrevia.length === 0 ? (
-                    <p className="text-[15px] font-light text-[#676E6E] leading-relaxed">
+                    <p className="text-[15px] font-light text-gray-ui leading-relaxed">
                       {delBloque.length === 0
                         ? 'Aquí va a leerse lo que escribas.'
                         : 'Con la lente de participante esto sale en blanco. Todo lo que hay en esta sección está marcado como solo moderador.'}
@@ -1050,7 +1050,7 @@ export default function Editor({
             </div>
           </div>
 
-          <p className="text-[11px] text-slate-400 text-center mt-3 leading-relaxed px-4">
+          <p className="text-[11px] text-gray-ui text-center mt-3 leading-relaxed px-4">
             Estás viendo el borrador. El participante ve la última versión publicada hasta que publiques
             de nuevo.
           </p>
@@ -1067,8 +1067,8 @@ function BotonTipo({ t, onClick, tenue = false }: { t: TipoBloque; onClick: () =
     <button
       onClick={onClick}
       title={definicion(t).ayuda}
-      className={`text-xs px-3 py-1.5 rounded-lg border transition-[background-color,border-color,transform] duration-100 active:scale-[0.97] hover:bg-dom hover:text-paper hover:border-dom focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dom/25 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-50 ${
-        tenue ? 'border-slate-200 text-slate-500' : 'border-slate-300 text-slate-800 font-medium'
+      className={`text-xs px-3 py-1.5 rounded-[10px] border transition-[background-color,border-color,transform] duration-100 active:scale-[0.97] hover:bg-dom hover:text-paper hover:border-dom focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dom/25 focus-visible:ring-offset-2 focus-visible:ring-offset-paper ${
+        tenue ? 'border-line text-gray-ui' : 'border-line text-ink font-medium'
       }`}
     >
       {definicion(t).nombre}
@@ -1171,25 +1171,25 @@ function TarjetaBloque({
     })
   }
 
-  const BTN_HERRAMIENTA = 'px-2 py-1 rounded text-xs text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition-colors'
+  const BTN_HERRAMIENTA = 'px-2 py-1 rounded text-xs text-gray-ui hover:bg-paper-2 hover:text-ink transition-colors'
 
   return (
     <div
       id={`bloque-${b.id}`}
       className={`${TARJETA} overflow-hidden transition-shadow duration-500 ${
-        resaltado ? 'ring-2 ring-slate-900/15' : ''
+        resaltado ? 'ring-2 ring-dom/15' : ''
       } ${estado === 'error' ? 'ring-2 ring-red-300' : ''}`}
     >
-      <div className="flex items-center justify-between gap-3 px-4 py-2.5 border-b border-slate-100 bg-slate-50/60">
+      <div className="flex items-center justify-between gap-3 px-4 py-2.5 border-b border-line bg-paper/60">
         <button
           onClick={onToggleExpandido}
           className="flex items-center gap-2.5 min-w-0 text-left"
           title={expandido ? 'Colapsar' : 'Expandir'}
         >
-          <span className="text-slate-400 text-[10px] flex-shrink-0 w-3">{expandido ? '▾' : '▸'}</span>
-          <span className="text-xs font-semibold text-slate-700 flex-shrink-0">{definicion(b.tipo).nombre}</span>
+          <span className="text-gray-ui text-[10px] flex-shrink-0 w-3">{expandido ? '▾' : '▸'}</span>
+          <span className="text-xs font-semibold text-gray-ui flex-shrink-0">{definicion(b.tipo).nombre}</span>
           {!expandido && previa && (
-            <span className="text-xs text-slate-400 truncate">{previa}</span>
+            <span className="text-xs text-gray-ui truncate">{previa}</span>
           )}
         </button>
         <div className="flex items-center gap-2.5 flex-shrink-0">
@@ -1238,7 +1238,7 @@ function TarjetaBloque({
       <div className="p-4">
         {b.tipo === 'pausa' ? (
           <>
-            <p className="text-sm text-slate-400">Un respiro. Nadie ve texto aquí.</p>
+            <p className="text-sm text-gray-ui">Un respiro. Nadie ve texto aquí.</p>
             <div className="mt-3">
               <label className={ETIQUETA_INPUT}>
                 Segundos de espera (máximo {definicion('pausa').campos.segundos.max})
@@ -1263,7 +1263,7 @@ function TarjetaBloque({
                   sistema. La persona nunca espera más que eso.
                 </p>
               ) : (
-                <p className="text-[11px] text-slate-400 mt-1.5 leading-relaxed">
+                <p className="text-[11px] text-gray-ui mt-1.5 leading-relaxed">
                   Cuánto espera la persona antes de que aparezca el botón para seguir. Sin este campo,
                   la pausa no detiene nada.
                 </p>
@@ -1328,10 +1328,10 @@ function TarjetaBloque({
                   type="checkbox"
                   checked={b.descargable ?? false}
                   onChange={e => onCambio({ descargable: e.target.checked })}
-                  className="w-4 h-4 rounded border-slate-300 accent-slate-900"
+                  className="w-4 h-4 rounded border-line accent-dom"
                 />
-                <span className="text-xs text-slate-600">Se puede descargar</span>
-                <span className="text-xs text-slate-400">
+                <span className="text-xs text-gray-ui">Se puede descargar</span>
+                <span className="text-xs text-gray-ui">
                   Los guiones de sala suelen ser solo para el moderador.
                 </span>
               </label>
@@ -1368,7 +1368,7 @@ function TarjetaBloque({
               </button>
               {b.tipo === 'texto' && (
                 <>
-                  <span className="w-px h-4 bg-slate-200 mx-1" />
+                  <span className="w-px h-4 bg-paper-2 mx-1" />
                   <button type="button" onClick={() => estiloDeLinea('')} className={BTN_HERRAMIENTA} title="Línea del cursor: texto normal">
                     Párrafo
                   </button>
@@ -1439,10 +1439,10 @@ function TarjetaBloque({
                   type="checkbox"
                   checked={b.aplicaDigital ?? false}
                   onChange={e => onCambio({ aplicaDigital: e.target.checked })}
-                  className="w-4 h-4 rounded border-slate-300 accent-slate-900"
+                  className="w-4 h-4 rounded border-line accent-dom"
                 />
-                <span className="text-xs text-slate-600">Aplica al modo digital</span>
-                <span className="text-xs text-slate-400">
+                <span className="text-xs text-gray-ui">Aplica al modo digital</span>
+                <span className="text-xs text-gray-ui">
                   Sin marcar, quien compra la experiencia por su cuenta no ve este gesto.
                 </span>
               </label>
@@ -1459,10 +1459,10 @@ function TarjetaBloque({
                   type="checkbox"
                   checked={b.guarda ?? false}
                   onChange={e => onCambio({ guarda: e.target.checked })}
-                  className="w-4 h-4 rounded border-slate-300 accent-slate-900"
+                  className="w-4 h-4 rounded border-line accent-dom"
                 />
-                <span className="text-xs text-slate-600">Se guarda la respuesta</span>
-                <span className="text-xs text-slate-400">
+                <span className="text-xs text-gray-ui">Se guarda la respuesta</span>
+                <span className="text-xs text-gray-ui">
                   Sin marcar, lo que escriba se pierde al cerrar la pestaña, como siempre.
                 </span>
               </label>
