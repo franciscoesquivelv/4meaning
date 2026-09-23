@@ -113,7 +113,26 @@ la base) igual que exige el resto del protocolo de este portal.
   publicada.
 
 ### P-013 — El editor no es versátil: siete quejas de Francisco, auditadas por Julian/Daniel/Leo
-- Estado: **primera ola hecha, el resto decidido y pendiente de construir**
+- Estado: **segunda ola hecha (texto enriquecido real), queda arrastrar de verdad y limpieza de tokens**
+- Actualización 2026-09-23, con Francisco probando en tiempo real: sin
+  esperar otra ronda de consejo (ya tenía el veredicto de Julian sobre
+  forma), se construyó negrita/cursiva real (rodea la selección) y
+  Párrafo/Subtítulo/Título (opera sobre la línea del cursor) para los
+  siete tipos de bloque con texto. Bug real encontrado probando: un
+  triple-clic incluye el salto de línea siguiente en la selección, y
+  envolverla tal cual dejaba el cierre de `**` huérfano en su propia
+  línea -- corregido recortando la selección al texto real antes de
+  envolver. Los otros seis tipos de bloque (cita/consigna/gesto/aviso/
+  nota/objeto) mostraban los asteriscos literales -- ahora interpretan
+  negrita/cursiva vía `Enfasis`, nuevo export de `RenderMarkdown.tsx`.
+  Verificado en un bloque `texto` y en uno `consigna`, con la vista
+  previa real. También: scroll sin barra visible (pedido explícito,
+  "ensucian la vista"), "+ Nueva sección" movida fuera de la región que
+  scrollea, confirmación de borrar con la redacción exacta que pidió, y
+  lápiz junto al título para que se vea editable antes de tocarlo.
+  Queda: arrastrar de verdad (necesita `@dnd-kit`) y la limpieza de 27
+  `text-slate-*` + 6 hex vivos dentro del propio `Editor.tsx` que
+  encontró Julian.
 - Origen: Francisco, 2026-09-23, usando el editor real de punta a punta
   por primera vez: "no es versátil, solo permite agregar bloques."
 - **Hecho hoy, verificado con ejecución real (cuenta de equipo, consulta
