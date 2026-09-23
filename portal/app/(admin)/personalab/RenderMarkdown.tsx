@@ -49,6 +49,24 @@ function enLinea(texto: string, c: (typeof CLASES)['lectura'], clave: string): R
   return salida
 }
 
+// SOLO LO EN LÍNEA, SIN PÁRRAFOS NI ENCABEZADOS. Para los tipos de bloque
+// que son una sola frase o dos (cita, consigna, gesto, aviso, nota,
+// objeto): admiten **negrita** y *cursiva* -- lo que ya ofrece el toolbar
+// del editor -- pero un h1/h2 no tiene sentido dentro de una consigna de
+// una línea, así que no se ofrece ahí ni se interpreta aquí. Antes estos
+// seis tipos pintaban `{b.texto}` crudo: si alguien escribía `**así**`
+// esperando negrita (ahora que el toolbar lo ofrece), se veía el asterisco
+// literal. Hallazgo de Leo, 2026-09-23.
+export function Enfasis({
+  texto, claseFuerte = 'font-medium', claseEnfasis = 'italic',
+}: {
+  texto: string
+  claseFuerte?: string
+  claseEnfasis?: string
+}) {
+  return <>{enLinea(texto, { ...CLASES.lectura, fuerte: claseFuerte, enfasis: claseEnfasis }, 'en')}</>
+}
+
 export default function RenderMarkdown({
   texto, tono = 'lectura',
 }: {

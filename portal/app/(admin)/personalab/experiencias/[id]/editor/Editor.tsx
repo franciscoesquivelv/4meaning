@@ -779,18 +779,21 @@ export default function Editor({
       )}
 
       {porBorrarSeccion && (
-        <div className="fixed inset-0 z-50 bg-black/30 flex items-center justify-center px-4">
+        <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center px-4">
           <div className="bg-white rounded-xl shadow-xl p-6 max-w-sm w-full">
-            <p className="text-sm text-slate-700">
-              ¿Borrar "{bisagras.find(s => s.id === porBorrarSeccion)?.titulo}"? Se borra también
-              todo lo que tenga escrito adentro. No se puede deshacer.
+            <h3 className="text-base font-semibold text-slate-900">
+              ¿Estás seguro que quieres borrar esta sección?
+            </h3>
+            <p className="text-sm text-slate-600 mt-2 leading-relaxed">
+              "{bisagras.find(s => s.id === porBorrarSeccion)?.titulo}" y todo lo que tenga
+              escrito adentro se borran juntos. No vas a poder recuperar el contenido.
             </p>
             <div className="mt-5 flex gap-2 justify-end">
-              <button onClick={() => setPorBorrarSeccion(null)} className={BTN_SECUNDARIO}>
+              <button onClick={() => setPorBorrarSeccion(null)} className={BTN_SECUNDARIO} autoFocus>
                 Cancelar
               </button>
               <button onClick={() => confirmarBorrarSeccion(porBorrarSeccion)} className={BTN_PELIGRO}>
-                Borrar sección
+                Sí, borrar sección
               </button>
             </div>
           </div>
@@ -800,8 +803,13 @@ export default function Editor({
       <div className="grid grid-cols-1 lg:grid-cols-[180px_minmax(0,1fr)_320px] gap-6 items-start">
         {/* Riel de secciones. Scroll propio (Julian, 2026-09-23): antes
             `sticky` la hacía viajar pegada a la página completa, peleando
-            con el scroll del lienzo y de la vista previa. */}
-        <nav className="lg:sticky lg:top-[164px] lg:h-[calc(100vh-164px)] lg:overflow-y-auto pr-1">
+            con el scroll del lienzo y de la vista previa. "Nueva sección"
+            vive FUERA de la región que scrollea, para que nunca dependa
+            de bajar hasta el final para encontrarla -- con la barra ya
+            invisible (pedido de Francisco), esa era la única señal de que
+            había más lista debajo. */}
+        <nav className="lg:sticky lg:top-[164px] lg:h-[calc(100vh-164px)] flex flex-col">
+        <div className="flex-1 min-h-0 lg:overflow-y-auto scroll-sin-barra pr-1">
           {TIEMPOS.map(t => {
             const bs = bisagras.filter(b => b.tiempo === t).sort((a, b) => a.orden - b.orden)
             if (bs.length === 0) return null
@@ -863,18 +871,19 @@ export default function Editor({
               </div>
             )
           })}
+        </div>
 
-          <button
-            onClick={agregarSeccion}
-            disabled={creandoSeccion}
-            className="w-full text-left px-2.5 py-2 rounded-lg text-[13px] text-dom hover:bg-paper-2 disabled:opacity-50 transition-colors flex items-center gap-1.5 mt-1"
-          >
-            <span className="text-base leading-none">+</span> Nueva sección
-          </button>
+        <button
+          onClick={agregarSeccion}
+          disabled={creandoSeccion}
+          className="w-full text-left px-2.5 py-2 rounded-lg text-[13px] text-dom hover:bg-paper-2 disabled:opacity-50 transition-colors flex items-center gap-1.5 mt-1 flex-shrink-0"
+        >
+          <span className="text-base leading-none">+</span> Nueva sección
+        </button>
         </nav>
 
-        {/* Lienzo. Mismo arreglo de scroll que el riel. */}
-        <div className="min-w-0 lg:h-[calc(100vh-164px)] lg:overflow-y-auto lg:pr-1">
+        {/* Lienzo. Mismo arreglo de scroll que el riel, sin barra visible. */}
+        <div className="min-w-0 lg:h-[calc(100vh-164px)] lg:overflow-y-auto scroll-sin-barra lg:pr-1">
           {bisagras.length === 0 && (
             <div className="border border-dashed border-slate-200 rounded-xl px-5 py-10 text-center">
               <p className="text-sm text-slate-600">
@@ -903,15 +912,28 @@ export default function Editor({
                   Borrar sección
                 </button>
               </div>
-              <input
-                id="titulo-seccion"
-                value={bisagraActiva.titulo}
-                onChange={e => actualizarSeccion(bisagraActiva.id, { titulo: e.target.value })}
-                placeholder="Título de la sección"
-                spellCheck
-                lang="es"
-                className="w-full text-xl font-semibold tracking-tight text-slate-900 mt-1 bg-transparent border-0 border-b border-transparent hover:border-slate-200 focus:border-slate-400 outline-none transition-colors px-0 py-1"
-              />
+              {/* EL LÁPIZ NO CAMBIA COMPORTAMIENTO, ES SEÑAL. El campo ya
+                  era editable con solo hacer clic; lo que faltaba era que
+                  se VIERA editable antes de tocarlo -- un input sin borde
+                  se lee como texto fijo hasta que alguien lo intenta.
+                  Pedido de Francisco, 2026-09-23. */}
+              <div className="relative group/titulo mt-1">
+                <input
+                  id="titulo-seccion"
+                  value={bisagraActiva.titulo}
+                  onChange={e => actualizarSeccion(bisagraActiva.id, { titulo: e.target.value })}
+                  placeholder="Título de la sección"
+                  spellCheck
+                  lang="es"
+                  className="w-full text-xl font-semibold tracking-tight text-slate-900 bg-transparent border-0 border-b border-transparent hover:border-slate-200 focus:border-slate-400 outline-none transition-colors pl-0 pr-7 py-1"
+                />
+                <svg
+                  className="absolute right-0.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-300 group-hover/titulo:text-slate-400 pointer-events-none"
+                  fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487a2.06 2.06 0 112.914 2.914L8.5 18.677l-4 1 1-4L16.862 4.487z" />
+                </svg>
+              </div>
               <input
                 value={bisagraActiva.descripcion ?? ''}
                 onChange={e => actualizarSeccion(bisagraActiva.id, { descripcion: e.target.value })}
@@ -1002,7 +1024,7 @@ export default function Editor({
               <div className="absolute top-9 left-1/2 -translate-x-1/2 z-30 text-[9px] font-semibold uppercase tracking-widest text-[#8F5341] bg-[#EFE9E0] px-2 py-0.5 rounded-full">
                 Vista previa
               </div>
-              <div className="overflow-y-auto h-full px-6 pt-16 pb-10">
+              <div className="overflow-y-auto scroll-sin-barra h-full px-6 pt-16 pb-10">
                 {bisagraActiva && (
                   <header>
                     <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[#8F5341]">
@@ -1084,6 +1106,72 @@ function TarjetaBloque({
   // Hallazgo de Leo, confirmado por Julian con la misma cita de línea.
   const etiquetaCampoPrincipal = definicion(b.tipo).campos.texto?.etiqueta
   const previa = typeof b.texto === 'string' && b.texto.trim() ? b.texto.trim() : null
+
+  // ── Toolbar de texto: negrita, cursiva, y (solo para 'texto') estilo
+  // de línea. Decisión de Julian, 2026-09-23, contra BRAND.md §5: sí a
+  // negrita/itálica/H2/H3 (ya interpretados por RenderMarkdown, ahora
+  // también por los otros seis tipos vía `Enfasis`, ver Bloques.tsx); NO
+  // a un H1 (la sección ya ocupa ese peldaño), NO a tamaños libres (la
+  // "lista de catorce tamaños" que su propio criterio lleva meses
+  // rechazando), NO a color libre ni centrar/justificar. Las opciones se
+  // nombran Párrafo/Subtítulo/Título, no h2/h3: quien escribe piensa en
+  // jerarquía, no en HTML.
+  const areaRef = useRef<HTMLTextAreaElement>(null)
+
+  function envolverSeleccion(marcador: string) {
+    const el = areaRef.current
+    if (!el) return
+    const valor = b.texto ?? ''
+    let s = el.selectionStart ?? valor.length
+    let e = el.selectionEnd ?? valor.length
+
+    // BUG REAL, ENCONTRADO PROBANDO EN EL NAVEGADOR: un triple-clic
+    // selecciona el párrafo completo INCLUYENDO el salto de línea que lo
+    // separa del siguiente. Envolver esa selección tal cual deja el
+    // marcador de cierre después del salto -- `**párrafo\n\n**` -- y
+    // `RenderMarkdown` parte en párrafos ANTES de leer los marcadores en
+    // línea, así que el cierre queda huérfano en su propio párrafo y
+    // ninguno de los dos se pinta en negrita. Se recorta la selección al
+    // texto real antes de envolver, para que el marcador quede siempre
+    // pegado al contenido, nunca a un salto de línea.
+    while (s < e && /\s/.test(valor[s])) s++
+    while (e > s && /\s/.test(valor[e - 1])) e--
+    if (s >= e) { s = el.selectionStart ?? valor.length; e = el.selectionEnd ?? valor.length }
+
+    const seleccion = valor.slice(s, e)
+    const nuevo = valor.slice(0, s) + marcador + seleccion + marcador + valor.slice(e)
+    onCambio({ texto: nuevo })
+    requestAnimationFrame(() => {
+      el.focus()
+      const inicio = s + marcador.length
+      el.setSelectionRange(inicio, inicio + seleccion.length)
+    })
+  }
+
+  // Opera sobre la LÍNEA donde está el cursor, no sobre la selección: es
+  // el mismo modelo que Notion/Google Docs para "estilo de bloque".
+  function estiloDeLinea(prefijo: '' | '##' | '###') {
+    const el = areaRef.current
+    if (!el) return
+    const valor = b.texto ?? ''
+    const pos = el.selectionStart ?? valor.length
+    const inicioLinea = valor.lastIndexOf('\n', pos - 1) + 1
+    const finBuscado = valor.indexOf('\n', pos)
+    const finLinea = finBuscado === -1 ? valor.length : finBuscado
+    const linea = valor.slice(inicioLinea, finLinea)
+    const limpia = linea.replace(/^#{2,3}\s/, '')
+    const nuevaLinea = prefijo ? `${prefijo} ${limpia}` : limpia
+    const nuevo = valor.slice(0, inicioLinea) + nuevaLinea + valor.slice(finLinea)
+    onCambio({ texto: nuevo })
+    const delta = nuevaLinea.length - linea.length
+    requestAnimationFrame(() => {
+      el.focus()
+      const p = Math.max(inicioLinea, pos + delta)
+      el.setSelectionRange(p, p)
+    })
+  }
+
+  const BTN_HERRAMIENTA = 'px-2 py-1 rounded text-xs text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition-colors'
 
   return (
     <div
@@ -1271,18 +1359,42 @@ function TarjetaBloque({
             {etiquetaCampoPrincipal !== definicion(b.tipo).nombre && (
               <label className={ETIQUETA_INPUT}>{etiquetaCampoPrincipal}</label>
             )}
+            <div className="flex items-center gap-0.5 mb-1 -ml-2">
+              <button type="button" onClick={() => envolverSeleccion('**')} className={BTN_HERRAMIENTA} title="Negrita: rodea lo que selecciones con **">
+                <b>N</b>
+              </button>
+              <button type="button" onClick={() => envolverSeleccion('*')} className={BTN_HERRAMIENTA} title="Cursiva: rodea lo que selecciones con *">
+                <i>I</i>
+              </button>
+              {b.tipo === 'texto' && (
+                <>
+                  <span className="w-px h-4 bg-slate-200 mx-1" />
+                  <button type="button" onClick={() => estiloDeLinea('')} className={BTN_HERRAMIENTA} title="Línea del cursor: texto normal">
+                    Párrafo
+                  </button>
+                  <button type="button" onClick={() => estiloDeLinea('###')} className={BTN_HERRAMIENTA} title="Línea del cursor: subtítulo">
+                    Subtítulo
+                  </button>
+                  <button type="button" onClick={() => estiloDeLinea('##')} className={BTN_HERRAMIENTA} title="Línea del cursor: título">
+                    Título
+                  </button>
+                </>
+              )}
+            </div>
             {b.tipo === 'texto' || b.tipo === 'nota' ? (
               <textarea
+                ref={areaRef}
                 value={b.texto ?? ''}
                 onChange={e => onCambio({ texto: e.target.value })}
                 rows={b.tipo === 'texto' ? 6 : 3}
-                placeholder={b.tipo === 'texto' ? 'Escribe. Admite **negrita**, *cursiva* y ## subtítulos.' : 'Lo que el moderador necesita saber y el grupo no.'}
+                placeholder={b.tipo === 'texto' ? 'Escribe. O usa los botones de arriba para negrita, cursiva, subtítulo y título.' : 'Lo que el moderador necesita saber y el grupo no.'}
                 className={`${INPUT} resize-y leading-relaxed`}
                 spellCheck
                 lang="es"
               />
             ) : (
               <textarea
+                ref={areaRef}
                 value={b.texto ?? ''}
                 onChange={e => onCambio({ texto: e.target.value })}
                 rows={2}

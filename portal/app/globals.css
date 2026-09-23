@@ -17,3 +17,16 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* Scroll sin barra visible, para paneles con su propia región de scroll
+   (el editor de PersonaLab: riel de secciones, lienzo de bloques) donde
+   una barra nativa ensucia una pantalla ya angosta. Sigue siendo
+   scrolleable de verdad -- rueda, trackpad, flechas -- solo no se dibuja
+   el indicador. Hallazgo de Francisco, 2026-09-23. */
+.scroll-sin-barra {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Edge viejo */
+}
+.scroll-sin-barra::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}

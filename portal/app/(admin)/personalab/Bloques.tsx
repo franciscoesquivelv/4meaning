@@ -1,4 +1,4 @@
-import RenderMarkdown from './RenderMarkdown'
+import RenderMarkdown, { Enfasis } from './RenderMarkdown'
 import BotonDescargar from './BotonDescargar'
 import { definicion, type Bloque } from '@/lib/personalab/bloques'
 
@@ -52,7 +52,7 @@ export default function BloqueLector({ b }: { b: Bloque }) {
       return (
         <figure className={mt}>
           <blockquote className="text-[24px] md:text-[32px] leading-[1.42] md:leading-[1.36] font-extralight tracking-[-0.02em] text-dom border-l-[3px] border-terra-ui pl-6 md:pl-8">
-            {b.texto}
+            <Enfasis texto={b.texto ?? ''} claseFuerte="font-medium" />
           </blockquote>
           {b.autor && (
             <figcaption className="mt-4 pl-6 md:pl-8 text-[12.5px] font-light text-gray-ui">
@@ -67,7 +67,7 @@ export default function BloqueLector({ b }: { b: Bloque }) {
         <div className={`${mt} border-t border-b border-line py-6 md:py-7`}>
           <div className={ROTULO}>Consigna</div>
           <p className="mt-3 text-[19px] md:text-[21px] leading-[1.55] font-light text-dom">
-            {b.texto}
+            <Enfasis texto={b.texto ?? ''} claseFuerte="font-medium" />
           </p>
         </div>
       )
@@ -79,14 +79,18 @@ export default function BloqueLector({ b }: { b: Bloque }) {
           <svg className="w-4 h-4 text-terra-ui mt-1 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.6}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 20h9M16.5 3.5a2.12 2.12 0 013 3L7 19l-4 1 1-4L16.5 3.5z" />
           </svg>
-          <p className="text-[15px] leading-[1.7] font-light text-gray-ui italic">{b.texto}</p>
+          <p className="text-[15px] leading-[1.7] font-light text-gray-ui italic">
+            <Enfasis texto={b.texto ?? ''} claseFuerte="font-medium" claseEnfasis="not-italic" />
+          </p>
         </div>
       )
 
     case 'aviso':
       return (
         <div className={`${mt} bg-paper-2 border-l-[3px] border-terra-ui rounded-r-[10px] px-5 py-4`}>
-          <p className="text-[15px] md:text-[16px] leading-[1.65] font-light text-ink">{b.texto}</p>
+          <p className="text-[15px] md:text-[16px] leading-[1.65] font-light text-ink">
+            <Enfasis texto={b.texto ?? ''} claseFuerte="font-medium" />
+          </p>
         </div>
       )
 
@@ -94,9 +98,13 @@ export default function BloqueLector({ b }: { b: Bloque }) {
       return (
         <div className={`${mt} border border-line rounded-[10px] px-5 py-5 bg-paper-2`}>
           <div className={ROTULO}>En la mano</div>
-          <p className="mt-2.5 text-[17px] md:text-[18px] font-light text-dom">{b.texto}</p>
+          <p className="mt-2.5 text-[17px] md:text-[18px] font-light text-dom">
+            <Enfasis texto={b.texto ?? ''} claseFuerte="font-medium" />
+          </p>
           {b.pie && (
-            <p className="mt-2 text-[12.5px] leading-[1.6] font-light text-gray-ui">{b.pie}</p>
+            <p className="mt-2 text-[12.5px] leading-[1.6] font-light text-gray-ui">
+              <Enfasis texto={b.pie} claseFuerte="font-medium" />
+            </p>
           )}
         </div>
       )
@@ -124,7 +132,9 @@ export default function BloqueLector({ b }: { b: Bloque }) {
           <div className={ROTULO}>
             Para ti, no para el grupo
           </div>
-          <p className="mt-2 text-[15px] leading-[1.65] font-light text-ink">{b.texto}</p>
+          <p className="mt-2 text-[15px] leading-[1.65] font-light text-ink">
+            <Enfasis texto={b.texto ?? ''} claseFuerte="font-medium" />
+          </p>
         </div>
       )
 
