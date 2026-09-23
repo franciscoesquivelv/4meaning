@@ -112,6 +112,62 @@ la base) igual que exige el resto del protocolo de este portal.
   guardar y borrar una respuesta funciona de verdad, y la versión queda
   publicada.
 
+### P-013 — El editor no es versátil: siete quejas de Francisco, auditadas por Julian/Daniel/Leo
+- Estado: **primera ola hecha, el resto decidido y pendiente de construir**
+- Origen: Francisco, 2026-09-23, usando el editor real de punta a punta
+  por primera vez: "no es versátil, solo permite agregar bloques."
+- **Hecho hoy, verificado con ejecución real (cuenta de equipo, consulta
+  directa a la base) contra "El Presente como Regalo":**
+  - Crear, renombrar/editar descripción, reordenar (flechas) y borrar
+    (con confirmación) una sección -- el hueco más sólido de los siete,
+    confirmado por Leo contra el historial completo: nunca existió, no
+    era una regresión. `almacenRemoto.ts` (`crearSeccionRemoto`,
+    `guardarSeccionRemoto`, `reordenarSeccionesRemoto`,
+    `borrarSeccionRemoto`) + `Editor.tsx`.
+  - Scroll independiente para el riel y el lienzo (arreglo CSS que
+    Daniel y Julian ya habían escrito: `overflow-y-auto` sobre el
+    `sticky` existente).
+  - `spellCheck`/`lang="es"` explícitos en los campos de texto (ya
+    funcionaba por default del navegador, según Daniel y Julian; esto
+    lo hace explícito, no depende de un default silencioso).
+  - Rótulo del botón "Guardar" aclarado ("Guardar ahora" + título
+    explicando qué hace) -- Leo encontró que no estaba roto, dice lo
+    mismo que el chip de al lado con otras palabras.
+  - Palabra "sección" en el texto visible del editor donde antes decía
+    "bisagra" (solo copy de esta pantalla, no los 884 usos del
+    identificador en 32 archivos que encontró Leo -- eso es un rename
+    mecánico aparte, sin urgencia, sin riesgo).
+- **Decidido, sin construir todavía (orden de Leo, con Daniel y Julian ya
+  de acuerdo en el fondo):**
+  - Texto enriquecido: extender `RenderMarkdown.tsx` (ya admite
+    `**negrita**`/`*cursiva*`/`##`/`###`, pero SOLO para bloques tipo
+    `texto` -- hallazgo de Leo, los otros once tipos muestran los
+    asteriscos literales) con H1 con nombre (Párrafo/Subtítulo/Título,
+    veto de Julian a tamaños libres) y un toolbar sobre el `textarea`
+    (`selectionStart/End`). Julian vetó color libre y centrar/justificar
+    por fuera de BRAND.md. Sin decidir: hipervínculos. 2-4 días base,
+    +1 por extra (Daniel).
+  - Rótulo interno por bloque (no visible al participante, veto de
+    Julian por chocar con los H2/H3 recién aprobados): mismo patrón
+    aditivo que `aplicaDigital`/`guarda`, sin bloqueo técnico (Daniel).
+  - Arrastrar para reordenar de verdad (hoy son flechas): necesita
+    `@dnd-kit` (cero librería de drag hoy), ~1-2 días por lista, riel de
+    secciones y lista de bloques son dos contextos distintos (Daniel).
+    Pospuesto hasta que el reordenar con flechas esté probado en uso
+    real (Leo).
+  - Limpieza de 27 usos de `text-slate-*` + 6 hex vivos + radios fuera
+    de norma DENTRO del propio `Editor.tsx` (hallazgo de Julian, fuera
+    de las siete quejas): es la razón formal de que el editor "lea
+    formulario genérico" aunque sus botones ya estén en marca.
+- **Hallazgo no pedido, de Leo:** el producto promete "se editan/arman
+  desde el editor" en su propia copy (`EditarFichaClient.tsx:50`,
+  `experiencias/nueva/page.tsx:58`) sin cumplirlo -- corregido de hecho
+  con esta misma pasada, ya no es falso.
+- Dueño: Claude construye lo decidido; falta que Francisco confirme
+  alcance de hipervínculos antes de esa pieza.
+- Criterio de cierre: cada pieza, verificada con ejecución real, no
+  lectura de código.
+
 ### P-011 — Cinco cambios estructurales para que el lector deje de sentirse "muy sutil"
 - Estado: **abierto**
 - Origen: Julian, 2026-09-21, segunda vuelta después de que Francisco

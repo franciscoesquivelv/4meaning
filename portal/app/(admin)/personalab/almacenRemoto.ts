@@ -5,6 +5,8 @@ import {
   desdeFila, aContenido, formatearPeso,
   type Bloque, type TipoBloque, type Audiencia, type FilaBloque,
 } from '@/lib/personalab/bloques'
+import type { BisagraEditable } from '@/lib/personalab/editorDatos'
+import type { Tiempo, Soporte } from './dominio'
 
 // Adaptador contra Supabase. Se escribió completo desde la Etapa 1 y no se
 // usó hasta la Etapa 3: `Editor.tsx` y `Publicar.tsx` lo llaman ahora de
@@ -262,6 +264,129 @@ export async function reordenarRemoto(
       .eq('version_id', versionId)
     if (error) throw error
   }
+}
+
+// ── Secciones (hinges) ───────────────────────────────────────
+//
+// HASTA HOY, ESTO NO EXISTÍA. Francisco lo encontró usando el editor real
+// por primera vez de punta a punta (2026-09-23): no había manera de crear
+// ni reordenar una sección desde la pantalla, solo bloques dentro de una
+// sección ya creada. No era una regresión -- Leo lo confirmó contra el
+// historial completo de `almacen.ts`, el store viejo: nunca existió. La
+// base ya estaba lista (`"pl equipo gestiona"` en `hinges` ya es `for all`
+// sobre la versión en borrador, `20260914_1030_hinges_por_version.sql`),
+// así que esto es solo el lado del cliente, calcado del patrón que ya
+// prueba `crearBloque`/`borrarBloque`/`reordenarRemoto` un nivel abajo.
+//
+// Se llama "Sección" en la interfaz de aquí en adelante (decisión de
+// Francisco, 2026-09-23: "las bisagras deben llamarse secciones"). El
+// nombre de tabla y de columna (`hinges`, `hinge_id`) se queda en inglés a
+// propósito, mismo patrón que capítulo→grupo: renombrar una tabla real es
+// una migración aparte, no un cambio de etiqueta.
+
+// Recalcula el `orden` local tras mover una sección DENTRO DEL MISMO
+// TIEMPO (víspera/ignición/retorno) -- las secciones de otro tiempo no
+// compiten por posición con esta. Misma forma que `reordenar()` para
+// bloques: solo dos filas cambian por movimiento de una posición.
+export function reordenarSecciones<T extends BisagraEditable>(
+  secciones: T[], tiempo: Tiempo, id: string, delta: number
+): T[] {
+  const dentro = secciones
+    .filter(s => s.tiempo === tiempo)
+    .sort((a, b) => a.orden - b.orden)
+  const i = dentro.findIndex(s => s.id === id)
+  const j = i + delta
+  if (i < 0 || j < 0 || j >= dentro.length) return secciones
+
+  const copia = [...dentro]
+  const [movida] = copia.splice(i, 1)
+  copia.splice(j, 0, movida)
+  const ordenes = new Map(copia.map((s, k) => [s.id, k + 1]))
+
+  return secciones.map(s => (ordenes.has(s.id) ? { ...s, orden: ordenes.get(s.id)! } : s))
+}
+
+export async function reordenarSeccionesRemoto(
+  cambios: { id: string; orden: number }[],
+  versionId: string
+): Promise<void> {
+  const sb = cliente()
+  for (const c of cambios) {
+    const { error } = await sb
+      .from('hinges')
+      .update({ orden: c.orden })
+      .eq('id', c.id)
+      .eq('version_id', versionId)
+    if (error) throw error
+  }
+}
+
+// Qué trae una sección recién nacida. El `tiempo` lo decide quien crea
+// (hoy siempre 'ignicion' desde el botón del riel, que es donde vive el
+// contenido propio de cada experiencia digital); `orden` lo calcula quien
+// llama, un lugar más allá de la última sección de ese mismo tiempo.
+export function seccionNueva(tiempo: Tiempo, orden: number): Omit<BisagraEditable, 'id'> {
+  return {
+    tiempo,
+    orden,
+    titulo: 'Nueva sección',
+    descripcion: '',
+    soporte: 'pantalla' as Soporte,
+    listo: false,
+  }
+}
+
+export async function crearSeccionRemoto(
+  s: Omit<BisagraEditable, 'id'>,
+  experienciaId: string,
+  versionId: string
+): Promise<BisagraEditable> {
+  const { data, error } = await cliente()
+    .from('hinges')
+    .insert({
+      version_id: versionId,
+      experience_id: experienciaId,
+      tiempo: s.tiempo,
+      orden: s.orden,
+      titulo: s.titulo,
+      descripcion: s.descripcion || null,
+      soporte: s.soporte,
+      listo: s.listo,
+    })
+    .select('id, tiempo, orden, titulo, descripcion, soporte, duracion, listo, requiere')
+    .single()
+
+  if (error) throw error
+  return data as BisagraEditable
+}
+
+// Título, descripción y si está lista para publicarse -- los tres campos
+// que un humano edita a mano. `tiempo`/`orden`/`soporte` no se tocan aquí:
+// tiempo y soporte no cambian nunca desde esta pantalla, y orden lo maneja
+// solo `reordenarSeccionesRemoto`, para no pisar un reordenamiento que
+// haya corrido mientras tanto.
+export async function guardarSeccionRemoto(
+  s: Pick<BisagraEditable, 'id' | 'titulo' | 'descripcion' | 'listo'>,
+  versionId: string
+): Promise<void> {
+  const { error } = await cliente()
+    .from('hinges')
+    .update({
+      titulo: s.titulo,
+      descripcion: s.descripcion || null,
+      listo: s.listo,
+    })
+    .eq('id', s.id)
+    .eq('version_id', versionId)
+  if (error) throw error
+}
+
+// Borrar una sección se lleva sus bloques con ella (`blocks.hinge_id`
+// tiene `on delete cascade`). La confirmación de que de verdad se quiere
+// perder el contenido vive en la interfaz, no aquí.
+export async function borrarSeccionRemoto(id: string): Promise<void> {
+  const { error } = await cliente().from('hinges').delete().eq('id', id)
+  if (error) throw error
 }
 
 // ── Ciclo de publicacion ────────────────────────────────────

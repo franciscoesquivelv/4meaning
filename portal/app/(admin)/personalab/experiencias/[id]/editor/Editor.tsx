@@ -12,9 +12,11 @@ import {
 import {
   crearBloque, guardarBloque, borrarBloque, borrarMedio, reordenarRemoto,
   camposPorDefecto, cambiarAudiencia, reordenar,
+  crearSeccionRemoto, guardarSeccionRemoto, borrarSeccionRemoto,
+  reordenarSecciones, reordenarSeccionesRemoto, seccionNueva,
   ConflictoDeVersion,
 } from '../../../almacenRemoto'
-import type { ExperienciaEditable, BloqueEditable } from '@/lib/personalab/editorDatos'
+import type { ExperienciaEditable, BloqueEditable, BisagraEditable } from '@/lib/personalab/editorDatos'
 import { ETIQUETA_TIEMPO, type Tiempo } from '../../../dominio'
 import { BTN_PRIMARIO, BTN_SECUNDARIO, BTN_FILA, BTN_PELIGRO, TARJETA } from '../../../tokens'
 import { Boton, Girador } from '../../../ui'
@@ -110,6 +112,20 @@ export default function Editor({
   bloquesIniciales: BloqueEditable[]
 }) {
   const [bloques, setBloques] = useState<BloqueEditable[]>(bloquesIniciales)
+  // HASTA HOY ESTO ERA `useMemo` sobre `experiencia.bisagras`, el prop
+  // inicial del servidor, que nunca cambia durante la sesión de edición --
+  // por eso crear, renombrar, reordenar o borrar una sección era
+  // literalmente imposible desde aquí, sin importar qué botón se
+  // inventara: no había dónde guardar el cambio. Encontrado por Francisco
+  // usando el editor real por primera vez (2026-09-23), confirmado por Leo
+  // contra el historial completo del store viejo -- nunca existió, no es
+  // una regresión.
+  const [bisagras, setBisagras] = useState<BisagraEditable[]>(
+    () => experiencia.bisagras.slice().sort((a, b) => a.orden - b.orden)
+  )
+  const [estadosPorSeccion, setEstadosPorSeccion] = useState<Map<string, EstadoBloque>>(new Map())
+  const [creandoSeccion, setCreandoSeccion] = useState(false)
+  const [porBorrarSeccion, setPorBorrarSeccion] = useState<string | null>(null)
   const [activa, setActiva] = useState<string>('')
   const [estadosPorBloque, setEstadosPorBloque] = useState<Map<string, EstadoBloque>>(new Map())
   const [lente, setLente] = useState<'participante' | 'moderador'>('participante')
@@ -462,11 +478,124 @@ export default function Editor({
     return () => clearTimeout(t)
   }, [recienCreado])
 
-  const bisagras = useMemo(
-    () => experiencia.bisagras.slice().sort((a, b) => a.orden - b.orden),
-    [experiencia]
-  )
+  // ── Secciones: crear, renombrar, reordenar, borrar ─────────────────
+  //
+  // Más simple que el guardado de bloques a propósito: una sección nace
+  // YA con id real (`hinges` solo exige `tiempo`+`titulo`, sin el CHECK
+  // por tipo que fuerza a un bloque a vivir "local" hasta tener contenido
+  // válido), así que no hace falta el mecanismo de id local/creación en
+  // curso. El debounce de edición sí se reusa: mismo ritmo que un bloque,
+  // para que la sensación sea la misma en las dos pantallas.
+  const seccionesRef = useRef<BisagraEditable[]>(bisagras)
+  useEffect(() => { seccionesRef.current = bisagras }, [bisagras])
+  const temporizadoresSeccion = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map())
+
+  function marcarSeccion(id: string, e: EstadoBloque) {
+    setEstadosPorSeccion(prev => {
+      const copia = new Map(prev)
+      copia.set(id, e)
+      return copia
+    })
+  }
+
+  async function guardarSeccionAhora(id: string) {
+    const s = seccionesRef.current.find(x => x.id === id)
+    if (!s) return
+    marcarSeccion(id, 'guardando')
+    try {
+      await conPisoPerceptible(guardarSeccionRemoto(s, experiencia.versionId))
+      marcarSeccion(id, 'guardado')
+    } catch (e) {
+      const codigo = (e as { code?: string } | null)?.code
+      if (codigo === '42501') {
+        setConflicto(
+          'Esta experiencia cambió del lado del servidor mientras editabas (alguien publicó o deshizo una publicación). Para no perder ni tu trabajo ni el de esa persona, recarga la página y vuelve a hacer tu cambio sobre la versión más reciente.'
+        )
+      }
+      marcarSeccion(id, 'error')
+    }
+  }
+
+  function actualizarSeccion(id: string, campos: Partial<BisagraEditable>) {
+    setBisagras(prev => prev.map(s => (s.id === id ? { ...s, ...campos } : s)))
+    marcarSeccion(id, 'pendiente')
+    const existente = temporizadoresSeccion.current.get(id)
+    if (existente) clearTimeout(existente)
+    temporizadoresSeccion.current.set(
+      id,
+      setTimeout(() => {
+        temporizadoresSeccion.current.delete(id)
+        guardarSeccionAhora(id)
+      }, DEMORA_AUTOGUARDADO)
+    )
+  }
+
+  async function agregarSeccion() {
+    setCreandoSeccion(true)
+    setErrorGlobal(null)
+    try {
+      const tiempo: Tiempo = bisagraActivaTiempo ?? 'ignicion'
+      const enEseTiempo = seccionesRef.current.filter(s => s.tiempo === tiempo)
+      const propuesta = seccionNueva(tiempo, enEseTiempo.length + 1)
+      const creada = await crearSeccionRemoto(propuesta, experiencia.id, experiencia.versionId)
+      setBisagras(prev => [...prev, creada])
+      setActiva(creada.id)
+      // La nueva sección nace con el título genérico "Nueva sección" ya
+      // seleccionado en el campo, lista para que quien la creó escriba el
+      // nombre real sin tener que borrar nada primero -- mismo espíritu
+      // que el enfoque automático de un bloque recién creado.
+      setTimeout(() => {
+        const campo = document.getElementById('titulo-seccion') as HTMLInputElement | null
+        campo?.focus()
+        campo?.select()
+      }, 50)
+    } catch {
+      setErrorGlobal('No se pudo crear la sección. Intenta de nuevo.')
+    } finally {
+      setCreandoSeccion(false)
+    }
+  }
+
+  async function moverSeccion(id: string, delta: number) {
+    const tiempo = seccionesRef.current.find(s => s.id === id)?.tiempo
+    if (!tiempo) return
+    const antes = seccionesRef.current
+    const despues = reordenarSecciones(antes, tiempo, id, delta)
+    if (despues === antes) return
+    setBisagras(despues)
+    const cambios = despues
+      .filter(s => s.tiempo === tiempo)
+      .filter(s => antes.find(a => a.id === s.id)?.orden !== s.orden)
+      .map(s => ({ id: s.id, orden: s.orden }))
+    try {
+      await reordenarSeccionesRemoto(cambios, experiencia.versionId)
+    } catch {
+      setBisagras(antes) // el servidor no lo aceptó: se revierte a lo que sí está guardado
+      setErrorGlobal('No se pudo reordenar. Intenta de nuevo.')
+    }
+  }
+
+  async function confirmarBorrarSeccion(id: string) {
+    setPorBorrarSeccion(null)
+    const antes = seccionesRef.current
+    setBisagras(prev => prev.filter(s => s.id !== id))
+    if (activa === id) {
+      const siguiente = seccionesRef.current.find(s => s.id !== id)
+      setActiva(siguiente?.id ?? '')
+    }
+    try {
+      await borrarSeccionRemoto(id)
+    } catch {
+      setBisagras(antes) // no se pudo borrar del lado del servidor: se restaura
+      setErrorGlobal('No se pudo borrar la sección. Intenta de nuevo.')
+    }
+  }
+
   const bisagraActiva = bisagras.find(b => b.id === activa)
+  // Dónde cae la próxima sección que se cree: el mismo tiempo de la que
+  // está activa, o 'ignicion' (donde vive el contenido propio de cada
+  // experiencia digital) si no hay ninguna todavía.
+  const bisagraActivaTiempo: Tiempo | null = bisagraActiva?.tiempo ?? null
   const delBloque = useMemo(
     () => bloques.filter(b => b.bisagraId === activa).sort((a, b) => a.orden - b.orden),
     [bloques, activa]
@@ -590,12 +719,22 @@ export default function Editor({
             </span>
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
+            {/* NO ES UN BOTÓN MUERTO -- adelanta el debounce de 700ms en
+                vez de esperarlo, y por eso ya nace deshabilitado salvo
+                cuando hay algo pendiente de verdad. La confusión que
+                encontró Francisco es de MODELO MENTAL, no de mecanismo
+                (Leo, 2026-09-23): al lado dice "Cambios sin guardar" y el
+                botón dice "Guardar", como si uno describiera un problema
+                que el otro resuelve por separado, cuando los dos vienen
+                del mismo estado. El título explica la diferencia real sin
+                rediseñar el flujo entero en esta pasada. */}
             <Boton
               variante="secundario"
               onClick={guardarYa}
               disabled={estadoGlobal !== 'pendiente'}
+              title="Guarda ya, sin esperar los segundos del autoguardado"
             >
-              Guardar
+              Guardar ahora
             </Boton>
             <Link
               href={`/personalab/experiencias/${experiencia.slug}/publicar`}
@@ -639,72 +778,148 @@ export default function Editor({
         </button>
       )}
 
+      {porBorrarSeccion && (
+        <div className="fixed inset-0 z-50 bg-black/30 flex items-center justify-center px-4">
+          <div className="bg-white rounded-xl shadow-xl p-6 max-w-sm w-full">
+            <p className="text-sm text-slate-700">
+              ¿Borrar "{bisagras.find(s => s.id === porBorrarSeccion)?.titulo}"? Se borra también
+              todo lo que tenga escrito adentro. No se puede deshacer.
+            </p>
+            <div className="mt-5 flex gap-2 justify-end">
+              <button onClick={() => setPorBorrarSeccion(null)} className={BTN_SECUNDARIO}>
+                Cancelar
+              </button>
+              <button onClick={() => confirmarBorrarSeccion(porBorrarSeccion)} className={BTN_PELIGRO}>
+                Borrar sección
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 lg:grid-cols-[180px_minmax(0,1fr)_320px] gap-6 items-start">
-        {/* Riel de bisagras */}
-        <nav className="lg:sticky lg:top-[164px]">
+        {/* Riel de secciones. Scroll propio (Julian, 2026-09-23): antes
+            `sticky` la hacía viajar pegada a la página completa, peleando
+            con el scroll del lienzo y de la vista previa. */}
+        <nav className="lg:sticky lg:top-[164px] lg:h-[calc(100vh-164px)] lg:overflow-y-auto pr-1">
           {TIEMPOS.map(t => {
-            const bs = bisagras.filter(b => b.tiempo === t)
+            const bs = bisagras.filter(b => b.tiempo === t).sort((a, b) => a.orden - b.orden)
             if (bs.length === 0) return null
             return (
               <div key={t} className="mb-5">
                 <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-2 px-2">
                   {ETIQUETA_TIEMPO[t]}
                 </div>
-                {bs.map(b => {
+                {bs.map((b, i) => {
                   // Solo cuenta lo que de verdad está en la base. Un
                   // bloque local recién creado (todavía sin contenido
                   // válido) hacía que esto dijera "1 bloque" para una
-                  // bisagra que, si se recarga la página ahora mismo,
+                  // sección que, si se recarga la página ahora mismo,
                   // sigue vacía. Dos señales que mentían en la misma
                   // dirección. Hallazgo de Julián.
                   const n = bloques.filter(x => x.bisagraId === b.id && !esLocal(x.id)).length
                   const act = b.id === activa
                   return (
-                    <button
+                    <div
                       key={b.id}
-                      onClick={() => setActiva(b.id)}
-                      className={`w-full text-left px-2.5 py-2 rounded-lg mb-0.5 transition-colors ${
+                      className={`group flex items-center gap-1 rounded-lg mb-0.5 transition-colors ${
                         act ? 'bg-slate-200/70' : 'hover:bg-slate-100'
                       }`}
                     >
-                      <span className={`block text-[13px] leading-snug ${act ? 'text-slate-900 font-medium' : 'text-slate-600'}`}>
-                        {b.titulo}
-                      </span>
-                      <span className="block text-[11px] text-slate-400 mt-0.5 tabular-nums">
-                        {n === 0 ? 'vacía' : `${n} bloque${n > 1 ? 's' : ''}`}
-                      </span>
-                    </button>
+                      <button
+                        onClick={() => setActiva(b.id)}
+                        className="flex-1 min-w-0 text-left px-2.5 py-2"
+                      >
+                        <span className={`block text-[13px] leading-snug truncate ${act ? 'text-slate-900 font-medium' : 'text-slate-600'}`}>
+                          {b.titulo}
+                        </span>
+                        <span className="block text-[11px] text-slate-400 mt-0.5 tabular-nums">
+                          {n === 0 ? 'vacía' : `${n} bloque${n > 1 ? 's' : ''}`}
+                        </span>
+                      </button>
+                      <div className="flex flex-col opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity pr-1">
+                        <button
+                          onClick={() => moverSeccion(b.id, -1)}
+                          disabled={i === 0}
+                          className="text-slate-400 hover:text-slate-700 disabled:opacity-20 disabled:hover:text-slate-400 text-[10px] leading-none py-0.5"
+                          title="Subir"
+                          aria-label={`Subir ${b.titulo}`}
+                        >
+                          ▲
+                        </button>
+                        <button
+                          onClick={() => moverSeccion(b.id, 1)}
+                          disabled={i === bs.length - 1}
+                          className="text-slate-400 hover:text-slate-700 disabled:opacity-20 disabled:hover:text-slate-400 text-[10px] leading-none py-0.5"
+                          title="Bajar"
+                          aria-label={`Bajar ${b.titulo}`}
+                        >
+                          ▼
+                        </button>
+                      </div>
+                    </div>
                   )
                 })}
               </div>
             )
           })}
+
+          <button
+            onClick={agregarSeccion}
+            disabled={creandoSeccion}
+            className="w-full text-left px-2.5 py-2 rounded-lg text-[13px] text-dom hover:bg-paper-2 disabled:opacity-50 transition-colors flex items-center gap-1.5 mt-1"
+          >
+            <span className="text-base leading-none">+</span> Nueva sección
+          </button>
         </nav>
 
-        {/* Lienzo */}
-        <div className="min-w-0">
+        {/* Lienzo. Mismo arreglo de scroll que el riel. */}
+        <div className="min-w-0 lg:h-[calc(100vh-164px)] lg:overflow-y-auto lg:pr-1">
           {bisagras.length === 0 && (
             <div className="border border-dashed border-slate-200 rounded-xl px-5 py-10 text-center">
               <p className="text-sm text-slate-600">
-                {experiencia.nombre} todavía no tiene bisagras.
+                {experiencia.nombre} todavía no tiene secciones.
               </p>
               <p className="text-xs text-slate-400 mt-2 leading-relaxed max-w-[46ch] mx-auto">
-                Una bisagra es cada momento de la experiencia. El contenido se escribe dentro de
-                ellas, así que hay que definirlas antes de poder escribir. Todavía no se puede hacer
-                desde aquí.
+                Una sección es cada momento de la experiencia. El contenido se escribe dentro de
+                ellas, así que hay que crear una primero.
               </p>
+              <button onClick={agregarSeccion} disabled={creandoSeccion} className={`${BTN_PRIMARIO} mt-4`}>
+                {creandoSeccion ? 'Creando…' : 'Crear la primera sección'}
+              </button>
             </div>
           )}
 
           {bisagraActiva && (
             <div className="mb-5">
-              <div className="text-[10px] font-semibold uppercase tracking-wider text-[#8F5341]">
-                {ETIQUETA_TIEMPO[bisagraActiva.tiempo]}
+              <div className="flex items-center justify-between gap-3">
+                <div className="text-[10px] font-semibold uppercase tracking-wider text-[#8F5341]">
+                  {ETIQUETA_TIEMPO[bisagraActiva.tiempo]}
+                </div>
+                <button
+                  onClick={() => setPorBorrarSeccion(bisagraActiva.id)}
+                  className="text-[11px] text-slate-400 hover:text-alerta transition-colors"
+                >
+                  Borrar sección
+                </button>
               </div>
-              <h2 className="text-xl font-semibold tracking-tight text-slate-900 mt-1">
-                {bisagraActiva.titulo}
-              </h2>
-              <p className="text-sm text-slate-500 mt-1">{bisagraActiva.descripcion}</p>
+              <input
+                id="titulo-seccion"
+                value={bisagraActiva.titulo}
+                onChange={e => actualizarSeccion(bisagraActiva.id, { titulo: e.target.value })}
+                placeholder="Título de la sección"
+                spellCheck
+                lang="es"
+                className="w-full text-xl font-semibold tracking-tight text-slate-900 mt-1 bg-transparent border-0 border-b border-transparent hover:border-slate-200 focus:border-slate-400 outline-none transition-colors px-0 py-1"
+              />
+              <input
+                value={bisagraActiva.descripcion ?? ''}
+                onChange={e => actualizarSeccion(bisagraActiva.id, { descripcion: e.target.value })}
+                placeholder="Una descripción breve (opcional, no la ve el participante)"
+                spellCheck
+                lang="es"
+                className="w-full text-sm text-slate-500 mt-1 bg-transparent border-0 border-b border-transparent hover:border-slate-200 focus:border-slate-400 outline-none transition-colors px-0 py-1"
+              />
             </div>
           )}
 
@@ -803,7 +1018,7 @@ export default function Editor({
                     <p className="text-[15px] font-light text-[#676E6E] leading-relaxed">
                       {delBloque.length === 0
                         ? 'Aquí va a leerse lo que escribas.'
-                        : 'Con la lente de participante esto sale en blanco. Todo lo que hay en esta bisagra está marcado como solo moderador.'}
+                        : 'Con la lente de participante esto sale en blanco. Todo lo que hay en esta sección está marcado como solo moderador.'}
                     </p>
                   ) : (
                     visiblesEnPrevia.map(b => <BloqueLector key={claveDe(b.id)} b={b} />)
@@ -1063,6 +1278,8 @@ function TarjetaBloque({
                 rows={b.tipo === 'texto' ? 6 : 3}
                 placeholder={b.tipo === 'texto' ? 'Escribe. Admite **negrita**, *cursiva* y ## subtítulos.' : 'Lo que el moderador necesita saber y el grupo no.'}
                 className={`${INPUT} resize-y leading-relaxed`}
+                spellCheck
+                lang="es"
               />
             ) : (
               <textarea
@@ -1070,6 +1287,8 @@ function TarjetaBloque({
                 onChange={e => onCambio({ texto: e.target.value })}
                 rows={2}
                 className={`${INPUT} resize-y leading-relaxed`}
+                spellCheck
+                lang="es"
               />
             )}
 
