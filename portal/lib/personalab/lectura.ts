@@ -200,7 +200,7 @@ export function posicionAlcanzable(iUltima: number): number {
 export async function cargarBisagra(
   slug: string,
   bisagraId: string
-): Promise<ResultadoLectura<{ experiencia: Experiencia; bisagra: Bisagra; bloques: Bloque[]; anterior: Bisagra | null; siguiente: Bisagra | null; primeraVez: boolean }>> {
+): Promise<ResultadoLectura<{ experiencia: Experiencia; bisagra: Bisagra; bloques: (Bloque & { respuestaGuardada?: string })[]; anterior: Bisagra | null; siguiente: Bisagra | null; primeraVez: boolean }>> {
   const base = await cargarExperiencia(slug)
   if (base.estado !== 'ok') return base
 
@@ -266,9 +266,28 @@ export async function cargarBisagra(
   // se verificó contra la base real (Etapa 5) que `media` llega como un
   // solo objeto, nunca un arreglo -- `blocks.media_id` apunta a una sola
   // fila.
-  const bloques: Bloque[] = (data ?? [])
+  const bloques: (Bloque & { respuestaGuardada?: string })[] = (data ?? [])
     .map(f => desdeFila(f as unknown as FilaBloque))
     .filter((b): b is Bloque => b !== null)
+
+  // LO YA ESCRITO, CUANDO LA CONSIGNA LO GUARDA. Solo se consulta si hace
+  // falta (alguna consigna de esta bisagra tiene `guarda: true`): el resto
+  // de las bisagras, que son la mayoría, no pagan una consulta de más.
+  // `createClient()` es la sesión de la propia persona, así que la RLS de
+  // `responses` (`profile_id = auth.uid()`) ya hace el filtro: no hace
+  // falta repetirlo aquí.
+  const idsConGuardado = bloques.filter(b => b.tipo === 'consigna' && b.guarda).map(b => b.id)
+  if (idsConGuardado.length > 0) {
+    const { data: guardadas } = await supabase
+      .from('responses')
+      .select('block_id, texto')
+      .in('block_id', idsConGuardado)
+    const porBloque = new Map((guardadas ?? []).map(r => [r.block_id, r.texto as string]))
+    for (const b of bloques) {
+      const g = porBloque.get(b.id)
+      if (g !== undefined) b.respuestaGuardada = g
+    }
+  }
 
   return {
     estado: 'ok',
@@ -350,14 +369,18 @@ export async function bienvenidaVista(experienciaId: string): Promise<boolean> {
 // Todas las consignas de una experiencia, en orden, para el cierre.
 //
 // El cierre necesita saber QUÉ se preguntó para poder poner cada respuesta
-// debajo de su pregunta. Las respuestas no vienen de aquí: viven en el
-// navegador de la persona y no existen en esta base. Esto solo trae las
-// preguntas.
+// debajo de su pregunta. LAS RESPUESTAS NO SIEMPRE VIENEN DE AQUÍ: para una
+// consigna con `guarda: false` (la mayoría, hasta hoy la única forma que
+// existía) siguen viviendo solo en el navegador de la persona, y esta
+// función no las conoce. Para una consigna con `guarda: true`
+// (2026-09-22, decisión de Francisco del 13-sep construida) el valor SÍ
+// viaja desde aquí, ya guardado en `responses` -- `Cierre.tsx` las junta
+// con las que le llegan de `sessionStorage` para las que no se guardan.
 export async function consignasDe(
   slug: string
 ): Promise<ResultadoLectura<{
   experiencia: Experiencia
-  consignas: { id: string; texto: string; bisagra: string }[]
+  consignas: { id: string; texto: string; bisagra: string; guarda: boolean; respuestaGuardada?: string }[]
   // SI DE VERDAD LLEGÓ AL FINAL. `Cierre.tsx` decía "Terminaste [experiencia]"
   // con la única condición de no haber escrito nada, sin mirar nunca si la
   // persona recorrió las bisagras. Reproducido en vivo por Hugo: entrar por
@@ -405,10 +428,24 @@ export async function consignasDe(
       id: f.id,
       texto: String((f.contenido as Record<string, unknown>)?.texto ?? ''),
       bisagra: titulo.get(f.hinge_id) ?? '',
+      guarda: (f.contenido as Record<string, unknown>)?.guarda === true,
       _o: (orden.get(f.hinge_id) ?? 0) * 1000 + f.orden,
     }))
     .sort((a, b) => a._o - b._o)
     .map(({ _o, ...c }) => c)
+
+  const idsConGuardado = consignas.filter(c => c.guarda).map(c => c.id)
+  if (idsConGuardado.length > 0) {
+    const { data: guardadas } = await supabase
+      .from('responses')
+      .select('block_id, texto')
+      .in('block_id', idsConGuardado)
+    const porBloque = new Map((guardadas ?? []).map(r => [r.block_id, r.texto as string]))
+    for (const c of consignas) {
+      const g = porBloque.get(c.id)
+      if (g !== undefined) (c as typeof c & { respuestaGuardada?: string }).respuestaGuardada = g
+    }
+  }
 
   return { estado: 'ok', datos: { experiencia, consignas, completo } }
 }

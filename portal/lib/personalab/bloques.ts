@@ -209,6 +209,19 @@ export const CONTRATO = {
     margen: 'mt-8 md:mt-10',
     campos: {
       texto: { clase: 'texto', etiqueta: 'Consigna', exigencia: 'impide', ...FALTA_TEXTO },
+      // EL INTERRUPTOR POR SECCIÓN. Decisión de Francisco, 2026-09-13
+      // (memoria de proyecto `presente-regalo-digital.md`, decisión 2):
+      // quien crea el contenido decide, consigna por consigna, si lo que la
+      // persona escribe ahí se guarda de verdad (tabla `responses`,
+      // `20260922_1200_respuestas_guardadas.sql`) o vive solo en la pestaña
+      // como hasta hoy. Falla cerrado, como `aplicaDigital`: sin marcar,
+      // NO se guarda -- la promesa por defecto sigue siendo la más
+      // conservadora, la que no se puede violar por accidente.
+      guarda: {
+        clase: 'booleano',
+        etiqueta: 'Se guarda la respuesta',
+        exigencia: 'opcional',
+      },
     },
   },
 
@@ -465,6 +478,7 @@ export interface Bloque {
   duracion?: string
   segundos?: number
   aplicaDigital?: boolean
+  guarda?: boolean
 }
 
 // ── La traducción, que vive aquí y en ningún otro sitio ─────────────────

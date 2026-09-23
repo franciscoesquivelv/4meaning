@@ -34,6 +34,74 @@ la base) igual que exige el resto del protocolo de este portal.
 
 ## Abiertos / decididos
 
+### P-012 — El Presente como Regalo, construido con la cronología real: falta correr la migración y publicar
+- Estado: **decidido, código listo, contenido escrito en borrador, bloqueado en la migración**
+- Origen: Francisco, 2026-09-22 ("llena el Presente como Regalo... hazlo
+  bien"), con el PDF de la cronología real del retiro presencial. Se cruzó
+  contra las once decisiones de Francisco del 2026-09-13 (memoria de
+  proyecto `presente-regalo-digital.md`) antes de escribir nada: la base
+  seguía en 4 bisagras-contenedor cuando la decisión 5 ya pedía "un
+  momento, una pantalla... unas 20", y `Escritura.tsx` seguía con la regla
+  de "nunca se guarda" del 10-sep sin el interruptor por sección que la
+  decisión 2 del 13-sep ya había decidido construir. Reconstruir esto
+  bien, no llenar las 4 bisagras viejas, fue la elección explícita de
+  Francisco sobre las dos opciones que se le dieron.
+- **Contenido:** Renata adaptó las 16 actividades de la cronología
+  presencial a texto/consigna/gesto/pausa/aviso real, momento por
+  momento, sin resumir. Dos huecos que no inventó, quedan como avisos
+  honestos en el lector, no bloques rotos: el pasaje real del libro del
+  Dr. Alexander (Finitud), y el video de perdón (Perdón, la cronología
+  misma dice "falta research" para ese punto). **Necesito de Francisco**:
+  el pasaje del Dr. Alexander con su autor confirmado, y la decisión o el
+  research de los ítems 14-15 (perdón, tres columnas / video).
+- **Estructura:** las 4 bisagras-contenedor se partieron en 16 momentos
+  reales (Finitud 6, Gratitud 5, Silencio 2, Perdón 3), escritos en la
+  versión borrador de la experiencia real (no tocan lo publicado). "Unas
+  20" de la decisión 5 se quedó en 16 porque Silencio, el módulo más
+  nuevo, es genuinamente más corto que los otros tres — no se fragmentó
+  a la fuerza para llegar a un número.
+- **El interruptor de guardado, construido de punta a punta:**
+  `Bloque.guarda` (nuevo campo del contrato, `lib/personalab/bloques.ts`,
+  falla cerrado como `aplicaDigital`), checkbox real en el editor
+  (`Editor.tsx`), tabla nueva `public.responses` con RLS propia
+  (`supabase/migrations/20260922_1200_respuestas_guardadas.sql`,
+  auditada por Hugo, dos rondas — la primera versión validaba grant de
+  experiencia pero no versión/audiencia del bloque, corregido para copiar
+  el mismo predicado que ya usa la política de lectura real de `blocks`),
+  `Escritura.tsx` reescrito con los dos comportamientos y su botón real de
+  borrar (nada que guarde sale sin poder borrarse — condición de Sora),
+  `lectura.ts` y `Cierre.tsx` leyendo y juntando lo guardado con lo que
+  sigue viviendo solo en la pestaña. Tres consignas marcadas `guarda:
+  true` (la frase de Finitud, el regalo de Gratitud, el cierre de Perdón)
+  para que decisión 9 y 11 del 13-sep (el cierre reúne el material, lo
+  escrito en Finitud puede recordarse después) tengan algo real que leer;
+  el resto de las consignas de calentamiento se queda efímera, a
+  propósito, criterio mío, ajustable.
+- **Lo que NO se construyó en esta pasada, marcado, no escondido:** el
+  test de propósito oculto como primera pantalla (decisión 6) y el
+  recordar-lo-escrito entre módulos como mecanismo de UI (decisión 11,
+  más allá de que el dato ya se guarda) — son piezas más grandes, fuera
+  del alcance que describí cuando Francisco eligió "hazlo bien". Si hace
+  falta, son su propio pendiente.
+- **Verificado hasta ahora:** typecheck limpio; la estructura completa
+  (16 bisagras, 69 bloques, orden secuencial sin huecos) confirmada con
+  consulta directa a la base; el editor real, con una cuenta de equipo,
+  muestra los 16 momentos y su vista previa renderiza el contenido real
+  correctamente (checkbox de guardado marcado donde corresponde, avisos
+  de audio/video pendientes legibles, sin bloques rotos). **Lo que falta
+  verificar** porque depende de la migración: que guardar y borrar una
+  respuesta funcione de verdad contra `public.responses`, y la lectura
+  real de un comprador (`/experiencia/presente-regalo`) una vez marcadas
+  `listo` las 16 bisagras.
+- Dueño: Francisco corre la migración en el editor SQL de Supabase (no
+  tengo acceso directo, mismo motivo que P-007) y entrega el pasaje del
+  Dr. Alexander + la decisión sobre perdón; Claude termina la
+  verificación y publica en cuanto eso llegue.
+- Criterio de cierre: comprador real (grant real, no previa de equipo) ve
+  contenido real en `/experiencia/presente-regalo` (no "0 pasos"),
+  guardar y borrar una respuesta funciona de verdad, y la versión queda
+  publicada.
+
 ### P-011 — Cinco cambios estructurales para que el lector deje de sentirse "muy sutil"
 - Estado: **abierto**
 - Origen: Julian, 2026-09-21, segunda vuelta después de que Francisco

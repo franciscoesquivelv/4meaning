@@ -82,7 +82,13 @@ export default async function LeerBisagra({
       <article className="mt-10">
         {bloquesDigitales.map(b =>
           b.tipo === 'consigna' ? (
-            <Escritura key={b.id} bloqueId={b.id} consigna={b.texto ?? ''} />
+            <Escritura
+              key={b.id}
+              bloqueId={b.id}
+              consigna={b.texto ?? ''}
+              guarda={b.guarda === true}
+              valorInicial={b.respuestaGuardada}
+            />
           ) : (
             <BloqueLector key={b.id} b={b} />
           )

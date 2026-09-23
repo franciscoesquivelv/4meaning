@@ -6,14 +6,18 @@ import Link from 'next/link'
 // El cierre. Junta lo que la persona escribió, se lo enseña, y le ofrece
 // mandárselo.
 //
-// LAS RESPUESTAS NO VIENEN DEL SERVIDOR, porque no existen ahí. Viven en el
-// `sessionStorage` de esta pestaña y este componente es el único sitio de
-// todo el sistema donde se leen juntas. Las consignas sí vienen del servidor:
-// hacen falta para poner cada respuesta debajo de su pregunta.
+// DOS ORÍGENES, DESDE EL 2026-09-22. Antes ninguna respuesta venía del
+// servidor porque ninguna existía ahí. Ahora una consigna con
+// `guarda: true` SÍ vive en la base (`public.responses`,
+// `lib/personalab/lectura.ts#consignasDe` ya la trae resuelta como
+// `respuestaGuardada`); una con `guarda: false` sigue sin existir fuera de
+// esta pestaña, y este componente sigue siendo el único sitio que las lee
+// del `sessionStorage`. Las dos se juntan aquí, en el mismo orden en el
+// que se preguntaron.
 
 const PREFIJO = 'pl.escritura.'
 
-type Consigna = { id: string; texto: string; bisagra: string }
+type Consigna = { id: string; texto: string; bisagra: string; guarda: boolean; respuestaGuardada?: string }
 type Estado = 'leyendo' | 'listo' | 'enviando' | 'enviado' | 'fallo'
 
 export default function Cierre({
@@ -36,12 +40,16 @@ export default function Cierre({
 
   useEffect(() => {
     const r: { c: Consigna; texto: string }[] = []
-    try {
-      for (const c of consignas) {
+    for (const c of consignas) {
+      if (c.guarda) {
+        if (c.respuestaGuardada?.trim()) r.push({ c, texto: c.respuestaGuardada })
+        continue
+      }
+      try {
         const t = sessionStorage.getItem(PREFIJO + c.id)
         if (t?.trim()) r.push({ c, texto: t })
-      }
-    } catch { /* almacenamiento bloqueado: se queda vacío */ }
+      } catch { /* almacenamiento bloqueado: se queda vacío */ }
+    }
     setRespuestas(r)
     setEstado('listo')
   }, [consignas])
@@ -92,7 +100,11 @@ export default function Cierre({
       ) : (
         <>
           <p className="mt-6 text-[17px] leading-[1.65] font-light text-ink/90">
-            Esto vive solo en esta pestaña. Si la cierras, se borra.
+            {respuestas.every(r => !r.c.guarda)
+              ? 'Esto vive solo en esta pestaña. Si la cierras, se borra.'
+              : respuestas.every(r => r.c.guarda)
+                ? 'Esto lo guardamos. Es tuyo, lo puedes borrar cuando quieras.'
+                : 'Una parte de esto la guardamos; otra vive solo en esta pestaña y se borra si la cierras.'}
           </p>
 
           <div className="mt-12 space-y-10">

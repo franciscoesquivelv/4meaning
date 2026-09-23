@@ -1117,6 +1117,26 @@ function TarjetaBloque({
               </label>
             )}
 
+            {/* EL INTERRUPTOR POR SECCIÓN. Decisión de Francisco, 2026-09-13:
+                quien escribe el contenido decide, consigna por consigna, si
+                lo que la persona responde se guarda de verdad
+                (`public.responses`) o vive solo en su pestaña, como antes.
+                Falla cerrado: sin marcar, no se guarda. */}
+            {b.tipo === 'consigna' && (
+              <label className="flex items-center gap-2 mt-3 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={b.guarda ?? false}
+                  onChange={e => onCambio({ guarda: e.target.checked })}
+                  className="w-4 h-4 rounded border-slate-300 accent-slate-900"
+                />
+                <span className="text-xs text-slate-600">Se guarda la respuesta</span>
+                <span className="text-xs text-slate-400">
+                  Sin marcar, lo que escriba se pierde al cerrar la pestaña, como siempre.
+                </span>
+              </label>
+            )}
+
           </>
         )}
       </div>
