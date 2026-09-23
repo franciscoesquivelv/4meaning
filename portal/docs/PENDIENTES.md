@@ -113,7 +113,22 @@ la base) igual que exige el resto del protocolo de este portal.
   publicada.
 
 ### P-013 — El editor no es versátil: siete quejas de Francisco, auditadas por Julian/Daniel/Leo
-- Estado: **segunda ola hecha (texto enriquecido real), queda arrastrar de verdad y limpieza de tokens**
+- Estado: **hecho, las siete quejas y lo que se encontró de más**
+- Actualización 2026-09-23, tercera y última ola: limpieza de tokens
+  (58 líneas, hex vivo y `slate-*` fuera de marca dentro del propio
+  `Editor.tsx`, cambiados a `text-ink`/`text-gray-ui`/`bg-paper(-2)`/
+  `border-line`/`text-dom`/`text-terra-ui`/`rounded-[10px]`, con la
+  única excepción a propósito del bisel del teléfono de la vista
+  previa, que no es chrome de marca). Y arrastrar de verdad para
+  reordenar secciones (`@dnd-kit/core` + `/sortable`, nueva dependencia,
+  cero librería de este tipo existía antes): asa `⠿` junto a cada
+  sección, las flechas ↑↓ se quedan como camino accesible por teclado.
+  Verificado con una secuencia real de eventos de puntero (mousedown +
+  varios pointermove + mouseup) contra la base real, porque el gesto
+  simple del navegador de este entorno no dispara suficiente movimiento
+  intermedio para que `@dnd-kit` lo reconozca -- no es un bug del
+  código, es un límite de la herramienta de prueba. Confirmado el
+  intercambio y revertido al orden original.
 - Actualización 2026-09-23, con Francisco probando en tiempo real: sin
   esperar otra ronda de consejo (ya tenía el veredicto de Julian sobre
   forma), se construyó negrita/cursiva real (rodea la selección) y

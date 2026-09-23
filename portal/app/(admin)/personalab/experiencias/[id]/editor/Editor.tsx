@@ -2,6 +2,14 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
+import {
+  DndContext, closestCenter, PointerSensor, KeyboardSensor, useSensor, useSensors,
+  type DragEndEvent,
+} from '@dnd-kit/core'
+import {
+  SortableContext, verticalListSortingStrategy, useSortable, sortableKeyboardCoordinates,
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import BloqueLector from '../../../Bloques'
 import SubirArchivo from '../../../SubirArchivo'
 import {
@@ -575,6 +583,43 @@ export default function Editor({
     }
   }
 
+  // ARRASTRAR DE VERDAD, no solo flechas. Pedido explícito de Francisco,
+  // 2026-09-23. Reusa exactamente `moverSeccion`: `reordenarSecciones` ya
+  // acepta cualquier delta, no solo ±1 (mismo `splice` sirve para mover
+  // tres lugares de una vez), así que arrastrar es el mismo mecanismo que
+  // las flechas, con un delta más grande. Las flechas se quedan -- son el
+  // camino accesible por teclado, `@dnd-kit` no las reemplaza.
+  //
+  // PointerSensor con `distance: 4` evita que un clic normal (seleccionar
+  // la sección) se confunda con el inicio de un arrastre: sin ese umbral,
+  // el primer pixel de movimiento del mouse ya cuenta como "arrastrando".
+  const sensoresArrastre = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  )
+
+  function alSoltarSeccion(evento: DragEndEvent) {
+    const { active, over } = evento
+    if (!over || active.id === over.id) return
+
+    const activaId = String(active.id)
+    const sobreId = String(over.id)
+    const tiempo = seccionesRef.current.find(s => s.id === activaId)?.tiempo
+    const tiempoDestino = seccionesRef.current.find(s => s.id === sobreId)?.tiempo
+    // Nunca cruza de un tiempo a otro (víspera/ignición/retorno): son
+    // listas separadas a propósito, no una sola lista larga.
+    if (!tiempo || tiempo !== tiempoDestino) return
+
+    const dentro = seccionesRef.current
+      .filter(s => s.tiempo === tiempo)
+      .sort((a, b) => a.orden - b.orden)
+    const iViejo = dentro.findIndex(s => s.id === activaId)
+    const iNuevo = dentro.findIndex(s => s.id === sobreId)
+    if (iViejo < 0 || iNuevo < 0) return
+
+    moverSeccion(activaId, iNuevo - iViejo)
+  }
+
   async function confirmarBorrarSeccion(id: string) {
     setPorBorrarSeccion(null)
     const antes = seccionesRef.current
@@ -810,67 +855,47 @@ export default function Editor({
             había más lista debajo. */}
         <nav className="lg:sticky lg:top-[164px] lg:h-[calc(100vh-164px)] flex flex-col">
         <div className="flex-1 min-h-0 lg:overflow-y-auto scroll-sin-barra pr-1">
-          {TIEMPOS.map(t => {
-            const bs = bisagras.filter(b => b.tiempo === t).sort((a, b) => a.orden - b.orden)
-            if (bs.length === 0) return null
-            return (
-              <div key={t} className="mb-5">
-                <div className="text-[10px] font-semibold uppercase tracking-wider text-gray-ui mb-2 px-2">
-                  {ETIQUETA_TIEMPO[t]}
+          <DndContext
+            sensors={sensoresArrastre}
+            collisionDetection={closestCenter}
+            onDragEnd={alSoltarSeccion}
+          >
+            {TIEMPOS.map(t => {
+              const bs = bisagras.filter(b => b.tiempo === t).sort((a, b) => a.orden - b.orden)
+              if (bs.length === 0) return null
+              return (
+                <div key={t} className="mb-5">
+                  <div className="text-[10px] font-semibold uppercase tracking-wider text-gray-ui mb-2 px-2">
+                    {ETIQUETA_TIEMPO[t]}
+                  </div>
+                  <SortableContext items={bs.map(b => b.id)} strategy={verticalListSortingStrategy}>
+                    {bs.map((b, i) => {
+                      // Solo cuenta lo que de verdad está en la base. Un
+                      // bloque local recién creado (todavía sin contenido
+                      // válido) hacía que esto dijera "1 bloque" para una
+                      // sección que, si se recarga la página ahora mismo,
+                      // sigue vacía. Dos señales que mentían en la misma
+                      // dirección. Hallazgo de Julián.
+                      const n = bloques.filter(x => x.bisagraId === b.id && !esLocal(x.id)).length
+                      return (
+                        <FilaSeccion
+                          key={b.id}
+                          b={b}
+                          tiempo={t}
+                          activa={b.id === activa}
+                          nBloques={n}
+                          primera={i === 0}
+                          ultima={i === bs.length - 1}
+                          onSeleccionar={() => setActiva(b.id)}
+                          onMover={delta => moverSeccion(b.id, delta)}
+                        />
+                      )
+                    })}
+                  </SortableContext>
                 </div>
-                {bs.map((b, i) => {
-                  // Solo cuenta lo que de verdad está en la base. Un
-                  // bloque local recién creado (todavía sin contenido
-                  // válido) hacía que esto dijera "1 bloque" para una
-                  // sección que, si se recarga la página ahora mismo,
-                  // sigue vacía. Dos señales que mentían en la misma
-                  // dirección. Hallazgo de Julián.
-                  const n = bloques.filter(x => x.bisagraId === b.id && !esLocal(x.id)).length
-                  const act = b.id === activa
-                  return (
-                    <div
-                      key={b.id}
-                      className={`group flex items-center gap-1 rounded-[10px] mb-0.5 transition-colors ${
-                        act ? 'bg-paper-2/70' : 'hover:bg-paper-2'
-                      }`}
-                    >
-                      <button
-                        onClick={() => setActiva(b.id)}
-                        className="flex-1 min-w-0 text-left px-2.5 py-2"
-                      >
-                        <span className={`block text-[13px] leading-snug truncate ${act ? 'text-ink font-medium' : 'text-gray-ui'}`}>
-                          {b.titulo}
-                        </span>
-                        <span className="block text-[11px] text-gray-ui mt-0.5 tabular-nums">
-                          {n === 0 ? 'vacía' : `${n} bloque${n > 1 ? 's' : ''}`}
-                        </span>
-                      </button>
-                      <div className="flex flex-col opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity pr-1">
-                        <button
-                          onClick={() => moverSeccion(b.id, -1)}
-                          disabled={i === 0}
-                          className="text-gray-ui hover:text-gray-ui disabled:opacity-20 disabled:hover:text-gray-ui text-[10px] leading-none py-0.5"
-                          title="Subir"
-                          aria-label={`Subir ${b.titulo}`}
-                        >
-                          ▲
-                        </button>
-                        <button
-                          onClick={() => moverSeccion(b.id, 1)}
-                          disabled={i === bs.length - 1}
-                          className="text-gray-ui hover:text-gray-ui disabled:opacity-20 disabled:hover:text-gray-ui text-[10px] leading-none py-0.5"
-                          title="Bajar"
-                          aria-label={`Bajar ${b.titulo}`}
-                        >
-                          ▼
-                        </button>
-                      </div>
-                    </div>
-                  )
-                })}
-              </div>
-            )
-          })}
+              )
+            })}
+          </DndContext>
         </div>
 
         <button
@@ -1073,6 +1098,87 @@ function BotonTipo({ t, onClick, tenue = false }: { t: TipoBloque; onClick: () =
     >
       {definicion(t).nombre}
     </button>
+  )
+}
+
+// ── Fila de sección, arrastrable ─────────────────────────────────
+//
+// `useSortable` pone la fila entera como zona de arrastre EXCEPTO donde
+// hay un control propio (el botón de seleccionar, las flechas): el
+// `listeners` del arrastre se aplican solo al asa (⠿), no al `<div>`
+// completo, para que un clic normal siga seleccionando la sección sin
+// competir con el gesto de arrastrar.
+function FilaSeccion({
+  b, tiempo, activa, nBloques, primera, ultima, onSeleccionar, onMover,
+}: {
+  b: BisagraEditable
+  tiempo: Tiempo
+  activa: boolean
+  nBloques: number
+  primera: boolean
+  ultima: boolean
+  onSeleccionar: () => void
+  onMover: (delta: number) => void
+}) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: b.id,
+    data: { tiempo },
+  })
+  const estilo = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  }
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={estilo}
+      className={`group flex items-center gap-0.5 rounded-[10px] mb-0.5 transition-colors ${
+        activa ? 'bg-paper-2/70' : 'hover:bg-paper-2'
+      }`}
+    >
+      <button
+        {...attributes}
+        {...listeners}
+        className="flex-shrink-0 px-1 py-2 text-gray-ui/50 hover:text-gray-ui cursor-grab active:cursor-grabbing touch-none"
+        title="Arrastra para reordenar"
+        aria-label={`Arrastrar ${b.titulo} para reordenar`}
+      >
+        ⠿
+      </button>
+      <button
+        onClick={onSeleccionar}
+        className="flex-1 min-w-0 text-left px-1 py-2"
+      >
+        <span className={`block text-[13px] leading-snug truncate ${activa ? 'text-ink font-medium' : 'text-gray-ui'}`}>
+          {b.titulo}
+        </span>
+        <span className="block text-[11px] text-gray-ui mt-0.5 tabular-nums">
+          {nBloques === 0 ? 'vacía' : `${nBloques} bloque${nBloques > 1 ? 's' : ''}`}
+        </span>
+      </button>
+      <div className="flex flex-col opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity pr-1">
+        <button
+          onClick={() => onMover(-1)}
+          disabled={primera}
+          className="text-gray-ui hover:text-ink disabled:opacity-20 disabled:hover:text-gray-ui text-[10px] leading-none py-0.5"
+          title="Subir"
+          aria-label={`Subir ${b.titulo}`}
+        >
+          ▲
+        </button>
+        <button
+          onClick={() => onMover(1)}
+          disabled={ultima}
+          className="text-gray-ui hover:text-ink disabled:opacity-20 disabled:hover:text-gray-ui text-[10px] leading-none py-0.5"
+          title="Bajar"
+          aria-label={`Bajar ${b.titulo}`}
+        >
+          ▼
+        </button>
+      </div>
+    </div>
   )
 }
 
