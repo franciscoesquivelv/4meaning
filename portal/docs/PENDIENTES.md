@@ -112,8 +112,57 @@ la base) igual que exige el resto del protocolo de este portal.
   guardar y borrar una respuesta funciona de verdad, y la versión queda
   publicada.
 
+### P-014 — El borde de todo campo del editor mide 1.15:1, muy por debajo del mínimo de 3:1
+- Estado: **abierto**
+- Origen: Claude, 2026-09-23, midiendo el contraste del campo de título
+  de sección que pidió Francisco revisar. `INPUT` (`Editor.tsx:111`,
+  `bg-white border border-line`) es la convención de caja de TODO el
+  editor -- once o más campos la usan. Medido, no estimado: el borde
+  `--line` contra `bg-white` da 1.15:1; WCAG pide 3:1 para el borde de
+  un control. No es un defecto de un campo, es la convención entera.
+- Qué se sabe: el texto adentro de los campos mide bien (14+:1 en los
+  casos medidos); el problema es solo el borde que separa un campo de
+  lo que lo rodea. Corregirlo bien es una decisión de token (¿un
+  `--line` más oscuro? ¿una sombra en vez de borde?), no un cambio de
+  clase suelto -- necesita el mismo criterio de Julian que ya fijó el
+  resto de la paleta.
+- Dueño: sin asignar -- Julian primero, para decidir el token; Claude
+  aplica.
+- Criterio de cierre: el borde de un campo mide 3:1 o más contra su
+  propio fondo, verificado con el mismo método de esta sesión
+  (inyección de JS, luminancia real, no estimada), en al menos los
+  campos que Francisco toca más seguido (título/descripción de sección,
+  campo principal de bloque).
+
 ### P-013 — El editor no es versátil: siete quejas de Francisco, auditadas por Julian/Daniel/Leo
-- Estado: **cuarta vuelta: dos bugs reales corregidos, consulta abierta con Sora y Leo sobre el patrón de fondo**
+- Estado: **quinta vuelta: patrón de fondo corregido con Sora y Leo, cerrado**
+- Actualización 2026-09-23, quinta vuelta: Sora y Leo respondieron con
+  veredicto conjunto "PROCEDE". Verificaron, no de memoria: el botón
+  flotante de la cuarta vuelta resolvía "¿sobrevive al scroll?" pero no
+  "¿lo veo sin que me lo señalen?" -- un FAB en una esquina es gramática
+  de app de celular, y el editor real ya entrenó a mirar la cabecera
+  fija (ahí viven "Guardar ahora" y "Revisar y publicar"). Movido: "+
+  Nueva sección" ahora vive en la cabecera, no flotando. Confirmaron
+  también que crear de inmediato con el título ya seleccionado sigue
+  siendo lo correcto (un diálogo de nombre previo multiplicaría la
+  ceremonia 16-20 veces por experiencia) -- no se construyó eso.
+  Sobre el título: el lápiz de la cuarta vuelta "parcha, no arregla" --
+  un campo se lee como campo por su caja, no por un ícono al lado. Se
+  le dio caja real (borde + fondo) y se quitó el lápiz, que ya no
+  agregaba nada. Midiendo esa caja salió un hallazgo más grande, no
+  solo de este campo: el `INPUT` que usa TODO el editor da 1.15:1 de
+  contraste de borde, muy por debajo del 3:1 de WCAG -- registrado
+  aparte como P-014, no se resuelve aquí porque es un cambio de token,
+  no de un campo.
+  Sora encontró además, antes de tocar código, que convivían DOS "+
+  Nueva sección" (la de la cuarta vuelta y el enlace viejo que se creía
+  quitado) -- resultó ser una lectura de un instante intermedio de la
+  cuarta vuelta, ya no existe en el código final, confirmado con grep.
+  Leo hizo el barrido que pidió Francisco sobre el resto del editor:
+  encontró un candidato barato más, de baja prioridad (las flechas
+  ↑↓ de reordenar sección son invisibles en reposo, `opacity-0` hasta
+  hover) -- no se corrigió porque ya existe arrastrar real como camino
+  principal; queda nombrado para quien lo quiera barato después.
 - Actualización 2026-09-23, cuarta vuelta: Francisco reportó, dos rondas
   seguidas, no poder encontrar "agregar sección". Investigado en vivo, no
   asumido: el botón SÍ existía y funcionaba, pero mi "fuera de la región

@@ -764,6 +764,24 @@ export default function Editor({
             </span>
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
+            {/* CUARTA VUELTA, 2026-09-23. "Nueva sección" vivía como
+                botón flotante (gramática de app de celular, un FAB en
+                una esquina) o antes como enlace de texto al fondo de una
+                lista de hasta veinte filas -- las dos veces Francisco no
+                lo encontró. Veredicto de Sora: la cabecera fija es donde
+                el editor YA entrenó a mirar ("Guardar ahora", "Revisar y
+                publicar" viven aquí), así que la acción de crear una
+                sección va aquí también, no en un patrón nuevo que nadie
+                pidió aprender. Deshabilitado mientras se crea, para que
+                no se dispare dos veces con un doble clic. */}
+            <Boton
+              variante="secundario"
+              onClick={agregarSeccion}
+              disabled={creandoSeccion}
+              title="Agregar una sección nueva"
+            >
+              + {creandoSeccion ? 'Creando…' : 'Nueva sección'}
+            </Boton>
             {/* SEGUNDA VUELTA, 2026-09-23. La primera corrección lo dejó
                 deshabilitado-pero-visible, con un título que explica la
                 diferencia -- y Francisco siguió sin entenderlo: "sigue
@@ -825,25 +843,6 @@ export default function Editor({
           +
         </button>
       )}
-
-      {/* "Nueva sección" FLOTANTE, no al fondo de una lista que puede
-          tener veinte filas. HALLAZGO REAL: el intento anterior (fuera
-          de la región que hace scroll, dentro de un `nav` con
-          `lg:h-[calc(100vh-164px)]`) no se quedaba fijo de verdad -- se
-          iba con el scroll de la PÁGINA completa, no del riel, así que
-          Francisco tenía que bajar por toda la lista para encontrarlo.
-          Mismo patrón ya probado que "agregar bloque": `position:
-          fixed`, siempre en pantalla, sin depender de dónde esté el
-          scroll de nada. A la izquierda para no pelear con el botón de
-          bloque, que vive a la derecha. */}
-      <button
-        onClick={agregarSeccion}
-        disabled={creandoSeccion}
-        className="fixed bottom-6 left-6 z-40 min-h-toque rounded-full bg-dom text-paper shadow-lg hover:bg-dom-deep disabled:opacity-60 transition-colors flex items-center gap-1.5 px-5 text-[14px] font-medium"
-        title="Agregar una sección nueva"
-      >
-        <span className="text-lg leading-none">+</span> {creandoSeccion ? 'Creando…' : 'Nueva sección'}
-      </button>
 
       {porBorrarSeccion && (
         <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center px-4">
@@ -951,35 +950,46 @@ export default function Editor({
                   Borrar sección
                 </button>
               </div>
-              {/* EL LÁPIZ NO CAMBIA COMPORTAMIENTO, ES SEÑAL. El campo ya
-                  era editable con solo hacer clic; lo que faltaba era que
-                  se VIERA editable antes de tocarlo -- un input sin borde
-                  se lee como texto fijo hasta que alguien lo intenta.
-                  Pedido de Francisco, 2026-09-23. */}
-              <div className="relative group/titulo mt-1">
-                <input
-                  id="titulo-seccion"
-                  value={bisagraActiva.titulo}
-                  onChange={e => actualizarSeccion(bisagraActiva.id, { titulo: e.target.value })}
-                  placeholder="Título de la sección"
-                  spellCheck
-                  lang="es"
-                  className="w-full text-xl font-semibold tracking-tight text-ink bg-transparent border-0 border-b border-transparent hover:border-line focus:border-dom/40 outline-none transition-colors pl-0 pr-7 py-1"
-                />
-                <svg
-                  className="absolute right-0.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-ui group-hover/titulo:text-gray-ui pointer-events-none"
-                  fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487a2.06 2.06 0 112.914 2.914L8.5 18.677l-4 1 1-4L16.862 4.487z" />
-                </svg>
-              </div>
+              {/* CAMPO CON FORMA DE CAMPO EN REPOSO, no un lápiz encima
+                  de texto que se ve fijo. Veredicto de Sora, 2026-09-23:
+                  el lápiz de la vuelta anterior no arregla el problema,
+                  lo parcha -- es una segunda señal sobre una primera
+                  (borde invisible hasta hover) que no existía en reposo.
+                  Un campo se lee como campo por su caja, no por un
+                  ícono al lado. Con caja visible siempre, el lápiz ya no
+                  agrega nada: se quita en vez de sumarse.
+
+                  MEDIDO, NO ESTIMADO, y con un límite que hay que decir:
+                  `bg-white border border-line` (el mismo `INPUT` que ya
+                  usa TODO este editor para sus demás campos) da apenas
+                  1.15:1 de contraste borde-contra-fondo -- muy por
+                  debajo del 3:1 que pide WCAG para el borde de un
+                  control. No es un defecto nuevo de este campo: es la
+                  convención de caja de TODO el editor (`INPUT`,
+                  `Editor.tsx:111`), y corregirla de verdad significa
+                  revisar esa convención entera, no solo este campo --
+                  alcance de otra pasada, con Julian. Lo que sí se
+                  corrigió aquí: usar exactamente esa misma convención
+                  en vez de una peor (`bg-paper-2`, que medía todavía
+                  más bajo, 1.09:1), para que el campo sea consistente
+                  con el resto del editor mientras esa pasada más grande
+                  no se haga. */}
+              <input
+                id="titulo-seccion"
+                value={bisagraActiva.titulo}
+                onChange={e => actualizarSeccion(bisagraActiva.id, { titulo: e.target.value })}
+                placeholder="Título de la sección"
+                spellCheck
+                lang="es"
+                className="w-full text-xl font-semibold tracking-tight text-ink bg-white border border-line rounded-[10px] focus:border-dom/40 outline-none transition-colors px-3 py-2 mt-1"
+              />
               <input
                 value={bisagraActiva.descripcion ?? ''}
                 onChange={e => actualizarSeccion(bisagraActiva.id, { descripcion: e.target.value })}
                 placeholder="Una descripción breve (opcional, no la ve el participante)"
                 spellCheck
                 lang="es"
-                className="w-full text-sm text-gray-ui mt-1 bg-transparent border-0 border-b border-transparent hover:border-line focus:border-dom/40 outline-none transition-colors px-0 py-1"
+                className="w-full text-sm text-gray-ui bg-white border border-line rounded-[10px] focus:border-dom/40 outline-none transition-colors px-3 py-2 mt-2"
               />
             </div>
           )}
