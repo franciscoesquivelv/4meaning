@@ -175,6 +175,12 @@ export default function Editor({
   // ancho con atmósfera) para que "computadora" muestre algo honesto en
   // vez de una promesa sin construir detrás.
   const [dispositivo, setDispositivo] = useState<'celular' | 'computadora'>('celular')
+  // EL RIEL SE MINIMIZA, NO DESAPARECE. Pedido de Francisco, 2026-09-24,
+  // junto con ensanchar el editor: "que la pestaña de sección sea
+  // retráctil... que se pueda minimizar hacia un lado y volver a abrir
+  // fácilmente". Colapsado dibuja una franja angosta con el asa para
+  // volver a abrir -- nunca una sección oculta sin cómo recuperarla.
+  const [rielColapsado, setRielColapsado] = useState(false)
   const [porBorrar, setPorBorrar] = useState<string | null>(null)
   const [borrando, setBorrando] = useState<string | null>(null)
   const [errorGlobal, setErrorGlobal] = useState<string | null>(null)
@@ -832,7 +838,25 @@ export default function Editor({
   }
 
   return (
-    <>
+    // SE SALE DE LOS 1200px DE PersonaLabLayout, A PROPÓSITO -- PERO
+    // SOLO DESDE `lg:`. Pedido de Francisco, 2026-09-24: "el editor se
+    // siente muy tallado". El resto de PersonaLab (Resumen, Grupos,
+    // Experiencias...) se queda en max-w-[1200px] -- esto no toca ese
+    // layout compartido, solo lo escapa desde adentro, con el truco
+    // estándar de `left-1/2` + margen negativo de medio viewport.
+    //
+    // BUG REAL, ENCONTRADO PROBANDO EN MÓVIL: sin el prefijo `lg:`, el
+    // mismo truco en una pantalla angosta con scroll vertical alto
+    // (un editor con varias secciones es exactamente eso) medía 24px de
+    // más -- `100vw` no descuenta la barra de scroll nativa en todos los
+    // navegadores igual, y en un viewport de 375px ese margen de error
+    // es visible: la barra de arriba se veía cortada. Nunca hacía falta
+    // ahí: la cuadrícula de tres columnas que este ensanche existe para
+    // servir tampoco se activa hasta `lg:` (ver el grid más abajo), así
+    // que limitarlo a la misma frontera cierra el bug en vez de
+    // perseguir el redondeo de `vw` con más CSS.
+    <div className="lg:relative lg:left-1/2 lg:right-1/2 lg:-mx-[50vw] lg:w-screen">
+    <div className="lg:max-w-[1600px] lg:mx-auto lg:px-6">
       {/* Cabecera del editor */}
       <div className="sticky top-[104px] z-30 bg-paper/95 backdrop-blur-sm border-b border-line -mx-6 px-6 py-3 mb-6">
         <div className="flex items-center justify-between gap-4 flex-wrap">
@@ -958,8 +982,8 @@ export default function Editor({
 
       <div className={`grid grid-cols-1 gap-6 items-start ${
         dispositivo === 'computadora'
-          ? 'lg:grid-cols-[180px_minmax(0,1fr)_680px]'
-          : 'lg:grid-cols-[180px_minmax(0,1fr)_320px]'
+          ? rielColapsado ? 'lg:grid-cols-[40px_minmax(0,1fr)_680px]' : 'lg:grid-cols-[180px_minmax(0,1fr)_680px]'
+          : rielColapsado ? 'lg:grid-cols-[40px_minmax(0,1fr)_320px]' : 'lg:grid-cols-[180px_minmax(0,1fr)_320px]'
       }`}>
         {/* Riel de secciones. Scroll propio (Julian, 2026-09-23), sin
             barra visible (pedido de Francisco). "Nueva sección" YA NO
@@ -971,6 +995,24 @@ export default function Editor({
             que la última sección de una lista larga no quede tapada por
             el botón flotante. */}
         <nav className="lg:sticky lg:top-[164px] lg:h-[calc(100vh-164px)] lg:overflow-y-auto scroll-sin-barra pr-1 pb-16">
+          {/* EL ASA SIEMPRE ESTÁ, colapsado o no -- minimizar nunca es
+              un callejón sin salida. Pedido de Francisco, 2026-09-24. */}
+          <button
+            onClick={() => setRielColapsado(v => !v)}
+            className="flex items-center justify-center w-full h-8 mb-2 rounded-[10px] text-gray-ui hover:text-ink hover:bg-paper-2 transition-colors"
+            title={rielColapsado ? 'Mostrar secciones' : 'Minimizar secciones'}
+            aria-label={rielColapsado ? 'Mostrar secciones' : 'Minimizar secciones'}
+            aria-expanded={!rielColapsado}
+          >
+            <svg
+              className={`w-3.5 h-3.5 transition-transform ${rielColapsado ? 'rotate-180' : ''}`}
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+
+          {!rielColapsado && (
           <DndContext
             sensors={sensoresArrastre}
             collisionDetection={closestCenter}
@@ -1013,6 +1055,7 @@ export default function Editor({
               )
             })}
           </DndContext>
+          )}
         </nav>
 
         {/* Lienzo. Mismo arreglo de scroll que el riel, sin barra visible. */}
@@ -1188,7 +1231,14 @@ export default function Editor({
           </div>
 
           {dispositivo === 'celular' ? (
-            <div className="relative mx-auto w-[375px] lg:w-[320px]">
+            // BUG REAL, ENCONTRADO PROBANDO EN 375px EXACTOS: `w-[375px]`
+            // fijo no cabía en su propia columna, que resta el `px-6`
+            // (24px por lado) del ancho del viewport -- en un teléfono
+            // de 375px de ancho real, sólo hay 327px disponibles ahí.
+            // `w-full max-w-[375px]` se encoge para caber cuando hace
+            // falta y solo llega a 375px cuando de verdad sobra el
+            // espacio; en `lg:` sigue siendo el 320px fijo de siempre.
+            <div className="relative mx-auto w-full max-w-[375px] lg:w-[320px]">
               <div
                 className="relative bg-paper rounded-[40px] border-4 border-slate-800 overflow-hidden shadow-xl"
                 style={{ height: 620 }}
@@ -1239,7 +1289,8 @@ export default function Editor({
           </p>
         </div>
       </div>
-    </>
+    </div>
+    </div>
   )
 }
 
