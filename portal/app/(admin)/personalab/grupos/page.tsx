@@ -1,9 +1,45 @@
 import Link from 'next/link'
-import { GRUPOS, ENCUENTROS, moderador, experiencia, fecha } from '../dominio'
-import { Titulo, Tabla, BotonPronto } from '../ui'
-import { TD } from '../tokens'
+import { cargarGrupos } from '@/lib/personalab/gestion'
+import { Titulo, Tabla, BotonPronto, Vacio } from '../ui'
+import { TD, TARJETA, BTN_PRIMARIO } from '../tokens'
 
-export default function GruposPage() {
+function fecha(iso: string) {
+  return new Date(iso + 'T12:00:00').toLocaleDateString('es-MX', {
+    day: '2-digit', month: 'short', year: 'numeric',
+  })
+}
+
+// ETAPA "GESTIÓN CONECTADA A LA BASE REAL", 2026-09-24. Hasta aquí leía
+// `dominio.ts`. Ver `lib/personalab/gestion.ts` para el porqué completo.
+export default async function GruposPage() {
+  const r = await cargarGrupos()
+
+  if (r.estado === 'sin-acceso') {
+    return (
+      <div className="max-w-[560px] mt-8">
+        <div className={`${TARJETA} p-6`}>
+          <h1 className="text-lg font-semibold text-ink">Sin permiso de equipo</h1>
+          <p className="text-sm text-ink mt-2 leading-relaxed">
+            Tu cuenta no tiene permiso de equipo sobre PersonaLab.
+          </p>
+          <Link href="/personalab" className={`${BTN_PRIMARIO} inline-block mt-5`}>Volver</Link>
+        </div>
+      </div>
+    )
+  }
+  if (r.estado === 'fallo') {
+    return (
+      <div className="max-w-[560px] mt-8">
+        <div className={`${TARJETA} p-6`}>
+          <h1 className="text-lg font-semibold text-ink">No se pudo cargar</h1>
+          <p className="text-sm text-ink mt-2 leading-relaxed">{r.motivo}</p>
+        </div>
+      </div>
+    )
+  }
+
+  const grupos = r.datos
+
   return (
     <>
       <Titulo
@@ -13,39 +49,39 @@ export default function GruposPage() {
         Grupos
       </Titulo>
 
-      <Tabla cabeceras={['Grupo', 'Ciudad', 'Moderador', 'Realizados', 'Siguiente']}>
-        {GRUPOS.map(c => {
-          const mod = moderador(c.moderadorId)!
-          const suyos = ENCUENTROS.filter(x => x.grupoId === c.id)
-          const realizados = suyos.filter(x => x.estado === 'realizado')
-          const siguiente = suyos
-            .filter(x => ['confirmado', 'en_preparacion', 'prospecto'].includes(x.estado))
-            .sort((a, b) => a.fecha.localeCompare(b.fecha))[0]
-          return (
-            <tr key={c.id} className="hover:bg-slate-50 transition-colors">
-              <td className={`${TD} font-medium text-slate-900`}>{c.nombre}</td>
-              <td className={`${TD} text-slate-500`}>{c.ciudad}</td>
-              <td className={`${TD} text-slate-500`}>{mod.nombre}</td>
+      {grupos.length === 0 ? (
+        <Vacio>Todavía no hay ningún grupo dado de alta.</Vacio>
+      ) : (
+        <Tabla cabeceras={['Grupo', 'Ciudad', 'Moderador', 'Realizados', 'Siguiente']}>
+          {grupos.map(g => (
+            <tr key={g.id} className="hover:bg-slate-50 transition-colors">
+              <td className={`${TD} font-medium text-slate-900`}>{g.nombre}</td>
+              <td className={`${TD} text-slate-500`}>{g.ciudad ?? '—'}</td>
+              <td className={`${TD} text-slate-500`}>
+                {g.moderadores.length === 0
+                  ? <span className="text-amber-700">sin moderador</span>
+                  : g.moderadores.map(m => m.nombre).join(', ')}
+              </td>
               <td className={`${TD} tabular-nums`}>
-                {realizados.length === 0 ? <span className="text-amber-700">nunca</span> : realizados.length}
+                {g.realizados === 0 ? <span className="text-amber-700">nunca</span> : g.realizados}
               </td>
               <td className={TD}>
-                {siguiente ? (
+                {g.siguiente ? (
                   <Link
-                    href={`/personalab/encuentros/${siguiente.id}`}
+                    href={`/personalab/encuentros/${g.siguiente.id}`}
                     className="text-slate-900 hover:underline"
                   >
-                    {experiencia(siguiente.experienciaId)!.nombre}
-                    <span className="text-slate-400"> · {fecha(siguiente.fecha)}</span>
+                    {g.siguiente.experienciaNombre}
+                    {g.siguiente.fecha && <span className="text-slate-400"> · {fecha(g.siguiente.fecha)}</span>}
                   </Link>
                 ) : (
                   <span className="text-slate-400">nada agendado</span>
                 )}
               </td>
             </tr>
-          )
-        })}
-      </Tabla>
+          ))}
+        </Tabla>
+      )}
     </>
   )
 }

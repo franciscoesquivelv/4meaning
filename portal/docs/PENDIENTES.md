@@ -34,6 +34,21 @@ la base) igual que exige el resto del protocolo de este portal.
 
 ## Abiertos / decididos
 
+### P-016 — `kit/page.tsx` y `vista/[encuentroId]/` siguen en datos de muestra
+- Estado: **abierto**
+- Origen: encontrado de pasada arreglando H-010 (Resumen/Grupos/
+  Moderadores/Encuentros/Retorno). Después de esa reescritura, dos
+  archivos más de `app/(admin)/personalab/` siguen importando de
+  `dominio.ts`: `kit/page.tsx` y `vista/[encuentroId]/` (esta segunda ya
+  estaba marcada como fósil/prototipo por Julian antes de esta sesión,
+  no es un hallazgo nuevo del todo). No se investigó qué tan real o
+  falso es cada uno -- solo se confirmó que existen, por el mismo grep
+  que encontró el resto.
+- Dueño: sin asignar.
+- Criterio de cierre: mismo patrón que H-010 -- confirmar contra el
+  esquema real qué tabla debería alimentar cada pantalla, construir el
+  loader real, verificar con ejecución real, no con lectura de código.
+
 ### P-012 — El Presente como Regalo, construido con la cronología real: falta el pasaje del Dr. Alexander, lo de perdón, y publicar
 - Estado: **decidido, mecanismo verificado de punta a punta, falta contenido de Francisco y la decisión de publicar**
 - Actualización 2026-09-23: Francisco corrió la migración. Verificado con
@@ -834,6 +849,58 @@ la base) igual que exige el resto del protocolo de este portal.
 *(vacío por ahora)*
 
 ## Hecho
+
+### H-010 — Resumen, Grupos, Moderadores, Encuentros y Retorno conectados a la base real
+- Estado: **hecho** — verificado 2026-09-24, con datos reales desechables
+- Origen: Francisco pidió limpiar los datos de prueba de PersonaLab
+  ("foros y personas que no son reales"). Se borraron los 5 foros de
+  siembra y 13 perfiles de prueba (ver más abajo) y, al revisar, las
+  pantallas de gestión seguían mostrando "Grupo Anáhuac", "Rodrigo
+  Lemus", etc. — no podían haber cambiado, porque nunca leyeron la base
+  para empezar: `app/(admin)/personalab/page.tsx` (Resumen),
+  `grupos/page.tsx`, `moderadores/page.tsx`, `encuentros/page.tsx` (lista
+  y ficha `[id]`) y `retorno/page.tsx` leían enteros de `dominio.ts`
+  (`GRUPOS`, `MODERADORES`, `ENCUENTROS`, arreglos escritos a mano). Los
+  enlaces lo delataban: llevaban a `/personalab/encuentros/c1`, no a un
+  UUID real. Solo Experiencias, Compras y Progreso eran reales.
+- Construido: `lib/personalab/gestion.ts`, mismo patrón que
+  `compras.ts`/`catalogo.ts` (`exigirEquipo()` + `createServiceClient()`
+  + `Resultado<T>`), con seis funciones (`cargarResumen`, `cargarGrupos`,
+  `cargarModeradores`, `cargarEncuentros`, `cargarEncuentro`,
+  `cargarRetorno`) contra `chapters`, `chapter_moderators`,
+  `moderator_training`, `runs`, `run_checklist`, `returns`,
+  `experiences`/`hinges` reales. Las seis pantallas reescritas para
+  llamarlas, conservando el mismo JSX/diseño -- solo cambió de dónde sale
+  el dato.
+- Tres desajustes reales que la reescritura corrigió, no heredó: el enum
+  real de `runs.estado` es `confirmada`/`corrida`/`cancelada`, no
+  `confirmado`/`realizado`/`cancelado` del mock; `chapter_moderators` es
+  tabla muchos-a-muchos (el mock asumía un moderador por grupo); "mes de
+  retorno" no es un campo del encuentro, se calcula del mes más alto con
+  un toque real (`returns.occurred_at` no nulo) para ese encuentro --
+  como `returns` está vacía hoy, el módulo sale honesto en vez de
+  inventar un número. De paso, `tokens.ts: COLOR_MADURACION` tenía la
+  clave `'diseño'` con tilde contra el enum real `'diseno'` sin tilde
+  (bug ya encontrado una vez por `experiencias/page.tsx`, que se hizo su
+  propio mapa local en vez de tocar el archivo compartido) -- corregido
+  en el origen esta vez.
+- El detalle de un encuentro (`encuentros/[id]/page.tsx`) tenía
+  `GRUPO_EJEMPLO`: catorce nombres inventados que se mostraban como "la
+  lista del grupo" sin serlo. Reemplazado por los grants reales
+  `titularidad='miembro_foro'` de ese encuentro -- si nadie tiene acceso
+  individual todavía, la pantalla lo dice, no inventa catorce personas.
+- Verificado en vivo, no solo tipado: cuenta y datos desechables (un
+  grupo, un moderador, un encuentro contra "El Presente como Regalo" con
+  checklist real) en las seis pantallas, confirmando bisagras/bloques
+  reales en el guion de sala y en la víspera. Se probó también el camino
+  de retorno completo (encuentro marcado `corrida` + dos toques
+  `returns` reales) y el Resumen se actualizó solo, sin recargar código:
+  "Personas en retorno" y la tarjeta "En retorno" reflejaron el dato real
+  de inmediato. Todo el contenido de prueba se borró después
+  (`chapters`/`chapter_moderators`/`runs`/`run_checklist`/`returns`
+  confirmados en 0 filas por consulta directa). `tsc --noEmit` limpio.
+- Nota aparte, no resuelta aquí: `kit/page.tsx` y
+  `vista/[encuentroId]/` siguen leyendo `dominio.ts` -- ver P-016.
 
 ### H-009 — P-007 cerrado: la base ya se llama grupo, no foro
 - Estado: **hecho** — verificado 2026-09-21

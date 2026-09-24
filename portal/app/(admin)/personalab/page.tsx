@@ -1,36 +1,74 @@
 import Link from 'next/link'
-import {
-  EXPERIENCIAS, ENCUENTROS, GRUPOS, MODERADORES,
-  ESTADO_ENCUENTRO, MADURACION, experiencia, grupo, fecha,
-} from './dominio'
-import { Badge, Titulo, Etiqueta, FilaMetricas, TarjetaLista, Fila, Panel } from './ui'
-import { AVISO, BTN_PRIMARIO, BTN_SECUNDARIO, COLOR_ESTADO, COLOR_MADURACION, VACIO_NEUTRO } from './tokens'
+import { cargarResumen } from '@/lib/personalab/gestion'
+import { Badge, Titulo, Etiqueta, FilaMetricas, TarjetaLista, Fila } from './ui'
+import { AVISO, BTN_PRIMARIO, BTN_SECUNDARIO, COLOR_ESTADO, COLOR_MADURACION, VACIO_NEUTRO, TARJETA } from './tokens'
 
-export default function ResumenPage() {
-  const activos = ENCUENTROS.filter(c => ['confirmado', 'en_preparacion'].includes(c.estado))
-  const proximos = [...activos].sort((a, b) => a.fecha.localeCompare(b.fecha))
-  const enRetorno = ENCUENTROS.filter(c => c.estado === 'realizado' && (c.mesDeRetorno ?? 0) < 6)
-  const personasEnRetorno = enRetorno.reduce((s, c) => s + c.personasEnElGrupo, 0)
-  const faltantes = EXPERIENCIAS.flatMap(e => e.bisagras.filter(b => !b.listo))
-  const sinDiseño = EXPERIENCIAS.filter(e => e.bisagras.length === 0)
+const ETIQUETA_ESTADO: Record<string, string> = {
+  prospecto: 'Prospecto', confirmada: 'Confirmado', en_preparacion: 'En preparación',
+  corrida: 'Realizado', cancelada: 'Cancelado',
+}
+const ETIQUETA_MADURACION: Record<string, string> = {
+  diseno: 'En diseño', piloto: 'En piloto', lista: 'Lista', retirada: 'Retirada',
+}
 
-  // Lo que hay que atender antes del proximo encuentro, al estilo del
-  // dashboard de Trascendencia: alertas con borde izquierdo ambar.
+function fecha(iso: string) {
+  return new Date(iso + 'T12:00:00').toLocaleDateString('es-MX', {
+    day: '2-digit', month: 'short', year: 'numeric',
+  })
+}
+
+// ETAPA "GESTIÓN CONECTADA A LA BASE REAL", 2026-09-24. Hasta aquí esta
+// pantalla (y las otras cuatro del panel de gestión) leía `dominio.ts`,
+// un catálogo escrito a mano nunca conectado a Supabase -- los enlaces
+// lo delataban, llevaban a ids como `c1` en vez de un UUID real. Se
+// encontró el mismo día que Francisco pidió limpiar los datos de prueba
+// de la base: después de borrarlos, esta pantalla seguía mostrando
+// "Grupo Anáhuac" y "Rodrigo Lemus", porque nunca había leído la base
+// para empezar. Ver `lib/personalab/gestion.ts` para el detalle completo
+// de cada consulta real.
+export default async function ResumenPage() {
+  const r = await cargarResumen()
+
+  if (r.estado === 'sin-acceso') {
+    return (
+      <div className="max-w-[560px] mt-8">
+        <div className={`${TARJETA} p-6`}>
+          <h1 className="text-lg font-semibold text-ink">Sin permiso de equipo</h1>
+          <p className="text-sm text-ink mt-2 leading-relaxed">
+            Tu cuenta no tiene permiso de equipo sobre PersonaLab.
+          </p>
+          <Link href="/workspaces" className={`${BTN_PRIMARIO} inline-block mt-5`}>Volver</Link>
+        </div>
+      </div>
+    )
+  }
+  if (r.estado === 'fallo') {
+    return (
+      <div className="max-w-[560px] mt-8">
+        <div className={`${TARJETA} p-6`}>
+          <h1 className="text-lg font-semibold text-ink">No se pudo cargar</h1>
+          <p className="text-sm text-ink mt-2 leading-relaxed">{r.motivo}</p>
+        </div>
+      </div>
+    )
+  }
+
+  const { encuentrosPorDelante, gruposTotal, moderadoresTotal, personasEnRetorno, proximos, huecos, catalogo, enRetorno } = r.datos
+
+  // Mismo estilo del dashboard de Trascendencia: alertas con borde
+  // izquierdo ámbar, la primera con botón oscuro, las demás en blanco.
   const alertas = [
     ...proximos
-      .filter(c => c.preparacion.some(p => !p.hecho))
-      .map(c => {
-        const n = c.preparacion.filter(p => !p.hecho).length
-        return {
-          titulo: `${n} pendiente${n > 1 ? 's' : ''} de preparación`,
-          sub: `${experiencia(c.experienciaId)!.nombre} · ${grupo(c.grupoId)!.nombre}`,
-          href: `/personalab/encuentros/${c.id}`,
-          accion: 'Ver encuentro',
-        }
-      }),
-    ...(faltantes.length
+      .filter(c => c.pendientes > 0)
+      .map(c => ({
+        titulo: `${c.pendientes} pendiente${c.pendientes > 1 ? 's' : ''} de preparación`,
+        sub: `${c.experienciaNombre} · ${c.grupoNombre}`,
+        href: `/personalab/encuentros/${c.id}`,
+        accion: 'Ver encuentro',
+      })),
+    ...(huecos.length
       ? [{
-          titulo: `${faltantes.length} bisagras sin diseñar`,
+          titulo: `${huecos.reduce((s, h) => s + h.bisagrasFaltantes.length, 0)} bisagras sin diseñar`,
           sub: 'No es captura pendiente: falta trabajo de diseño antes de poder realizarla',
           href: '/personalab/experiencias',
           accion: 'Ver experiencias',
@@ -44,9 +82,9 @@ export default function ResumenPage() {
 
       <FilaMetricas
         items={[
-          { v: String(activos.length), k: 'Encuentros por delante', href: '/personalab/encuentros' },
-          { v: String(GRUPOS.length), k: 'Grupos', href: '/personalab/grupos' },
-          { v: String(MODERADORES.length), k: 'Moderadores', href: '/personalab/moderadores' },
+          { v: String(encuentrosPorDelante), k: 'Encuentros por delante', href: '/personalab/encuentros' },
+          { v: String(gruposTotal), k: 'Grupos', href: '/personalab/grupos' },
+          { v: String(moderadoresTotal), k: 'Moderadores', href: '/personalab/moderadores' },
           { v: String(personasEnRetorno), k: 'Personas en retorno', href: '/personalab/retorno' },
         ]}
       />
@@ -54,11 +92,6 @@ export default function ResumenPage() {
       {alertas.length > 0 && (
         <div className="mb-8">
           <Etiqueta>Pendiente antes del próximo encuentro</Etiqueta>
-          {/* Esta pantalla no tenía ninguna acción destacada: cuatro
-              métricas, hasta cinco alertas y cuatro tarjetas, todo del mismo
-              peso. La acción real es la primera alerta, así que esa lleva el
-              botón oscuro y las demás se quedan en blanco. Una promovida, no
-              todas. */}
           <div className="flex flex-col gap-2">
             {alertas.map((a, i) => (
               <div key={a.titulo + a.sub} className={`${AVISO} flex items-center justify-between gap-4`}>
@@ -88,65 +121,53 @@ export default function ResumenPage() {
             {proximos.length === 0 ? (
               <div className={VACIO_NEUTRO}>Nada agendado por ahora.</div>
             ) : (
-              proximos.map(c => {
-                const e = experiencia(c.experienciaId)!
-                const grp = grupo(c.grupoId)!
-                return (
-                  <Fila
-                    key={c.id}
-                    href={`/personalab/encuentros/${c.id}`}
-                    titulo={e.nombre}
-                    sub={`${grp.nombre} · ${fecha(c.fecha)} · ${c.personasEnElGrupo || 'sin'} personas`}
-                    derecha={<Badge label={ESTADO_ENCUENTRO[c.estado].etiqueta} cls={COLOR_ESTADO[c.estado]} />}
-                  />
-                )
-              })
+              proximos.map(c => (
+                <Fila
+                  key={c.id}
+                  href={`/personalab/encuentros/${c.id}`}
+                  titulo={c.experienciaNombre}
+                  sub={`${c.grupoNombre} · ${c.fecha ? fecha(c.fecha) : 'sin fecha'} · ${c.personasEnElGrupo || 'sin'} personas`}
+                  derecha={<Badge label={ETIQUETA_ESTADO[c.estado] ?? c.estado} cls={COLOR_ESTADO[c.estado] ?? COLOR_ESTADO.prospecto} />}
+                />
+              ))
             )}
           </TarjetaLista>
 
           <TarjetaLista titulo="Huecos del catálogo" verTodo={{ href: '/personalab/experiencias', label: 'Ver todas' }}>
-            {EXPERIENCIAS.filter(e => e.bisagras.some(b => !b.listo)).map(e => (
-              <Fila
-                key={e.id}
-                href={`/personalab/experiencias/${e.id}`}
-                titulo={e.nombre}
-                sub={e.bisagras.filter(b => !b.listo).map(b => b.titulo).join(' · ')}
-                derecha={
-                  <span className="text-xs text-amber-700 tabular-nums whitespace-nowrap">
-                    faltan {e.bisagras.filter(b => !b.listo).length}
-                  </span>
-                }
-              />
-            ))}
-            {sinDiseño.map(e => (
-              <Fila
-                key={e.id}
-                href={`/personalab/experiencias/${e.id}`}
-                titulo={e.nombre}
-                sub="Sin ninguna bisagra. La experiencia entera está por diseñar."
-                derecha={<span className="text-xs text-amber-700 whitespace-nowrap">sin diseño</span>}
-              />
-            ))}
+            {huecos.length === 0 ? (
+              <div className={VACIO_NEUTRO}>Sin huecos: todo el catálogo tiene su diseño al día.</div>
+            ) : (
+              huecos.map(h => (
+                <Fila
+                  key={h.experienciaId}
+                  href={`/personalab/experiencias/${h.experienciaSlug}`}
+                  titulo={h.experienciaNombre}
+                  sub={h.sinDiseño ? 'Sin ninguna bisagra. La experiencia entera está por diseñar.' : h.bisagrasFaltantes.join(' · ')}
+                  derecha={
+                    <span className="text-xs text-amber-700 tabular-nums whitespace-nowrap">
+                      {h.sinDiseño ? 'sin diseño' : `faltan ${h.bisagrasFaltantes.length}`}
+                    </span>
+                  }
+                />
+              ))
+            )}
           </TarjetaLista>
         </div>
 
         <div className="flex flex-col gap-5">
           <TarjetaLista titulo="Catálogo" verTodo={{ href: '/personalab/experiencias', label: 'Ver todas' }}>
-            {EXPERIENCIAS.map(e => {
-              const listas = e.bisagras.filter(b => b.listo).length
-              return (
-                <Fila
-                  key={e.id}
-                  href={`/personalab/experiencias/${e.id}`}
-                  titulo={e.nombre}
-                  sub={
-                    (e.bisagras.length === 0 ? 'Sin bisagras' : `${listas} de ${e.bisagras.length} bisagras listas`) +
-                    ' · ' + (e.encuentros === 0 ? 'nunca se ha realizado' : `${e.encuentros} encuentro${e.encuentros > 1 ? 's' : ''}`)
-                  }
-                  derecha={<Badge label={MADURACION[e.maduracion].etiqueta} cls={COLOR_MADURACION[e.maduracion]} />}
-                />
-              )
-            })}
+            {catalogo.map(e => (
+              <Fila
+                key={e.id}
+                href={`/personalab/experiencias/${e.slug}`}
+                titulo={e.nombre}
+                sub={
+                  (e.bisagrasTotal === 0 ? 'Sin bisagras' : `${e.bisagrasListas} de ${e.bisagrasTotal} bisagras listas`) +
+                  ' · ' + (e.encuentros === 0 ? 'nunca se ha realizado' : `${e.encuentros} encuentro${e.encuentros > 1 ? 's' : ''}`)
+                }
+                derecha={<Badge label={ETIQUETA_MADURACION[e.maduracion] ?? e.maduracion} cls={COLOR_MADURACION[e.maduracion] ?? COLOR_MADURACION.diseno} />}
+              />
+            ))}
           </TarjetaLista>
 
           <TarjetaLista titulo="En retorno" verTodo={{ href: '/personalab/retorno', label: 'Ver todo' }}>
@@ -157,11 +178,11 @@ export default function ResumenPage() {
                 <Fila
                   key={c.id}
                   href={`/personalab/encuentros/${c.id}`}
-                  titulo={experiencia(c.experienciaId)!.nombre}
-                  sub={`${grupo(c.grupoId)!.nombre} · ${c.personasEnElGrupo} personas`}
+                  titulo={c.experienciaNombre}
+                  sub={`${c.grupoNombre} · ${c.personasEnElGrupo} personas`}
                   derecha={
                     <span className="text-xs text-slate-500 tabular-nums whitespace-nowrap">
-                      Mes {c.mesDeRetorno} de 6
+                      Mes {c.mesDeRetorno ?? 0} de 6
                     </span>
                   }
                 />

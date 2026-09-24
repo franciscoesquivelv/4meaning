@@ -65,8 +65,14 @@ export const COLOR_ESTADO: Record<string, string> = {
   cancelada:      TONO.alerta,
 }
 
+// La clave iba con tilde ('diseño'); el enum real (`pl_maduracion`) no la
+// lleva ('diseno'). Contra datos de muestra nunca se notaba porque nadie
+// buscaba esta clave con datos reales -- `experiencias/page.tsx` ya lo
+// había encontrado y se hizo su propio mapa local para no toparse con
+// esto. Corregido aquí, en el origen, para que quien lo importe de ahora
+// en adelante no tenga que repetir el mismo hallazgo.
 export const COLOR_MADURACION: Record<string, string> = {
-  'diseño':   TONO.curso,
+  'diseno':   TONO.curso,
   'piloto':   TONO.marca,
   'lista':    TONO.bien,
   'retirada': TONO.neutro,
