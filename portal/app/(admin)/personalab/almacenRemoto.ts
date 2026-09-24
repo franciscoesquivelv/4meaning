@@ -312,12 +312,18 @@ export async function reordenarSeccionesRemoto(
 ): Promise<void> {
   const sb = cliente()
   for (const c of cambios) {
-    const { error } = await sb
+    // Mismo hallazgo que en `guardarSeccionRemoto`: sin `.select()`, mover
+    // una sección sobre una versión que dejó de ser el borrador vivo
+    // reportaba éxito sin haber movido nada.
+    const { data, error } = await sb
       .from('hinges')
       .update({ orden: c.orden })
       .eq('id', c.id)
       .eq('version_id', versionId)
+      .select('id')
+      .maybeSingle()
     if (error) throw error
+    if (!data) throw new ConflictoDeVersion(0, -1)
   }
 }
 
@@ -369,7 +375,15 @@ export async function guardarSeccionRemoto(
   s: Pick<BisagraEditable, 'id' | 'titulo' | 'descripcion' | 'listo'>,
   versionId: string
 ): Promise<void> {
-  const { error } = await cliente()
+  // MISMO DEFECTO QUE `guardarBloque` TENÍA, ENCONTRADO AQUÍ AL AUDITAR EL
+  // MISMO CAMINO PARA SECCIONES: un UPDATE cuya fila queda fuera del
+  // `using` de RLS (versión que dejó de ser el borrador vivo) no es un
+  // error para Postgres ni para PostgREST -- son cero filas afectadas, y
+  // sin `.select()` la llamada vuelve como éxito. Antes de esto, editar el
+  // título de una sección sobre una versión muerta reportaba "Guardado" sin
+  // haber escrito nada. `.select().maybeSingle()` fuerza a ver si de
+  // verdad hubo una fila, igual que ya hacía `guardarBloque`.
+  const { data, error } = await cliente()
     .from('hinges')
     .update({
       titulo: s.titulo,
@@ -378,7 +392,10 @@ export async function guardarSeccionRemoto(
     })
     .eq('id', s.id)
     .eq('version_id', versionId)
+    .select('id')
+    .maybeSingle()
   if (error) throw error
+  if (!data) throw new ConflictoDeVersion(0, -1)
 }
 
 // Borrar una sección se lleva sus bloques con ella (`blocks.hinge_id`

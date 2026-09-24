@@ -90,6 +90,32 @@ const PESO_ESTADO: Record<EstadoBloque, number> = {
 
 const DEMORA_AUTOGUARDADO = 700
 
+// MISMO TEXTO, UN SOLO LUGAR. Vivía repetido igual en `guardarOCrear` y
+// `crearAhora`; la auditoría de Sora (2026-09-23) encontró que faltaba en
+// tres sitios más (crear/mover/borrar sección) que también pueden chocar
+// contra una versión que dejó de ser el borrador vivo, y que cada uno lo
+// habría escrito a mano distinto si no se centraliza aquí.
+const MENSAJE_CONFLICTO =
+  'Esta experiencia cambió del lado del servidor mientras editabas (alguien publicó o deshizo una publicación). Para no perder ni tu trabajo ni el de esa persona, recarga la página y vuelve a hacer tu cambio sobre la versión más reciente.'
+
+function esConflicto(e: unknown): boolean {
+  return e instanceof ConflictoDeVersion || (e as { code?: string } | null)?.code === '42501'
+}
+
+// HALLAZGO DE SORA, 2026-09-23: "Intenta de nuevo" es activamente
+// engañoso cuando la causa real es que se cortó la conexión -- reintentar
+// sin señal vuelve a fallar, siempre, y el mensaje no lo dice. `onLine` no
+// detecta toda caída de red (una VPN o un proxy pueden fallar con
+// `navigator.onLine` todavía en `true`), pero cuando SÍ está en `false` es
+// una señal segura, y es la única distinción barata que se puede hacer
+// aquí sin guardar de dónde vino cada error.
+function mensajeDeFallo(generico: string): string {
+  if (typeof navigator !== 'undefined' && !navigator.onLine) {
+    return 'Se cortó la conexión a internet. Nada de lo que ya estaba guardado se perdió; vuelve a intentar en cuanto tengas señal.'
+  }
+  return generico
+}
+
 // Debajo de este piso el ojo no registra el cambio de "Guardando" a
 // "Guardado" y parece que no pasó nada. Ya regía para el botón manual de
 // Publicar.tsx (`MINIMO_PERCEPTIBLE`, decisión de Julián); se le había
@@ -214,17 +240,30 @@ export default function Editor({
     setActiva(valida ?? (orden[0]?.id ?? ''))
   }, [experiencia])
 
-  // El chip global es el peor caso entre todos los bloques con actividad
-  // reciente. Un bloque que nunca se tocó no cuenta: si contara, la
-  // pantalla abriría diciendo "Todo guardado" de forma vacía, sin que
-  // nadie hubiera guardado nada todavía.
+  // El chip global es el peor caso entre todos los bloques Y SECCIONES con
+  // actividad reciente. Un bloque o sección que nunca se tocó no cuenta: si
+  // contara, la pantalla abriría diciendo "Todo guardado" de forma vacía,
+  // sin que nadie hubiera guardado nada todavía.
+  //
+  // HASTA HOY ESTO SOLO MIRABA `estadosPorBloque`. `estadosPorSeccion`
+  // existía, `marcarSeccion` lo escribía en cada guardado de sección, pero
+  // nada lo leía: editar el título de una sección no movía este chip ni en
+  // éxito ni en error, y el guardia de "¿salir del sitio?" de más abajo
+  // (que también depende solo de `estadoGlobal`) no avisaba si alguien
+  // cerraba la pestaña con un título sin guardar. Hallazgo de Sora,
+  // 2026-09-23: más grave que el reporte original ("no se pudo guardar" sin
+  // explicación), porque esto era pérdida silenciosa de datos, no solo un
+  // mensaje pobre.
   const estadoGlobal = useMemo<EstadoBloque>(() => {
     let peor: EstadoBloque = 'limpio'
     Array.from(estadosPorBloque.values()).forEach(e => {
       if (PESO_ESTADO[e] > PESO_ESTADO[peor]) peor = e
     })
+    Array.from(estadosPorSeccion.values()).forEach(e => {
+      if (PESO_ESTADO[e] > PESO_ESTADO[peor]) peor = e
+    })
     return peor
-  }, [estadosPorBloque])
+  }, [estadosPorBloque, estadosPorSeccion])
 
   // Los estados y los temporizadores también se llevan por clave estable,
   // no por id, por la misma razón que la llave de React: el id de un
@@ -317,6 +356,7 @@ export default function Editor({
       const rev = await conPisoPerceptible(guardarBloque(b, experiencia.versionId))
       setBloques(prev => prev.map(x => (x.id === b.id ? { ...x, rev } : x)))
       marcarPorClave(clave, 'guardado')
+      setErrorGlobal(null)
 
       const medioViejo = mediosAReemplazar.current.get(clave)
       if (medioViejo) {
@@ -330,7 +370,7 @@ export default function Editor({
       }
     } catch (e) {
       const codigo = (e as { code?: string } | null)?.code
-      if (e instanceof ConflictoDeVersion || codigo === '42501') {
+      if (esConflicto(e)) {
         // MISMO BANNER PARA LAS DOS CAUSAS, A PROPÓSITO. El mensaje viejo
         // decía "alguien guardó cambios en ESTE bloque", y eso era falso
         // en el caso real que lo disparó: alguien publicó o revirtió la
@@ -343,9 +383,7 @@ export default function Editor({
         // de este arreglo caía al chip rojo genérico sin explicación.
         // Hallazgo de Hugo, reproducido en vivo con una publicación real
         // mientras el editor seguía abierto.
-        setConflicto(
-          'Esta experiencia cambió del lado del servidor mientras editabas (alguien publicó o deshizo una publicación). Para no perder ni tu trabajo ni el de esa persona, recarga la página y vuelve a hacer tu cambio sobre la versión más reciente.'
-        )
+        setConflicto(MENSAJE_CONFLICTO)
       } else if (codigo === '23514') {
         // Vaciar un campo obligatorio de un bloque QUE YA EXISTÍA es
         // distinto de un fallo de red, y antes de esto se veían igual:
@@ -356,6 +394,14 @@ export default function Editor({
         setErrorGlobal(
           `${definicion(b.tipo).nombre}: no puede quedar sin ${definicion(b.tipo).campos.texto ? 'texto' : 'contenido'}. Lo último que sí se guardó sigue en la base; esto que ves ahora no se ha guardado.`
         )
+      } else {
+        // EL HUECO ORIGINAL: cualquier otro código (fallo de red, un 500,
+        // lo que sea) caía aquí sin poner nada en `errorGlobal` -- el chip
+        // del bloque decía "No se guardó" y no había ninguna explicación
+        // en ningún lado de por qué ni qué hacer. Esto es literalmente lo
+        // que Francisco reportó ("por qué putas... no nos puede pasar con
+        // un cliente"), y lo que disparó la auditoría completa de Sora.
+        setErrorGlobal(mensajeDeFallo(`No se pudo guardar "${definicion(b.tipo).nombre}". Intenta de nuevo.`))
       }
       marcarPorClave(clave, 'error')
     }
@@ -388,6 +434,7 @@ export default function Editor({
       // posterior la persiste como una actualización normal.
       setBloques(prev => prev.map(x => (x.id === idLocalDeAhora ? { ...x, id: creado.id, rev: creado.rev } : x)))
       marcarPorClave(clave, 'guardado')
+      setErrorGlobal(null)
       return creado
     } catch (e) {
       const codigo = (e as { code?: string } | null)?.code
@@ -395,7 +442,7 @@ export default function Editor({
         marcarPorClave(clave, 'limpio')
         return null
       }
-      if (codigo === '42501') {
+      if (esConflicto(e)) {
         // Un bloque nuevo, creado contra una versión que dejó de ser el
         // borrador vivo (alguien publicó o revirtió mientras se escribía):
         // no hay fila que comparar como en `guardarBloque`, así que
@@ -403,9 +450,11 @@ export default function Editor({
         // filas. Antes de este arreglo caía al mismo `else` genérico que
         // un fallo de red, sin explicación. Mismo banner que el caso de
         // edición, mismo remedio. Hallazgo de Hugo.
-        setConflicto(
-          'Esta experiencia cambió del lado del servidor mientras editabas (alguien publicó o deshizo una publicación). Para no perder ni tu trabajo ni el de esa persona, recarga la página y vuelve a hacer tu cambio sobre la versión más reciente.'
-        )
+        setConflicto(MENSAJE_CONFLICTO)
+      } else {
+        // Mismo hueco que en `guardarOCrear`: sin esto, un fallo real
+        // (red, un 500) marcaba el bloque en error sin decir por qué.
+        setErrorGlobal(mensajeDeFallo('No se pudo crear este bloque. Intenta de nuevo.'))
       }
       marcarPorClave(clave, 'error')
       return null
@@ -453,6 +502,18 @@ export default function Editor({
       clearTimeout(t)
       temporizadores.current.delete(clave)
       guardarOCrear(clave)
+    })
+    // "Guardar ahora" solo aparece cuando `estadoGlobal === 'pendiente'`, y
+    // desde que ese estado también mira `estadosPorSeccion` (hallazgo de
+    // Sora), el botón puede aparecer por un título de sección sin guardar,
+    // no solo por un bloque. Sin esto, hacer clic en "Guardar ahora" con
+    // solo una sección pendiente no habría hecho nada: el chip seguiría
+    // diciendo "pendiente" después del clic, sin ningún error que lo
+    // explicara.
+    Array.from(temporizadoresSeccion.current.entries()).forEach(([id, t]) => {
+      clearTimeout(t)
+      temporizadoresSeccion.current.delete(id)
+      guardarSeccionAhora(id)
     })
     // Deps vacías a propósito, no un olvido: el cuerpo no lee `bloques` ni
     // `experiencia` directamente, todo pasa por `guardarOCrear`, que lee
@@ -513,12 +574,18 @@ export default function Editor({
     try {
       await conPisoPerceptible(guardarSeccionRemoto(s, experiencia.versionId))
       marcarSeccion(id, 'guardado')
+      setErrorGlobal(null)
     } catch (e) {
-      const codigo = (e as { code?: string } | null)?.code
-      if (codigo === '42501') {
-        setConflicto(
-          'Esta experiencia cambió del lado del servidor mientras editabas (alguien publicó o deshizo una publicación). Para no perder ni tu trabajo ni el de esa persona, recarga la página y vuelve a hacer tu cambio sobre la versión más reciente.'
-        )
+      if (esConflicto(e)) {
+        // `guardarSeccionRemoto` ahora lanza `ConflictoDeVersion` también
+        // cuando el UPDATE afecta cero filas (versión muerta) -- antes
+        // solo se revisaba el código `42501`, que un UPDATE nunca produce
+        // (a diferencia de un INSERT), así que este caso nunca se
+        // detectaba y la sección se marcaba "Guardado" sin haberse
+        // guardado. Ver el comentario en `almacenRemoto.ts`.
+        setConflicto(MENSAJE_CONFLICTO)
+      } else {
+        setErrorGlobal(mensajeDeFallo('No se pudo guardar esta sección. Intenta de nuevo.'))
       }
       marcarSeccion(id, 'error')
     }
@@ -557,8 +624,9 @@ export default function Editor({
         campo?.focus()
         campo?.select()
       }, 50)
-    } catch {
-      setErrorGlobal('No se pudo crear la sección. Intenta de nuevo.')
+    } catch (e) {
+      if (esConflicto(e)) setConflicto(MENSAJE_CONFLICTO)
+      else setErrorGlobal(mensajeDeFallo('No se pudo crear la sección. Intenta de nuevo.'))
     } finally {
       setCreandoSeccion(false)
     }
@@ -577,9 +645,11 @@ export default function Editor({
       .map(s => ({ id: s.id, orden: s.orden }))
     try {
       await reordenarSeccionesRemoto(cambios, experiencia.versionId)
-    } catch {
+      setErrorGlobal(null)
+    } catch (e) {
       setBisagras(antes) // el servidor no lo aceptó: se revierte a lo que sí está guardado
-      setErrorGlobal('No se pudo reordenar. Intenta de nuevo.')
+      if (esConflicto(e)) setConflicto(MENSAJE_CONFLICTO)
+      else setErrorGlobal(mensajeDeFallo('No se pudo reordenar. Intenta de nuevo.'))
     }
   }
 
@@ -630,9 +700,11 @@ export default function Editor({
     }
     try {
       await borrarSeccionRemoto(id)
-    } catch {
+      setErrorGlobal(null)
+    } catch (e) {
       setBisagras(antes) // no se pudo borrar del lado del servidor: se restaura
-      setErrorGlobal('No se pudo borrar la sección. Intenta de nuevo.')
+      if (esConflicto(e)) setConflicto(MENSAJE_CONFLICTO)
+      else setErrorGlobal(mensajeDeFallo('No se pudo borrar la sección. Intenta de nuevo.'))
     }
   }
 
@@ -688,7 +760,8 @@ export default function Editor({
     try {
       await reordenarRemoto(cambiadosReales.map(b => ({ id: b.id, orden: b.orden })), experiencia.versionId)
       for (const c of cambiadosReales) marcarPorClave(claveDe(c.id), 'guardado')
-    } catch {
+      setErrorGlobal(null)
+    } catch (e) {
       // Revertir SOLO el orden de los bloques que ESTE movimiento tocó,
       // sobre el estado más reciente (función de actualización, no el
       // `bloques` cerrado de cuando se hizo clic). `reordenarRemoto` manda
@@ -703,9 +776,13 @@ export default function Editor({
       const ordenPrevio = new Map(cambiados.map(b => [b.id, antes.get(b.id)!]))
       setBloques(prev => prev.map(b => (ordenPrevio.has(b.id) ? { ...b, orden: ordenPrevio.get(b.id)! } : b)))
       for (const c of cambiadosReales) marcarPorClave(claveDe(c.id), 'error')
-      setErrorGlobal(
-        'No se pudo mover el bloque. Se deshizo el cambio en pantalla. Si moviste varios a la vez, revisa el orden: reordenarRemoto no es una sola operación, así que alguno pudo haberse guardado antes de que fallara.'
-      )
+      if (esConflicto(e)) {
+        setConflicto(MENSAJE_CONFLICTO)
+      } else {
+        setErrorGlobal(
+          'No se pudo mover el bloque. Se deshizo el cambio en pantalla. Si moviste varios a la vez, revisa el orden: reordenarRemoto no es una sola operación, así que alguno pudo haberse guardado antes de que fallara.'
+        )
+      }
     }
   }
 
@@ -734,8 +811,9 @@ export default function Editor({
       await borrarBloque(id)
       setBloques(prev => prev.filter(b => b.id !== id))
       setPorBorrar(null)
-    } catch {
-      setErrorGlobal('No se pudo quitar el bloque. Sigue ahí, sin cambios.')
+    } catch (e) {
+      if (esConflicto(e)) setConflicto(MENSAJE_CONFLICTO)
+      else setErrorGlobal(mensajeDeFallo('No se pudo quitar el bloque. Sigue ahí, sin cambios.'))
     } finally {
       setBorrando(null)
     }
@@ -908,6 +986,7 @@ export default function Editor({
                           nBloques={n}
                           primera={i === 0}
                           ultima={i === bs.length - 1}
+                          estado={estadosPorSeccion.get(b.id) ?? 'limpio'}
                           onSeleccionar={() => setActiva(b.id)}
                           onMover={delta => moverSeccion(b.id, delta)}
                         />
@@ -1156,7 +1235,7 @@ function BotonTipo({ t, onClick, tenue = false }: { t: TipoBloque; onClick: () =
 // completo, para que un clic normal siga seleccionando la sección sin
 // competir con el gesto de arrastrar.
 function FilaSeccion({
-  b, tiempo, activa, nBloques, primera, ultima, onSeleccionar, onMover,
+  b, tiempo, activa, nBloques, primera, ultima, estado, onSeleccionar, onMover,
 }: {
   b: BisagraEditable
   tiempo: Tiempo
@@ -1164,6 +1243,7 @@ function FilaSeccion({
   nBloques: number
   primera: boolean
   ultima: boolean
+  estado: EstadoBloque
   onSeleccionar: () => void
   onMover: (delta: number) => void
 }) {
@@ -1183,7 +1263,7 @@ function FilaSeccion({
       style={estilo}
       className={`group flex items-center gap-0.5 rounded-[10px] mb-0.5 transition-colors ${
         activa ? 'bg-paper-2/70' : 'hover:bg-paper-2'
-      }`}
+      } ${estado === 'error' ? 'ring-1 ring-red-300' : ''}`}
     >
       <button
         {...attributes}
@@ -1207,8 +1287,21 @@ function FilaSeccion({
         <span className={`block text-[13px] leading-snug truncate ${activa ? 'text-ink font-medium' : 'text-gray-ui'}`}>
           {b.titulo}
         </span>
-        <span className="block text-[11px] text-gray-ui mt-0.5 tabular-nums">
-          {nBloques === 0 ? 'vacía' : `${nBloques} bloque${nBloques > 1 ? 's' : ''}`}
+        {/* HASTA HOY ESTA LÍNEA SOLO MOSTRABA EL CONTEO DE BLOQUES, SIN
+            IMPORTAR SI HABÍA UN GUARDADO EN CURSO O FALLIDO -- Sora
+            encontró que `estadosPorSeccion` se escribía pero nada lo leía
+            en ningún elemento visible. Ahora, mientras el título o la
+            descripción de la sección tienen algo pendiente, guardándose o
+            en error, esta línea lo dice en vez del conteo; vuelve al
+            conteo en cuanto se resuelve. */}
+        <span className={`block text-[11px] mt-0.5 tabular-nums ${estado === 'error' ? 'text-alerta font-medium' : 'text-gray-ui'}`}>
+          {estado === 'error'
+            ? 'No se guardó'
+            : estado === 'guardando'
+              ? 'Guardando…'
+              : estado === 'pendiente'
+                ? 'Sin guardar'
+                : nBloques === 0 ? 'vacía' : `${nBloques} bloque${nBloques > 1 ? 's' : ''}`}
         </span>
       </button>
       <div className="flex flex-col opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity pr-1">

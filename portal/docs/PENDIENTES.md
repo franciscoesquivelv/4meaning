@@ -135,7 +135,36 @@ la base) igual que exige el resto del protocolo de este portal.
   campo principal de bloque).
 
 ### P-015 — Recuperación de contraseña rota, en producción, con una cuenta real
-- Estado: **causa raíz encontrada, auditoría completa despachada (Daniel + Hugo)**
+- Estado: **tres piezas del plan barato construidas y verificadas (tipos + render); falta Resend y el resto del plan**
+- Actualización 2026-09-23, ejecutado de la lista "barato y ya" del plan
+  conjunto de Daniel y Hugo (`recuperar-contrasena/page.tsx`):
+  - `redirectTo` ya no usa `window.location.origin` a secas: en
+    producción (`NODE_ENV === 'production'`, no depende de que
+    `NEXT_PUBLIC_APP_URL` tenga el valor correcto en Vercel, que hoy NO
+    lo tiene) usa un dominio de marca fijo en el código
+    (`https://app.4meaning.life`); en desarrollo/preview sigue cayendo a
+    `window.location.origin` como antes, para no romper las pruebas
+    locales. Esto cierra el bug COMPLETO que rompió el correo de
+    Patricia -- es el único uso de `redirectTo` en todo el repo. Corregir
+    el valor de `NEXT_PUBLIC_APP_URL` en el dashboard de Vercel sigue
+    siendo aparte (config de cuenta, no código) y ya no es necesario para
+    que esto funcione.
+  - Quitado el catch-all que mostraba el mensaje crudo de Supabase
+    (`authError.message`) a cualquier visitante anónimo para cualquier
+    error no previsto por las dos reglas ya existentes.
+  - "Espera un minuto y vuelve a intentar" (minimizaba una espera real de
+    hasta una hora) corregido a un mensaje que no promete un tiempo que
+    no se puede cumplir.
+  - Verificado: `tsc --noEmit` limpio, la página carga y renderiza igual
+    que antes. No se disparó un envío real (consumiría el cupo
+    compartido de 2/hora que Patricia todavía puede necesitar).
+  - Sin construir del plan barato: subir el mínimo de contraseña a 8 en
+    el dashboard de Supabase (config de cuenta, no código); evaluar
+    activar el captcha nativo de Supabase Auth (sí es código, una tarde,
+    pero es una pieza aparte, no un ajuste de mensaje).
+- Actualización 2026-09-23, auditoría completa de Daniel y Hugo (mecanismo
+  y seguridad del flujo completo, no solo el bug puntual), plan conjunto
+  entregado:
 - Origen: Francisco, 2026-09-23, intentando recuperar el acceso de una
   cuenta real de equipo (`arriaza.patricia@gmail.com`). Con razón: "eso
   no nos puede pasar con un cliente."
@@ -149,9 +178,93 @@ la base) igual que exige el resto del protocolo de este portal.
   pendiente desde antes (`personalab-producto-digital.md`: "se conecta
   SMTP propio (Resend) más adelante, no bloquea el trabajo de hoy"). Ese
   "más adelante" ya bloqueó trabajo real hoy.
-- Dueño: Daniel (mecanismo, costo real de Resend) y Hugo (seguridad del
-  flujo) están auditando el flujo completo, no solo el bug puntual --
-  respuesta pendiente.
+- Actualización 2026-09-23, auditoría de Daniel y Hugo (mecanismo y
+  seguridad del flujo completo, no solo el bug puntual):
+  - **Daniel, mecanismo:** `redirectTo` es el ÚNICO uso de
+    `redirectTo`/`emailRedirectTo` en todo el repo (grep exhaustivo);
+    `inviteUserByEmail` (`lib/personalab/acceso.ts:35`) no pasa
+    `redirectTo` y depende del Site URL del dashboard de Supabase
+    (`app.4meaning.life`, según el comentario de `app/page.tsx:10-15`),
+    así que ese camino no tiene este bug. El fix es de una línea. Hallazgo
+    nuevo: en Vercel ya existe `NEXT_PUBLIC_APP_URL` (Production +
+    Preview, confirmado con `vercel env ls`), pero CERO código lo lee
+    (grep exhaustivo) y su valor real (`vercel env pull`, revisado y
+    borrado) es `https://trascendencia-portal.vercel.app/`, NO
+    `https://app.4meaning.life` -- confirmado con `vercel inspect` que
+    ese dominio viejo sigue siendo alias vivo del mismo deployment, así
+    que no está muerto, pero no es el dominio de marca y no hay forma de
+    confirmar desde el código si está en la lista blanca de redirect URLs
+    de Supabase (sin `supabase/config.toml`, esa lista solo vive en el
+    dashboard). No usar esa variable tal cual; corregir su valor o
+    introducir una nueva, solo en Production, para que Preview y local
+    sigan cayendo a `window.location.origin` como hoy.
+    `RESEND_API_KEY` confirmado en vivo, 2026-09-23, ausente en
+    Production, Preview y Development de Vercel (las tres revisadas) --
+    reconfirma P-005 sin cambio en dos días. Prueba en vivo del límite:
+    4 llamadas seguidas a `POST /auth/v1/recover` con direcciones
+    inventadas (nunca con la cuenta real de Patricia ni con ninguna
+    dirección real, para no mandar correo sin permiso) devolvieron 200
+    `{}` sin error -- no prueba que el cupo real esté disponible, porque
+    Supabase no gasta el cupo de envío en una dirección que no existe (a
+    propósito, para no filtrar cuentas). El costo de conectar Resend como
+    SMTP de Supabase sigue siendo config pura (sección 3.4), pero el paso
+    previo -- dominio verificado con SPF/DKIM, sección 3.2 -- tiene
+    propagación de DNS real, no garantizada en "una tarde". Lo más grave:
+    el mensaje que ve el cliente hoy cuando el cupo se agota
+    (`recuperar-contrasena/page.tsx:35`, "espera un minuto") minimiza una
+    espera que puede ser de hasta una hora, y ni siquiera es su propio
+    intento el que pudo gastar el cupo (es compartido con las
+    invitaciones de staff). No es hipotético: ya pasó hoy con dos cuentas
+    de prueba en la misma hora -- el umbral es la escala de HOY, no una
+    proyección.
+  - **Hugo, seguridad:** sin enumeración de cuentas -- el éxito siempre
+    da el mismo mensaje genérico (`recuperar-contrasena/page.tsx:68-70`),
+    confirmado también contra el endpoint real (200 `{}` igual con
+    dirección inventada). Pero el manejo de error tiene un catch-all real:
+    `recuperar-contrasena/page.tsx:38-39` muestra el mensaje crudo de
+    Supabase a cualquier visitante anónimo para cualquier error que no
+    calce con los dos regex ya previstos, y como `email_log` no existe
+    (PROTOCOLO-CORREO.md 4.2), ese texto ni siquiera queda registrado
+    para el equipo -- se ve una vez en la pantalla de un desconocido y se
+    pierde. El branch de "la dirección de retorno no está autorizada"
+    también expone configuración interna a un anónimo, severidad baja.
+    HALLAZGO NUEVO, el más serio: cero captcha en todo el repo (grep) y
+    cero throttle propio delante de este formulario (grep, ya confirmado
+    antes para otra ruta) -- el único freno es el cupo de Supabase, que
+    es público (`/auth/v1/recover` no pide sesión, la anon key no es
+    secreta), compartido entre recuperar contraseña e invitar personal, y
+    cualquiera sin cuenta puede agotarlo con dos solicitudes y bloquear de
+    paso las invitaciones reales del equipo. No es solo que el cupo sea
+    bajo: es un recurso público, sin costo de ataque, compartido entre dos
+    funciones críticas. CSRF revisado, sin hallazgo (el token viaje por
+    header leído de almacenamiento same-origin, no por cookie ambiental
+    cross-site). Contraseña mínima de 8 caracteres es SOLO del cliente
+    (`nueva-contrasena/page.tsx:69`); nada en el repo confirma que
+    Supabase también lo exige del lado del servidor (default de Supabase
+    es 6, por debajo de lo que la pantalla promete).
+- **Plan conjunto, barato/urgente (sin depender de Resend) contra lo que
+  sí necesita Resend:**
+  - Barato y ya (minutos a una tarde, sin Resend): fijar `redirectTo` a
+    la URL de marca en vez de `window.location.origin` y corregir/retirar
+    el valor equivocado de `NEXT_PUBLIC_APP_URL`; quitar el catch-all que
+    muestra el error crudo de Supabase; corregir el mensaje de "espera un
+    minuto" para que no minimice la espera real ni le atribuya el
+    bloqueo al propio intento; subir el mínimo de contraseña en el
+    dashboard de Supabase a 8 para que calce con la promesa en pantalla;
+    evaluar activar el captcha nativo de Supabase Auth (única defensa
+    real contra el DoS de cupo compartido mientras el cupo siga en 2/hora
+    -- esto sí es código, no solo config, una tarde).
+  - Necesita la pieza grande (Resend): lo único que de verdad sube el
+    techo de 2/hora es conectar Resend como SMTP de Supabase (3.4),
+    detrás de un dominio verificado con SPF/DKIM (3.2, con propagación de
+    DNS real). Y aun conectado, la sección 4 completa de
+    PROTOCOLO-CORREO.md (bitácora, webhooks, cola, lista de supresión,
+    semáforo, alerta por push) sigue sin existir, así que conectar Resend
+    quita el techo pero no da todavía visibilidad de si un correo real
+    llegó -- ese es el segundo piso de "listo para un cliente real", no
+    el primero.
+- Dueño: Francisco decide qué del plan barato se construye ya y resuelve
+  Resend externamente (dominio + llave); Claude ejecuta lo decidido.
 - Criterio de cierre: un enlace de recuperación real, enviado desde
   producción, funciona de punta a punta para una cuenta real, verificado
   con ejecución real; y una decisión explícita sobre si el límite de
@@ -159,7 +272,71 @@ la base) igual que exige el resto del protocolo de este portal.
   reales o si Resend deja de ser "más adelante".
 
 ### P-013 — El editor no es versátil: siete quejas de Francisco, auditadas por Julian/Daniel/Leo
-- Estado: **sexta vuelta: tres bugs reales corregidos, tres auditorías nuevas despachadas**
+- Estado: **séptima vuelta: auditoría de Sora recibida y aplicada, verificado en vivo con cuenta y contenido desechables**
+- Actualización 2026-09-23, séptima vuelta: Sora auditó TODO mensaje de
+  error/estado del editor real, no solo "No se pudo guardar". Hallazgo
+  más grave de lo que disparó la auditoría: `estadosPorSeccion` se
+  escribía (`marcarSeccion`) pero NADA lo leía -- ni el chip de la
+  cabecera (`estadoGlobal` solo miraba `estadosPorBloque`), ni el
+  guardia de "¿salir sin guardar?" (`beforeunload`, mismo `estadoGlobal`),
+  ni ninguna fila del riel. Editar el título de una sección no movía
+  ningún indicador, en éxito o en error, y cerrar la pestaña con un
+  título sin guardar no avisaba -- pérdida de datos silenciosa, más
+  grave que un mensaje pobre. Corregido y verificado en vivo (cuenta
+  desechable, contenido desechable en "El Presente como Regalo Demo",
+  creado y borrado por la UI real, nunca sobre lo que Francisco pueda
+  tener abierto):
+  - `estadoGlobal` ahora también mira `estadosPorSeccion`: el chip de la
+    cabecera y "Guardar ahora" reaccionan a un título/descripción de
+    sección sin guardar, igual que ya reaccionaban a un bloque.
+    Verificado: al editar un título, el chip pasó por "Guardando" y
+    volvió a "Guardado"; antes se hubiera quedado en "Todo guardado"
+    todo el tiempo, sin moverse.
+  - Cada fila del riel (`FilaSeccion`) ahora muestra "Guardando…" o "No
+    se guardó" en el lugar del conteo de bloques mientras hay algo
+    pendiente, con un aro rojo discreto en error -- mismo lenguaje visual
+    que ya usaba la tarjeta de un bloque. Verificado en vivo, capturado
+    en el momento exacto del guardado.
+  - `guardarYa` ("Guardar ahora" y Cmd/Ctrl+S) ahora también adelanta el
+    debounce de una sección pendiente, no solo el de bloques -- si no se
+    corregía, el botón podía aparecer por una sección y no hacer nada al
+    hacer clic.
+  - Los cuatro `catch` genéricos que Sora señaló (crear/mover/borrar
+    sección, borrar bloque) ahora distinguen un choque de versión real
+    (banner con "Recargar") de un fallo genérico, en vez de un mismo
+    "Intenta de nuevo" para las dos causas -- reintentar contra una
+    versión muerta solo vuelve a fallar, y el mensaje viejo no lo decía.
+  - `errorGlobal` ahora se limpia también en el camino de ÉXITO de cada
+    acción que puede ponerlo (guardar/crear bloque, guardar/mover/borrar
+    sección), no solo al empezar tres acciones sueltas -- antes un
+    banner de error podía sobrevivir a la corrección real y contradecir
+    un chip que ya decía "Guardado".
+  - Mensajes que antes caían al `catch` genérico SIN explicación (el
+    hueco original, literalmente lo que reportó Francisco) ahora dicen
+    qué pasó, con una distinción real de "sin conexión" (`navigator
+    .onLine`) contra cualquier otro fallo -- no se construyó reintento
+    automático al recuperar señal; eso es una pieza aparte, más grande
+    (necesitaría guardar POR QUÉ falló cada guardado, no solo que
+    falló), queda de backlog si se pide.
+  - **Hallazgo propio, encontrado auditando el mismo camino que señaló
+    Sora, no reportado por ella:** `guardarSeccionRemoto` y
+    `reordenarSeccionesRemoto` (`almacenRemoto.ts`) hacían su `UPDATE`
+    sin `.select()` -- el mismo defecto que `guardarBloque` ya tenía
+    resuelto (comentario propio en el archivo, "MISMO DEFECTO QUE..."),
+    pero nunca se replicó al escribir el CRUD de secciones. Un `UPDATE`
+    cuya fila cae fuera del `using` de RLS (versión que dejó de ser el
+    borrador vivo) no es un error para Postgres ni PostgREST -- son cero
+    filas afectadas, y sin `.select()` la llamada vuelve como éxito.
+    Confirmado contra la política real (`20260914_1030_hinges_por_
+    version.sql:412-427`, mismo `for all using(...) with check(...)` que
+    `blocks`): antes de esto, editar el título de una sección o
+    reordenarla sobre una versión muerta reportaba "Guardado" sin haber
+    escrito nada. Corregido con `.select('id').maybeSingle()` +
+    `ConflictoDeVersion` si no hay fila, igual que `guardarBloque`.
+  - Verificado también sin regresión: crear dos secciones, reordenarlas
+    con las flechas, agregar un bloque de texto, editarlo y verlo
+    persistir (consulta directa a la base), borrar bloque y secciones --
+    todo con cuenta y contenido desechables, limpiado después.
 - Actualización 2026-09-23, sexta vuelta: Francisco, usando el editor
   para construir contenido real, encontró tres bugs concretos y pidió
   tres auditorías nuevas, más una lista larga de cambios sin construir
@@ -189,10 +366,45 @@ la base) igual que exige el resto del protocolo de este portal.
     "participante" -- el propio campo dice "no la ve el participante").
   **Despachado, sin construir todavía:** Sora audita TODOS los mensajes
   de error/estado del editor real (no solo "No se pudo guardar", que
-  fue el disparador) -- respuesta pendiente. Leo y Julian arman un plan
-  de acción para que la experiencia del participante se pueda ver bien
-  desde computadora, no solo simulada en marco de teléfono -- respuesta
-  pendiente.
+  fue el disparador) -- respuesta pendiente.
+  **Plan de acción de Leo y Julian, entregado 2026-09-23, nada construido
+  todavía, falta que Francisco confirme el orden:** verificaron sobre el
+  código real (sin sesión de navegador) que el lector real
+  (`app/(experiencia)/`) no tiene NINGÚN tratamiento de escritorio hoy --
+  seis pantallas con `max-w-[620px]`/`max-w-[520px]` fijo en todos los
+  breakpoints, `md:` solo cambia relleno y tamaño de letra, cero
+  `@media` propio en `globals.css`/`marca.css`, cero lógica en JS atada a
+  un ancho (el bug de `TopNav` a 375px ya está resuelto, mismo día, filas
+  de arriba). No es una reparación, es una superficie sin decisión de
+  escritorio todavía. El toggle del editor ("Como participante" / "Como
+  moderador", `Editor.tsx:1062-1072`) filtra AUDIENCIA
+  (`NIVEL[b.audiencia]`, `:649`), no dispositivo: el marco de teléfono
+  (`:1076`, `w-[375px] lg:w-[320px]`) es fijo siempre. Decisión: construir
+  primero el ancho de escritorio del lector real (columna de lectura
+  ~620-680px se queda por legibilidad -- es la misma medida que Julian ya
+  usa para rechazar texto justificado -- pero el lienzo alrededor gana
+  composición real con el degradado/grano que BRAND.md §9 ya autoriza y
+  que hoy no se usa en PersonaLab), y RECIÉN DESPUÉS agregar al editor un
+  segundo selector de dispositivo (celular/computadora) que conviva con
+  el de audiencia, nunca lo reemplace -- reemplazarlo borraría
+  información que Francisco ya usa (la descripción solo-moderador).
+  Construir el toggle antes que el layout real le mostraría al equipo
+  una pantalla que la producción no sostiene. Orden de magnitud: el
+  ensanche del lector es CSS puro sobre seis archivos más `Bloques.tsx`
+  (ya fluido: `w-full`, `aspect-video`, `aspect-[2/1]`, sin anchos fijos
+  en píxeles), medio día a un día si la dirección es "columna generosa +
+  atmósfera", más si Francisco pide una composición distinta (rail de
+  contexto, multi-columna) porque eso reabre a Sora (qué se puede
+  revelar sin romper "se revela por apertura, no por logro"). El
+  selector de dispositivo en el editor, una vez exista el layout real:
+  horas, mismo orden que mover "+ Nueva sección" a la cabecera. Revisado
+  también si el mismo patrón se repite en otra pantalla del participante:
+  `app/(participant)/` (Trascendencia) no usa `max-w-[` en absoluto, así
+  que no comparte este defecto específico -- no se auditó más a fondo,
+  fuera de alcance hoy. Por consultar antes de construir: Sora
+  (obligatorio, qué puede mostrar de más un lienzo ancho sin romper su
+  propio criterio de revelado), Marcus (opcional, solo si esto amerita
+  una regla explícita de ancho de columna en BRAND.md, que hoy no existe).
   **Pedido, sin decidir alcance todavía (backlog, no urgente hoy):**
   Ctrl+Z en el editor; una sección de referencias/fuentes por
   experiencia, citables aparte; renombrar el tipo de bloque "Consigna"

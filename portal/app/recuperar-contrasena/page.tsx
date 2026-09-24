@@ -4,6 +4,21 @@ import { useState } from 'react'
 import { createBrowserClient } from '@supabase/ssr'
 import { LIENZO, TARJETA, ETIQUETA, CAMPO, BOTON, ERROR, CONFIRMACION, ENLACE } from '@/lib/estilos/acceso'
 
+// LA CAUSA REAL DE "Email link is invalid or has expired" QUE VIO PATRICIA:
+// `redirectTo` se armaba con `window.location.origin`, que en local es
+// `localhost:3000` -- si el correo se manda desde una sesión de desarrollo,
+// el link que le llega a quien lo recibe apunta a una URL que solo existe
+// en la máquina de quien lo mandó. Auditoría de Daniel y Hugo, 2026-09-23
+// (P-015): este es el ÚNICO lugar del repo que usa `redirectTo` (el otro
+// correo de Auth, `inviteUserByEmail`, no lo necesita), así que arreglarlo
+// aquí cierra el bug completo, sin depender de que `NEXT_PUBLIC_APP_URL` en
+// Vercel tenga el valor correcto (hoy no lo tiene: apunta al dominio viejo
+// de Vercel, no a app.4meaning.life -- Daniel lo confirmó contra el
+// entorno real. Corregir esa variable es aparte, config de la cuenta, no
+// código). `NODE_ENV` sí es fiable: Next.js lo reemplaza en build, no
+// depende de ningún valor que alguien pueda dejar mal puesto.
+const DOMINIO_PRODUCCION = 'https://app.4meaning.life'
+
 export default function RecuperarContrasenaPage() {
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
@@ -20,23 +35,34 @@ export default function RecuperarContrasenaPage() {
     setError('')
     setLoading(true)
 
+    const origen = process.env.NODE_ENV === 'production' ? DOMINIO_PRODUCCION : window.location.origin
     const { error: authError } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: window.location.origin + '/nueva-contrasena',
+      redirectTo: origen + '/nueva-contrasena',
     })
 
     setLoading(false)
 
     if (authError) {
-      // Se muestra el motivo real. El mensaje generico anterior escondia
-      // causas accionables como el limite de frecuencia o una URL de
-      // redireccion que no esta en la lista blanca del proyecto.
+      // Se muestra el motivo real PARA LAS CAUSAS QUE SE RECONOCEN. El
+      // `else` de abajo YA NO muestra `authError.message` crudo: Hugo
+      // encontró (auditoría P-015, 2026-09-23) que cualquier error no
+      // previsto por las dos reglas de arriba se mostraba tal cual a
+      // cualquier visitante anónimo -- el texto interno de Supabase, sin
+      // pasar por nadie del equipo, para quien sea que lo dispare.
       const m = authError.message ?? ''
       if (/only request this after|rate limit|too many/i.test(m)) {
-        setError('Ya se envió un correo hace un momento. Espera un minuto y vuelve a intentar.')
+        // "Espera un minuto" MINIMIZA la espera real. El cupo de correos
+        // de autenticación es de 2 POR HORA PARA TODO EL PROYECTO (no por
+        // cuenta), compartido con las invitaciones de staff -- Daniel lo
+        // confirmó en vivo contra el entorno real. Un minuto es lo que
+        // tarda el cupo de MENSAJES POR SEGUNDO, no el de recuperar
+        // contraseña; decir "un minuto" aquí es la misma clase de mensaje
+        // que no explica lo que de verdad pasa.
+        setError('Ya se enviaron los correos que el proyecto permite por ahora. Puede tardar hasta una hora en poder reenviarse; si es urgente, avisa al equipo.')
       } else if (/redirect|not allowed|invalid/i.test(m)) {
         setError('La dirección de retorno no está autorizada en el proyecto. Avisa al equipo.')
       } else {
-        setError(m || 'Ocurrió un error. Intenta de nuevo.')
+        setError('Ocurrió un error y no se pudo enviar el correo. Intenta de nuevo o avisa al equipo.')
       }
       return
     }
