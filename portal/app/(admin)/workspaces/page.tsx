@@ -1,7 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { H1, SUBTITULO, PASTILLA_BIEN, PASTILLA_CURSO } from '@/lib/estilos/oficina'
+import Image from 'next/image'
+import { H1 } from '@/lib/estilos/oficina'
 
 // Panel de la casa: desde aqui se entra a cualquiera de los dos workspaces.
 // Vive dentro del grupo (admin), asi que ya queda protegido por su layout,
@@ -38,11 +39,15 @@ interface Marca {
   id: string
   nombre: string
   descripcion: string
-  estado: string
   href: string
   /** Clase de dominancia de `app/marca.css`. Decide de que color es la tarjeta. */
   marca: string
-  listo: boolean
+  /** Wordmark en blanco, recortado a su caja de contenido real (ver el
+   *  script que lo generó, más abajo). Vive sobre una ficha de
+   *  `--dom-deep`, nunca sobre el tinte claro de la tarjeta: ninguna de
+   *  las dos marcas tiene una versión oscura del wordmark, solo blanca. */
+  logo: string
+  logoRatio: number
 }
 
 const MARCAS: Marca[] = [
@@ -50,19 +55,19 @@ const MARCAS: Marca[] = [
     id: 'trascendencia',
     nombre: 'Trascendencia',
     descripcion: 'Retiros familiares. Eventos, familias, acuerdos, itinerario y operación del día.',
-    estado: 'En producción',
     href: '/hoy',
     marca: 'marca-trascendencia',
-    listo: true,
+    logo: '/logo-trascendencia-wht.png',
+    logoRatio: 7142 / 1020,
   },
   {
     id: 'personalab',
     nombre: 'PersonaLab',
     descripcion: 'Experiencias para foros. Catálogo, encuentros, grupos y moderadores.',
-    estado: 'Prototipo',
     href: '/personalab',
     marca: 'marca-personalab',
-    listo: false,
+    logo: '/logo-personalab-wht.png',
+    logoRatio: 4673 / 711,
   },
 ]
 
@@ -91,13 +96,8 @@ export default async function WorkspacesPage() {
           {nombre ? `Hola, ${nombre}.` : 'Hola.'}
         </p>
         <h1 className={`${H1} mt-1`}>
-          ¿Dónde vas a trabajar?
+          Inicio
         </h1>
-        {puedePersonaLab && (
-          <p className={`${SUBTITULO} mt-2`}>
-            Tu cuenta opera las dos marcas.
-          </p>
-        )}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -112,14 +112,22 @@ export default async function WorkspacesPage() {
               'focus-visible:ring-offset-2 focus-visible:ring-offset-paper-2'
             }
           >
-            <div className="flex items-start justify-between gap-3 mb-3">
-              {/* 13.15 en vino y 13.09 en teal, sobre su propio tinte. */}
-              <h2 className="text-xl font-semibold tracking-tight text-dom">
-                {m.nombre}
-              </h2>
-              <span className={m.listo ? PASTILLA_BIEN : PASTILLA_CURSO}>
-                {m.estado}
-              </span>
+            {/* Ficha de `--dom-deep`, no el tinte claro de la tarjeta: el
+                wordmark de las dos marcas solo existe en blanco, y blanco
+                sobre `bg-dom/[0.06]` (prácticamente el papel) no se leería.
+                Medido, no estimado: blanco sobre `--dom-deep` da 14.8:1 en
+                vino y 13.7:1 en teal, muy por encima del 3:1 que pide WCAG
+                para un logotipo (se trata como imagen de marca, no como
+                texto de lectura). */}
+            <div className="inline-flex bg-dom-deep rounded-marca px-4 py-3 mb-4">
+              <Image
+                src={m.logo}
+                alt={m.nombre}
+                width={Math.round(m.logoRatio * 100)}
+                height={100}
+                className="h-6 w-auto"
+                priority
+              />
             </div>
             <p className="text-sm text-ink leading-relaxed">{m.descripcion}</p>
             <div className="mt-5 pt-4 border-t border-dom/30 text-xs font-medium text-dom">
