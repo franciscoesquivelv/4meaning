@@ -839,39 +839,30 @@ export default function Editor({
   }
 
   return (
-    // SE SALE DE LOS 1200px DE PersonaLabLayout, A PROPÓSITO -- PERO
-    // SOLO DESDE `lg:`. Pedido de Francisco, 2026-09-24: "el editor se
-    // siente muy tallado". El resto de PersonaLab (Resumen, Grupos,
-    // Experiencias...) se queda en max-w-[1200px] -- esto no toca ese
-    // layout compartido, solo lo escapa desde adentro, con el truco
-    // estándar de `left-1/2` + margen negativo de medio viewport.
-    //
-    // BUG REAL, ENCONTRADO PROBANDO EN MÓVIL: sin el prefijo `lg:`, el
-    // mismo truco en una pantalla angosta con scroll vertical alto
-    // (un editor con varias secciones es exactamente eso) medía 24px de
-    // más -- `100vw` no descuenta la barra de scroll nativa en todos los
-    // navegadores igual, y en un viewport de 375px ese margen de error
-    // es visible: la barra de arriba se veía cortada. Nunca hacía falta
-    // ahí: la cuadrícula de tres columnas que este ensanche existe para
-    // servir tampoco se activa hasta `lg:` (ver el grid más abajo), así
-    // que limitarlo a la misma frontera cierra el bug en vez de
-    // perseguir el redondeo de `vw` con más CSS.
-    <div className="lg:relative lg:left-1/2 lg:right-1/2 lg:-mx-[50vw] lg:w-screen">
-    {/* `lg:-mb-8` CANCELA EL `py-8` (RELLENO INFERIOR) DE PersonaLabLayout,
-        A PROPÓSITO -- mismo espíritu que el `-mx-6` de la cabecera más
-        abajo, que ya cancelaba el relleno horizontal. Las tres columnas
-        de este editor se calculan para llenar EXACTO el alto que queda
-        de pantalla (`h-[calc(100vh-173px)]`); el `py-8` de abajo de
-        PersonaLabLayout le agrega 32px más de documento después de eso,
-        que nadie necesita ver -- son 32px de "pista" de scroll de más,
-        y ESE es el tramo exacto donde una columna `sticky` se queda sin
-        contenedor donde seguir pegada y se suelta a moverse con la
-        página otra vez. Hallazgo de Francisco, 2026-09-24: "veo un
-        espacio blanco al final de la pantalla" y "el teléfono... se
-        vuelve molesto" -- las dos quejas eran la misma causa. */}
-    <div className="lg:max-w-[1600px] lg:mx-auto lg:px-6 lg:-mb-8">
-      {/* Cabecera del editor */}
-      <div className="sticky top-[104px] z-30 bg-paper/95 backdrop-blur-sm border-b border-line -mx-6 px-6 py-3 mb-6">
+    // MODO EDITOR: PANTALLA COMPLETA DEDICADA, SIN CROMO DEL PORTAL ARRIBA.
+    // Veredicto del consejo (Leo/Julian/Sora), 2026-09-24, a pedido de
+    // Francisco ("que el menú de arriba se colapse o se vaya... necesito
+    // que el teléfono siempre se vea completo"): las dos barras de arriba
+    // (BARRA_CASA, 56px, y BARRA_WORKSPACE, 48px) se apagan POR COMPLETO
+    // -- nunca una versión encogida -- mientras la ruta está bajo /editor.
+    // Quien las apaga es `AdminChrome.tsx` y `PersonaLabChrome.tsx`, contra
+    // `enModoEditor()` (lib/personalab/modoEditor.ts); esta pantalla ya no
+    // recibe ningún envoltorio de esos dos -- `PersonaLabChrome` entrega
+    // `children` sin tocar cuando la ruta es esta -- así que el truco de
+    // escape a -50vw que vivía aquí, y la cancelación de un `py-8` ajeno,
+    // dejaron de hacer falta: no queda cromo ajeno del que escapar.
+    // `lg:max-w-[1600px] lg:mx-auto` se conserva igual que en la novena
+    // vuelta -- el editor ancho sigue siendo una decisión aparte de esta.
+    // `pb-8 lg:pb-0`: aire abajo en el celular, donde la página SÍ
+    // scrollea de forma normal; en escritorio las tres columnas ya llenan
+    // exacto `100vh - 69px` (ver más abajo), así que agregar aire aquí
+    // repetiría la causa exacta del bug de "espacio blanco al final" que
+    // se cerró en la vuelta anterior.
+    <div className="px-6 pb-8 lg:pb-0 lg:max-w-[1600px] lg:mx-auto">
+      {/* Cabecera del editor. Único cromo visible en modo editor: pegada
+          al borde real de la pantalla (`top-0`), ya no a 104px de dos
+          barras que ya no están. */}
+      <div className="sticky top-0 z-30 bg-paper/95 backdrop-blur-sm border-b border-line -mx-6 px-6 py-3 mb-6">
         <div className="flex items-center justify-between gap-4 flex-wrap">
           <div className="flex items-baseline gap-3 min-w-0">
             <Link
@@ -1008,19 +999,19 @@ export default function Editor({
             que la última sección de una lista larga no quede tapada por
             el botón flotante.
 
-            173px, NO 164px -- MEDIDO, NO ESTIMADO, 2026-09-24. Francisco
-            reportó "el teléfono no debería estar haciendo scroll con
-            toda la página, se vuelve molesto" y "veo un espacio blanco
-            al final de la pantalla". La cabecera pegajosa del editor
-            (`top-[104px]`, más arriba) mide 69px de alto real, no 60:
-            104+69=173, no 164. Con el número viejo, estas tres columnas
-            se pegaban 9px más arriba de donde la cabecera de verdad
-            termina, y sobraban esos mismos 9px de "carrera" de scroll al
-            final -- que es exactamente cuando una columna `sticky` se
-            suelta de su punto fijo y vuelve a moverse con la página.
-            Verificado con `getBoundingClientRect()` real en el
-            navegador, no a ojo. */}
-        <nav className="lg:sticky lg:top-[173px] lg:h-[calc(100vh-173px)] lg:overflow-y-auto scroll-sin-barra pr-1 pb-16">
+            93px, NO 173px -- MODO EDITOR, 2026-09-24. Hasta la vuelta
+            anterior esta cifra era 173px (104px de las dos barras del
+            portal más 69px de la cabecera propia del editor). El modo
+            editor apaga esas dos barras por completo (ver el comentario
+            grande al principio del archivo), así que lo único que queda
+            arriba es la cabecera propia. NO es 69 (su sólo alto): la
+            cabecera también lleva `mb-6` (24px) antes de que empiece
+            esta cuadrícula, y ese margen es parte real de dónde cae la
+            columna en la página, no un detalle a ignorar -- medido en
+            vivo con `getBoundingClientRect()`, la columna de vista
+            previa arrancaba en 93px, no en 69px, y con 69 el teléfono se
+            recortaba 19px por abajo en una ventana de 768px de alto. */}
+        <nav className="lg:sticky lg:top-[93px] lg:h-[calc(100vh-93px)] lg:overflow-y-auto scroll-sin-barra pr-1 pb-16">
           {/* EL ASA SIEMPRE ESTÁ, colapsado o no -- minimizar nunca es
               un callejón sin salida. Pedido de Francisco, 2026-09-24.
               `min-h-toque` (44px), no `h-8` (32px) -- hallazgo de Julian,
@@ -1098,7 +1089,7 @@ export default function Editor({
             620px de columna). Mismo criterio de legibilidad, aplicado
             aquí: más aire alrededor de una medida de lectura/escritura
             constante, no más caracteres por línea. */}
-        <div className="min-w-0 lg:max-w-[720px] lg:h-[calc(100vh-173px)] lg:overflow-y-auto scroll-sin-barra lg:pr-1">
+        <div className="min-w-0 lg:max-w-[720px] lg:h-[calc(100vh-93px)] lg:overflow-y-auto scroll-sin-barra lg:pr-1">
           {bisagras.length === 0 && (
             <div className="border border-dashed border-line rounded-[10px] px-5 py-10 text-center">
               <p className="text-sm text-gray-ui">
@@ -1225,22 +1216,37 @@ export default function Editor({
 
         {/* Vista previa en teléfono. BUG REAL reportado por Francisco:
             "necesito que en todo momento se esté viendo la pantalla
-            completa del celular". `sticky` sin una altura propia se
-            queda pegado solo mientras el contenido natural de esta
-            columna (más bajo que el lienzo) alcanza -- en cuanto el
-            lienzo se vuelve más largo que eso (una sección con muchos
-            bloques), el "contenedor" de este sticky se termina y el
-            teléfono se suelta a scrollear con la página. Misma altura
-            fija que ya tienen el riel y el lienzo: con eso, el sticky
-            tiene de sobra todo el alto de la ventana para pegarse. */}
-        <div className="lg:sticky lg:top-[173px] lg:h-[calc(100vh-173px)]">
+            completa del celular". Dos causas, no una:
+            1. `sticky` sin una altura propia se quedaba pegado solo
+               mientras el contenido natural de esta columna alcanzaba --
+               resuelto dándole la misma altura fija que ya tienen el
+               riel y el lienzo (`h-[calc(100vh-93px)]`, ver más arriba).
+            2. SEGUNDA CAUSA, ENCONTRADA VERIFICANDO EL MODO EDITOR EN
+               VIVO, 2026-09-24: aun con esa altura correcta, el bisel del
+               teléfono tenía `style={{ height: 620 }}` -- un número FIJO
+               que no respondía al espacio real disponible. En una
+               ventana de 768px de alto, el selector celular/computadora
+               de arriba y el pie "Estás viendo el borrador" de abajo ya
+               ocupan de sobra los 620px no entraban: medido, el bisel se
+               recortaba por debajo del borde de la ventana aunque el
+               offset de arriba ya estuviera correcto. `lg:flex
+               lg:flex-col` en esta columna, con el selector y el pie
+               como `lg:flex-none` (su tamaño natural) y el bisel como
+               `lg:flex-1 lg:min-h-0` (se lleva lo que sobra, nunca más),
+               hace que el teléfono se ENCOJA cuando hace falta en vez de
+               desbordar -- `lg:max-h-[620px]` sigue poniendo el techo de
+               "tamaño de teléfono real" para cuando sí sobra espacio (un
+               monitor alto). Verificado con `getBoundingClientRect()`:
+               sin desborde en 768px de alto, y el bisel sigue midiendo
+               620px en una ventana de 1000px. */}
+        <div className="lg:sticky lg:top-[93px] lg:h-[calc(100vh-93px)] lg:flex lg:flex-col lg:min-h-0">
           {/* EL SELECTOR DE AUDIENCIA (participante/moderador) SE QUITÓ
               DE AQUÍ, a pedido de Francisco -- ver el comentario junto al
               estado `dispositivo`. Este es ahora el único selector de la
               vista previa: solo el ancho de pantalla, nunca quién ve
               qué. La vista previa muestra siempre todo lo que no es
               exclusivo de equipo (ver `visiblesEnPrevia`). */}
-          <div className={`${TARJETA} p-3 mb-3`}>
+          <div className={`${TARJETA} p-3 mb-3 lg:flex-none`}>
             <div className="flex bg-paper-2 rounded-[10px] p-1">
               {(['celular', 'computadora'] as const).map(d => (
                 <button
@@ -1264,10 +1270,9 @@ export default function Editor({
             // `w-full max-w-[375px]` se encoge para caber cuando hace
             // falta y solo llega a 375px cuando de verdad sobra el
             // espacio; en `lg:` sigue siendo el 320px fijo de siempre.
-            <div className="relative mx-auto w-full max-w-[375px] lg:w-[320px]">
+            <div className="relative mx-auto w-full max-w-[375px] lg:w-[320px] lg:flex-1 lg:min-h-0">
               <div
-                className="relative bg-paper rounded-[40px] border-4 border-slate-800 overflow-hidden shadow-xl"
-                style={{ height: 620 }}
+                className="relative bg-paper rounded-[40px] border-4 border-slate-800 overflow-hidden shadow-xl h-[620px] lg:h-full lg:max-h-[620px]"
               >
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-7 bg-slate-800 rounded-b-2xl z-20" />
                 <div className="absolute top-9 left-1/2 -translate-x-1/2 z-30 text-[9px] font-semibold uppercase tracking-widest text-terra-ui bg-paper-2 px-2 py-0.5 rounded-full">
@@ -1289,14 +1294,16 @@ export default function Editor({
             // dibujar, y ponerle uno habría sido decoración, no información.
             // Ancho real de columna: 620px, la misma cifra que Julian
             // calibró para el lector real (P-013) -- no un número aparte
-            // inventado para esta pantalla.
-            <div className="bg-paper border border-line rounded-[10px] overflow-hidden">
-              <div className="text-center pt-4">
+            // inventado para esta pantalla. Mismo mecanismo de encoger que
+            // el bisel: `lg:flex-1 lg:min-h-0` en el marco y en su región
+            // de scroll, `lg:max-h-[620px]` como techo, no como fijo.
+            <div className="bg-paper border border-line rounded-[10px] overflow-hidden lg:flex-1 lg:min-h-0 lg:flex lg:flex-col">
+              <div className="text-center pt-4 lg:flex-none">
                 <span className="text-[9px] font-semibold uppercase tracking-widest text-terra-ui bg-paper-2 px-2 py-0.5 rounded-full">
                   Vista previa
                 </span>
               </div>
-              <div className="overflow-y-auto scroll-sin-barra px-8 md:px-10 pt-6 pb-10 mx-auto max-w-[620px]" style={{ maxHeight: 620 }}>
+              <div className="overflow-y-auto scroll-sin-barra px-8 md:px-10 pt-6 pb-10 mx-auto max-w-[620px] w-full max-h-[620px] lg:flex-1 lg:min-h-0 lg:max-h-[620px]">
                 <PreviaContenido
                   bisagraActiva={bisagraActiva}
                   visiblesEnPrevia={visiblesEnPrevia}
@@ -1307,13 +1314,12 @@ export default function Editor({
             </div>
           )}
 
-          <p className="text-[11px] text-gray-ui text-center mt-3 leading-relaxed px-4">
+          <p className="text-[11px] text-gray-ui text-center mt-3 leading-relaxed px-4 lg:flex-none">
             Estás viendo el borrador. El participante ve la última versión publicada hasta que publiques
             de nuevo.
           </p>
         </div>
       </div>
-    </div>
     </div>
   )
 }

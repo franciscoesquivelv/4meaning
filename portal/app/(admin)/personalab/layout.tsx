@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import PersonaLabNav from './PersonaLabNav'
+import PersonaLabChrome from './PersonaLabChrome'
 
 // El workspace de PersonaLab, ya dentro del portal.
 //
@@ -57,8 +57,7 @@ export default async function PersonaLabLayout({ children }: { children: React.R
   // escrito: "El chasis es NEUTRO (escala slate), igual que Trascendencia".
   return (
     <div className="marca-personalab">
-      <PersonaLabNav />
-      <div className="max-w-[1200px] mx-auto px-6 py-8">{children}</div>
+      <PersonaLabChrome>{children}</PersonaLabChrome>
     </div>
   )
 }

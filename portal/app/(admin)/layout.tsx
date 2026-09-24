@@ -1,8 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import AdminTopNav from '@/components/AdminTopNav'
+import AdminChrome from '@/components/AdminChrome'
 import ToastProvider from '@/components/ToastProvider'
-import { SUELO } from '@/lib/estilos/oficina'
 import { inicioDe } from '@/lib/rutas/porRol'
 
 // ── EL CHASIS DEL BACK OFFICE ───────────────────────────────────
@@ -46,11 +45,8 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   return (
     <div className="marca-trascendencia">
-      <AdminTopNav userEmail={user.email ?? ''} />
       <ToastProvider>
-        <main className={`pt-14 ${SUELO}`}>
-          {children}
-        </main>
+        <AdminChrome userEmail={user.email ?? ''}>{children}</AdminChrome>
       </ToastProvider>
     </div>
   )

@@ -287,7 +287,72 @@ la base) igual que exige el resto del protocolo de este portal.
   reales o si Resend deja de ser "más adelante".
 
 ### P-013 — El editor no es versátil: siete quejas de Francisco, auditadas por Julian/Daniel/Leo
-- Estado: **décima vuelta: bug real de scroll cerrado (medido, no adivinado), selector de audiencia retirado a pedido explícito, techo de ancho al lienzo y asa de riel a tamaño de toque -- los cuatro hallazgos de la revisión de Leo/Julian ya aplicados**
+- Estado: **undécima vuelta: modo editor construido -- las dos barras del portal se apagan por completo mientras se edita, y el teléfono de vista previa ya no se recorta en ninguna altura de ventana probada**
+- Actualización 2026-09-24, undécima vuelta: Francisco, viendo capturas del
+  espacio en blanco que había quedado abajo de la vista previa en la décima
+  vuelta, pidió un "modo editor" explícito: que al entrar al editor "el menú
+  de arriba se colapse o se vaya" y que "el teléfono siempre se pueda ver
+  completo", con instrucción directa de que Leo, Julian y Sora decidieran el
+  diseño. Se convocó al consejo antes de tocar código (sesión completa en
+  `./memory/Leo.md` interacción 47, `./memory/Julian.md` interacción 27,
+  `./memory/Sora.md` interacción 35, todas en
+  `/Users/franciscoesquivel/Documents/Projects/4Meaning/AGENTS/`). Veredicto,
+  sin disenso: las dos barras (BARRA_CASA 56px y BARRA_WORKSPACE de
+  PersonaLab, 48px) se apagan POR COMPLETO mientras la ruta está bajo
+  `/editor` -- nunca una versión encogida -- dejando solo la cabecera propia
+  del editor (69px) como cromo, con su enlace "← [nombre]" ya existente como
+  única salida; al navegar fuera de `/editor`, las dos reaparecen de
+  inmediato.
+  - Construido: `lib/personalab/modoEditor.ts` (`enModoEditor(pathname)`,
+    la única fuente de verdad de la ruta), `components/AdminChrome.tsx`
+    (apaga `AdminTopNav` y el `pt-14` de `<main>` que reservaba su alto) y
+    `app/(admin)/personalab/PersonaLabChrome.tsx` (apaga `PersonaLabNav` y
+    el contenedor `max-w-[1200px] px-6 py-8` que lo acompañaba). Los dos
+    layouts (`(admin)/layout.tsx`, `(admin)/personalab/layout.tsx`) pasaron
+    a delegarles esa decisión en vez de renderizar el cromo directo.
+  - `Editor.tsx` ya no recibe ningún envoltorio ajeno en modo editor, así
+    que el truco de escape `-50vw` de la novena/décima vuelta (y la
+    cancelación de un `py-8` ajeno que traía) se volvió innecesario y se
+    quitó -- no queda cromo del que escapar. El offset de las tres columnas
+    bajó de 173px a 93px (69px de la cabecera propia + su `mb-6`, medido
+    con `getBoundingClientRect()`, no adivinado).
+  - **SEGUNDA CAUSA, ENCONTRADA VERIFICANDO EN VIVO Y NO SOLO CALCULANDO EL
+    OFFSET:** aun con el offset correcto, el bisel del teléfono tenía
+    `style={{ height: 620 }}` fijo, que no respondía al espacio real. En
+    una ventana de 768px de alto (una laptop común) el teléfono se seguía
+    recortando 19px por abajo. Corregido convirtiendo la columna de vista
+    previa en una columna flex (`lg:flex lg:flex-col`): el selector
+    celular/computadora y el pie "Estás viendo el borrador" a su tamaño
+    natural (`lg:flex-none`), y el teléfono (o el marco de escritorio) a
+    `lg:flex-1 lg:min-h-0` con `lg:max-h-[620px]` como techo, no como
+    fijo -- se encoge cuando hace falta, nunca desborda, y sigue topando en
+    620px cuando sobra espacio (verificado a 1200×1000: el bisel se quedó
+    exactamente en 620px).
+  - Verificado en vivo, cuenta desechable (`staff`, creada y borrada por
+    script contra la base real, nunca sobre una cuenta de Francisco): a
+    768px de alto, la columna de vista previa mide exactamente `bottom:
+    768` (cero desborde, `pageScrollable: false`); a 1000px de alto, el
+    bisel topa en 620px; a 375px de ancho (celular real), `scrollWidth ===
+    clientWidth === 375` (cero desborde horizontal) y las dos barras
+    también desaparecen ahí. Al navegar fuera de `/editor`
+    (`/personalab/experiencias/presente-regalo`), las dos barras
+    reaparecen de inmediato, capturado en pantalla. `npx tsc --noEmit`
+    limpio. El único mensaje de consola en una pestaña nueva es un aviso
+    de hidratación de `@dnd-kit` (`aria-describedby`) preexistente del
+    riel arrastrable, no introducido por este cambio.
+  - `app/globals.css`: el comentario de `overflow-x: hidden` en `body`
+    describía el truco `-50vw` que este cambio elimina -- corregido para
+    no confundir a quien lo lea después; la regla se queda como red de
+    seguridad general del sitio, no se retiró (retirarla sin probar cada
+    pantalla del portal es un riesgo aparte, fuera de este pedido).
+  - Leo dejó, sin bloquear, una verificación pendiente (no nueva, ya
+    resuelta en la séptima vuelta de esta misma fila): que el autoguardado
+    cubra reordenar/crear/borrar secciones y bloques, no solo texto. Releída
+    la fila de la séptima vuelta: sí lo cubre (`moverSeccion`,
+    `confirmarBorrarSeccion`, `agregarSeccion`, `mover`, `borrar` tienen su
+    propio `catch` con reversión y distinción de conflicto real). No hace
+    falta trabajo nuevo, solo queda esta nota cruzando las dos filas para
+    que no se vuelva a preguntar como si fuera un hueco abierto.
 - Actualización 2026-09-24, décima vuelta: Francisco reportó, después del
   ensanche de la novena vuelta, "veo un espacio blanco al final de la
   pantalla" y "el teléfono... haciendo scroll con toda la página, se

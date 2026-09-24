@@ -16,17 +16,16 @@ body {
   font-weight: 300;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* BUG REAL, ENCONTRADO PROBANDO EN MÓVIL: el editor de PersonaLab se
-     sale del ancho de PersonaLabLayout con el truco estándar
-     `left-1/2` + margen negativo de medio viewport (`50vw`), para ganar
-     espacio en pantallas anchas (pedido de Francisco, 2026-09-24).
-     `100vw` no descuenta el grosor de la barra de scroll nativa, así
-     que en cualquier pantalla con barra visible el truco se pasa por
-     ese mismo ancho -- medido en vivo, 24px de desborde horizontal real
-     en un viewport de 375px. `overflow-x: hidden` aquí, en el body, lo
-     cierra en el origen sin tocar el eje Y: `position: sticky` en este
-     editor depende del scroll VERTICAL, así que esto no le afecta en
-     absoluto. */
+  /* HISTORIA, PARA QUE NO SE REINTERPRETE MAL: esto nació el 2026-09-24
+     porque el editor de PersonaLab escapaba el ancho de PersonaLabLayout
+     con el truco `left-1/2` + margen negativo de `50vw`, y `100vw` no
+     descuenta el grosor de la barra de scroll nativa -- 24px de desborde
+     horizontal real, medido en un viewport de 375px. Ese truco ya NO
+     existe (ver el comentario grande al principio de Editor.tsx, "MODO
+     EDITOR"): el editor dejó de necesitar escapar nada. Esto se queda
+     como red de seguridad general del sitio, no como parche de un bug
+     puntual -- no le afecta a `position: sticky`, que depende solo del
+     eje vertical. */
   overflow-x: hidden;
 }
 
