@@ -272,7 +272,7 @@ la base) igual que exige el resto del protocolo de este portal.
   reales o si Resend deja de ser "más adelante".
 
 ### P-013 — El editor no es versátil: siete quejas de Francisco, auditadas por Julian/Daniel/Leo
-- Estado: **séptima vuelta: auditoría de Sora recibida y aplicada, verificado en vivo con cuenta y contenido desechables**
+- Estado: **octava vuelta: lienzo ancho del lector real construido y verificado (Sora + Julian + Claude); falta el selector celular/computadora del editor**
 - Actualización 2026-09-23, séptima vuelta: Sora auditó TODO mensaje de
   error/estado del editor real, no solo "No se pudo guardar". Hallazgo
   más grave de lo que disparó la auditoría: `estadosPorSeccion` se
@@ -405,6 +405,87 @@ la base) igual que exige el resto del protocolo de este portal.
   (obligatorio, qué puede mostrar de más un lienzo ancho sin romper su
   propio criterio de revelado), Marcus (opcional, solo si esto amerita
   una regla explícita de ancho de columna en BRAND.md, que hoy no existe).
+  **Respuesta de Sora, 2026-09-23, PROCEDE:** verificado contra las seis
+  pantallas reales (`[slug]/page.tsx:43`, `[slug]/[bisagra]/page.tsx:47`,
+  `cierre/page.tsx:20`, `mis-experiencias/page.tsx:20`, `cuenta/page.tsx:19`,
+  todas `max-w-[620px]`/`max-w-[520px]` fijo), BRAND.md:181-182 y el
+  degradado/grano de `assets/brand.css:74-81`. El patrón ya vive en este
+  repo aplicado a una sola cabecera (`components/participante/MiRetiro.tsx:121-131`,
+  "la aurora de brand.css") y nunca a un lienzo completo: esto es una
+  aplicación nueva de una pieza probada, no territorio sin probar. La
+  propuesta de Julian (columna igual, atmósfera ciega al estado, sin
+  navegación ni contexto de avance) pasa mi umbral de "se revela por
+  apertura, no por logro" (memoria Sora, Consejo 2026-09-11) porque el
+  grano y el degradado no leen ningún dato de la persona: no dependen de
+  qué bisagra está abierta ni de cuántas faltan. Línea exacta: grano o
+  degradado solos, sin ningún elemento con significado, pasan; un filete
+  decorativo simple pasa solo si es idéntico en las doce bisagras y en las
+  seis pantallas (el día que cambie de grosor, color o posición según lo
+  leído, es una barra de progreso disfrazada); cualquier cosa que sugiera
+  cuánto falta o en qué sección se está -- índice lateral, miniatura de lo
+  que queda, degradado que se intensifica con el avance -- cruza la línea,
+  diga o no un número. MI AGREGADO, con mi autoridad: no dejar la
+  atmósfera pareja en las doce bisagras. Mi propia auditoría del
+  2026-09-21 (memoria Sora, interacción 30, P-009) ya nombró que hoy el
+  único bloque con más peso visual es `pausa` (`Bloques.tsx:8`) mientras
+  que sellar la carta en El Presente como Regalo (p3, consigna b13, el
+  único gesto irreversible del producto) pesa igual que cualquier otro
+  bloque. El lienzo ancho puede llevar UNA variación, atada al tipo de
+  bloque que se está leyendo (nunca a la posición en la secuencia ni a
+  cuánto se ha recorrido), para que ese peso ya decidido por Elena se
+  note con espacio y quietud. Costo: Julian calibra dos estados de
+  atmósfera en vez de uno; el disparador se lee del mismo dato que ya
+  existe en `Bloques.tsx`, cero campo nuevo. Si no se construye la
+  variación, no rompe nada: la atmósfera pareja sola ya pasa el umbral,
+  solo que deja el lienzo ancho tan honesto y sin ritual como el resto
+  del lector hoy. No escala nada a Francisco: cae entera en jurisdicción
+  de secuencia y estado: la forma exacta del filete y de los dos estados
+  es de Julian.
+  **Calibración de Julian, 2026-09-23, ejecutable con cifra, no dirección
+  general:** corrigió un dato mal atribuido antes de fijar nada -- el
+  bloque que carga el volumen real de lectura no es `consigna` (19-21px,
+  el menos frecuente de los doce) sino `texto` (`RenderMarkdown.tsx:14`,
+  17-18px, idéntico al que ya medía en `Cierre.tsx`). El cpl que manda es
+  el de ese tamaño: 67 a 620px, 74 a 680px (a un carácter del techo de
+  75). Las cinco decisiones: (1) ancho de columna **620px**, sin cambio,
+  por el cpl de arriba; (2) el lienzo ancho entra en juego en **`lg:`
+  (1024px)**, punto de corte nuevo en todo el portal, no `md:` (a 768px el
+  margen junto a la columna es 74px por lado, insuficiente; a 1024px es
+  202px); (3) el cuarteto de `MiRetiro.tsx:121-131` ("la aurora de
+  brand.css") se adapta a lienzo completo invirtiendo el orden de
+  dominancia (PersonaLab manda teal, BRAND.md §4), recalibrado para fondo
+  claro: teal-2 16%, wine-2 9%, terra 8%, gold 4%, `position: fixed`,
+  blur 120px (no 60: esto ambienta minutos, no una cabecera de tres
+  segundos), tamaños 560/480/400/300px, sin animación; (4) el estado
+  `pesoMayor` lo dispara `consigna` (mismo chequeo que ya usa
+  `[bisagra]/page.tsx:84` para decidir `<Escritura>` vs `<BloqueLector>`,
+  cero campo nuevo) y el cambio es MENOS color, no más: se retiran
+  wine-2/terra/gold, solo queda teal-2, de 16% a 10% -- subir color en un
+  gesto a veces irreversible repetiría la jerarquía doble que ya se
+  prohibió tres veces; vive en un componente nuevo, montado explícito
+  solo en `[slug]`/`[bisagra]`/`cierre`, nunca en el layout compartido ni
+  en las pantallas de gestión/error; (5) el filete decorativo **se
+  retira**, no agrega nada que el lienzo no cargue ya. Confianza: alta en
+  las cinco cifras, declarado "propuesto, no verificado en pantalla" por
+  falta de sesión en el worktree -- verificación real, abajo.
+  **Construido y verificado en vivo, 2026-09-23 (Claude):** nuevo
+  `app/(experiencia)/experiencia/AtmosferaLectura.tsx`, montado en las
+  tres pantallas de lectura larga (`[slug]/page.tsx`, `[bisagra]/page.tsx`
+  con `pesoMayor` calculado igual que línea 84, `cierre/page.tsx` con
+  `pesoMayor = consignas.length > 0`), con las cinco cifras de Julian
+  exactas, sin desviación. Verificado con cuenta y grant desechables
+  contra dos experiencias reales publicadas ("El Agradecimiento Demo","El
+  Presente como Regalo" -- esta última resultó tener 0 bisagras en su
+  versión PUBLICADA, todo el contenido de la P-012 sigue en un borrador
+  nunca publicado, hallazgo aparte, no se tocó): a 1440px la atmósfera se
+  ve en los dos márgenes fuera de la columna, nunca sobre el texto; en la
+  misma bisagra con `consigna` el estado `pesoMayor` se ve visiblemente
+  más quieto (un solo tinte tenue) contra el estado base (los cuatro,
+  incluido un tinte cálido del lado derecho) -- comparado con capturas
+  reales, no de memoria. Por debajo de `lg:` (probado a 900px) la
+  atmósfera desaparece por completo, columna igual que antes. Probado
+  también a 375px (móvil): sin cambio, cero regresión. `tsc --noEmit`
+  limpio.
   **Pedido, sin decidir alcance todavía (backlog, no urgente hoy):**
   Ctrl+Z en el editor; una sección de referencias/fuentes por
   experiencia, citables aparte; renombrar el tipo de bloque "Consigna"

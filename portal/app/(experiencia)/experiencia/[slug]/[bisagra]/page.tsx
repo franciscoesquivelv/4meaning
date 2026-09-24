@@ -7,6 +7,7 @@ import Fallo from '../../Fallo'
 import Escritura from '../../Escritura'
 import MarcarVisto from './MarcarVisto'
 import PisoDeTiempo from '../../PisoDeTiempo'
+import AtmosferaLectura from '../../AtmosferaLectura'
 
 // Una bisagra a la vez. Es el motor de lectura del producto digital.
 //
@@ -43,8 +44,17 @@ export default async function LeerBisagra({
   // en vez de dejar un hueco mudo entre el título y el paso siguiente.
   const bloquesDigitales = bloques.filter(b => b.tipo !== 'gesto' || b.aplicaDigital === true)
 
+  // EL ESTADO "PESOMAYOR" DEL LIENZO ANCHO. Decisión de Sora + Julian,
+  // 2026-09-23: una consigna es el único bloque que pide algo de quien lee,
+  // a veces un gesto irreversible, así que el lienzo se aquieta (menos
+  // color, no más) en vez de decorarse -- nunca al revés. Mismo chequeo que
+  // ya decide `<Escritura>` vs `<BloqueLector>` más abajo, cero campo nuevo.
+  const pesoMayor = bloquesDigitales.some(b => b.tipo === 'consigna')
+
   return (
-    <main className="max-w-[620px] mx-auto px-6 py-12 md:py-16">
+    <>
+    <AtmosferaLectura pesoMayor={pesoMayor} />
+    <main className="relative bg-paper max-w-[620px] mx-auto px-6 py-12 md:py-16">
 
       <MarcarVisto experienciaId={experiencia.id} bisagraId={bisagra.id} />
 
@@ -131,5 +141,6 @@ export default async function LeerBisagra({
         />
       </nav>
     </main>
+    </>
   )
 }

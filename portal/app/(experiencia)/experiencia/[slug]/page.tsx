@@ -4,6 +4,7 @@ import SinAcceso from '../SinAcceso'
 import SinContenido from '../SinContenido'
 import Fallo from '../Fallo'
 import UmbralBienvenida from '../UmbralBienvenida'
+import AtmosferaLectura from '../AtmosferaLectura'
 
 // El índice de la experiencia. Lo primero que ve quien acaba de entrar, y lo
 // que ve cada vez que vuelve.
@@ -40,7 +41,8 @@ export default async function IndiceExperiencia({ params }: { params: { slug: st
       narrativa={experiencia.narrativa}
       vistaInicial={vistaBienvenida}
     >
-    <main className="max-w-[620px] mx-auto px-6 py-16 md:py-24">
+    <AtmosferaLectura />
+    <main className="relative bg-paper max-w-[620px] mx-auto px-6 py-16 md:py-24">
 
       <div className="cejilla">PersonaLab</div>
 
