@@ -87,6 +87,7 @@ export function camposPorDefecto(tipo: TipoBloque): Partial<Bloque> {
     case 'archivo':
       return { audiencia: 'moderador', nombreArchivo: '', descargable: true, pie: '' }
     case 'pausa':
+    case 'divisor':
       return {}
     case 'cita':
       return { texto: '', autor: '' }

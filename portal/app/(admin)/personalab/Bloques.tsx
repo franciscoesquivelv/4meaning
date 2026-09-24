@@ -109,6 +109,17 @@ export default function BloqueLector({ b }: { b: Bloque }) {
         </div>
       )
 
+    case 'divisor':
+      // Un filete, no un respiro. `pausa` ya ocupa el lugar del corte con
+      // tiempo detrás (los tres puntos, el piso de espera); este es el
+      // corte puramente visual que Francisco pidió para separar bloques
+      // dentro de una sección, sin implicar ninguna espera.
+      return (
+        <div className={mt} aria-hidden="true">
+          <hr className="border-t border-line" />
+        </div>
+      )
+
     case 'pausa':
       // Dos correcciones sobre el mismo glifo, en dos días. El 11 se cambió
       // el hex a mano (#D8AC96) por su token, que era `terra-lo`. El 12,

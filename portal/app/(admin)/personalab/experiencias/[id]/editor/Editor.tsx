@@ -163,6 +163,18 @@ export default function Editor({
   const [activa, setActiva] = useState<string>('')
   const [estadosPorBloque, setEstadosPorBloque] = useState<Map<string, EstadoBloque>>(new Map())
   const [lente, setLente] = useState<'participante' | 'moderador'>('participante')
+  // SEGUNDO SELECTOR, NO UN REEMPLAZO DEL DE ARRIBA. Veredicto de Leo y
+  // Julian, 2026-09-23 (docs/PENDIENTES.md, P-013): "lente" filtra
+  // AUDIENCIA (quién ve este bloque), "dispositivo" filtra ANCHO DE
+  // PANTALLA (cómo se ve en esa pantalla) -- son dos ejes independientes
+  // que conviven, nunca uno sustituye al otro. Reemplazar "Como
+  // participante/moderador" por "En celular/computadora", que fue el
+  // pedido original de Francisco, habría borrado la única forma de ver
+  // la descripción de sección (solo-moderador) en la vista previa.
+  // Depende de que el lector real de escritorio ya exista (P-013, lienzo
+  // ancho con atmósfera) para que "computadora" muestre algo honesto en
+  // vez de una promesa sin construir detrás.
+  const [dispositivo, setDispositivo] = useState<'celular' | 'computadora'>('celular')
   const [porBorrar, setPorBorrar] = useState<string | null>(null)
   const [borrando, setBorrando] = useState<string | null>(null)
   const [errorGlobal, setErrorGlobal] = useState<string | null>(null)
@@ -944,7 +956,11 @@ export default function Editor({
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-[180px_minmax(0,1fr)_320px] gap-6 items-start">
+      <div className={`grid grid-cols-1 gap-6 items-start ${
+        dispositivo === 'computadora'
+          ? 'lg:grid-cols-[180px_minmax(0,1fr)_680px]'
+          : 'lg:grid-cols-[180px_minmax(0,1fr)_320px]'
+      }`}>
         {/* Riel de secciones. Scroll propio (Julian, 2026-09-23), sin
             barra visible (pedido de Francisco). "Nueva sección" YA NO
             vive aquí dentro -- es el botón flotante de más arriba, fijo
@@ -1136,7 +1152,7 @@ export default function Editor({
             fija que ya tienen el riel y el lienzo: con eso, el sticky
             tiene de sobra todo el alto de la ventana para pegarse. */}
         <div className="lg:sticky lg:top-[164px] lg:h-[calc(100vh-164px)]">
-          <div className={`${TARJETA} p-3 mb-3`}>
+          <div className={`${TARJETA} p-3 mb-3 flex flex-col gap-2`}>
             <div className="flex bg-paper-2 rounded-[10px] p-1">
               {(['participante', 'moderador'] as const).map(l => (
                 <button
@@ -1150,62 +1166,126 @@ export default function Editor({
                 </button>
               ))}
             </div>
+            {/* SEGUNDO SELECTOR, EJE DISTINTO. Ver el comentario junto al
+                estado `dispositivo`: esto no reemplaza al de arriba, lo
+                acompaña. "En computadora" solo existe porque el lector
+                real de escritorio ya se construyó (lienzo de 620px,
+                atmósfera de marca) -- antes de eso, este botón habría
+                prometido algo que la producción no sostenía. */}
+            <div className="flex bg-paper-2 rounded-[10px] p-1">
+              {(['celular', 'computadora'] as const).map(d => (
+                <button
+                  key={d}
+                  onClick={() => setDispositivo(d)}
+                  className={`flex-1 px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
+                    dispositivo === d ? 'bg-white text-ink shadow-sm' : 'text-gray-ui hover:text-gray-ui'
+                  }`}
+                >
+                  {d === 'celular' ? 'En celular' : 'En computadora'}
+                </button>
+              ))}
+            </div>
           </div>
 
-          <div className="relative mx-auto w-[375px] lg:w-[320px]">
-            <div
-              className="relative bg-paper rounded-[40px] border-4 border-slate-800 overflow-hidden shadow-xl"
-              style={{ height: 620 }}
-            >
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-7 bg-slate-800 rounded-b-2xl z-20" />
-              <div className="absolute top-9 left-1/2 -translate-x-1/2 z-30 text-[9px] font-semibold uppercase tracking-widest text-terra-ui bg-paper-2 px-2 py-0.5 rounded-full">
-                Vista previa
-              </div>
-              <div className="overflow-y-auto scroll-sin-barra h-full px-6 pt-16 pb-10">
-                {bisagraActiva && (
-                  <header>
-                    <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-terra-ui">
-                      {ETIQUETA_TIEMPO[bisagraActiva.tiempo]}
-                    </div>
-                    <h1 className="mt-3 text-[26px] leading-[1.12] font-extralight tracking-[-0.025em] text-dom">
-                      {bisagraActiva.titulo}
-                    </h1>
-                    {/* La descripción NO es del participante -- el propio
-                        campo lo dice ("no la ve el participante"). Por
-                        eso no aparece en la lente de participante ni
-                        nunca apareció ahí; el hallazgo real de Francisco
-                        es que tampoco aparecía en NINGUNA lente, ni
-                        siquiera en la de moderador, que es donde sí le
-                        corresponde vivir -- una nota interna es
-                        exactamente lo que el modo moderador existe para
-                        mostrar. */}
-                    {lente === 'moderador' && bisagraActiva.descripcion && (
-                      <p className="mt-2 text-[13px] leading-[1.5] text-gray-ui italic border-l-2 border-line pl-3">
-                        {bisagraActiva.descripcion}
-                      </p>
-                    )}
-                  </header>
-                )}
-                <div className="mt-8">
-                  {visiblesEnPrevia.length === 0 ? (
-                    <p className="text-[15px] font-light text-gray-ui leading-relaxed">
-                      {delBloque.length === 0
-                        ? 'Aquí va a leerse lo que escribas.'
-                        : 'Con la lente de participante esto sale en blanco. Todo lo que hay en esta sección está marcado como solo moderador.'}
-                    </p>
-                  ) : (
-                    visiblesEnPrevia.map(b => <BloqueLector key={claveDe(b.id)} b={b} />)
-                  )}
+          {dispositivo === 'celular' ? (
+            <div className="relative mx-auto w-[375px] lg:w-[320px]">
+              <div
+                className="relative bg-paper rounded-[40px] border-4 border-slate-800 overflow-hidden shadow-xl"
+                style={{ height: 620 }}
+              >
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-28 h-7 bg-slate-800 rounded-b-2xl z-20" />
+                <div className="absolute top-9 left-1/2 -translate-x-1/2 z-30 text-[9px] font-semibold uppercase tracking-widest text-terra-ui bg-paper-2 px-2 py-0.5 rounded-full">
+                  Vista previa
+                </div>
+                <div className="overflow-y-auto scroll-sin-barra h-full px-6 pt-16 pb-10">
+                  <PreviaContenido
+                    bisagraActiva={bisagraActiva}
+                    lente={lente}
+                    visiblesEnPrevia={visiblesEnPrevia}
+                    delBloque={delBloque}
+                    claveDe={claveDe}
+                  />
                 </div>
               </div>
             </div>
-          </div>
+          ) : (
+            // SIN BISEL, A PROPÓSITO. Un celular es un objeto con un marco
+            // real; una laptop o un monitor no tienen uno que valga la pena
+            // dibujar, y ponerle uno habría sido decoración, no información.
+            // Ancho real de columna: 620px, la misma cifra que Julian
+            // calibró para el lector real (P-013) -- no un número aparte
+            // inventado para esta pantalla.
+            <div className="bg-paper border border-line rounded-[10px] overflow-hidden">
+              <div className="text-center pt-4">
+                <span className="text-[9px] font-semibold uppercase tracking-widest text-terra-ui bg-paper-2 px-2 py-0.5 rounded-full">
+                  Vista previa
+                </span>
+              </div>
+              <div className="overflow-y-auto scroll-sin-barra px-8 md:px-10 pt-6 pb-10 mx-auto max-w-[620px]" style={{ maxHeight: 620 }}>
+                <PreviaContenido
+                  bisagraActiva={bisagraActiva}
+                  lente={lente}
+                  visiblesEnPrevia={visiblesEnPrevia}
+                  delBloque={delBloque}
+                  claveDe={claveDe}
+                />
+              </div>
+            </div>
+          )}
 
           <p className="text-[11px] text-gray-ui text-center mt-3 leading-relaxed px-4">
             Estás viendo el borrador. El participante ve la última versión publicada hasta que publiques
             de nuevo.
           </p>
         </div>
+      </div>
+    </>
+  )
+}
+
+// ── Contenido de la vista previa ─────────────────────────────────
+//
+// Extraído para que el celular y la computadora pinten EXACTAMENTE lo
+// mismo -- mismo título, misma descripción, mismos bloques filtrados por
+// lente -- y la única diferencia real entre los dos modos sea el marco
+// que los rodea (bisel de teléfono contra columna de escritorio sin
+// bisel), nunca el contenido ni la lógica de qué se muestra.
+function PreviaContenido({
+  bisagraActiva, lente, visiblesEnPrevia, delBloque, claveDe,
+}: {
+  bisagraActiva: BisagraEditable | undefined
+  lente: 'participante' | 'moderador'
+  visiblesEnPrevia: BloqueEditable[]
+  delBloque: BloqueEditable[]
+  claveDe: (id: string) => string
+}) {
+  return (
+    <>
+      {bisagraActiva && (
+        <header>
+          <div className="text-[10px] font-semibold uppercase tracking-[0.16em] text-terra-ui">
+            {ETIQUETA_TIEMPO[bisagraActiva.tiempo]}
+          </div>
+          <h1 className="mt-3 text-[26px] leading-[1.12] font-extralight tracking-[-0.025em] text-dom">
+            {bisagraActiva.titulo}
+          </h1>
+          {lente === 'moderador' && bisagraActiva.descripcion && (
+            <p className="mt-2 text-[13px] leading-[1.5] text-gray-ui italic border-l-2 border-line pl-3">
+              {bisagraActiva.descripcion}
+            </p>
+          )}
+        </header>
+      )}
+      <div className="mt-8">
+        {visiblesEnPrevia.length === 0 ? (
+          <p className="text-[15px] font-light text-gray-ui leading-relaxed">
+            {delBloque.length === 0
+              ? 'Aquí va a leerse lo que escribas.'
+              : 'Con la lente de participante esto sale en blanco. Todo lo que hay en esta sección está marcado como solo moderador.'}
+          </p>
+        ) : (
+          visiblesEnPrevia.map(b => <BloqueLector key={claveDe(b.id)} b={b} />)
+        )}
       </div>
     </>
   )
@@ -1532,6 +1612,10 @@ function TarjetaBloque({
               )}
             </div>
           </>
+        ) : b.tipo === 'divisor' ? (
+          <p className="text-sm text-gray-ui">
+            Un corte visual entre bloques. No lleva contenido: se guarda solo, apenas se agrega.
+          </p>
         ) : CON_MEDIO.includes(b.tipo) ? (
           <>
             <label className={ETIQUETA_INPUT}>{definicion(b.tipo).nombre}</label>

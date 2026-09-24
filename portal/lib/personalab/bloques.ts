@@ -245,6 +245,21 @@ export const CONTRATO = {
     },
   },
 
+  // Filete visual entre bloques, sin contenido -- el mismo espíritu que
+  // `pausa` (ya es "el único separador que la marca admite") pero sin
+  // piso de tiempo: no pide nada a quien lee, solo marca un corte.
+  // Pedido de Francisco, 2026-09-23/24. Necesita
+  // `20260924_1800_bloque_divisor.sql` corrida contra la base real antes
+  // de poder guardarse -- sin esa migración, la base lo rechaza con el
+  // `else` genérico del constraint, no con un error que lo explique.
+  divisor: {
+    nombre: 'Divisor',
+    ayuda: 'Un corte visual entre bloques. No lleva contenido.',
+    frecuencia: 'ocasional',
+    margen: 'my-10 md:my-12',
+    campos: {},
+  },
+
   pausa: {
     nombre: 'Pausa',
     ayuda: 'Un respiro. No lleva contenido.',

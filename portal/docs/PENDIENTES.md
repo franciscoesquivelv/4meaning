@@ -287,7 +287,53 @@ la base) igual que exige el resto del protocolo de este portal.
   reales o si Resend deja de ser "más adelante".
 
 ### P-013 — El editor no es versátil: siete quejas de Francisco, auditadas por Julian/Daniel/Leo
-- Estado: **octava vuelta: lienzo ancho del lector real construido y verificado (Sora + Julian + Claude); falta el selector celular/computadora del editor**
+- Estado: **novena vuelta: divisor, selector celular/computadora y corrector ortográfico -- los tres del backlog que quedaban pendientes, revisados uno por uno**
+- Actualización 2026-09-24, novena vuelta: Francisco reclamó, con razón,
+  que tres cosas de esta fila seguían sin construirse y una cuarta
+  (centrar/justificar) parecía ignorada sin explicación. Revisado uno
+  por uno:
+  - **Bloque "Divisor"**: construido de punta a punta. Nuevo tipo en
+    `lib/personalab/bloques.ts` (`campos: {}`, igual que `pausa` pero sin
+    piso de tiempo -- puramente visual), render en `Bloques.tsx` (un
+    filete `border-line`), y migración nueva
+    `supabase/migrations/20260924_1800_bloque_divisor.sql` que agrega
+    `'divisor'` al enum `pl_tipo_bloque` y su rama en
+    `blocks_contenido_por_tipo` (pasa siempre, como `pausa`). **Falta que
+    Francisco corra esa migración en el editor SQL de Supabase** -- sin
+    eso, la base rechaza el bloque con el `else` genérico del constraint.
+    Verificado en el editor real que el tipo aparece en la paleta con su
+    copy correcto; el guardado contra la base real queda pendiente de esa
+    migración.
+  - **Selector "En celular"/"En computadora"**: construido, coexistiendo
+    con "Como participante"/"Como moderador" sin reemplazarlo, tal como
+    lo dejó condicionado el veredicto de Leo y Julian del 2026-09-23 (ver
+    más abajo, "Plan de acción de Leo y Julian"). Dependía de que el
+    lector real de escritorio existiera primero, y ya existe (misma
+    vuelta, lienzo ancho con atmósfera). En "computadora" la tercera
+    columna del editor se ensancha (`320px` a `680px`) y el marco de
+    teléfono se quita del todo -- ancho real de columna 620px, la misma
+    cifra que Julian ya calibró para el lector, no un número aparte.
+    Verificado en vivo con cuenta desechable: los dos selectores
+    funcionan juntos (la descripción solo-moderador se sigue viendo en
+    modo escritorio), sin bisel de teléfono, contenido real.
+  - **Corrector ortográfico**: investigado en vivo antes de asumir que
+    estaba roto. El `spellCheck`/`lang="es"` que ya existía SÍ funciona
+    en un navegador real -- probado tecleando una palabra mal escrita a
+    propósito ("propocito") en el editor real, con captura de pantalla
+    que muestra el subrayado rojo ondulado nativo. Si Francisco no lo ve
+    en su propio navegador, es casi seguro una configuración de Chrome
+    de su lado (`chrome://settings/languages`, revisar que español esté
+    agregado a "Revisión ortográfica"), no un defecto del código. Un
+    corrector propio, dentro de la app, que no dependa de ningún ajuste
+    de navegador, es una pieza aparte y bastante más grande (diccionario
+    real, superposición visual sobre el textarea) -- no se construyó sin
+    que Francisco decida primero si de verdad la necesita después de
+    revisar su propio Chrome.
+  - **Centrar/justificar texto**: NO era un olvido -- Julian lo vetó
+    explícitamente contra BRAND.md al construir el toolbar de texto
+    (interacción ya registrada en su memoria), y se le reportó a
+    Francisco en su momento. Quedó preguntado de nuevo, directo, si
+    quiere reabrir esa decisión -- no se construye solo.
 - Actualización 2026-09-23, séptima vuelta: Sora auditó TODO mensaje de
   error/estado del editor real, no solo "No se pudo guardar". Hallazgo
   más grave de lo que disparó la auditoría: `estadosPorSeccion` se
