@@ -287,7 +287,52 @@ la base) igual que exige el resto del protocolo de este portal.
   reales o si Resend deja de ser "más adelante".
 
 ### P-013 — El editor no es versátil: siete quejas de Francisco, auditadas por Julian/Daniel/Leo
-- Estado: **novena vuelta: divisor, selector celular/computadora y corrector ortográfico -- los tres del backlog que quedaban pendientes, revisados uno por uno**
+- Estado: **décima vuelta: bug real de scroll cerrado (medido, no adivinado), selector de audiencia retirado a pedido explícito, techo de ancho al lienzo y asa de riel a tamaño de toque -- los cuatro hallazgos de la revisión de Leo/Julian ya aplicados**
+- Actualización 2026-09-24, décima vuelta: Francisco reportó, después del
+  ensanche de la novena vuelta, "veo un espacio blanco al final de la
+  pantalla" y "el teléfono... haciendo scroll con toda la página, se
+  vuelve molesto" -- el mismo síntoma que ya se había cerrado una vez
+  (cuarta vuelta) volvió a aparecer. Medido con `getBoundingClientRect()`
+  real en el navegador antes de tocar nada, no adivinado: dos causas
+  reales, las dos en `Editor.tsx`.
+  1. La cabecera pegajosa del editor mide 69px de alto real; las tres
+     columnas (riel, lienzo, previa) estaban ancladas a `top-[164px]`,
+     asumiendo 60px -- 9px de más. Corregido a `top-[173px]` (104+69) en
+     las tres, con la cifra medida documentada en el propio código para
+     que no se vuelva a desviar en silencio.
+  2. El `py-8` (relleno inferior) del contenedor compartido de
+     PersonaLabLayout agregaba 32px de "pista" de scroll de más después
+     de donde las columnas ya terminan de llenar la pantalla -- y ese
+     tramo de más es exactamente donde una columna `sticky` se queda sin
+     contenedor donde seguir pegada y se suelta a moverse con la página
+     otra vez, justo el síntoma reportado. Cancelado con `lg:-mb-8` en el
+     envoltorio del editor, mismo espíritu que el `-mx-6` que ya cancela
+     el relleno horizontal de la cabecera.
+  Verificado con medición real antes y después (no solo mirado): el
+  scroll sobrante de la página bajó de 115px a 71px, y en el scroll
+  máximo la columna de vista previa queda exactamente al borde de la
+  pantalla, sin hueco visible, confirmado por captura real.
+  **Además, a pedido explícito de Francisco:** se retiró el selector
+  "Como participante/Como moderador" de la vista previa -- reabre a
+  propósito lo que Leo y Julian habían fijado un día antes como dos ejes
+  independientes (ver más abajo). La vista previa ahora muestra siempre
+  la lente más completa (equivalente al "moderador" de antes, sin
+  contar lo exclusivo de equipo): nada se esconde nunca al editar, así
+  que la pérdida de poder alternar queda cerrada sin dejar un hueco.
+  **Y los cuatro hallazgos de la revisión de Leo y Julian** (despachada
+  en la novena vuelta, respondió en esta): dos ya aplicados --
+  `Editor.tsx`, el lienzo de escritura no tenía techo de ancho propio
+  (podía llegar a ~130 caracteres por línea, casi el doble del techo de
+  75 que Julian mismo fijó un día antes para el lector real); corregido
+  con `lg:max-w-[720px]` en la columna del lienzo. El asa de colapsar el
+  riel medía 32px de alto (`h-8`), no los 44px (`min-h-toque`) que ya
+  usa el resto de controles nuevos de esta sesión; corregido. Los otros
+  dos hallazgos de Leo (discoverabilidad del asa sin señal en reposo, y
+  la combinación riel-colapsado + modo-computadora que antes empujaba el
+  lienzo por encima del techo del lector) quedan sin resolver aparte --
+  el segundo ya no aplica tal como se describió, porque el lienzo ahora
+  tiene su propio techo de 720px que no depende de cuánto espacio libere
+  el riel al colapsarse.
 - Actualización 2026-09-24, novena vuelta: Francisco reclamó, con razón,
   que tres cosas de esta fila seguían sin construirse y una cuarta
   (centrar/justificar) parecía ignorada sin explicación. Revisado uno

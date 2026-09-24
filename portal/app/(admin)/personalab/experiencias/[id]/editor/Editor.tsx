@@ -162,18 +162,15 @@ export default function Editor({
   const [porBorrarSeccion, setPorBorrarSeccion] = useState<string | null>(null)
   const [activa, setActiva] = useState<string>('')
   const [estadosPorBloque, setEstadosPorBloque] = useState<Map<string, EstadoBloque>>(new Map())
-  const [lente, setLente] = useState<'participante' | 'moderador'>('participante')
-  // SEGUNDO SELECTOR, NO UN REEMPLAZO DEL DE ARRIBA. Veredicto de Leo y
-  // Julian, 2026-09-23 (docs/PENDIENTES.md, P-013): "lente" filtra
-  // AUDIENCIA (quién ve este bloque), "dispositivo" filtra ANCHO DE
-  // PANTALLA (cómo se ve en esa pantalla) -- son dos ejes independientes
-  // que conviven, nunca uno sustituye al otro. Reemplazar "Como
-  // participante/moderador" por "En celular/computadora", que fue el
-  // pedido original de Francisco, habría borrado la única forma de ver
-  // la descripción de sección (solo-moderador) en la vista previa.
-  // Depende de que el lector real de escritorio ya exista (P-013, lienzo
-  // ancho con atmósfera) para que "computadora" muestre algo honesto en
-  // vez de una promesa sin construir detrás.
+  // EL SELECTOR "COMO PARTICIPANTE/COMO MODERADOR" SE QUITÓ, A PEDIDO
+  // EXPLÍCITO DE FRANCISCO, 2026-09-24 -- reabre a propósito lo que el
+  // 2026-09-23 Leo y Julian habían dejado como dos ejes independientes
+  // (ver P-013 en docs/PENDIENTES.md): quitarlo perdía la única forma de
+  // ver la descripción de sección solo-moderador en la vista previa. La
+  // vista previa ahora SIEMPRE muestra la lente más completa
+  // (equivalente a "moderador" de antes: todo lo que no es exclusivo de
+  // equipo), así que esa pérdida queda cerrada de otra forma: nada se
+  // esconde nunca al editar, no hace falta alternar para verlo todo.
   const [dispositivo, setDispositivo] = useState<'celular' | 'computadora'>('celular')
   // EL RIEL SE MINIMIZA, NO DESAPARECE. Pedido de Francisco, 2026-09-24,
   // junto con ensanchar el editor: "que la pestaña de sección sea
@@ -735,9 +732,13 @@ export default function Editor({
     () => bloques.filter(b => b.bisagraId === activa).sort((a, b) => a.orden - b.orden),
     [bloques, activa]
   )
+  // Techo en NIVEL.moderador (2), no NIVEL.equipo (3): lo exclusivo de
+  // equipo se queda fuera de la vista previa siempre, con o sin
+  // selector -- eso nunca cambió con el selector que se quitó, era el
+  // mismo techo con el toggle en "moderador".
   const visiblesEnPrevia = useMemo(
-    () => delBloque.filter(b => NIVEL[b.audiencia] <= (lente === 'moderador' ? 2 : 1)),
-    [delBloque, lente]
+    () => delBloque.filter(b => NIVEL[b.audiencia] <= 2),
+    [delBloque]
   )
 
   // Nace local, no en la base. Ver PREFIJO_LOCAL: la base exige contenido
@@ -856,7 +857,19 @@ export default function Editor({
     // que limitarlo a la misma frontera cierra el bug en vez de
     // perseguir el redondeo de `vw` con más CSS.
     <div className="lg:relative lg:left-1/2 lg:right-1/2 lg:-mx-[50vw] lg:w-screen">
-    <div className="lg:max-w-[1600px] lg:mx-auto lg:px-6">
+    {/* `lg:-mb-8` CANCELA EL `py-8` (RELLENO INFERIOR) DE PersonaLabLayout,
+        A PROPÓSITO -- mismo espíritu que el `-mx-6` de la cabecera más
+        abajo, que ya cancelaba el relleno horizontal. Las tres columnas
+        de este editor se calculan para llenar EXACTO el alto que queda
+        de pantalla (`h-[calc(100vh-173px)]`); el `py-8` de abajo de
+        PersonaLabLayout le agrega 32px más de documento después de eso,
+        que nadie necesita ver -- son 32px de "pista" de scroll de más,
+        y ESE es el tramo exacto donde una columna `sticky` se queda sin
+        contenedor donde seguir pegada y se suelta a moverse con la
+        página otra vez. Hallazgo de Francisco, 2026-09-24: "veo un
+        espacio blanco al final de la pantalla" y "el teléfono... se
+        vuelve molesto" -- las dos quejas eran la misma causa. */}
+    <div className="lg:max-w-[1600px] lg:mx-auto lg:px-6 lg:-mb-8">
       {/* Cabecera del editor */}
       <div className="sticky top-[104px] z-30 bg-paper/95 backdrop-blur-sm border-b border-line -mx-6 px-6 py-3 mb-6">
         <div className="flex items-center justify-between gap-4 flex-wrap">
@@ -993,13 +1006,31 @@ export default function Editor({
             scroll de la PÁGINA, no del riel, así que había que bajar por
             toda la lista para encontrarlo. `pb-16` deja aire abajo para
             que la última sección de una lista larga no quede tapada por
-            el botón flotante. */}
-        <nav className="lg:sticky lg:top-[164px] lg:h-[calc(100vh-164px)] lg:overflow-y-auto scroll-sin-barra pr-1 pb-16">
+            el botón flotante.
+
+            173px, NO 164px -- MEDIDO, NO ESTIMADO, 2026-09-24. Francisco
+            reportó "el teléfono no debería estar haciendo scroll con
+            toda la página, se vuelve molesto" y "veo un espacio blanco
+            al final de la pantalla". La cabecera pegajosa del editor
+            (`top-[104px]`, más arriba) mide 69px de alto real, no 60:
+            104+69=173, no 164. Con el número viejo, estas tres columnas
+            se pegaban 9px más arriba de donde la cabecera de verdad
+            termina, y sobraban esos mismos 9px de "carrera" de scroll al
+            final -- que es exactamente cuando una columna `sticky` se
+            suelta de su punto fijo y vuelve a moverse con la página.
+            Verificado con `getBoundingClientRect()` real en el
+            navegador, no a ojo. */}
+        <nav className="lg:sticky lg:top-[173px] lg:h-[calc(100vh-173px)] lg:overflow-y-auto scroll-sin-barra pr-1 pb-16">
           {/* EL ASA SIEMPRE ESTÁ, colapsado o no -- minimizar nunca es
-              un callejón sin salida. Pedido de Francisco, 2026-09-24. */}
+              un callejón sin salida. Pedido de Francisco, 2026-09-24.
+              `min-h-toque` (44px), no `h-8` (32px) -- hallazgo de Julian,
+              2026-09-24: el resto de controles nuevos de esta sesión (el
+              botón flotante "+" un poco más abajo, entre otros) ya usan
+              ese mismo token; este había quedado más chico que sus
+              vecinos, sin razón. */}
           <button
             onClick={() => setRielColapsado(v => !v)}
-            className="flex items-center justify-center w-full h-8 mb-2 rounded-[10px] text-gray-ui hover:text-ink hover:bg-paper-2 transition-colors"
+            className="flex items-center justify-center w-full min-h-toque mb-2 rounded-[10px] text-gray-ui hover:text-ink hover:bg-paper-2 transition-colors"
             title={rielColapsado ? 'Mostrar secciones' : 'Minimizar secciones'}
             aria-label={rielColapsado ? 'Mostrar secciones' : 'Minimizar secciones'}
             aria-expanded={!rielColapsado}
@@ -1059,7 +1090,15 @@ export default function Editor({
         </nav>
 
         {/* Lienzo. Mismo arreglo de scroll que el riel, sin barra visible. */}
-        <div className="min-w-0 lg:h-[calc(100vh-164px)] lg:overflow-y-auto scroll-sin-barra lg:pr-1">
+        {/* `lg:max-w-[720px]`, hallazgo de Julian, 2026-09-24: al
+            ensanchar el editor a 1600px sin ponerle techo propio al
+            lienzo, el texto que se está escribiendo podía llegar a
+            ~130 caracteres por línea -- casi el doble del techo de 75
+            que él mismo fijó un día antes para el lector real (P-013,
+            620px de columna). Mismo criterio de legibilidad, aplicado
+            aquí: más aire alrededor de una medida de lectura/escritura
+            constante, no más caracteres por línea. */}
+        <div className="min-w-0 lg:max-w-[720px] lg:h-[calc(100vh-173px)] lg:overflow-y-auto scroll-sin-barra lg:pr-1">
           {bisagras.length === 0 && (
             <div className="border border-dashed border-line rounded-[10px] px-5 py-10 text-center">
               <p className="text-sm text-gray-ui">
@@ -1194,27 +1233,14 @@ export default function Editor({
             teléfono se suelta a scrollear con la página. Misma altura
             fija que ya tienen el riel y el lienzo: con eso, el sticky
             tiene de sobra todo el alto de la ventana para pegarse. */}
-        <div className="lg:sticky lg:top-[164px] lg:h-[calc(100vh-164px)]">
-          <div className={`${TARJETA} p-3 mb-3 flex flex-col gap-2`}>
-            <div className="flex bg-paper-2 rounded-[10px] p-1">
-              {(['participante', 'moderador'] as const).map(l => (
-                <button
-                  key={l}
-                  onClick={() => setLente(l)}
-                  className={`flex-1 px-3 py-1.5 text-xs font-medium rounded-md transition-colors ${
-                    lente === l ? 'bg-white text-ink shadow-sm' : 'text-gray-ui hover:text-gray-ui'
-                  }`}
-                >
-                  {l === 'participante' ? 'Como participante' : 'Como moderador'}
-                </button>
-              ))}
-            </div>
-            {/* SEGUNDO SELECTOR, EJE DISTINTO. Ver el comentario junto al
-                estado `dispositivo`: esto no reemplaza al de arriba, lo
-                acompaña. "En computadora" solo existe porque el lector
-                real de escritorio ya se construyó (lienzo de 620px,
-                atmósfera de marca) -- antes de eso, este botón habría
-                prometido algo que la producción no sostenía. */}
+        <div className="lg:sticky lg:top-[173px] lg:h-[calc(100vh-173px)]">
+          {/* EL SELECTOR DE AUDIENCIA (participante/moderador) SE QUITÓ
+              DE AQUÍ, a pedido de Francisco -- ver el comentario junto al
+              estado `dispositivo`. Este es ahora el único selector de la
+              vista previa: solo el ancho de pantalla, nunca quién ve
+              qué. La vista previa muestra siempre todo lo que no es
+              exclusivo de equipo (ver `visiblesEnPrevia`). */}
+          <div className={`${TARJETA} p-3 mb-3`}>
             <div className="flex bg-paper-2 rounded-[10px] p-1">
               {(['celular', 'computadora'] as const).map(d => (
                 <button
@@ -1250,7 +1276,6 @@ export default function Editor({
                 <div className="overflow-y-auto scroll-sin-barra h-full px-6 pt-16 pb-10">
                   <PreviaContenido
                     bisagraActiva={bisagraActiva}
-                    lente={lente}
                     visiblesEnPrevia={visiblesEnPrevia}
                     delBloque={delBloque}
                     claveDe={claveDe}
@@ -1274,7 +1299,6 @@ export default function Editor({
               <div className="overflow-y-auto scroll-sin-barra px-8 md:px-10 pt-6 pb-10 mx-auto max-w-[620px]" style={{ maxHeight: 620 }}>
                 <PreviaContenido
                   bisagraActiva={bisagraActiva}
-                  lente={lente}
                   visiblesEnPrevia={visiblesEnPrevia}
                   delBloque={delBloque}
                   claveDe={claveDe}
@@ -1302,10 +1326,9 @@ export default function Editor({
 // que los rodea (bisel de teléfono contra columna de escritorio sin
 // bisel), nunca el contenido ni la lógica de qué se muestra.
 function PreviaContenido({
-  bisagraActiva, lente, visiblesEnPrevia, delBloque, claveDe,
+  bisagraActiva, visiblesEnPrevia, delBloque, claveDe,
 }: {
   bisagraActiva: BisagraEditable | undefined
-  lente: 'participante' | 'moderador'
   visiblesEnPrevia: BloqueEditable[]
   delBloque: BloqueEditable[]
   claveDe: (id: string) => string
@@ -1320,7 +1343,10 @@ function PreviaContenido({
           <h1 className="mt-3 text-[26px] leading-[1.12] font-extralight tracking-[-0.025em] text-dom">
             {bisagraActiva.titulo}
           </h1>
-          {lente === 'moderador' && bisagraActiva.descripcion && (
+          {/* Sin selector de audiencia, la descripción (solo-moderador
+              por definición del propio campo) se muestra siempre --
+              quien edita es quien la necesita ver, siempre. */}
+          {bisagraActiva.descripcion && (
             <p className="mt-2 text-[13px] leading-[1.5] text-gray-ui italic border-l-2 border-line pl-3">
               {bisagraActiva.descripcion}
             </p>
@@ -1332,7 +1358,7 @@ function PreviaContenido({
           <p className="text-[15px] font-light text-gray-ui leading-relaxed">
             {delBloque.length === 0
               ? 'Aquí va a leerse lo que escribas.'
-              : 'Con la lente de participante esto sale en blanco. Todo lo que hay en esta sección está marcado como solo moderador.'}
+              : 'Todo lo que hay en esta sección está marcado como exclusivo de equipo.'}
           </p>
         ) : (
           visiblesEnPrevia.map(b => <BloqueLector key={claveDe(b.id)} b={b} />)
