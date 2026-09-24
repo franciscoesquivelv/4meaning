@@ -7,10 +7,17 @@ import { H1, SUBTITULO, PASTILLA_BIEN, PASTILLA_CURSO } from '@/lib/estilos/ofic
 // Vive dentro del grupo (admin), asi que ya queda protegido por su layout,
 // que exige rol super_admin, admin o staff.
 //
-// Nota de alcance: hoy el rol es un campo unico y global en profiles, asi
-// que no existe todavia "staff solo de PersonaLab". Mientras eso llega en
-// el frente de identidad, super_admin ve las dos marcas y el resto ve
-// Trascendencia, que es la que esta en produccion.
+// HASTA HOY, ESTA PANTALLA MENTIA. Solo mostraba la tarjeta de PersonaLab a
+// `super_admin`, con un mensaje que le decia a cualquier otro rol "pidesela
+// a un super admin" -- pero `(admin)/personalab/layout.tsx` (la puerta real,
+// la que de verdad importa) ya admite a `super_admin`, `admin` Y `staff`
+// desde la Etapa 6a, la misma definicion de equipo que usa el resto del
+// portal. Encontrado probando en vivo, no leyendo: una cuenta de prueba con
+// rol `staff` entraba sin problema a `/personalab` escribiendo la URL
+// directo, mientras esta pantalla le habria dicho que no podia. Caso real:
+// Patricia (`staff`) reporto no tener acceso a PersonaLab: si tenia acceso,
+// esta pantalla se lo escondia y la mandaba a pedirlo de nuevo. Se corrige
+// para que las dos puertas digan lo mismo.
 
 // CADA TARJETA LLEVA SU PROPIA CLASE DE MARCA, Y ESO ES TODO EL MECANISMO.
 //
@@ -70,8 +77,11 @@ export default async function WorkspacesPage() {
     .eq('id', user.id)
     .single()
 
-  const esSuper = profile?.role === 'super_admin'
-  const visibles = esSuper ? MARCAS : MARCAS.filter(m => m.id === 'trascendencia')
+  // MISMO CONJUNTO QUE `(admin)/personalab/layout.tsx: ROLES_CON_ACCESO`,
+  // a propósito -- es la puerta que de verdad decide, esta pantalla solo
+  // la describe. Si ese archivo cambia, este debe cambiar con él.
+  const puedePersonaLab = ['super_admin', 'admin', 'staff'].includes(profile?.role ?? '')
+  const visibles = puedePersonaLab ? MARCAS : MARCAS.filter(m => m.id === 'trascendencia')
   const nombre = profile?.full_name?.split(' ')[0]
 
   return (
@@ -83,7 +93,7 @@ export default async function WorkspacesPage() {
         <h1 className={`${H1} mt-1`}>
           ¿Dónde vas a trabajar?
         </h1>
-        {esSuper && (
+        {puedePersonaLab && (
           <p className={`${SUBTITULO} mt-2`}>
             Tu cuenta opera las dos marcas.
           </p>
@@ -122,7 +132,7 @@ export default async function WorkspacesPage() {
       {/* Era `text-slate-400`: 2.45 sobre el fondo. Es la unica explicacion de
           por que aqui solo se ve una marca, o sea la respuesta a la pregunta
           que la pantalla provoca. `gray-ui` da 4.52 sobre el suelo. */}
-      {!esSuper && (
+      {!puedePersonaLab && (
         <p className="text-xs text-gray-ui mt-8 leading-relaxed max-w-[60ch]">
           Si necesitas acceso a PersonaLab, pídeselo a un super admin. Los permisos por marca todavía no
           están seccionados: hoy el rol es global y se está trabajando en separarlo.
