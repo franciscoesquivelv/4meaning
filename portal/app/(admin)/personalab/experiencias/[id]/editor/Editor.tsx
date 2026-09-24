@@ -1046,8 +1046,17 @@ export default function Editor({
           )}
         </div>
 
-        {/* Vista previa en teléfono */}
-        <div className="lg:sticky lg:top-[164px]">
+        {/* Vista previa en teléfono. BUG REAL reportado por Francisco:
+            "necesito que en todo momento se esté viendo la pantalla
+            completa del celular". `sticky` sin una altura propia se
+            queda pegado solo mientras el contenido natural de esta
+            columna (más bajo que el lienzo) alcanza -- en cuanto el
+            lienzo se vuelve más largo que eso (una sección con muchos
+            bloques), el "contenedor" de este sticky se termina y el
+            teléfono se suelta a scrollear con la página. Misma altura
+            fija que ya tienen el riel y el lienzo: con eso, el sticky
+            tiene de sobra todo el alto de la ventana para pegarse. */}
+        <div className="lg:sticky lg:top-[164px] lg:h-[calc(100vh-164px)]">
           <div className={`${TARJETA} p-3 mb-3`}>
             <div className="flex bg-paper-2 rounded-[10px] p-1">
               {(['participante', 'moderador'] as const).map(l => (
@@ -1082,6 +1091,20 @@ export default function Editor({
                     <h1 className="mt-3 text-[26px] leading-[1.12] font-extralight tracking-[-0.025em] text-dom">
                       {bisagraActiva.titulo}
                     </h1>
+                    {/* La descripción NO es del participante -- el propio
+                        campo lo dice ("no la ve el participante"). Por
+                        eso no aparece en la lente de participante ni
+                        nunca apareció ahí; el hallazgo real de Francisco
+                        es que tampoco aparecía en NINGUNA lente, ni
+                        siquiera en la de moderador, que es donde sí le
+                        corresponde vivir -- una nota interna es
+                        exactamente lo que el modo moderador existe para
+                        mostrar. */}
+                    {lente === 'moderador' && bisagraActiva.descripcion && (
+                      <p className="mt-2 text-[13px] leading-[1.5] text-gray-ui italic border-l-2 border-line pl-3">
+                        {bisagraActiva.descripcion}
+                      </p>
+                    )}
                   </header>
                 )}
                 <div className="mt-8">
@@ -1278,7 +1301,17 @@ function TarjetaBloque({
     const nuevo = valor.slice(0, s) + marcador + seleccion + marcador + valor.slice(e)
     onCambio({ texto: nuevo })
     requestAnimationFrame(() => {
-      el.focus()
+      // BUG REAL, reportado por Francisco: "me tira hasta abajo del
+      // texto y me pierdo en donde iba". `el.focus()` sin
+      // `preventScroll` dispara el comportamiento nativo del navegador
+      // de desplazar la PÁGINA para que el elemento enfocado quede a la
+      // vista -- si el campo ya estaba parcialmente fuera de la
+      // ventana (bisagras largas, de 5 a 9 bloques, es el caso normal),
+      // cada clic en negrita/cursiva saltaba la página entera. No hacía
+      // falta: el campo ya estaba enfocado desde antes de hacer clic en
+      // el botón, `focus()` aquí solo restaura el foco después de que
+      // React vuelve a pintar el textarea con el valor nuevo.
+      el.focus({ preventScroll: true })
       const inicio = s + marcador.length
       el.setSelectionRange(inicio, inicio + seleccion.length)
     })
@@ -1301,7 +1334,7 @@ function TarjetaBloque({
     onCambio({ texto: nuevo })
     const delta = nuevaLinea.length - linea.length
     requestAnimationFrame(() => {
-      el.focus()
+      el.focus({ preventScroll: true }) // ver comentario de envolverSeleccion
       const p = Math.max(inicioLinea, pos + delta)
       el.setSelectionRange(p, p)
     })

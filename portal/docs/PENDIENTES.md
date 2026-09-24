@@ -134,8 +134,75 @@ la base) igual que exige el resto del protocolo de este portal.
   campos que Francisco toca más seguido (título/descripción de sección,
   campo principal de bloque).
 
+### P-015 — Recuperación de contraseña rota, en producción, con una cuenta real
+- Estado: **causa raíz encontrada, auditoría completa despachada (Daniel + Hugo)**
+- Origen: Francisco, 2026-09-23, intentando recuperar el acceso de una
+  cuenta real de equipo (`arriaza.patricia@gmail.com`). Con razón: "eso
+  no nos puede pasar con un cliente."
+- Qué se sabe, verificado en vivo: (1) el primer correo lo disparé desde
+  mi entorno local, así que `redirectTo` (`recuperar-contrasena/page.tsx`,
+  se arma con `window.location.origin`) apuntó a `localhost:3000` -- un
+  enlace que nunca iba a funcionar para nadie fuera de mi máquina. Error
+  mío, no del sistema. (2) Reintentando desde el sitio real, Supabase
+  respondió con su límite de frecuencia: 2 correos de autenticación por
+  HORA, para todo el proyecto (no por cuenta) -- ya anotado como
+  pendiente desde antes (`personalab-producto-digital.md`: "se conecta
+  SMTP propio (Resend) más adelante, no bloquea el trabajo de hoy"). Ese
+  "más adelante" ya bloqueó trabajo real hoy.
+- Dueño: Daniel (mecanismo, costo real de Resend) y Hugo (seguridad del
+  flujo) están auditando el flujo completo, no solo el bug puntual --
+  respuesta pendiente.
+- Criterio de cierre: un enlace de recuperación real, enviado desde
+  producción, funciona de punta a punta para una cuenta real, verificado
+  con ejecución real; y una decisión explícita sobre si el límite de
+  2/hora de Supabase es aceptable para el volumen esperado de clientes
+  reales o si Resend deja de ser "más adelante".
+
 ### P-013 — El editor no es versátil: siete quejas de Francisco, auditadas por Julian/Daniel/Leo
-- Estado: **quinta vuelta: patrón de fondo corregido con Sora y Leo, cerrado**
+- Estado: **sexta vuelta: tres bugs reales corregidos, tres auditorías nuevas despachadas**
+- Actualización 2026-09-23, sexta vuelta: Francisco, usando el editor
+  para construir contenido real, encontró tres bugs concretos y pidió
+  tres auditorías nuevas, más una lista larga de cambios sin construir
+  todavía.
+  **Corregido, verificado en vivo:**
+  - Negrita/cursiva "tira hasta abajo del texto": `el.focus()` sin
+    `preventScroll` dispara el comportamiento nativo del navegador de
+    desplazar la página para que el elemento enfocado quede a la vista
+    -- en una sección con varios bloques, cada clic en negrita saltaba
+    la pantalla entera. Corregido con `el.focus({ preventScroll: true })`
+    en los dos sitios (negrita/cursiva y estilo de línea). No lo pude
+    reproducir de punta a punta en mi entorno de prueba, pero es la
+    causa real y documentada de exactamente este síntoma -- si Francisco
+    lo sigue viendo después de este cambio, es una señal de que hay una
+    segunda causa y hay que seguir buscando, no que el diagnóstico esté
+    cerrado por decreto.
+  - Vista previa del teléfono no se quedaba fija: mismo defecto que ya
+    se había corregido en el riel y el lienzo (P-013, cuarta vuelta) --
+    le faltaba la altura fija (`lg:h-[calc(100vh-164px)]`) para que el
+    `sticky` tuviera de sobra todo el alto de la ventana donde pegarse.
+    Sin esa altura, se pegaba solo mientras el contenido propio de esa
+    columna alcanzara, y se soltaba en cuanto el lienzo se hacía más
+    largo.
+  - Descripción de sección no aparecía en ninguna vista previa: el campo
+    nunca se leía en el panel del teléfono, en ningún lente. Corregido
+    para que aparezca en el lente "Como moderador" (nunca en
+    "participante" -- el propio campo dice "no la ve el participante").
+  **Despachado, sin construir todavía:** Sora audita TODOS los mensajes
+  de error/estado del editor real (no solo "No se pudo guardar", que
+  fue el disparador) -- respuesta pendiente. Leo y Julian arman un plan
+  de acción para que la experiencia del participante se pueda ver bien
+  desde computadora, no solo simulada en marco de teléfono -- respuesta
+  pendiente.
+  **Pedido, sin decidir alcance todavía (backlog, no urgente hoy):**
+  Ctrl+Z en el editor; una sección de referencias/fuentes por
+  experiencia, citables aparte; renombrar el tipo de bloque "Consigna"
+  a algo más claro; bullets/listas numeradas en el toolbar de texto
+  (centrar texto ya se evaluó y Julian lo vetó explícitamente contra
+  BRAND.md -- si Francisco insiste, es una decisión que hay que
+  reabrir con él, no aplicar sola); un tipo de bloque "divisor" entre
+  bloques.
+- Actualización 2026-09-23, quinta vuelta: Sora y Leo respondieron con
+  veredicto conjunto "PROCEDE". Verificaron, no de memoria: el botón
 - Actualización 2026-09-23, quinta vuelta: Sora y Leo respondieron con
   veredicto conjunto "PROCEDE". Verificaron, no de memoria: el botón
   flotante de la cuarta vuelta resolvía "¿sobrevive al scroll?" pero no
