@@ -287,7 +287,31 @@ la base) igual que exige el resto del protocolo de este portal.
   reales o si Resend deja de ser "más adelante".
 
 ### P-013 — El editor no es versátil: siete quejas de Francisco, auditadas por Julian/Daniel/Leo
-- Estado: **undécima vuelta: modo editor construido -- las dos barras del portal se apagan por completo mientras se edita, y el teléfono de vista previa ya no se recorta en ninguna altura de ventana probada**
+- Estado: **duodécima vuelta: los tres campos de texto que le faltaba el `spellCheck`/`lang="es"` de la novena vuelta ya lo tienen; pendiente de Francisco decidir si además quiere un corrector propio dentro de la app**
+- Actualización 2026-09-28, duodécima vuelta: Francisco volvió a preguntar
+  "cómo hacemos para que se marquen los errores ortográficos", cuatro días
+  después de que la novena vuelta ya hubiera probado que el subrayado rojo
+  nativo del navegador SÍ funciona (captura real, palabra mal escrita a
+  propósito) y hubiera dejado como sospecha más probable que fuera la
+  configuración de idioma de su propio Chrome. Antes de repetirle esa misma
+  respuesta, se revisó el código en vez de asumir que seguía intacto: SÍ
+  había un hueco real, no cubierto en la novena vuelta -- tres campos de
+  texto libre del editor no llevaban `spellCheck`/`lang="es"` (el "Pie" de
+  video/audio/imagen/archivo, "Quién lo dijo" de una cita, "Nota al pie" de
+  un objeto), a diferencia de los textareas principales y de título/
+  descripción de sección, que sí lo tenían desde antes. Corregido en los
+  tres; verificado en vivo, con cuenta desechable y contenido desechable
+  (una sección y un bloque "Cita" creados y borrados por la UI real dentro
+  de "El Presente como Regalo Demo", nunca sobre contenido real) que el
+  atributo llega al DOM (`spellcheck: true, lang: "es"`) en el campo antes
+  descubierto. No se repitió la prueba visual del subrayado rojo en sí --
+  ya está probada en la novena vuelta y es el mismo mecanismo del
+  navegador, no uno nuevo. Sigue en pie, sin construir, la pieza más
+  grande que la novena vuelta ya había dejado explícitamente para que
+  Francisco decidiera: un corrector ortográfico propio, dentro de la app,
+  que no dependa de la configuración de cada navegador -- diccionario real
+  y superposición visual sobre el campo, alcance bastante mayor que este
+  arreglo.
 - Actualización 2026-09-24, undécima vuelta: Francisco, viendo capturas del
   espacio en blanco que había quedado abajo de la vista previa en la décima
   vuelta, pidió un "modo editor" explícito: que al entrar al editor "el menú

@@ -1748,6 +1748,8 @@ function TarjetaBloque({
                     : 'Una frase. Se lee debajo.'
                 }
                 className={INPUT}
+                spellCheck
+                lang="es"
               />
             </div>
 
@@ -1841,6 +1843,8 @@ function TarjetaBloque({
                   onChange={e => onCambio({ autor: e.target.value })}
                   placeholder="Nombre de quien lo dijo"
                   className={INPUT}
+                  spellCheck
+                  lang="es"
                 />
               </div>
             )}
@@ -1853,6 +1857,8 @@ function TarjetaBloque({
                   onChange={e => onCambio({ pie: e.target.value })}
                   placeholder="Una frase sobre qué hacer con el objeto."
                   className={INPUT}
+                  spellCheck
+                  lang="es"
                 />
               </div>
             )}
