@@ -213,10 +213,7 @@ a.mode-card:hover{transform:translateY(-4px)}
 .juego-texto h2{font-size:clamp(1.9rem,3.6vw,3.1rem);font-weight:200;line-height:1.1;letter-spacing:-.02em;color:var(--dom);text-wrap:balance;max-width:22ch;margin-bottom:clamp(1.5rem,3vw,2.25rem)}
 .juego-texto h2 em{font-style:normal;color:var(--terra)}
 .juego-par{padding:1.4rem 0;border-top:1px solid var(--line)}
-.juego-par .cuando{display:block;font-size:.68rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;margin-bottom:.7rem;color:var(--gray)}
-.juego-par.ahora .cuando{color:var(--terra)}
 .juego-par p{font-size:1rem;font-weight:400;line-height:1.7;max-width:48ch;color:var(--ink)}
-.juego-par.antes p{color:var(--gray)}
 @media(min-width:861px){
   .juego{grid-template-columns:5fr 7fr;gap:clamp(2.5rem,6vw,5rem)}
   .juego-foto{aspect-ratio:3/4}
@@ -386,3 +383,25 @@ a.mode-card:hover{transform:translateY(-4px)}
   .moment blockquote{font-size:1.25rem;line-height:1.5}
   .intro-body[style*="font-size"]{font-size:.95rem!important}
 }
+
+/* ── La plataforma: tres pantallas en marco de telefono ─────
+   Espacio definido para screenshots reales que Francisco entrega
+   despues. Reusa el patron de "pendiente" que ya existia para fotos
+   sin llegar (.entregable-foto .pendiente en que-se-llevan), no
+   inventa uno nuevo. Cuando llegue el screenshot real, se reemplaza
+   el div .pendiente por <img> dentro de la misma .phone-frame: la
+   moldura no cambia. */
+.app-phones{display:flex;gap:clamp(1.25rem,3vw,2rem);justify-content:center;flex-wrap:wrap;margin-top:clamp(2.5rem,5vw,4rem)}
+.phone-frame{
+  width:220px;aspect-ratio:9/19.5;margin:0;position:relative;
+  border-radius:2.1rem;border:8px solid var(--dom-deep);background:var(--ink);
+  box-shadow:0 24px 50px -12px rgba(20,5,9,.35);overflow:hidden;flex-shrink:0
+}
+.phone-notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:38%;height:22px;background:var(--dom-deep);border-radius:0 0 12px 12px;z-index:2}
+.phone-frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.phone-frame .pendiente{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  text-align:center;padding:2.2rem 1.25rem;font-size:.72rem;font-weight:400;line-height:1.6;
+  color:var(--gray);background:var(--paper-2);border:1px dashed var(--line)
+}
+@media(max-width:760px){.phone-frame{width:180px}}
