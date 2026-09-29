@@ -224,6 +224,72 @@ export default function Editor({
     bloquesRef.current = bloques
   }, [bloques])
 
+  // `activa` de nuevo por la misma razón que `bloquesRef`: una función de
+  // deshacer se registra en un momento y se ejecuta en otro, potencialmente
+  // varias acciones después. Sin este ref, la función capturaría la
+  // sección activa DE CUANDO SE CREÓ el deshacer, no la de cuando de
+  // verdad se usa.
+  const activaRef = useRef(activa)
+  useEffect(() => {
+    activaRef.current = activa
+  }, [activa])
+
+  // ── DESHACER (Ctrl/Cmd+Z) ────────────────────────────────────────────
+  //
+  // NO EXISTÍA. Pedido de Francisco, 2026-09-29: "que sea coherente y
+  // fácil de marcar para los errores que se cometieron". Hasta hoy lo
+  // único que había era el deshacer NATIVO del navegador dentro de un
+  // campo de texto enfocado -- que no cubre borrar un bloque o un
+  // segmento (los dos avisan "no vas a poder recuperar el contenido", y
+  // hasta hoy era cierto), no cubre reordenar, y se pierde en cuanto se
+  // cambia de segmento (el textarea se desmonta: React lo confirma, el
+  // historial nativo de ese campo se va con él).
+  //
+  // LA REGLA, para que las dos formas de deshacer convivan sin pisarse:
+  // dentro de un campo de texto, Ctrl/Cmd+Z deshace últimas pulsaciones
+  // con el mecanismo nativo del navegador -- letra por letra, ya funciona
+  // bien, no hay razón para reemplazarlo por algo más torpe. Fuera de un
+  // campo (el caso típico: justo después de borrar algo), Ctrl/Cmd+Z usa
+  // esta pila. Ver el atajo de teclado más abajo, junto al de Cmd/Ctrl+S.
+  //
+  // UNA ENTRADA POR ACCIÓN ESTRUCTURAL (crear/borrar/mover un bloque o un
+  // segmento), Y UNA POR RÁFAGA DE EDICIÓN DE TEXTO, no por tecla: escribir
+  // agrupa como una sola entrada mientras no haya una pausa de
+  // `DEMORA_AUTOGUARDADO` (el mismo ritmo que ya agrupa el autoguardado),
+  // y una pausa que ya alcanzó a guardar empieza una entrada nueva al
+  // seguir escribiendo. Deshacer letra por letra un texto ya sería el
+  // trabajo del deshacer nativo, no de este.
+  //
+  // CADA ENTRADA REVIERTE LLAMANDO A LAS MISMAS FUNCIONES DE BAJO NIVEL
+  // (`crearBloque`, `borrarBloque`, `reordenarRemoto`, etc. de
+  // `almacenRemoto.ts`), nunca a las funciones públicas instrumentadas
+  // (`agregar`, `borrar`, `mover`...) -- si deshacer un borrado llamara a
+  // `agregar`, que a su vez registra su propio deshacer, cada Ctrl+Z
+  // generaría el deshacer del deshacer, un ping-pong sin salida.
+  type AccionDeshacer = { etiqueta: string; deshacer: () => void | Promise<void> }
+  const LIMITE_DESHACER = 25
+  const [pilaDeshacer, setPilaDeshacer] = useState<AccionDeshacer[]>([])
+  const pilaDeshacerRef = useRef<AccionDeshacer[]>([])
+  useEffect(() => {
+    pilaDeshacerRef.current = pilaDeshacer
+  }, [pilaDeshacer])
+
+  function registrarDeshacer(etiqueta: string, deshacer: () => void | Promise<void>) {
+    setPilaDeshacer(prev => {
+      const nueva = [...prev, { etiqueta, deshacer }]
+      return nueva.length > LIMITE_DESHACER ? nueva.slice(nueva.length - LIMITE_DESHACER) : nueva
+    })
+  }
+
+  const deshacer = useCallback(() => {
+    const pila = pilaDeshacerRef.current
+    if (pila.length === 0) return
+    const ultima = pila[pila.length - 1]
+    setPilaDeshacer(prev => prev.slice(0, -1))
+    ultima.deshacer()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   // LA LLAVE DE REACT DE UNA TARJETA NO PUEDE SER `b.id`. Un bloque nace
   // local y su id cambia una vez, al primer guardado que lo crea de verdad
   // (ver PREFIJO_LOCAL arriba). Si la llave de React fuera el id, ese
@@ -504,8 +570,40 @@ export default function Editor({
         mediosAReemplazar.current.set(claveDe(id), medioViejo)
       }
     }
-    setBloques(prev => prev.map(b => (b.id === id ? { ...b, ...campos } : b)))
     const clave = claveDe(id)
+    // PRIMERA PULSACIÓN DE UNA RÁFAGA NUEVA, NO CADA TECLA. Si ya hay un
+    // temporizador pendiente para este bloque, esta edición es parte de
+    // la ráfaga que ya se estaba capturando -- no se vuelve a capturar el
+    // "antes", porque el "antes" correcto sigue siendo el de la primera
+    // tecla de la ráfaga. Mismo límite de 700ms que ya agrupa el
+    // autoguardado (`DEMORA_AUTOGUARDADO`), a propósito: la sensación de
+    // "esto se deshace junto" tiene que calzar con la de "esto se guarda
+    // junto".
+    if (!temporizadores.current.has(clave)) {
+      const anterior = bloquesRef.current.find(b => b.id === id)
+      if (anterior) {
+        registrarDeshacer('Cambios en un bloque', () => restaurarContenidoDeBloque(clave, anterior))
+      }
+    }
+    setBloques(prev => prev.map(b => (b.id === id ? { ...b, ...campos } : b)))
+    marcarPorClave(clave, 'pendiente')
+    programarGuardado(clave)
+  }
+
+  // El id puede haber cambiado desde que se capturó `anterior` (de
+  // `local:` a uno real, ver PREFIJO_LOCAL): por eso se guarda y se
+  // busca por CLAVE, nunca por id, igual que el resto de esta
+  // contabilidad. Solo se restauran los campos de CONTENIDO -- id y rev
+  // se toman del bloque actual, nunca de la captura vieja, porque una
+  // `rev` vieja haría que el próximo guardado choque contra un
+  // `ConflictoDeVersion` que no es real.
+  function restaurarContenidoDeBloque(clave: string, anterior: BloqueEditable) {
+    const idActual = idPorClave(clave)
+    if (!idActual) return
+    const actual = bloquesRef.current.find(b => b.id === idActual)
+    if (!actual) return // se borró mientras tanto: ese borrado tiene su propia entrada de deshacer
+    const { id: _idViejo, rev: _revVieja, ...contenidoAnterior } = anterior
+    setBloques(prev => prev.map(b => (b.id === idActual ? { ...actual, ...contenidoAnterior } : b)))
     marcarPorClave(clave, 'pendiente')
     programarGuardado(clave)
   }
@@ -544,11 +642,26 @@ export default function Editor({
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 's') {
         e.preventDefault()
         guardarYa()
+        return
+      }
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'z' && !e.shiftKey) {
+        const objetivo = e.target as HTMLElement | null
+        const enCampoEditable =
+          objetivo?.tagName === 'TEXTAREA' || objetivo?.tagName === 'INPUT' || objetivo?.isContentEditable
+        // DENTRO de un campo, este atajo se deja pasar a propósito: el
+        // deshacer nativo del navegador ya funciona ahí, letra por letra,
+        // y tomarlo aquí lo reemplazaría por algo más torpe (la pila solo
+        // agrupa por ráfaga de 700ms, no por tecla). Fuera de un campo no
+        // hay deshacer nativo que proteger -- es el momento típico
+        // después de borrar un bloque o un segmento.
+        if (enCampoEditable) return
+        e.preventDefault()
+        deshacer()
       }
     }
     window.addEventListener('keydown', atajo)
     return () => window.removeEventListener('keydown', atajo)
-  }, [guardarYa])
+  }, [guardarYa, deshacer])
 
   useEffect(() => {
     if (!recienCreado) return
@@ -607,7 +720,37 @@ export default function Editor({
   }
 
   function actualizarSeccion(id: string, campos: Partial<BisagraEditable>) {
+    // Misma regla de ráfaga que `actualizar` para bloques: se captura el
+    // "antes" solo en la primera edición desde el último guardado, no en
+    // cada tecla.
+    if (!temporizadoresSeccion.current.has(id)) {
+      const anterior = seccionesRef.current.find(s => s.id === id)
+      if (anterior) {
+        registrarDeshacer('Cambios en un segmento', () => restaurarContenidoDeSeccion(id, anterior))
+      }
+    }
     setBisagras(prev => prev.map(s => (s.id === id ? { ...s, ...campos } : s)))
+    marcarSeccion(id, 'pendiente')
+    const existente = temporizadoresSeccion.current.get(id)
+    if (existente) clearTimeout(existente)
+    temporizadoresSeccion.current.set(
+      id,
+      setTimeout(() => {
+        temporizadoresSeccion.current.delete(id)
+        guardarSeccionAhora(id)
+      }, DEMORA_AUTOGUARDADO)
+    )
+  }
+
+  // Una sección nace con id real desde el primer momento (a diferencia de
+  // un bloque, nunca vive como `local:`), así que aquí no hace falta la
+  // indirección de clave: el id no cambia nunca.
+  function restaurarContenidoDeSeccion(id: string, anterior: BisagraEditable) {
+    const actual = seccionesRef.current.find(s => s.id === id)
+    if (!actual) return // se borró mientras tanto: ese borrado tiene su propia entrada de deshacer
+    setBisagras(prev =>
+      prev.map(s => (s.id === id ? { ...s, titulo: anterior.titulo, descripcion: anterior.descripcion } : s))
+    )
     marcarSeccion(id, 'pendiente')
     const existente = temporizadoresSeccion.current.get(id)
     if (existente) clearTimeout(existente)
@@ -630,6 +773,7 @@ export default function Editor({
       const creada = await crearSeccionRemoto(propuesta, experiencia.id, experiencia.versionId)
       setBisagras(prev => [...prev, creada])
       setActiva(creada.id)
+      registrarDeshacer('Segmento nuevo', () => deshacerCreacionDeSeccion(creada.id))
       // La nueva sección nace con el título genérico "Nueva sección" ya
       // seleccionado en el campo, lista para que quien la creó escriba el
       // nombre real sin tener que borrar nada primero -- mismo espíritu
@@ -647,6 +791,22 @@ export default function Editor({
     }
   }
 
+  function deshacerCreacionDeSeccion(id: string) {
+    const t = temporizadoresSeccion.current.get(id)
+    if (t) clearTimeout(t)
+    temporizadoresSeccion.current.delete(id)
+    setBisagras(prev => prev.filter(s => s.id !== id))
+    if (activaRef.current === id) {
+      const siguiente = seccionesRef.current.find(s => s.id !== id)
+      setActiva(siguiente?.id ?? '')
+    }
+    borrarSeccionRemoto(id).catch(() => {
+      // Deshacer ya quitó el segmento de la pantalla; si el borrado
+      // remoto falla, queda huérfano en la base sin afectar a nadie --
+      // mismo espíritu que el archivo huérfano de `mediosAReemplazar`.
+    })
+  }
+
   async function moverSeccion(id: string, delta: number) {
     const tiempo = seccionesRef.current.find(s => s.id === id)?.tiempo
     if (!tiempo) return
@@ -658,14 +818,28 @@ export default function Editor({
       .filter(s => s.tiempo === tiempo)
       .filter(s => antes.find(a => a.id === s.id)?.orden !== s.orden)
       .map(s => ({ id: s.id, orden: s.orden }))
+    const ordenPrevio = new Map(antes.map(s => [s.id, s.orden]))
     try {
       await reordenarSeccionesRemoto(cambios, experiencia.versionId)
       setErrorGlobal(null)
+      registrarDeshacer('Segmento movido', () => restaurarOrdenDeSecciones(ordenPrevio, cambios.map(c => c.id)))
     } catch (e) {
       setBisagras(antes) // el servidor no lo aceptó: se revierte a lo que sí está guardado
       if (esConflicto(e)) setConflicto(MENSAJE_CONFLICTO)
       else setErrorGlobal(mensajeDeFallo('No se pudo reordenar. Intenta de nuevo.'))
     }
+  }
+
+  function restaurarOrdenDeSecciones(ordenPrevio: Map<string, number>, ids: string[]) {
+    setBisagras(prev =>
+      prev.map(s => (ids.includes(s.id) && ordenPrevio.has(s.id) ? { ...s, orden: ordenPrevio.get(s.id)! } : s))
+    )
+    reordenarSeccionesRemoto(
+      ids.map(id => ({ id, orden: ordenPrevio.get(id)! })),
+      experiencia.versionId
+    ).catch(() => {
+      setErrorGlobal(mensajeDeFallo('No se pudo deshacer el orden de un segmento. Intenta de nuevo.'))
+    })
   }
 
   // ARRASTRAR DE VERDAD, no solo flechas. Pedido explícito de Francisco,
@@ -708,6 +882,12 @@ export default function Editor({
   async function confirmarBorrarSeccion(id: string) {
     setPorBorrarSeccion(null)
     const antes = seccionesRef.current
+    // Capturado ANTES de borrar: `borrarSeccionRemoto` se lleva sus
+    // bloques con ella (`blocks.hinge_id` tiene `on delete cascade`, ver
+    // `almacenRemoto.ts`), así que deshacer esto no es solo recrear la
+    // sección -- es recrear la sección Y cada uno de sus bloques.
+    const seccionCapturada = antes.find(s => s.id === id)
+    const bloquesCapturados = bloquesRef.current.filter(b => b.bisagraId === id)
     setBisagras(prev => prev.filter(s => s.id !== id))
     if (activa === id) {
       const siguiente = seccionesRef.current.find(s => s.id !== id)
@@ -716,10 +896,43 @@ export default function Editor({
     try {
       await borrarSeccionRemoto(id)
       setErrorGlobal(null)
+      if (seccionCapturada) {
+        registrarDeshacer('Segmento borrado', () => restaurarSeccionBorrada(seccionCapturada, bloquesCapturados))
+      }
     } catch (e) {
       setBisagras(antes) // no se pudo borrar del lado del servidor: se restaura
       if (esConflicto(e)) setConflicto(MENSAJE_CONFLICTO)
       else setErrorGlobal(mensajeDeFallo('No se pudo borrar el segmento. Intenta de nuevo.'))
+    }
+  }
+
+  // Recrea la sección con id NUEVO (la base nunca reutiliza uno borrado) y
+  // cada uno de sus bloques encima, en el mismo orden que tenían. Un
+  // bloque que seguía `local:` (nunca llegó a existir en la base) se
+  // restaura con el mismo mecanismo que uno recién agregado -- si de
+  // verdad tenía contenido válido, el autoguardado lo va a crear de
+  // verdad; si no, se queda esperando, igual que antes de borrarse.
+  async function restaurarSeccionBorrada(seccion: BisagraEditable, bloquesDeLaSeccion: BloqueEditable[]) {
+    try {
+      const { id: _idVieja, ...datosSeccion } = seccion
+      const recreada = await crearSeccionRemoto(datosSeccion, experiencia.id, experiencia.versionId)
+      setBisagras(prev => [...prev, recreada])
+      setActiva(recreada.id)
+      for (const b of bloquesDeLaSeccion) {
+        const { id: _idViejo, rev: _revVieja, bisagraId: _bisagraIdVieja, ...contenido } = b
+        if (esLocal(b.id)) {
+          const nuevoId = idLocal()
+          const restaurado: BloqueEditable = { ...contenido, id: nuevoId, bisagraId: recreada.id, rev: 0 }
+          clavesEstables.current.set(nuevoId, nuevoId)
+          setBloques(prev => [...prev, restaurado])
+          programarGuardado(claveDe(nuevoId))
+        } else {
+          const creado = await crearBloque({ ...contenido, bisagraId: recreada.id }, experiencia.versionId)
+          setBloques(prev => [...prev, creado])
+        }
+      }
+    } catch (e) {
+      setErrorGlobal(mensajeDeFallo('No se pudo deshacer el borrado del segmento. Intenta de nuevo.'))
     }
   }
 
@@ -759,6 +972,32 @@ export default function Editor({
     const clave = claveDe(id)
     resaltar(id, true)
     programarGuardado(clave)
+    registrarDeshacer('Bloque nuevo', () => deshacerCreacionDeBloque(clave))
+  }
+
+  // Espera a que una creación en curso termine antes de decidir qué
+  // hacer: si se deshace mientras el bloque todavía es `local:` PERO ya
+  // hay un INSERT en camino (`creacionesEnCurso`), resolver el id
+  // demasiado pronto lo encontraría local, no llamaría a `borrarBloque`,
+  // y el INSERT que sigue en vuelo dejaría una fila huérfana en la base
+  // que nadie en pantalla conoce. Mismo mecanismo de sincronización que
+  // ya usa `guardarOCrear` para el mismo tipo de carrera.
+  async function deshacerCreacionDeBloque(clave: string) {
+    const enCurso = creacionesEnCurso.current.get(clave)
+    if (enCurso) await enCurso
+    const id = idPorClave(clave)
+    if (!id) return
+    const t = temporizadores.current.get(clave)
+    if (t) clearTimeout(t)
+    temporizadores.current.delete(clave)
+    setBloques(prev => prev.filter(b => b.id !== id))
+    if (!esLocal(id)) {
+      borrarBloque(id).catch(() => {
+        // Deshacer ya quitó el bloque de la pantalla; si el borrado
+        // remoto falla, queda huérfano en la base sin afectar a nadie --
+        // mismo espíritu que el archivo huérfano de `mediosAReemplazar`.
+      })
+    }
   }
 
   async function mover(id: string, delta: number) {
@@ -780,6 +1019,8 @@ export default function Editor({
       await reordenarRemoto(cambiadosReales.map(b => ({ id: b.id, orden: b.orden })), experiencia.versionId)
       for (const c of cambiadosReales) marcarPorClave(claveDe(c.id), 'guardado')
       setErrorGlobal(null)
+      const idsCambiados = cambiadosReales.map(b => b.id)
+      registrarDeshacer('Bloque movido', () => restaurarOrdenDeBloques(antes, idsCambiados))
     } catch (e) {
       // Revertir SOLO el orden de los bloques que ESTE movimiento tocó,
       // sobre el estado más reciente (función de actualización, no el
@@ -805,6 +1046,24 @@ export default function Editor({
     }
   }
 
+  function restaurarOrdenDeBloques(ordenPrevio: Map<string, number>, ids: string[]) {
+    setBloques(prev =>
+      prev.map(b => (ids.includes(b.id) && ordenPrevio.has(b.id) ? { ...b, orden: ordenPrevio.get(b.id)! } : b))
+    )
+    for (const id of ids) marcarPorClave(claveDe(id), 'guardando')
+    reordenarRemoto(
+      ids.map(id => ({ id, orden: ordenPrevio.get(id)! })),
+      experiencia.versionId
+    )
+      .then(() => {
+        for (const id of ids) marcarPorClave(claveDe(id), 'guardado')
+      })
+      .catch(() => {
+        for (const id of ids) marcarPorClave(claveDe(id), 'error')
+        setErrorGlobal(mensajeDeFallo('No se pudo deshacer el orden de un bloque. Intenta de nuevo.'))
+      })
+  }
+
   function resaltar(id: string, conFoco: boolean) {
     enfocarAlResaltar.current = conFoco
     setRecienCreado(id)
@@ -812,6 +1071,7 @@ export default function Editor({
 
   async function borrar(id: string) {
     setErrorGlobal(null)
+    const capturado = bloquesRef.current.find(b => b.id === id)
 
     // Local: nunca llegó a la base. Quitarlo de pantalla es todo lo que
     // hay que hacer, y no hace falta esperar ninguna red.
@@ -822,6 +1082,7 @@ export default function Editor({
       temporizadores.current.delete(clave)
       setBloques(prev => prev.filter(b => b.id !== id))
       setPorBorrar(null)
+      if (capturado) registrarDeshacer('Bloque quitado', () => restaurarBloqueBorrado(capturado))
       return
     }
 
@@ -830,12 +1091,28 @@ export default function Editor({
       await borrarBloque(id)
       setBloques(prev => prev.filter(b => b.id !== id))
       setPorBorrar(null)
+      if (capturado) registrarDeshacer('Bloque borrado', () => restaurarBloqueBorrado(capturado))
     } catch (e) {
       if (esConflicto(e)) setConflicto(MENSAJE_CONFLICTO)
       else setErrorGlobal(mensajeDeFallo('No se pudo quitar el bloque. Sigue ahí, sin cambios.'))
     } finally {
       setBorrando(null)
     }
+  }
+
+  // El id viejo nunca vuelve (ni local ni real): se restaura como un
+  // bloque nuevo con el mismo contenido, mismo mecanismo que crear uno de
+  // verdad -- si el contenido ya era válido, el autoguardado lo persiste
+  // de inmediato; si no, se queda en pantalla esperando, igual que
+  // cualquier bloque recién agregado.
+  function restaurarBloqueBorrado(bloque: BloqueEditable) {
+    const nuevoId = idLocal()
+    const { id: _idViejo, rev: _revVieja, ...contenido } = bloque
+    const restaurado: BloqueEditable = { ...contenido, id: nuevoId, rev: 0 }
+    clavesEstables.current.set(nuevoId, nuevoId)
+    setBloques(prev => [...prev, restaurado])
+    resaltar(nuevoId, false)
+    programarGuardado(claveDe(nuevoId))
   }
 
   return (
@@ -900,6 +1177,23 @@ export default function Editor({
             >
               + {creandoSeccion ? 'Creando…' : 'Nuevo segmento'}
             </Boton>
+            {/* DESHACER, VISIBLE, NO SOLO POR TECLADO. Pedido de
+                Francisco, 2026-09-29: "fácil de marcar para los errores
+                que se cometieron". Ctrl/Cmd+Z ya funciona (ver el atajo
+                más arriba), pero un atajo que nadie ve es la misma
+                lección que ya dejó "Nueva sección" como FAB: si la única
+                pista es un atajo, la mitad de quienes lo necesitan no lo
+                encuentran. El título dice QUÉ va a deshacer, no solo que
+                algo se puede deshacer. */}
+            {pilaDeshacer.length > 0 && (
+              <Boton
+                variante="secundario"
+                onClick={deshacer}
+                title={`Deshacer: ${pilaDeshacer[pilaDeshacer.length - 1].etiqueta} (Ctrl+Z / Cmd+Z)`}
+              >
+                ↩ Deshacer
+              </Boton>
+            )}
             {/* SEGUNDA VUELTA, 2026-09-23. La primera corrección lo dejó
                 deshabilitado-pero-visible, con un título que explica la
                 diferencia -- y Francisco siguió sin entenderlo: "sigue

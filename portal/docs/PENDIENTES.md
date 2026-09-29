@@ -34,6 +34,86 @@ la base) igual que exige el resto del protocolo de este portal.
 
 ## Abiertos / decididos
 
+### P-018 — Deshacer (Ctrl/Cmd+Z) construido de punta a punta en el editor, no existía
+- Estado: **construido y verificado contra la base real, 2026-09-29**
+- Origen: Francisco pidió revisar "si ya la función de CTRL-Z está
+  correctamente implementada" y que fuera "coherente y fácil de marcar
+  para los errores que se cometieron". No estaba implementada -- cero
+  ocurrencias de deshacer/undo/ctrl+z en todo `Editor.tsx`, confirmado por
+  grep antes de escribir una sola línea. Lo único que existía era el
+  deshacer NATIVO del navegador dentro de un campo enfocado, que no cubre
+  borrar un bloque o un segmento (los dos ya avisaban "no vas a poder
+  recuperar el contenido", y hasta hoy era cierto), no cubre reordenar, y
+  se pierde al cambiar de segmento porque el textarea se desmonta.
+- **La regla que hace que las dos formas de deshacer convivan sin
+  pisarse:** dentro de un campo de texto, Ctrl/Cmd+Z deshace con el
+  mecanismo NATIVO del navegador (letra por letra, ya funciona bien).
+  Fuera de un campo -- el momento típico después de borrar algo -- usa una
+  pila propia del editor. El atajo revisa `e.target` antes de decidir
+  cuál de los dos le toca.
+- **Cubre las seis acciones estructurales**, cada una con su propia
+  entrada en la pila: crear/borrar/mover un bloque, crear/borrar/mover un
+  segmento. También cubre editar texto (título/descripción de un segmento,
+  contenido de un bloque), agrupado por RÁFAGA de escritura (misma
+  ventana de 700ms que ya agrupa el autoguardado, `DEMORA_AUTOGUARDADO`)
+  y no por tecla -- deshacer letra por letra sigue siendo trabajo del
+  navegador.
+- **Cada entrada revierte llamando a las funciones de bajo nivel de
+  `almacenRemoto.ts`** (`crearBloque`, `borrarBloque`, `reordenarRemoto`,
+  etc.), nunca a las funciones públicas instrumentadas (`agregar`,
+  `borrar`, `mover`...). Si deshacer un borrado llamara a `agregar`, que
+  a su vez registra su propio deshacer, cada Ctrl+Z generaría el deshacer
+  del deshacer -- un ping-pong sin salida. Es la misma razón por la que no
+  hizo falta ninguna bandera de "estoy deshaciendo": las funciones de
+  restauración nunca tocan `registrarDeshacer`.
+- **El caso más difícil, resuelto:** borrar un segmento se lleva sus
+  bloques con él (`blocks.hinge_id` tiene `on delete cascade`, ya
+  documentado en `almacenRemoto.ts`). Deshacer eso no es solo recrear el
+  segmento -- es capturar TODOS sus bloques antes de borrar y recrearlos
+  uno por uno bajo el id nuevo del segmento recreado (la base nunca
+  reutiliza un id borrado).
+- **La carrera que sí se cerró, no se dejó como riesgo aceptado:** si se
+  deshace la creación de un bloque mientras su primer guardado (que crea
+  la fila real) todavía está en vuelo, resolver el id demasiado pronto lo
+  encontraría `local:` y no borraría nada del lado del servidor -- el
+  INSERT que sigue en camino dejaría una fila huérfana que reaparecería
+  al recargar la página. `deshacerCreacionDeBloque` espera esa creación
+  en curso (`creacionesEnCurso`, el mismo mecanismo que ya usa
+  `guardarOCrear` para esta exacta carrera) antes de decidir.
+- **Visible, no solo atajo de teclado.** Botón "↩ Deshacer" en la
+  cabecera, junto a "Guardar ahora", que solo aparece cuando hay algo que
+  deshacer y cuyo título dice QUÉ va a deshacer -- misma lección que
+  "Nueva sección" ya había dejado como FAB en una vuelta anterior: un
+  atajo que nadie ve, la mitad de quienes lo necesitan no lo encuentran.
+- **Verificado en vivo contra la base real**, con cuenta y experiencia
+  desechables (nunca sobre El Presente como Regalo ni ningún contenido
+  real), los seis escenarios, confirmando cada uno con una consulta
+  directa a la base, no solo mirando la pantalla:
+  1. Crear un segmento → deshacer → cero filas en `hinges`.
+  2. Crear un segmento, escribir un título, deshacer dos veces: la
+     primera solo revierte el texto ("Nueva sección" de vuelta, el
+     segmento se queda), la segunda sí borra el segmento completo.
+  3. Agregar un bloque con contenido real, borrarlo, deshacer → el
+     bloque vuelve con el contenido exacto, confirmado en `blocks.contenido`.
+  4. Dentro de un textarea enfocado, Ctrl+Z no toca la pila del editor
+     (confirmado: el botón "↩ Deshacer" siguió mostrando la MISMA
+     entrada antes y después, sin popearse).
+  5. Mover un bloque, deshacer (por botón) → orden restaurado,
+     confirmado en `blocks.orden`.
+  6. Borrar un segmento con DOS bloques adentro, deshacer (por teclado)
+     → el segmento y los dos bloques vuelven, contenido y orden
+     correctos, confirmado con una consulta que junta `hinges` y `blocks`.
+  `npx tsc --noEmit` limpio en cada paso.
+- **Lo que NO se construyó, a propósito, no por descuido:** rehacer
+  (Ctrl+Shift+Z / Ctrl+Y) -- Francisco no lo pidió, y la pila actual no
+  guarda lo deshecho para rehacerlo. Si hace falta, es su propio pendiente
+  aparte, con su propio diseño (qué pasa si entre deshacer y rehacer se
+  hizo una acción nueva). La pila tiene techo de 25 acciones -- no hay
+  persistencia entre sesiones ni sobre-vive un `location.reload()`, a
+  propósito: deshacer siempre fue, en todo editor real, una memoria de la
+  SESIÓN de edición, no un historial permanente (eso ya existe, aparte,
+  como el ciclo de publicar/despublicar de `experience_versions`).
+
 ### P-017 — Léxico de pantalla: bisagra ahora es "segmento", tiempo ahora es Previo/Desarrollo/Post
 - Estado: **decidido y aplicado en todo el portal de PersonaLab (admin), 2026-09-29**
 - Origen: dos pedidos seguidos de Francisco sobre "El Presente como Regalo"
