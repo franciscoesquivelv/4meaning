@@ -35,7 +35,7 @@ la base) igual que exige el resto del protocolo de este portal.
 ## Abiertos / decididos
 
 ### P-016 — `kit/page.tsx` y `vista/[encuentroId]/` siguen en datos de muestra
-- Estado: **abierto**
+- Estado: **abierto para los datos; el color de marca de los dos ya se corrigió (2026-09-28)**
 - Origen: encontrado de pasada arreglando H-010 (Resumen/Grupos/
   Moderadores/Encuentros/Retorno). Después de esa reescritura, dos
   archivos más de `app/(admin)/personalab/` siguen importando de
@@ -48,6 +48,32 @@ la base) igual que exige el resto del protocolo de este portal.
 - Criterio de cierre: mismo patrón que H-010 -- confirmar contra el
   esquema real qué tabla debería alimentar cada pantalla, construir el
   loader real, verificar con ejecución real, no con lectura de código.
+- Actualización 2026-09-28: Francisco pidió un análisis de continuidad de
+  tono/voz/persona en todo PersonaLab. El lenguaje resultó consistente en
+  todos lados -- el hallazgo real fue visual, no verbal. Precisamente estos
+  dos archivos (los más viejos, nunca migrados) tenían la disciplina de
+  color rota: `kit/page.tsx` pintaba con `slate`/`amber`/`emerald` de
+  fábrica de Tailwind en vez de los tokens de `tokens.ts`, y
+  `vista/[encuentroId]/**` (las tres pantallas: portada, layout y bisagra)
+  tenía TODO su color escrito a mano en hex, sin pasar nunca por
+  `lib/estilos/oficina.ts`. Entre esos hex estaba `#8F5341` en tres sitios
+  distintos (la etiqueta de tiempo y sus estados de hover) -- exactamente
+  "la tercera terracota" que el propio `lib/estilos/oficina.ts` ya había
+  señalado como problema el 2026-09-06 en otra parte del sistema, repetida
+  aquí sin que nadie la hubiera tocado. El resto de los hex (`#EFF3F4`,
+  `#D5DEE0`, `#4B6B72`, `#14181B`, `#676E6E`, `#E7E1D8`, `#FAF8F4`) no
+  correspondían a ningún token declarado: variantes inventadas, muy
+  cercanas pero no iguales a `paper`, `paper-2`, `gray-ui` e `ink`.
+  Corregidos los cuatro archivos a los tokens reales (`teal`, `terra-lo`,
+  `terra-ui`, `gray-ui`, `ink`, `paper`, `paper-2`, `line`, `line-dk`,
+  `bien`). Verificado en vivo con cuenta desechable, en `/personalab/kit`
+  y en `/personalab/vista/c1` y `/personalab/vista/c2/…` (mock, con y sin
+  contenido, con y sin lente de moderador): capturas de pantalla
+  confirmando que el color ahora coincide con el resto del sistema, sin
+  regresión visual. El problema de fondo (estos dos árboles siguen leyendo
+  `dominio.ts` y no la base real) sigue exactamente igual que antes: esto
+  no lo resuelve, solo evita que quien migre los datos después herede
+  también colores rotos.
 
 ### P-012 — El Presente como Regalo, construido con la cronología real: falta el pasaje del Dr. Alexander, lo de perdón, y publicar
 - Estado: **decidido, mecanismo verificado de punta a punta, falta contenido de Francisco y la decisión de publicar**

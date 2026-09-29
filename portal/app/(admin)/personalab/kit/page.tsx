@@ -21,11 +21,11 @@ export default function KitPage() {
           const faltan = piezas.filter(x => !x.p.disponible).length
           return (
             <div key={col} className={`${TARJETA} p-5`}>
-              <div className="text-sm font-semibold text-slate-900">{c.titulo}</div>
-              <p className="text-xs text-amber-700 mt-1.5 leading-relaxed">{c.regla}</p>
-              <div className="text-xs text-slate-500 mt-3 tabular-nums">
+              <div className="text-sm font-semibold text-ink">{c.titulo}</div>
+              <p className="text-xs text-terra-ui mt-1.5 leading-relaxed">{c.regla}</p>
+              <div className="text-xs text-gray-ui mt-3 tabular-nums">
                 {piezas.length} pieza{piezas.length === 1 ? '' : 's'}
-                {faltan > 0 && <span className="text-amber-700"> · {faltan} sin resolver</span>}
+                {faltan > 0 && <span className="text-terra-ui"> · {faltan} sin resolver</span>}
               </div>
             </div>
           )
@@ -35,23 +35,23 @@ export default function KitPage() {
       <Etiqueta>Todas las piezas</Etiqueta>
       <Tabla cabeceras={['Pieza', 'Columna', 'Experiencia', 'Por persona', 'Estado']}>
         {todas.map(({ exp, p }) => (
-          <tr key={p.id} className="hover:bg-slate-50 transition-colors">
+          <tr key={p.id} className="hover:bg-paper-2 transition-colors">
             <td className={TD}>
-              <div className="font-medium text-slate-900">{p.nombre}</div>
-              <div className="text-xs text-slate-500 mt-0.5 max-w-[48ch]">{p.detalle}</div>
+              <div className="font-medium text-ink">{p.nombre}</div>
+              <div className="text-xs text-gray-ui mt-0.5 max-w-[48ch]">{p.detalle}</div>
             </td>
-            <td className={`${TD} text-slate-500`}>{COLUMNA_KIT[p.columna].titulo}</td>
+            <td className={`${TD} text-gray-ui`}>{COLUMNA_KIT[p.columna].titulo}</td>
             <td className={TD}>
               <Link
                 href={`/personalab/experiencias/${exp.id}`}
-                className="text-slate-900 hover:underline"
+                className="text-ink hover:underline"
               >
                 {exp.nombre}
               </Link>
             </td>
-            <td className={`${TD} text-slate-500`}>{p.porPersona ? 'Sí' : ''}</td>
+            <td className={`${TD} text-gray-ui`}>{p.porPersona ? 'Sí' : ''}</td>
             <td className={TD}>
-              <span className={`text-xs font-medium ${p.disponible ? 'text-emerald-700' : 'text-amber-700'}`}>
+              <span className={`text-xs font-medium ${p.disponible ? 'text-bien' : 'text-terra-ui'}`}>
                 {p.disponible ? 'Listo' : 'Falta'}
               </span>
             </td>

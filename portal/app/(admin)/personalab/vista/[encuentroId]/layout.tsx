@@ -27,23 +27,23 @@ export default function VistaLayout({
     <div className="max-w-[560px] mx-auto">
       <div className="flex items-center justify-between gap-4 mb-4">
         <div>
-          <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+          <div className="text-[11px] font-semibold uppercase tracking-wider text-gray-ui">
             Previa
           </div>
-          <p className="text-sm text-slate-600 mt-0.5">
+          <p className="text-sm text-gray-ui mt-0.5">
             Así se ve para quien entra a leer.
           </p>
         </div>
         <Link
           href={`/personalab/encuentros/${params.encuentroId}`}
-          className="text-xs text-slate-500 hover:text-slate-900 transition-colors whitespace-nowrap flex-shrink-0 underline underline-offset-2"
+          className="text-xs text-gray-ui hover:text-ink transition-colors whitespace-nowrap flex-shrink-0 underline underline-offset-2"
         >
           Volver al encuentro
         </Link>
       </div>
 
       <div
-        className="rounded-2xl border border-slate-200 overflow-hidden bg-[#FAF8F4] shadow-sm"
+        className="rounded-2xl border border-line overflow-hidden bg-paper shadow-sm"
         style={{
           fontFamily:
             '-apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif',
