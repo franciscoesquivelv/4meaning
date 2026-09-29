@@ -35,7 +35,7 @@ la base) igual que exige el resto del protocolo de este portal.
 ## Abiertos / decididos
 
 ### P-019 — Dos personas editando lo mismo a la vez: los segmentos no tenían ningún candado
-- Estado: **código listo y con `npx tsc --noEmit` limpio, esperando que Francisco corra la migración antes de fusionar -- sin ella, guardar o crear un segmento se rompe para todos**
+- Estado: **cerrado y verificado en vivo contra la base real, 2026-09-29**
 - Origen: Francisco pidió auditar el guardado del editor con una pregunta
   concreta: "si yo tengo abierta mi cuenta y mi tía también, al mismo
   tiempo... que nunca por un error tonto se vaya a perder información."
@@ -88,16 +88,32 @@ la base) igual que exige el resto del protocolo de este portal.
   dentro de la verificación en vivo de P-018 (deshacer un movimiento de
   bloque) y siguió funcionando igual con el `.select().maybeSingle()`
   agregado.
-- **Lo que falta, y por qué no se fusionó ya:** confirmado contra la base
-  real que `hinges.rev` todavía no existe -- la migración no ha corrido.
-  El código nuevo de `guardarSeccionRemoto`/`crearSeccionRemoto` YA pide
-  esa columna: si esto se fusiona antes de correr la migración, CREAR o
-  GUARDAR cualquier segmento se rompe para cualquiera, con un error real
-  de Postgres ("column hinges.rev does not exist"). Por eso este cambio,
-  a diferencia del resto de esta sesión, se queda sin empujar a `main`
-  hasta que Francisco corra la migración y se pueda verificar en vivo el
-  escenario de dos personas editando el mismo segmento a la vez, con una
-  cuenta desechable.
+- **Francisco corrió la migración. Verificado en vivo, el escenario
+  exacto que preguntó, con cuenta y experiencia desechables:**
+  1. Se creó un segmento real (`rev: 1`, confirmado contra la base).
+  2. Se simuló "la tía" guardando un cambio directo contra la base
+     (`titulo: 'Título de la tía'`), sin pasar por el navegador --
+     `rev` subió a 2 solo, vía el trigger, tal como se diseñó.
+  3. En el navegador, que seguía mostrando el segmento con `rev: 1` en
+     memoria, se escribió un título distinto y se dejó autoguardar. El
+     banner mostró el mensaje NUEVO y correcto ("Alguien más del equipo
+     guardó un cambio aquí mismo... están editando al mismo tiempo"), no
+     el de "alguien publicó". Confirmado contra la base: el título de la
+     tía seguía intacto (`rev: 2`) -- el intento de Francisco NUNCA lo
+     pisó, se rechazó antes de tocar la fila.
+  4. Recargando, la pantalla mostró el título real (el de la tía), sin
+     nada perdido de ningún lado.
+  5. Aparte, se simuló la OTRA causa (la fila deja de existir, como pasa
+     cuando alguien publica) borrando el segmento directo contra la base
+     mientras seguía abierto en el navegador, y editando encima: ahí SÍ
+     apareció el mensaje viejo ("alguien publicó o deshizo una
+     publicación"), correcto para esa causa. Los dos mensajes salen bien,
+     cada uno en su caso real, no el mismo texto repetido siempre.
+  6. Un guardado normal, sin ningún conflicto, se probó aparte: creó el
+     segmento en `rev: 1` y, tras editar el título, subió a `rev: 2` en
+     la base -- el candado no estorba el camino feliz.
+  `npx tsc --noEmit` limpio en cada paso. Cuenta y experiencia de prueba
+  borradas al terminar.
 
 ### P-018 — Deshacer (Ctrl/Cmd+Z) construido de punta a punta en el editor, no existía
 - Estado: **construido y verificado contra la base real, 2026-09-29**
