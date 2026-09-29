@@ -28,6 +28,12 @@ export interface BisagraEditable {
   duracion?: string
   listo: boolean
   requiere?: string[]
+  // El mismo candado de concurrencia optimista que ya tenía `blocks`
+  // (`BloqueEditable.rev`), agregado a `hinges` el 2026-09-29: sin esto,
+  // dos personas editando el título del MISMO segmento a la vez se pisan
+  // en silencio, sin ningún aviso para ninguna de las dos. Ver
+  // `supabase/migrations/20260929_1715_hinges_concurrencia_optimista.sql`.
+  rev: number
 }
 
 export interface ExperienciaEditable {
@@ -78,7 +84,7 @@ export async function cargarParaEditar(slug: string): Promise<ResultadoEditor> {
 
   const { data: bis, error: errBis } = await supabase
     .from('hinges')
-    .select('id, tiempo, orden, titulo, descripcion, soporte, duracion, listo, requiere')
+    .select('id, tiempo, orden, titulo, descripcion, soporte, duracion, listo, requiere, rev')
     .eq('version_id', versionId)
     .order('tiempo')
     .order('orden')

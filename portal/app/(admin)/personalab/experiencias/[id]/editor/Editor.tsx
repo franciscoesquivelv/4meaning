@@ -95,11 +95,35 @@ const DEMORA_AUTOGUARDADO = 700
 // tres sitios más (crear/mover/borrar sección) que también pueden chocar
 // contra una versión que dejó de ser el borrador vivo, y que cada uno lo
 // habría escrito a mano distinto si no se centraliza aquí.
-const MENSAJE_CONFLICTO =
+const MENSAJE_CONFLICTO_VERSION =
   'Esta experiencia cambió del lado del servidor mientras editabas (alguien publicó o deshizo una publicación). Para no perder ni tu trabajo ni el de esa persona, recarga la página y vuelve a hacer tu cambio sobre la versión más reciente.'
 
-function esConflicto(e: unknown): boolean {
-  return e instanceof ConflictoDeVersion || (e as { code?: string } | null)?.code === '42501'
+// SEGUNDA CAUSA, DISTINTA DE LA DE ARRIBA, ENCONTRADA AUDITANDO LA
+// CONCURRENCIA A PEDIDO DE FRANCISCO (2026-09-29: "si yo tengo abierta mi
+// cuenta y mi tía también, al mismo tiempo"). Hasta hoy, CUALQUIER
+// `ConflictoDeVersion` mostraba el mismo mensaje de arriba -- que dice
+// "alguien publicó o deshizo una publicación", y eso es FALSO en el caso
+// más común que Francisco preguntó: dos personas del equipo editando el
+// mismo bloque o el mismo segmento a la vez, sin que nadie haya publicado
+// nada. `ConflictoDeVersion.revReal` ya distinguía las dos causas desde
+// que existe (`guardarBloque` la usa para construir el error) -- lo que
+// faltaba era leerla aquí para elegir el mensaje correcto en vez de
+// mentir con el mismo texto siempre.
+const MENSAJE_CONFLICTO_EDICION_SIMULTANEA =
+  'Alguien más del equipo guardó un cambio aquí mismo mientras editabas -- están editando al mismo tiempo. Para no perder ni tu trabajo ni el de esa persona, recarga la página: lo que ya se había guardado se queda, y esto que ves ahora sin guardar vas a tener que volver a escribirlo sobre lo último que esa persona dejó.'
+
+// Devuelve el mensaje correcto, o `null` si esto no es un conflicto de
+// verdad. `revReal >= 0` significa que la fila SIGUE viva con un cambio
+// de alguien más encima (edición simultánea); `revReal === -1` es la
+// señal ya establecida (`guardarBloque`, `guardarSeccionRemoto`, y los
+// caminos que nunca pudieron releer la fila real: reordenar, borrar,
+// crear) de que la fila o la versión entera ya no está.
+function mensajeDeConflicto(e: unknown): string | null {
+  if (e instanceof ConflictoDeVersion) {
+    return e.revReal >= 0 ? MENSAJE_CONFLICTO_EDICION_SIMULTANEA : MENSAJE_CONFLICTO_VERSION
+  }
+  if ((e as { code?: string } | null)?.code === '42501') return MENSAJE_CONFLICTO_VERSION
+  return null
 }
 
 // HALLAZGO DE SORA, 2026-09-23: "Intenta de nuevo" es activamente
@@ -451,20 +475,21 @@ export default function Editor({
       }
     } catch (e) {
       const codigo = (e as { code?: string } | null)?.code
-      if (esConflicto(e)) {
-        // MISMO BANNER PARA LAS DOS CAUSAS, A PROPÓSITO. El mensaje viejo
-        // decía "alguien guardó cambios en ESTE bloque", y eso era falso
-        // en el caso real que lo disparó: alguien publicó o revirtió la
-        // EXPERIENCIA completa mientras se editaba, no tocó este bloque en
-        // particular. Un update contra una versión que ya no es el
-        // borrador vivo cae aquí (RLS lo invalida en silencio, sale como
-        // `ConflictoDeVersion` porque el update no afecta ninguna fila).
-        // Un insert nuevo contra esa misma versión muerta no tiene fila
-        // que comparar: Postgres lo rechaza directo con `42501`, y antes
-        // de este arreglo caía al chip rojo genérico sin explicación.
-        // Hallazgo de Hugo, reproducido en vivo con una publicación real
-        // mientras el editor seguía abierto.
-        setConflicto(MENSAJE_CONFLICTO)
+      const conflicto = mensajeDeConflicto(e)
+      if (conflicto) {
+        // DOS CAUSAS DE VERDAD, DOS MENSAJES DISTINTOS DESDE EL 2026-09-29
+        // -- antes era el mismo banner para las dos, y decía "alguien
+        // publicó" incluso cuando la causa real era la otra persona del
+        // equipo editando ESTE MISMO bloque a la vez (el caso que
+        // Francisco preguntó explícitamente: "si yo tengo abierta mi
+        // cuenta y mi tía también"). `guardarBloque` ya distinguía las
+        // dos con `revReal` desde que existe; `mensajeDeConflicto` es lo
+        // que finalmente lee esa distinción. Un insert nuevo contra una
+        // versión muerta no tiene fila que comparar (Postgres lo rechaza
+        // directo con `42501`, sin `revReal`), así que siempre cae en el
+        // mensaje de versión, nunca en el de edición simultánea -- un
+        // bloque que no existía no puede tener "otra persona editándolo".
+        setConflicto(conflicto)
       } else if (codigo === '23514') {
         // Vaciar un campo obligatorio de un bloque QUE YA EXISTÍA es
         // distinto de un fallo de red, y antes de esto se veían igual:
@@ -523,15 +548,16 @@ export default function Editor({
         marcarPorClave(clave, 'limpio')
         return null
       }
-      if (esConflicto(e)) {
+      const conflicto = mensajeDeConflicto(e)
+      if (conflicto) {
         // Un bloque nuevo, creado contra una versión que dejó de ser el
         // borrador vivo (alguien publicó o revirtió mientras se escribía):
         // no hay fila que comparar como en `guardarBloque`, así que
         // Postgres lo rechaza directo por RLS en vez de devolver cero
-        // filas. Antes de este arreglo caía al mismo `else` genérico que
-        // un fallo de red, sin explicación. Mismo banner que el caso de
-        // edición, mismo remedio. Hallazgo de Hugo.
-        setConflicto(MENSAJE_CONFLICTO)
+        // filas -- siempre cae en el mensaje de versión, nunca en el de
+        // edición simultánea (un bloque que todavía no existía no puede
+        // tener a otra persona editándolo). Hallazgo de Hugo.
+        setConflicto(conflicto)
       } else {
         // Mismo hueco que en `guardarOCrear`: sin esto, un fallo real
         // (red, un 500) marcaba el bloque en error sin decir por qué.
@@ -700,18 +726,27 @@ export default function Editor({
     if (!s) return
     marcarSeccion(id, 'guardando')
     try {
-      await conPisoPerceptible(guardarSeccionRemoto(s, experiencia.versionId))
+      const rev = await conPisoPerceptible(guardarSeccionRemoto(s, experiencia.versionId))
+      // Sin esto, el `rev` local se queda congelado en el que trajo la
+      // carga inicial: el PRÓXIMO guardado de este mismo segmento
+      // mandaría ese `rev` viejo contra la base, que ya subió con este
+      // guardado que sí funcionó -- un conflicto falso contra el propio
+      // trabajo de quien edita. Mismo patrón que `guardarOCrear` ya usa
+      // para bloques.
+      setBisagras(prev => prev.map(x => (x.id === id ? { ...x, rev } : x)))
       marcarSeccion(id, 'guardado')
       setErrorGlobal(null)
     } catch (e) {
-      if (esConflicto(e)) {
-        // `guardarSeccionRemoto` ahora lanza `ConflictoDeVersion` también
-        // cuando el UPDATE afecta cero filas (versión muerta) -- antes
-        // solo se revisaba el código `42501`, que un UPDATE nunca produce
-        // (a diferencia de un INSERT), así que este caso nunca se
-        // detectaba y la sección se marcaba "Guardado" sin haberse
-        // guardado. Ver el comentario en `almacenRemoto.ts`.
-        setConflicto(MENSAJE_CONFLICTO)
+      // `guardarSeccionRemoto` ahora también lanza `ConflictoDeVersion`
+      // cuando OTRA PERSONA ya guardó un cambio en este mismo segmento
+      // (candado real desde el 2026-09-29, ver
+      // `supabase/migrations/20260929_1715_hinges_concurrencia_optimista.sql`),
+      // no solo cuando la versión entera dejó de ser el borrador vivo.
+      // `mensajeDeConflicto` es lo que decide cuál de las dos cosas
+      // pasó y elige el texto correcto para cada una.
+      const conflicto = mensajeDeConflicto(e)
+      if (conflicto) {
+        setConflicto(conflicto)
       } else {
         setErrorGlobal(mensajeDeFallo('No se pudo guardar este segmento. Intenta de nuevo.'))
       }
@@ -784,7 +819,8 @@ export default function Editor({
         campo?.select()
       }, 50)
     } catch (e) {
-      if (esConflicto(e)) setConflicto(MENSAJE_CONFLICTO)
+      const conflicto = mensajeDeConflicto(e)
+      if (conflicto) setConflicto(conflicto)
       else setErrorGlobal(mensajeDeFallo('No se pudo crear el segmento. Intenta de nuevo.'))
     } finally {
       setCreandoSeccion(false)
@@ -825,7 +861,8 @@ export default function Editor({
       registrarDeshacer('Segmento movido', () => restaurarOrdenDeSecciones(ordenPrevio, cambios.map(c => c.id)))
     } catch (e) {
       setBisagras(antes) // el servidor no lo aceptó: se revierte a lo que sí está guardado
-      if (esConflicto(e)) setConflicto(MENSAJE_CONFLICTO)
+      const conflicto = mensajeDeConflicto(e)
+      if (conflicto) setConflicto(conflicto)
       else setErrorGlobal(mensajeDeFallo('No se pudo reordenar. Intenta de nuevo.'))
     }
   }
@@ -901,7 +938,8 @@ export default function Editor({
       }
     } catch (e) {
       setBisagras(antes) // no se pudo borrar del lado del servidor: se restaura
-      if (esConflicto(e)) setConflicto(MENSAJE_CONFLICTO)
+      const conflicto = mensajeDeConflicto(e)
+      if (conflicto) setConflicto(conflicto)
       else setErrorGlobal(mensajeDeFallo('No se pudo borrar el segmento. Intenta de nuevo.'))
     }
   }
@@ -914,7 +952,7 @@ export default function Editor({
   // verdad; si no, se queda esperando, igual que antes de borrarse.
   async function restaurarSeccionBorrada(seccion: BisagraEditable, bloquesDeLaSeccion: BloqueEditable[]) {
     try {
-      const { id: _idVieja, ...datosSeccion } = seccion
+      const { id: _idVieja, rev: _revVieja, ...datosSeccion } = seccion
       const recreada = await crearSeccionRemoto(datosSeccion, experiencia.id, experiencia.versionId)
       setBisagras(prev => [...prev, recreada])
       setActiva(recreada.id)
@@ -1036,8 +1074,9 @@ export default function Editor({
       const ordenPrevio = new Map(cambiados.map(b => [b.id, antes.get(b.id)!]))
       setBloques(prev => prev.map(b => (ordenPrevio.has(b.id) ? { ...b, orden: ordenPrevio.get(b.id)! } : b)))
       for (const c of cambiadosReales) marcarPorClave(claveDe(c.id), 'error')
-      if (esConflicto(e)) {
-        setConflicto(MENSAJE_CONFLICTO)
+      const conflicto = mensajeDeConflicto(e)
+      if (conflicto) {
+        setConflicto(conflicto)
       } else {
         setErrorGlobal(
           'No se pudo mover el bloque. Se deshizo el cambio en pantalla. Si moviste varios a la vez, revisa el orden: reordenarRemoto no es una sola operación, así que alguno pudo haberse guardado antes de que fallara.'
@@ -1093,7 +1132,8 @@ export default function Editor({
       setPorBorrar(null)
       if (capturado) registrarDeshacer('Bloque borrado', () => restaurarBloqueBorrado(capturado))
     } catch (e) {
-      if (esConflicto(e)) setConflicto(MENSAJE_CONFLICTO)
+      const conflicto = mensajeDeConflicto(e)
+      if (conflicto) setConflicto(conflicto)
       else setErrorGlobal(mensajeDeFallo('No se pudo quitar el bloque. Sigue ahí, sin cambios.'))
     } finally {
       setBorrando(null)

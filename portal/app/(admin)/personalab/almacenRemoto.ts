@@ -252,18 +252,30 @@ export async function borrarBloque(id: string) {
 // propósito: si dos personas mueven bloques de la MISMA bisagra a la vez el
 // peor caso es que el orden final no sea el que ninguna de las dos esperaba,
 // nunca contenido perdido, y hoy el editor lo usa una persona a la vez.
+// MISMO HALLAZGO QUE YA SE HABÍA CERRADO EN `reordenarSeccionesRemoto` Y EN
+// `guardarSeccionRemoto`, ENCONTRADO AQUÍ SIN CERRAR EL 2026-09-29
+// AUDITANDO LA CONCURRENCIA A PEDIDO DE FRANCISCO: sin `.select()`, un
+// UPDATE cuya fila queda fuera del `using` de RLS (la versión dejó de ser
+// el borrador vivo -- alguien publicó, o el bloque se borró mientras
+// tanto) no es un error para Postgres ni para PostgREST: son cero filas
+// afectadas, y la llamada vuelve como éxito. Antes de esto, reordenar
+// bloques sobre una versión que acababa de morir reportaba "listo" sin
+// haber movido nada.
 export async function reordenarRemoto(
   cambios: { id: string; orden: number }[],
   versionId: string
 ): Promise<void> {
   const sb = cliente()
   for (const c of cambios) {
-    const { error } = await sb
+    const { data, error } = await sb
       .from('blocks')
       .update({ orden: c.orden })
       .eq('id', c.id)
       .eq('version_id', versionId)
+      .select('id')
+      .maybeSingle()
     if (error) throw error
+    if (!data) throw new ConflictoDeVersion(0, -1)
   }
 }
 
@@ -332,7 +344,9 @@ export async function reordenarSeccionesRemoto(
 // (hoy siempre 'ignicion' desde el botón del riel, que es donde vive el
 // contenido propio de cada experiencia digital); `orden` lo calcula quien
 // llama, un lugar más allá de la última sección de ese mismo tiempo.
-export function seccionNueva(tiempo: Tiempo, orden: number): Omit<BisagraEditable, 'id'> {
+// Sin `rev` a propósito, igual que `crearBloque` no pide `id`: lo asigna
+// la base (empieza en 1, el mismo `default` que ya usa `blocks.rev`).
+export function seccionNueva(tiempo: Tiempo, orden: number): Omit<BisagraEditable, 'id' | 'rev'> {
   return {
     tiempo,
     orden,
@@ -344,7 +358,7 @@ export function seccionNueva(tiempo: Tiempo, orden: number): Omit<BisagraEditabl
 }
 
 export async function crearSeccionRemoto(
-  s: Omit<BisagraEditable, 'id'>,
+  s: Omit<BisagraEditable, 'id' | 'rev'>,
   experienciaId: string,
   versionId: string
 ): Promise<BisagraEditable> {
@@ -360,7 +374,7 @@ export async function crearSeccionRemoto(
       soporte: s.soporte,
       listo: s.listo,
     })
-    .select('id, tiempo, orden, titulo, descripcion, soporte, duracion, listo, requiere')
+    .select('id, tiempo, orden, titulo, descripcion, soporte, duracion, listo, requiere, rev')
     .single()
 
   if (error) throw error
@@ -372,19 +386,27 @@ export async function crearSeccionRemoto(
 // tiempo y soporte no cambian nunca desde esta pantalla, y orden lo maneja
 // solo `reordenarSeccionesRemoto`, para no pisar un reordenamiento que
 // haya corrido mientras tanto.
+//
+// CANDADO DE VERDAD, AGREGADO EL 2026-09-29 -- HASTA ESE DÍA, ESTO SOLO
+// SE CUIDABA DE QUE LA VERSIÓN SIGUIERA VIVA, NUNCA DE QUE OTRA PERSONA
+// HUBIERA EDITADO ESTA MISMA FILA. Hallazgo real, auditando la
+// concurrencia a pedido de Francisco ("si yo tengo abierta mi cuenta y mi
+// tía también, al mismo tiempo"): sin `eq('rev', s.rev)`, dos personas
+// escribiendo el título del MISMO segmento a la vez se pisaban en
+// silencio -- el segundo guardado en llegar ganaba siempre, y quien
+// escribió primero nunca se enteraba de que su texto se perdió. Mismo
+// candado que ya tenía `guardarBloque`, con la misma trampa ya resuelta
+// ahí: un UPDATE cuya fila queda fuera del `using` de RLS (versión
+// muerta) TAMBIÉN da cero filas, así que hay que distinguir las dos
+// causas releyendo la fila real cuando el primer intento no encuentra
+// nada -- si SÍ existe, es la otra persona editando; si no aparece ni en
+// esa segunda lectura, la versión ya no es la que se creía.
 export async function guardarSeccionRemoto(
-  s: Pick<BisagraEditable, 'id' | 'titulo' | 'descripcion' | 'listo'>,
+  s: Pick<BisagraEditable, 'id' | 'titulo' | 'descripcion' | 'listo' | 'rev'>,
   versionId: string
-): Promise<void> {
-  // MISMO DEFECTO QUE `guardarBloque` TENÍA, ENCONTRADO AQUÍ AL AUDITAR EL
-  // MISMO CAMINO PARA SECCIONES: un UPDATE cuya fila queda fuera del
-  // `using` de RLS (versión que dejó de ser el borrador vivo) no es un
-  // error para Postgres ni para PostgREST -- son cero filas afectadas, y
-  // sin `.select()` la llamada vuelve como éxito. Antes de esto, editar el
-  // título de una sección sobre una versión muerta reportaba "Guardado" sin
-  // haber escrito nada. `.select().maybeSingle()` fuerza a ver si de
-  // verdad hubo una fila, igual que ya hacía `guardarBloque`.
-  const { data, error } = await cliente()
+): Promise<number> {
+  const sb = cliente()
+  const { data, error } = await sb
     .from('hinges')
     .update({
       titulo: s.titulo,
@@ -393,10 +415,19 @@ export async function guardarSeccionRemoto(
     })
     .eq('id', s.id)
     .eq('version_id', versionId)
-    .select('id')
+    .eq('rev', s.rev)
+    .select('rev')
     .maybeSingle()
+
   if (error) throw error
-  if (!data) throw new ConflictoDeVersion(0, -1)
+
+  if (!data) {
+    const { data: actual } = await sb
+      .from('hinges').select('rev').eq('id', s.id).maybeSingle()
+    throw new ConflictoDeVersion(s.rev, actual?.rev ?? -1)
+  }
+
+  return data.rev
 }
 
 // Borrar una sección se lleva sus bloques con ella (`blocks.hinge_id`

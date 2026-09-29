@@ -34,6 +34,71 @@ la base) igual que exige el resto del protocolo de este portal.
 
 ## Abiertos / decididos
 
+### P-019 — Dos personas editando lo mismo a la vez: los segmentos no tenían ningún candado
+- Estado: **código listo y con `npx tsc --noEmit` limpio, esperando que Francisco corra la migración antes de fusionar -- sin ella, guardar o crear un segmento se rompe para todos**
+- Origen: Francisco pidió auditar el guardado del editor con una pregunta
+  concreta: "si yo tengo abierta mi cuenta y mi tía también, al mismo
+  tiempo... que nunca por un error tonto se vaya a perder información."
+- **Dos hallazgos reales, no teóricos, confirmados leyendo el código y la
+  base antes de tocar nada:**
+  1. `hinges` (los segmentos) nunca tuvo el candado de concurrencia
+     optimista que `blocks` y `experience_versions` sí tienen desde
+     `20260813_personalab_almacenamiento.sql` -- ese archivo lo dice por
+     escrito: "Dos personas editando la misma version se pisan en
+     silencio sin esto." Confirmado contra el esquema real
+     (`information_schema`/una consulta directa): `hinges` no tiene
+     columna `rev`. Hasta hoy, si dos personas del equipo editan el
+     título del MISMO segmento a la vez, ninguna ve ningún aviso: el
+     segundo guardado en llegar pisa al primero en silencio, y quien
+     escribió primero nunca se entera de que se perdió.
+  2. `reordenarRemoto` (mover bloques) tenía el MISMO defecto que ya se
+     había encontrado y cerrado en `reordenarSeccionesRemoto` y en
+     `guardarSeccionRemoto` en vueltas anteriores de esta misma auditoría
+     -- pero nunca se cerró aquí. Sin `.select().maybeSingle()`, un
+     UPDATE cuya fila queda fuera del `using` de RLS (versión que dejó de
+     ser el borrador vivo) no es un error para Postgres ni para
+     PostgREST: son cero filas afectadas, y la llamada reportaba éxito
+     sin haber movido nada.
+- **Construido:** migración nueva
+  (`supabase/migrations/20260929_1715_hinges_concurrencia_optimista.sql`)
+  que agrega `hinges.rev` y le engancha el mismo trigger genérico
+  (`pl_subir_rev()`) que ya usan `blocks` y `experience_versions` --no
+  hizo falta escribir nada nuevo del lado de la base, solo extender el
+  mecanismo que ya existía. `guardarSeccionRemoto` ahora manda
+  `eq('rev', s.rev)` y distingue, releyendo la fila si el primer intento
+  no encuentra nada, entre "otra persona ya lo guardó" (la fila sigue
+  viva, con un `rev` más alto) y "la versión ya no es la que se creía"
+  (la fila no aparece ni en la segunda lectura). `reordenarRemoto` ganó
+  el mismo `.select().maybeSingle()` que ya tenían sus hermanas.
+- **El mensaje de conflicto también mentía, y se corrigió.** Hasta hoy,
+  CUALQUIER conflicto (de cualquier causa) mostraba el mismo texto:
+  "alguien publicó o deshizo una publicación" -- falso en el caso que
+  Francisco preguntó, donde nadie publica nada, solo dos personas editan
+  a la vez. `ConflictoDeVersion.revReal` ya cargaba la distinción desde
+  que existe (`guardarBloque` la usa para construirse); lo que faltaba
+  era leerla en `Editor.tsx` para elegir el mensaje correcto en vez de
+  repetir siempre el mismo. Ahora hay dos mensajes reales,
+  `mensajeDeConflicto(e)` decide cuál, y los ocho sitios del editor que
+  antes mostraban el genérico ya usan la función nueva.
+- **Verificado hasta ahora, lo que sí se pudo sin la migración:**
+  `npx tsc --noEmit` limpio con los tipos nuevos (`BisagraEditable.rev`,
+  las firmas de `guardarSeccionRemoto`/`crearSeccionRemoto`/`seccionNueva`
+  sin `rev` en la creación). La ruta normal de reordenar bloques (que sí
+  usa `reordenarRemoto`, el segundo hallazgo) se ejercitó de verdad
+  dentro de la verificación en vivo de P-018 (deshacer un movimiento de
+  bloque) y siguió funcionando igual con el `.select().maybeSingle()`
+  agregado.
+- **Lo que falta, y por qué no se fusionó ya:** confirmado contra la base
+  real que `hinges.rev` todavía no existe -- la migración no ha corrido.
+  El código nuevo de `guardarSeccionRemoto`/`crearSeccionRemoto` YA pide
+  esa columna: si esto se fusiona antes de correr la migración, CREAR o
+  GUARDAR cualquier segmento se rompe para cualquiera, con un error real
+  de Postgres ("column hinges.rev does not exist"). Por eso este cambio,
+  a diferencia del resto de esta sesión, se queda sin empujar a `main`
+  hasta que Francisco corra la migración y se pueda verificar en vivo el
+  escenario de dos personas editando el mismo segmento a la vez, con una
+  cuenta desechable.
+
 ### P-018 — Deshacer (Ctrl/Cmd+Z) construido de punta a punta en el editor, no existía
 - Estado: **construido y verificado contra la base real, 2026-09-29**
 - Origen: Francisco pidió revisar "si ya la función de CTRL-Z está
