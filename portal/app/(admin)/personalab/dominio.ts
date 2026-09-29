@@ -42,10 +42,20 @@ export const TEAL = '#002B34'
 export const TEAL_2 = '#0A3B45'
 export const TERRA = '#B9735A'
 
+// LA ETIQUETA CAMBIÓ, EL VOCABULARIO INTERNO NO. Pedido de Francisco,
+// 2026-09-29: "las secciones de la experiencia en el portal ya no se
+// llamen víspera, ignición, retorno... ponles Previo, Desarrollo, Post".
+// `vispera`/`ignicion`/`retorno` siguen siendo los valores reales del
+// enum de Postgres `pl_tiempo` (creado 2026-08-13, Consejo #002, para
+// evitar el vocabulario genérico de curso -- "tiempo: no módulo") y el
+// vocabulario interno del código: renombrar EL ENUM es una migración de
+// esquema aparte, más grande, que nadie pidió. Lo único que cambia es lo
+// que la persona lee en pantalla, con el mismo patrón que ya usa
+// `pl_maduracion` ('diseno' por dentro, "En diseño" en pantalla).
 export const ETIQUETA_TIEMPO: Record<Tiempo, string> = {
-  vispera: 'Víspera',
-  ignicion: 'Ignición',
-  retorno: 'Retorno',
+  vispera: 'Previo',
+  ignicion: 'Desarrollo',
+  retorno: 'Post',
 }
 
 export const PAPEL_SOFTWARE: Record<Tiempo, string> = {
@@ -199,8 +209,12 @@ export const EXPERIENCIAS: Experiencia[] = [
       { id: 'p1', tiempo: 'vispera', orden: 1, titulo: 'Invitación al grupo', descripcion: 'Convocatoria breve, una semana antes.', soporte: 'pantalla', listo: true },
       { id: 'p2', tiempo: 'ignicion', orden: 1, titulo: 'El inventario del hoy', descripcion: 'Qué hay de valioso en el presente que no se está mirando.', soporte: 'sala', duracion: '60 min', listo: true },
       { id: 'p3', tiempo: 'ignicion', orden: 2, titulo: 'La carta al futuro', descripcion: 'Escrita a mano. No se sube ni se transcribe.', soporte: 'objeto', duracion: '45 min', listo: true },
-      { id: 'p4', tiempo: 'retorno', orden: 1, titulo: 'Capa mensual', descripcion: 'En curso con el grupo Anáhuac. Mes 5 de 6.', soporte: 'pantalla', listo: true },
-      { id: 'p5', tiempo: 'retorno', orden: 2, titulo: 'Entrega de la carta', descripcion: 'La carta escrita en la ignición vuelve a su autor a los seis meses. Se recibe, no se descarga.', soporte: 'objeto', listo: true },
+      // 'p4' (Capa mensual, "En curso con el grupo Anáhuac. Mes 5 de 6.")
+      // se quitó el 2026-09-29, a pedido de Francisco: era un "fixed" de
+      // la conversación inicial, nunca una realidad -- nadie estuvo nunca
+      // "en curso" con ningún grupo Anáhuac aquí. Mismo hallazgo y mismo
+      // borrado que se hizo en la base real (ver docs/PENDIENTES.md).
+      { id: 'p5', tiempo: 'retorno', orden: 1, titulo: 'Entrega de la carta', descripcion: 'La carta escrita en la ignición vuelve a su autor a los seis meses. Se recibe, no se descarga.', soporte: 'objeto', listo: true },
     ],
     kit: [
       { id: 'pk1', columna: 'objeto', nombre: 'Papel y sobre lacrado', detalle: 'Para la carta al futuro.', porPersona: true, disponible: true },

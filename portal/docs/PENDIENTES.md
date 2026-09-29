@@ -76,7 +76,53 @@ la base) igual que exige el resto del protocolo de este portal.
   también colores rotos.
 
 ### P-012 — El Presente como Regalo, construido con la cronología real: falta el pasaje del Dr. Alexander, lo de perdón, y publicar
-- Estado: **decidido, mecanismo verificado de punta a punta, falta contenido de Francisco y la decisión de publicar**
+- Estado: **decidido, mecanismo verificado de punta a punta, falta contenido de Francisco y la decisión de publicar. Además: las secciones se renombraron (Previo/Desarrollo/Post) y la versión PUBLICADA quedó con una fila menos, falsa, y sigue siendo un snapshot viejo que no es el borrador real**
+- Actualización 2026-09-29: dos pedidos de Francisco sobre esta misma
+  experiencia, los dos resueltos.
+  1. **"Las secciones ya no se llamen víspera, ignición, retorno... ponles
+     Previo, Desarrollo, Post."** Ese vocabulario viene del Consejo #002
+     (`supabase/migrations/20260813_personalab_contenido.sql:6-18`): léxico
+     deliberado para que el esquema NO se pareciera al de un curso ("tiempo:
+     no módulo → enum vispera/ignicion/retorno"). Cambiar el enum real de la
+     base (`pl_tiempo`) es una migración de esquema aparte que nadie pidió;
+     lo que se corrigió es la ETIQUETA que ve la persona, en el único lugar
+     donde vive de verdad (`ETIQUETA_TIEMPO`, `dominio.ts`) más las dos
+     copias sueltas que no importaban de ahí (`experiencias/[id]/page.tsx`,
+     `encuentros/[id]/page.tsx`). El vocabulario interno (`vispera`,
+     `ignicion`, `retorno`, como valores de enum y como nombres de campo)
+     sigue igual, mismo patrón que `pl_maduracion` ('diseno' por dentro,
+     "En diseño" en pantalla). Verificado en vivo: la ficha de la
+     experiencia, la vista previa del lector y el riel del editor real, los
+     tres dicen ahora Previo/Desarrollo/Post.
+  2. **"No pongas lo de la capa mensual... es un 'fixed' de lo que
+     habíamos hablado al principio, no una realidad de la estructura de
+     hoy. Corrige esa página ya."** Cierto, y peor de lo que parecía visto
+     de afuera. La ficha de la experiencia (`experiencias/[id].page.tsx`,
+     vía `catalogo.ts`) muestra la versión PUBLICADA (2026-09-14), no el
+     borrador real (2026-09-15, el que de verdad se edita hoy: 18 bisagras
+     reales, todas bajo Desarrollo, cero Retorno). Esa versión publicada
+     nunca se actualizó desde que se creó: tenía una bisagra "Capa mensual"
+     (retorno) con `listo: true` y **cero bloques de contenido** -- una fila
+     que afirmaba estar lista sin haber una sola palabra escrita adentro.
+     Confirmado contra la base real antes de tocar nada (bloques, bookmarks
+     y respuestas guardadas: los tres en cero para esa fila) y borrada,
+     junto con su gemela en los datos de ejemplo de `dominio.ts`
+     (`vista/[encuentroId]/`, mismo texto, "En curso con el grupo Anáhuac.
+     Mes 5 de 6." -- una fecha que nunca ocurrió).
+  - **Lo que NO se tocó, y Francisco tiene que saber:** la versión
+    publicada sigue siendo, en todo lo demás, el snapshot viejo de
+    pre-reconstrucción -- tres bisagras con contenido real pero superadas
+    (Invitación al foro, El inventario del hoy, La carta al futuro) más
+    cuatro cáscaras vacías (Finitud/Gratitud/Silencio/Perdón, `listo:
+    false`, 0 bloques cada una) y "Entrega de la carta" (retorno, 5
+    bloques reales, no se tocó: SÍ tiene contenido, a diferencia de Capa
+    mensual). Nada de esto vive en el borrador real. La ficha de la
+    experiencia va a seguir sin reflejar "cómo está la estructura hoy" en
+    su totalidad -- no solo en Capa mensual -- hasta que ese borrador se
+    publique, que es justo la decisión que este mismo pendiente ya tenía
+    parada esperando el contenido que falta (Dr. Alexander, perdón). No se
+    tocó ni se publicó nada de eso sin que Francisco lo pida: es su
+    decisión, ya escrita arriba en este mismo pendiente antes de hoy.
 - Actualización 2026-09-23: Francisco corrió la migración. Verificado con
   ejecución real (no solo que la migración "corrió bien"): sesión real de
   un comprador (no service role) contra `public.responses` -- guardar,

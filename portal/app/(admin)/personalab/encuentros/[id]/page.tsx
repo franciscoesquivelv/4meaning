@@ -240,9 +240,13 @@ export default async function EncuentroPage({ params }: { params: { id: string }
             </div>
           </TarjetaLista>
 
-          <TarjetaLista titulo="Víspera">
+          {/* "Previo", no "Víspera" -- mismo cambio de etiqueta que
+              `dominio.ts` (pedido de Francisco, 2026-09-29). `c.vispera`
+              sigue siendo el nombre real del campo (viene del enum de la
+              base, `pl_tiempo`), esto solo cambia lo que se lee. */}
+          <TarjetaLista titulo="Previo">
             {c.vispera.length === 0 ? (
-              <div className="px-5 py-5 text-sm text-slate-500">Sin víspera diseñada.</div>
+              <div className="px-5 py-5 text-sm text-slate-500">Sin nada diseñado para antes del encuentro.</div>
             ) : (
               c.vispera.map(b => (
                 <div key={b.id} className="px-5 py-3 border-b border-slate-100 last:border-b-0">

@@ -9,8 +9,11 @@ import { TONO } from '@/lib/estilos/oficina'
 // `lib/personalab/catalogo.ts` para el detalle exacto de qué tan real es
 // cada sección de esta ficha (bisagras, kit, encuentros).
 
+// Misma etiqueta que `dominio.ts` (pedido de Francisco, 2026-09-29): el
+// vocabulario interno sigue siendo vispera/ignicion/retorno (enum real de
+// la base), esto solo cambia lo que se lee en pantalla.
 const ETIQUETA_TIEMPO: Record<string, string> = {
-  vispera: 'Víspera', ignicion: 'Ignición', retorno: 'Retorno',
+  vispera: 'Previo', ignicion: 'Desarrollo', retorno: 'Post',
 }
 const PAPEL_SOFTWARE: Record<string, string> = {
   vispera: 'El software es protagonista. Es el tiempo que hoy no existe en ningún lado.',
