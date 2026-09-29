@@ -55,7 +55,7 @@ export default function NuevaExperienciaPage() {
       </Link>
 
       <div className="mt-4">
-        <Titulo sub="El primer borrador del diseño. Las bisagras y el kit se arman después, desde el editor.">
+        <Titulo sub="El primer borrador del diseño. Los segmentos y el kit se arman después, desde el editor.">
           Nueva experiencia
         </Titulo>
       </div>

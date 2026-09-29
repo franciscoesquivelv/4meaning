@@ -34,6 +34,56 @@ la base) igual que exige el resto del protocolo de este portal.
 
 ## Abiertos / decididos
 
+### P-017 — Léxico de pantalla: bisagra ahora es "segmento", tiempo ahora es Previo/Desarrollo/Post
+- Estado: **decidido y aplicado en todo el portal de PersonaLab (admin), 2026-09-29**
+- Origen: dos pedidos seguidos de Francisco sobre "El Presente como Regalo"
+  (ver P-012) escalaron a un cambio de vocabulario de pantalla más amplio.
+  Primero pidió que los tres tiempos (víspera/ignición/retorno) se llamen
+  Previo/Desarrollo/Post. Luego notó la contradicción que eso abría:
+  "¿Eso no son secciones ahora?" -- el editor YA llamaba "sección" a cada
+  bisagra (Nueva sección, Título de la sección...) desde hace varias
+  vueltas, y con el tiempo también llamándose "sección" las dos cosas
+  iban a compartir nombre en la misma pantalla (la ficha de una
+  experiencia diría "sección: Previo" y adentro "sección: Invitación al
+  grupo"). Preguntado en el chat, decidió: el tiempo se queda con
+  "sección"; la bisagra necesita otra palabra. Se investigó "momento"
+  (candidato natural por la memoria `presente-regalo-digital.md`,
+  decisión 5: "un momento, una pantalla") y se descartó por chocar con el
+  guion real: `contenido.ts` usa "momento" una y otra vez como lenguaje
+  natural del retiro ("busca un momento en que alguien te sostuvo"), así
+  que una pantalla rotulada "Momento 3 de 5" habría competido con el
+  propio texto que le pide a la persona pensar en "un momento" distinto.
+  Se propusieron "paso" y "parada" como alternativas limpias; Francisco
+  eligió **"segmento"**, sin choque con nada existente (verificado con
+  grep antes de adoptarla).
+- **Lo que cambió, y lo que no.** Igual que con tiempo: el vocabulario
+  interno (la tabla `hinges`, el tipo `BisagraEditable`, las funciones
+  `agregarSeccion`/`seccionesRef`/etc., los comentarios de código) se
+  queda igual a propósito -- renombrar eso es otro proyecto, nadie lo
+  pidió. Lo único que cambió es la etiqueta que lee la persona: "bisagra"
+  y "sección" (como sinónimo de bisagra) pasan a ser "segmento" en las 11
+  pantallas donde aparecían como texto visible (Resumen, Experiencias,
+  la ficha de una experiencia, Editar ficha, Nueva experiencia, Publicar,
+  Progreso, el detalle de un encuentro, y el editor real: botón "+ Nuevo
+  segmento", el diálogo de borrar, el título del campo, los mensajes de
+  guardar/crear/borrar). El "Retorno" del menú de PersonaLab (la etapa de
+  seguimiento a seis meses de un grupo, no un tiempo de una experiencia)
+  y "recorrido"/"pasos" del lector real del participante
+  (`(experiencia)/experiencia/[slug]/page.tsx:65`, "Son N pasos.") son
+  conceptos distintos que ya tenían su propia palabra funcionando: no se
+  tocaron.
+- Verificado en vivo con cuenta desechable: Resumen ("11 segmentos sin
+  diseñar", "X de Y segmentos listos"), Experiencias (encabezado de tabla
+  "SEGMENTOS"), la ficha de El Presente como Regalo ("Segmentos 4 de 8"),
+  y el editor real ("+ Nuevo segmento", el diálogo completo de borrar con
+  su texto y su botón, ambos en "segmento"). `npx tsc --noEmit` limpio.
+- Lo que sigue con el nombre viejo, a propósito, documentado para que no
+  se confunda con un olvido: los comentarios de código (siguen hablando
+  de "sección"/"bisagra" porque describen variables y funciones que
+  siguen llamándose así) y `app/prototipo/` (ruta muerta, ya no enlazada
+  desde ningún lado del portal real, confirmado por grep antes de dejarla
+  intacta).
+
 ### P-016 — `kit/page.tsx` y `vista/[encuentroId]/` siguen en datos de muestra
 - Estado: **abierto para los datos; el color de marca de los dos ya se corrigió (2026-09-28)**
 - Origen: encontrado de pasada arreglando H-010 (Resumen/Grupos/

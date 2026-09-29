@@ -47,7 +47,7 @@ export default function EditarFichaClient({ experiencia }: { experiencia: FichaE
       </Link>
 
       <div className="mt-4">
-        <Titulo sub="El nombre, la narrativa y cómo se da acceso. Las bisagras se editan desde el editor.">
+        <Titulo sub="El nombre, la narrativa y cómo se da acceso. Los segmentos se editan desde el editor.">
           Editar ficha
         </Titulo>
       </div>

@@ -68,7 +68,7 @@ export default async function ResumenPage() {
       })),
     ...(huecos.length
       ? [{
-          titulo: `${huecos.reduce((s, h) => s + h.bisagrasFaltantes.length, 0)} bisagras sin diseñar`,
+          titulo: `${huecos.reduce((s, h) => s + h.bisagrasFaltantes.length, 0)} segmentos sin diseñar`,
           sub: 'No es captura pendiente: falta trabajo de diseño antes de poder realizarla',
           href: '/personalab/experiencias',
           accion: 'Ver experiencias',
@@ -142,7 +142,7 @@ export default async function ResumenPage() {
                   key={h.experienciaId}
                   href={`/personalab/experiencias/${h.experienciaSlug}`}
                   titulo={h.experienciaNombre}
-                  sub={h.sinDiseño ? 'Sin ninguna bisagra. La experiencia entera está por diseñar.' : h.bisagrasFaltantes.join(' · ')}
+                  sub={h.sinDiseño ? 'Sin ningún segmento. La experiencia entera está por diseñar.' : h.bisagrasFaltantes.join(' · ')}
                   derecha={
                     <span className="text-xs text-amber-700 tabular-nums whitespace-nowrap">
                       {h.sinDiseño ? 'sin diseño' : `faltan ${h.bisagrasFaltantes.length}`}
@@ -162,7 +162,7 @@ export default async function ResumenPage() {
                 href={`/personalab/experiencias/${e.slug}`}
                 titulo={e.nombre}
                 sub={
-                  (e.bisagrasTotal === 0 ? 'Sin bisagras' : `${e.bisagrasListas} de ${e.bisagrasTotal} bisagras listas`) +
+                  (e.bisagrasTotal === 0 ? 'Sin segmentos' : `${e.bisagrasListas} de ${e.bisagrasTotal} segmentos listos`) +
                   ' · ' + (e.encuentros === 0 ? 'nunca se ha realizado' : `${e.encuentros} encuentro${e.encuentros > 1 ? 's' : ''}`)
                 }
                 derecha={<Badge label={ETIQUETA_MADURACION[e.maduracion] ?? e.maduracion} cls={COLOR_MADURACION[e.maduracion] ?? COLOR_MADURACION.diseno} />}

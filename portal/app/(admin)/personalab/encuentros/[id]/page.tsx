@@ -98,7 +98,7 @@ export default async function EncuentroPage({ params }: { params: { id: string }
         items={[
           { v: String(c.personasEnElGrupo || 0), k: 'En el grupo' },
           { v: `${c.totalChecklist - c.pendientes} / ${c.totalChecklist}`, k: 'Preparación' },
-          { v: String(c.guion.length), k: 'Bisagras de sala' },
+          { v: String(c.guion.length), k: 'Segmentos de sala' },
           { v: c.estado === 'corrida' ? `${c.mesDeRetorno ?? 0} / 6` : 'sin retorno', k: 'Mes de retorno' },
         ]}
       />

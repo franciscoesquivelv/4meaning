@@ -27,7 +27,7 @@ export default function ProgresoClient({ datos }: { datos: DatosProgreso }) {
 
   return (
     <>
-      <Titulo sub="Por dónde va cada quien, no cuánto le falta. No hay porcentaje ni racha: solo la última bisagra que abrió y cuándo.">
+      <Titulo sub="Por dónde va cada quien, no cuánto le falta. No hay porcentaje ni racha: solo el último segmento que abrió y cuándo.">
         Progreso
       </Titulo>
 

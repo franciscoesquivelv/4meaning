@@ -107,7 +107,7 @@ export default async function ExperienciaPage({ params }: { params: { id: string
         <span>Duración <b className="text-ink font-medium">{e.duracion ?? 'Por definir'}</b></span>
         <span>Se ha realizado <b className="text-ink font-medium">{e.encuentros.length === 0 ? 'nunca' : `${e.encuentros.length} ${e.encuentros.length === 1 ? 'vez' : 'veces'}`}</b></span>
         <span>Espacio al grupo <b className="text-ink font-medium">{e.abreEspacioAlGrupo ? 'sí' : 'no'}</b></span>
-        <span>Bisagras <b className="text-ink font-medium tabular-nums">{listas} de {e.bisagras.length}</b></span>
+        <span>Segmentos <b className="text-ink font-medium tabular-nums">{listas} de {e.bisagras.length}</b></span>
       </div>
 
       {e.notaDiseno && (
@@ -128,7 +128,7 @@ export default async function ExperienciaPage({ params }: { params: { id: string
                 </Link>
               }
             >
-              Esta experiencia no tiene ninguna bisagra definida todavía. No es que falte capturarla: es que
+              Esta experiencia no tiene ningún segmento definido todavía. No es que falte capturarlo: es que
               no está diseñada. Mientras siga así, no se puede realizar ni licenciar a un grupo.
             </Vacio>
           ) : (

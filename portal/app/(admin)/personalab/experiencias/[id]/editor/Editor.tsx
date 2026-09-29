@@ -600,7 +600,7 @@ export default function Editor({
         // guardado. Ver el comentario en `almacenRemoto.ts`.
         setConflicto(MENSAJE_CONFLICTO)
       } else {
-        setErrorGlobal(mensajeDeFallo('No se pudo guardar esta sección. Intenta de nuevo.'))
+        setErrorGlobal(mensajeDeFallo('No se pudo guardar este segmento. Intenta de nuevo.'))
       }
       marcarSeccion(id, 'error')
     }
@@ -641,7 +641,7 @@ export default function Editor({
       }, 50)
     } catch (e) {
       if (esConflicto(e)) setConflicto(MENSAJE_CONFLICTO)
-      else setErrorGlobal(mensajeDeFallo('No se pudo crear la sección. Intenta de nuevo.'))
+      else setErrorGlobal(mensajeDeFallo('No se pudo crear el segmento. Intenta de nuevo.'))
     } finally {
       setCreandoSeccion(false)
     }
@@ -719,7 +719,7 @@ export default function Editor({
     } catch (e) {
       setBisagras(antes) // no se pudo borrar del lado del servidor: se restaura
       if (esConflicto(e)) setConflicto(MENSAJE_CONFLICTO)
-      else setErrorGlobal(mensajeDeFallo('No se pudo borrar la sección. Intenta de nuevo.'))
+      else setErrorGlobal(mensajeDeFallo('No se pudo borrar el segmento. Intenta de nuevo.'))
     }
   }
 
@@ -896,9 +896,9 @@ export default function Editor({
               variante="secundario"
               onClick={agregarSeccion}
               disabled={creandoSeccion}
-              title="Agregar una sección nueva"
+              title="Agregar un segmento nuevo"
             >
-              + {creandoSeccion ? 'Creando…' : 'Nueva sección'}
+              + {creandoSeccion ? 'Creando…' : 'Nuevo segmento'}
             </Boton>
             {/* SEGUNDA VUELTA, 2026-09-23. La primera corrección lo dejó
                 deshabilitado-pero-visible, con un título que explica la
@@ -966,7 +966,7 @@ export default function Editor({
         <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center px-4">
           <div className="bg-white rounded-[10px] shadow-xl p-6 max-w-sm w-full">
             <h3 className="text-base font-semibold text-ink">
-              ¿Estás seguro que quieres borrar esta sección?
+              ¿Estás seguro que quieres borrar este segmento?
             </h3>
             <p className="text-sm text-gray-ui mt-2 leading-relaxed">
               "{bisagras.find(s => s.id === porBorrarSeccion)?.titulo}" y todo lo que tenga
@@ -977,7 +977,7 @@ export default function Editor({
                 Cancelar
               </button>
               <button onClick={() => confirmarBorrarSeccion(porBorrarSeccion)} className={BTN_PELIGRO}>
-                Sí, borrar sección
+                Sí, borrar segmento
               </button>
             </div>
           </div>
@@ -1022,8 +1022,8 @@ export default function Editor({
           <button
             onClick={() => setRielColapsado(v => !v)}
             className="flex items-center justify-center w-full min-h-toque mb-2 rounded-[10px] text-gray-ui hover:text-ink hover:bg-paper-2 transition-colors"
-            title={rielColapsado ? 'Mostrar secciones' : 'Minimizar secciones'}
-            aria-label={rielColapsado ? 'Mostrar secciones' : 'Minimizar secciones'}
+            title={rielColapsado ? 'Mostrar segmentos' : 'Minimizar segmentos'}
+            aria-label={rielColapsado ? 'Mostrar segmentos' : 'Minimizar segmentos'}
             aria-expanded={!rielColapsado}
           >
             <svg
@@ -1093,14 +1093,14 @@ export default function Editor({
           {bisagras.length === 0 && (
             <div className="border border-dashed border-line rounded-[10px] px-5 py-10 text-center">
               <p className="text-sm text-gray-ui">
-                {experiencia.nombre} todavía no tiene secciones.
+                {experiencia.nombre} todavía no tiene segmentos.
               </p>
               <p className="text-xs text-gray-ui mt-2 leading-relaxed max-w-[46ch] mx-auto">
-                Una sección es cada momento de la experiencia. El contenido se escribe dentro de
-                ellas, así que hay que crear una primero.
+                Un segmento es cada momento de la experiencia. El contenido se escribe dentro de
+                ellos, así que hay que crear uno primero.
               </p>
               <button onClick={agregarSeccion} disabled={creandoSeccion} className={`${BTN_PRIMARIO} mt-4`}>
-                {creandoSeccion ? 'Creando…' : 'Crear la primera sección'}
+                {creandoSeccion ? 'Creando…' : 'Crear el primer segmento'}
               </button>
             </div>
           )}
@@ -1115,7 +1115,7 @@ export default function Editor({
                   onClick={() => setPorBorrarSeccion(bisagraActiva.id)}
                   className="text-[11px] text-gray-ui hover:text-alerta transition-colors"
                 >
-                  Borrar sección
+                  Borrar segmento
                 </button>
               </div>
               {/* CAMPO CON FORMA DE CAMPO EN REPOSO, no un lápiz encima
@@ -1146,7 +1146,7 @@ export default function Editor({
                 id="titulo-seccion"
                 value={bisagraActiva.titulo}
                 onChange={e => actualizarSeccion(bisagraActiva.id, { titulo: e.target.value })}
-                placeholder="Título de la sección"
+                placeholder="Título del segmento"
                 spellCheck
                 lang="es"
                 className="w-full text-xl font-semibold tracking-tight text-ink bg-white border border-line rounded-[10px] focus:border-dom/40 outline-none transition-colors px-3 py-2 mt-1"
@@ -1364,7 +1364,7 @@ function PreviaContenido({
           <p className="text-[15px] font-light text-gray-ui leading-relaxed">
             {delBloque.length === 0
               ? 'Aquí va a leerse lo que escribas.'
-              : 'Todo lo que hay en esta sección está marcado como exclusivo de equipo.'}
+              : 'Todo lo que hay en este segmento está marcado como exclusivo de equipo.'}
           </p>
         ) : (
           visiblesEnPrevia.map(b => <BloqueLector key={claveDe(b.id)} b={b} />)

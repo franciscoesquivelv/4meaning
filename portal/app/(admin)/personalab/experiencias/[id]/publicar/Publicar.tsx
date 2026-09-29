@@ -173,7 +173,7 @@ export default function Publicar({
               <p className="text-sm font-semibold text-emerald-900">No encontré nada que corregir.</p>
               <p className="text-sm text-emerald-800 mt-1">
                 Revisé bloques vacíos, citas sin autor, objetos sin instrucción, archivos sin subir y
-                bisagras que el participante vería en blanco.
+                segmentos que el participante vería en blanco.
               </p>
             </div>
           )}
@@ -185,7 +185,7 @@ export default function Publicar({
               Qué se va a publicar
             </div>
             <dl className="space-y-2.5 text-sm">
-              <Dato k="Bisagras con contenido" v={`${r.resumen.bisagrasConContenido} de ${r.resumen.bisagrasTotales}`} />
+              <Dato k="Segmentos con contenido" v={`${r.resumen.bisagrasConContenido} de ${r.resumen.bisagrasTotales}`} />
               <Dato k="Bloques en el borrador" v={String(r.resumen.bloques)} />
               <Dato k="Ve el participante" v={String(r.resumen.visiblesAlParticipante)} />
               <Dato k="Solo el moderador" v={String(r.resumen.soloModerador)} />

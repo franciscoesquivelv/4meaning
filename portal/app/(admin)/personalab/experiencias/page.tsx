@@ -59,7 +59,7 @@ export default async function ExperienciasPage() {
   return (
     <>
       <Titulo
-        sub="La biblioteca. Cada experiencia es un diseño, no un contenedor de lecciones: vive en tres tiempos y se sostiene en bisagras."
+        sub="La biblioteca. Cada experiencia es un diseño, no un contenedor de lecciones: vive en tres tiempos y se sostiene en segmentos."
         accion={
           <Link href="/personalab/experiencias/nueva" className={BTN_PRIMARIO}>
             + Nueva experiencia
@@ -86,7 +86,7 @@ export default async function ExperienciasPage() {
           Todavía no hay ninguna experiencia en el catálogo.
         </Vacio>
       ) : (
-        <Tabla cabeceras={['Experiencia', 'Estado', 'Duración', 'Bisagras', 'Encuentros', 'Espacio al grupo']}>
+        <Tabla cabeceras={['Experiencia', 'Estado', 'Duración', 'Segmentos', 'Encuentros', 'Espacio al grupo']}>
           {experiencias.map(e => (
             <tr key={e.id} className="hover:bg-paper-2 transition-colors">
               <td className={TD}>
