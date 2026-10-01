@@ -34,6 +34,41 @@ la base) igual que exige el resto del protocolo de este portal.
 
 ## Abiertos / decididos
 
+### P-020 — Indicador de almacenamiento en el Resumen de PersonaLab
+- Estado: **construido y verificado en vivo, 2026-09-30**
+- Origen: Francisco preguntó cómo saber cuánto espacio de subida se está
+  usando en Supabase, ahora que el editor ya admite subir imagen/video/
+  audio/PDF y "en el portal van a subir cosas".
+- Construido: `lib/personalab/almacenamiento.ts`
+  (`cargarUsoAlmacenamiento()`), que suma `media.peso_bytes` por bucket --
+  la fuente que ya existe (cada subida real pasa por
+  `/api/personalab/medios/subir`, que registra el peso real ahí), no una
+  llamada aparte a la API de Storage enumerando objeto por objeto. Tarjeta
+  nueva en `/personalab` (Resumen), debajo de "En retorno".
+- **Límite honesto, documentado en el propio archivo:** el tope del plan
+  (cuánto hay disponible EN TOTAL) no vive en ninguna tabla -- es una
+  cifra de la cuenta de Supabase, no de este proyecto, y la llave de
+  servicio no da acceso a esa API. `TOPE_ALMACENAMIENTO_BYTES` se deja en
+  `null` a propósito: sin un tope real, la pantalla muestra el uso sin
+  fingir una barra de porcentaje contra un número inventado. Falta que
+  Francisco diga el tope de su plan para activar la barra.
+- **Hallazgo de paso, auditando esto mismo:** la tabla `media` tiene una
+  fila (`prueba2.pdf`, bucket `personalab-documentos`) que ya NO existe
+  en el almacén real -- confirmado comparando la tabla contra
+  `storage.from(bucket).list()` directo. Está referenciada por un bloque
+  de una versión RETIRADA de "El Presente como Regalo" (no la publicada
+  ni el borrador), así que hoy no la ve nadie real. También se encontró
+  un archivo huérfano real en Storage (`PHOTO-2026-02-19-19-41-09.jpg`,
+  subido dos veces el 2026-09-30 con 2 minutos de diferencia, la primera
+  copia sin ningún bloque que la use) -- 90 KB, no importa hoy, pero es
+  la primera señal de que puede acumularse basura de subidas abandonadas
+  si nadie limpia. Ninguno de los dos se tocó: son hallazgos para
+  decidir aparte, no lo que se pidió.
+- Verificado en vivo con cuenta desechable: la tarjeta mostró "8.7 MB",
+  desglosado "Fotos, video y audio (4 archivos) 8.7 MB" y "Documentos (1
+  archivo) 26 KB" -- coincide exacto con la consulta directa a la base
+  hecha antes de construir nada. `npx tsc --noEmit` limpio.
+
 ### P-019 — Dos personas editando lo mismo a la vez: los segmentos no tenían ningún candado
 - Estado: **cerrado y verificado en vivo contra la base real, 2026-09-29**
 - Origen: Francisco pidió auditar el guardado del editor con una pregunta

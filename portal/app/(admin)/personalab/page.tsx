@@ -1,7 +1,23 @@
 import Link from 'next/link'
 import { cargarResumen } from '@/lib/personalab/gestion'
+import { cargarUsoAlmacenamiento, TOPE_ALMACENAMIENTO_BYTES } from '@/lib/personalab/almacenamiento'
 import { Badge, Titulo, Etiqueta, FilaMetricas, TarjetaLista, Fila } from './ui'
 import { AVISO, BTN_PRIMARIO, BTN_SECUNDARIO, COLOR_ESTADO, COLOR_MADURACION, VACIO_NEUTRO, TARJETA } from './tokens'
+
+const ETIQUETA_BUCKET: Record<string, string> = {
+  'personalab-medios': 'Fotos, video y audio',
+  'personalab-documentos': 'Documentos',
+}
+
+// Formato adaptable (KB/MB/GB), a diferencia de `formatearPeso` (que
+// vive en lib/personalab/bloques.ts, calibrado para el peso de UN
+// archivo y siempre en KB): un total agregado de todo lo subido puede
+// llegar a los GB, y mostrarlo en KB sería ilegible.
+function formatearBytesTotal(bytes: number): string {
+  if (bytes >= 1024 ** 3) return `${(bytes / 1024 ** 3).toFixed(2)} GB`
+  if (bytes >= 1024 ** 2) return `${(bytes / 1024 ** 2).toFixed(1)} MB`
+  return `${Math.round(bytes / 1024)} KB`
+}
 
 const ETIQUETA_ESTADO: Record<string, string> = {
   prospecto: 'Prospecto', confirmada: 'Confirmado', en_preparacion: 'En preparación',
@@ -27,7 +43,10 @@ function fecha(iso: string) {
 // para empezar. Ver `lib/personalab/gestion.ts` para el detalle completo
 // de cada consulta real.
 export default async function ResumenPage() {
-  const r = await cargarResumen()
+  // En paralelo, sin depender uno del otro: si el uso de almacenamiento
+  // falla por lo que sea, el resto del Resumen se sigue viendo -- no es
+  // razón para tumbar toda la pantalla.
+  const [r, almacenamiento] = await Promise.all([cargarResumen(), cargarUsoAlmacenamiento()])
 
   if (r.estado === 'sin-acceso') {
     return (
@@ -189,6 +208,55 @@ export default async function ResumenPage() {
               ))
             )}
           </TarjetaLista>
+
+          {almacenamiento.estado === 'ok' && (
+            <div className={`${TARJETA} p-5`}>
+              <div className="flex items-center justify-between gap-3 mb-1">
+                <span className="text-sm font-semibold text-slate-900">Almacenamiento</span>
+                <span className="text-sm font-semibold text-slate-900 tabular-nums">
+                  {formatearBytesTotal(almacenamiento.datos.totalBytes)}
+                  {TOPE_ALMACENAMIENTO_BYTES && (
+                    <span className="text-slate-400 font-normal"> de {formatearBytesTotal(TOPE_ALMACENAMIENTO_BYTES)}</span>
+                  )}
+                </span>
+              </div>
+              {TOPE_ALMACENAMIENTO_BYTES ? (
+                <div className="h-1.5 rounded-full bg-slate-100 overflow-hidden mb-3">
+                  <div
+                    className="h-full bg-dom rounded-full"
+                    style={{
+                      width: `${Math.min(100, (almacenamiento.datos.totalBytes / TOPE_ALMACENAMIENTO_BYTES) * 100)}%`,
+                    }}
+                  />
+                </div>
+              ) : (
+                // SIN TOPE CONFIGURADO, A PROPÓSITO NO SE INVENTA UNO. Un
+                // tope adivinado dibujaría una barra que promete una
+                // precisión que no existe -- decisión de no mentir con el
+                // número, documentada en lib/personalab/almacenamiento.ts.
+                <p className="text-xs text-gray-ui mb-3 leading-relaxed">
+                  Agrega el tope de tu plan en <code className="text-[11px]">lib/personalab/almacenamiento.ts</code> para
+                  ver cuánto te queda.
+                </p>
+              )}
+              <div className="flex flex-col gap-1">
+                {almacenamiento.datos.porBucket.map(b => (
+                  <div key={b.bucket} className="flex items-center justify-between text-xs text-slate-500">
+                    <span>
+                      {ETIQUETA_BUCKET[b.bucket] ?? b.bucket}{' '}
+                      <span className="tabular-nums">
+                        ({b.archivos} archivo{b.archivos === 1 ? '' : 's'})
+                      </span>
+                    </span>
+                    <span className="tabular-nums flex-shrink-0">{formatearBytesTotal(b.bytes)}</span>
+                  </div>
+                ))}
+                {almacenamiento.datos.porBucket.length === 0 && (
+                  <span className="text-xs text-gray-ui">Nada subido todavía.</span>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </>
