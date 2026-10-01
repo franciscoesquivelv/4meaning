@@ -1350,16 +1350,24 @@ export default function Editor({
           una columna de vista previa sin marco, así que donde terminaba
           una y empezaba la otra no se podía adivinar sin fijarse en el
           contenido. Ahora cada una es su propio panel `TARJETA`
-          (`bg-paper border border-line rounded-marca`), con el `gap-6` de
+          (`bg-paper border border-line rounded-marca`), con el `gap` de
           esta cuadrícula pintando el suelo `paper-2` entre los tres como
-          el corte real. Dentro del riel y de la vista previa esto deja
+          el corte real -- `gap-4`, no el `gap-6` original: con las tres
+          columnas ya bordeadas, ese mismo espacio de siempre se leía como
+          un vacío entre tarjetas, no como aire alrededor de contenido
+          suelto. Hallazgo de Francisco, 2026-10-01, en el primer vistazo
+          al cambio ("hay mucho márgen entre el espacio de bloques y el
+          espacio del celular"): un borde visible cambia cuánto espacio
+          vacío se percibe, aunque el número de píxeles no haya cambiado
+          nunca antes de este commit. Dentro del riel y de la vista previa
+          esto deja
           piezas que ya eran `TARJETA` (la fila de sección activa, el
           selector celular/computadora) ahora dentro de un panel del mismo
           tono: se les quitó su propio fondo/borde donde quedaba
           redundante, y lo que las distingue de su panel es exactamente lo
           mismo que ya distingue a una fila de sección del resto del riel
           -- `bg-paper-2`, no un segundo borde encima de otro. */}
-      <div className={`grid grid-cols-1 gap-6 items-start ${
+      <div className={`grid grid-cols-1 gap-4 items-start ${
         dispositivo === 'computadora'
           ? rielColapsado ? 'lg:grid-cols-[40px_minmax(0,1fr)_680px]' : 'lg:grid-cols-[180px_minmax(0,1fr)_680px]'
           : rielColapsado ? 'lg:grid-cols-[40px_minmax(0,1fr)_320px]' : 'lg:grid-cols-[180px_minmax(0,1fr)_320px]'
@@ -1680,8 +1688,26 @@ export default function Editor({
             // de 375px de ancho real, sólo hay 327px disponibles ahí.
             // `w-full max-w-[375px]` se encoge para caber cuando hace
             // falta y solo llega a 375px cuando de verdad sobra el
-            // espacio; en `lg:` sigue siendo el 320px fijo de siempre.
-            <div className="relative mx-auto w-full max-w-[375px] lg:w-[320px] lg:flex-1 lg:min-h-0">
+            // espacio.
+            //
+            // SEGUNDO BUG REAL, el mismo día que el panel de arriba (P-026):
+            // en `lg:` esto era `lg:w-[320px]` fijo, calibrado contra una
+            // columna de 320px SIN borde ni padding propios. En cuanto esa
+            // columna ganó su panel (`border` + `p-3`, 26px entre los dos),
+            // el bisel pedía más ancho del que su contenedor ya tenía --
+            // se recortaba contra el `overflow-hidden` del panel nuevo.
+            // Francisco lo encontró de inmediato ("el borde derecho del
+            // celular se corta"). Dos números fijos (320px aquí Y el ancho
+            // de columna del grid, más abajo) describiendo la misma cosa
+            // sin que nada los mantuviera iguales es justo lo que rompió
+            // esto -- la corrección no es otro número fijo, es dejar de
+            // fijar uno: sin `lg:w-...`, el bisel ESTIRA al 100% del
+            // espacio real que `flex` le da dentro de su panel (mismo
+            // mecanismo que ya usa el marco de escritorio con
+            // `max-w-[620px]`, nunca un ancho fijo). `lg:max-w-[320px]`
+            // quedó como techo -- un teléfono real no debería verse más
+            // ancho que eso aunque la columna algún día tenga más espacio.
+            <div className="relative mx-auto w-full max-w-[375px] lg:max-w-[320px] lg:flex-1 lg:min-h-0">
               <div
                 className="relative bg-paper rounded-[40px] border-4 border-slate-800 overflow-hidden shadow-xl h-[620px] lg:h-full lg:max-h-[620px]"
               >

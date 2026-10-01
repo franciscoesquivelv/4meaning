@@ -92,6 +92,33 @@ la base) igual que exige el resto del protocolo de este portal.
   aparece es el de hidratación ya documentado en P-023, preexistente,
   confirmado otra vez que no lo causa este cambio). `npx tsc --noEmit`
   limpio.
+- **CORRECCIÓN EL MISMO DÍA -- la verificación de arriba no lo agarró.**
+  Francisco, apenas visto el cambio: "el borde derecho del celular se
+  corta. Hay mucho márgen entre el espacio de bloques y el espacio del
+  celular." Dos hallazgos reales, los dos causados por el panel nuevo:
+  - El bisel del celular tenía `lg:w-[320px]` FIJO, calibrado contra una
+    columna de 320px sin borde ni padding propios. En cuanto esa columna
+    ganó su panel (`border` + `p-3`, 26px entre los dos), el bisel pedía
+    más ancho del que su contenedor ya tenía y se recortaba contra el
+    `overflow-hidden` nuevo -- dos números fijos (el ancho del bisel Y el
+    ancho de columna del grid) describiendo la misma cosa sin que nada
+    los mantuviera iguales. Corregido quitando el ancho fijo: el bisel
+    ahora ESTIRA al 100% del espacio real que `flex` le da (mismo
+    mecanismo que ya usaba el marco de escritorio con `max-w-[620px]`),
+    con `lg:max-w-[320px]` como techo, no como valor fijo.
+  - El `gap-6` (24px) entre columnas nunca cambió de número, pero con las
+    tres columnas ya bordeadas ese mismo espacio se empezó a LEER como
+    un vacío entre tarjetas, no como aire alrededor de contenido suelto
+    -- el borde nuevo cambió cuánto vacío se percibe, aunque el pixel no
+    se hubiera movido antes de este commit. Bajado a `gap-4` (16px).
+  - Verificado en vivo otra vez, misma cuenta y experiencia desechables:
+    `getBoundingClientRect()` contra el elemento real confirmó el bisel
+    completo dentro de su panel (antes `fitsInside: false` con el borde
+    derecho recortado, ahora `true`, 13px de margen simétrico a cada
+    lado); el gap entre columnas midió 16px real en pantalla, no solo en
+    el className. Celular, computadora, 1280px, 375px -- otra vez los
+    cuatro, no solo el caso donde se encontró el defecto. `npx tsc
+    --noEmit` limpio.
 
 ### P-025 — Vista previa de escritorio antes de abrir el editor, construida y verificada en vivo
 - Estado: **construido y verificado en vivo, 2026-10-01**
