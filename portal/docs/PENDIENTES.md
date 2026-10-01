@@ -34,9 +34,58 @@ la base) igual que exige el resto del protocolo de este portal.
 
 ## Abiertos / decididos
 
-### P-022 — Tres pedidos nuevos de Francisco, valorados (no construidos): Ideas, vista previa antes del editor, arrastrar bloques
-- Estado: **abierto** — valorado con el código real, falta que Francisco
-  decida orden y si los tres entran
+### P-023 — Arrastrar bloques dentro de un segmento, construido y verificado en vivo
+- Estado: **construido y verificado en vivo, 2026-10-01**
+- Origen: Francisco, 2026-09-30 (valorado en P-022), confirmó seguir con
+  este el 2026-10-01: "parece el más barato".
+- Confirmado el motivo de la valoración, leyendo y probando el código: era
+  de verdad el más barato de los tres. `reordenar()` (la versión de
+  bloques de `reordenarSecciones`, `almacenRemoto.ts:111`) ya aceptaba
+  cualquier delta por el mismo `splice` que usan las secciones -- no hubo
+  que tocar NADA del backend ni de `mover(id, delta)`. Todo lo nuevo:
+  - `alSoltarBloque()` en `Editor.tsx`, calcado de `alSoltarSeccion()`:
+    traduce `active`/`over` del evento de arrastre a un id real con
+    `idPorClave` (la clave estable, no el id -- un bloque recién creado
+    puede seguir en `local:...` a mitad de un arrastre) y llama a
+    `mover(id, delta)`, el mismo camino que ya usan las flechas ▲▼.
+  - La lista de bloques de la sección activa se envolvió en su propio
+    `DndContext`/`SortableContext` (`sensoresArrastre` se reusa tal cual,
+    ya estaba declarado para las secciones).
+  - `TarjetaBloque` ahora llama a `useSortable({id: claveArrastre})`
+    internamente (mismo patrón que `FilaSeccion`) y tiene un asa de
+    arrastre (⠿) separada del botón de expandir/colapsar, para que
+    arrastrar no compita con un clic normal -- mismo motivo que ya
+    documenta el comentario de `FilaSeccion`.
+  - Las flechas ▲▼ NO se quitaron: siguen siendo el camino accesible por
+    teclado, igual que con las secciones.
+- Verificado en vivo con cuenta y experiencia desechables (tres bloques de
+  prueba, "BLOQUE UNO/DOS/TRES"): arrastrar el primero debajo del segundo
+  cambió el orden a DOS/UNO/TRES, quedó "Guardado", el botón "↩ Deshacer"
+  apareció, y la vista previa de la derecha se actualizó al mismo orden.
+  Recargando la página desde cero el orden siguió siendo DOS/UNO/TRES --
+  confirma que de verdad escribió en la base, no solo en pantalla. Las
+  flechas ▲▼ y el expandir/colapsar se probaron después del cambio y
+  siguen funcionando igual que antes (no hay regresión). `npx tsc --noEmit`
+  limpio.
+- **Hallazgo de paso, no introducido por este cambio:** la consola del
+  navegador muestra un warning de hidratación de React en el arrastre de
+  SECCIONES (`aria-describedby="DndDescribedBy-2"` servidor contra
+  `"DndDescribedBy-0"` cliente, dentro de `FilaSeccion`). Se verificó que
+  YA EXISTE en el código de `main` sin ningún cambio de esta sesión
+  (`git stash` temporal de este cambio, mismo warning exacto con el
+  código ya desplegado). Es una limitación conocida de `@dnd-kit/utilities`:
+  `useUniqueId()` usa un contador en una variable de módulo (`let ids =
+  {}`), no el `useId()` de React, así que no es seguro contra SSR+
+  hidratación. Es solo un atributo de accesibilidad (no afecta el
+  arrastre, ni visualmente, ni la función), y React lo corrige solo al
+  hidratar; no se tocó porque no es parte de lo que se pidió y arreglarlo
+  de verdad significa tocar la librería o evitar SSR en este componente,
+  no un cambio de una línea. Queda anotado para no redescubrirlo como si
+  fuera nuevo la próxima vez que alguien mire la consola.
+
+### P-022 — Tres pedidos nuevos de Francisco, valorados: Ideas, vista previa antes del editor (arrastrar bloques ya construido, ver P-023)
+- Estado: **abierto** — dos de los tres siguen sin construir, falta que
+  Francisco decida si entran
 - Origen: Francisco, 2026-09-30, junto con el pedido de subida que se
   volvió P-021: pidió ayuda para "valorar la creación" de tres cosas.
 - **"Sección de Ideas" para anotar y que queden registradas.** No existe
@@ -61,7 +110,10 @@ la base) igual que exige el resto del protocolo de este portal.
   los recorra en vez de mostrar solo el activo. Esfuerzo **bajo-medio**:
   es ensamblar piezas ya probadas, no inventar renderizado nuevo.
 - **Arrastrar bloques dentro de un segmento, como ya se arrastra
-  secciones.** Confirmado leyendo el código: las secciones ya tienen
+  secciones. Construido y verificado, ver P-023** -- lo que sigue es la
+  valoración original, que se queda como registro de por qué salió
+  barato, no como pendiente. Confirmado leyendo el código: las secciones
+  ya tenían
   `DndContext`/`SortableContext`/`useSortable` completo y funcionando
   (`Editor.tsx:1372-1413`), y el reordenamiento de BLOQUES (`mover(id,
   delta)`, hoy solo con flechas ▲▼) YA le manda a `reordenarRemoto` la

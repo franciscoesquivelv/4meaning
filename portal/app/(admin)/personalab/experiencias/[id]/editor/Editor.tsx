@@ -1103,6 +1103,34 @@ export default function Editor({
       })
   }
 
+  // ARRASTRAR BLOQUES DENTRO DE UN SEGMENTO, mismo mecanismo que ya prueba
+  // `alSoltarSeccion`: `reordenar()` (la versión de bloques de
+  // `reordenarSecciones`) ya acepta cualquier delta por el mismo `splice`,
+  // así que arrastrar tres lugares de una vez es `mover(id, delta)` con un
+  // delta más grande -- ni `mover` ni `reordenarRemoto` cambian. La única
+  // pieza nueva es traducir `active`/`over` (que llegan como la CLAVE
+  // estable, no el id real -- ver `useSortable({id: claveDe(b.id)})` en
+  // `TarjetaBloque`) de vuelta a un id real con `idPorClave`, porque un
+  // bloque recién creado todavía puede estar en `local:...` mientras se
+  // arrastra y su id real puede llegar a mitad del gesto.
+  function alSoltarBloque(evento: DragEndEvent) {
+    const { active, over } = evento
+    if (!over || active.id === over.id) return
+
+    const activaId = idPorClave(String(active.id))
+    const sobreId = idPorClave(String(over.id))
+    if (!activaId || !sobreId) return
+
+    // `delBloque` ya está filtrado a la sección activa y ordenado por
+    // `orden` -- es la misma lista que se renderiza, así que sus índices
+    // son los índices reales de pantalla, sin volver a filtrar nada.
+    const iViejo = delBloque.findIndex(b => b.id === activaId)
+    const iNuevo = delBloque.findIndex(b => b.id === sobreId)
+    if (iViejo < 0 || iNuevo < 0) return
+
+    mover(activaId, iNuevo - iViejo)
+  }
+
   function resaltar(id: string, conFoco: boolean) {
     enfocarAlResaltar.current = conFoco
     setRecienCreado(id)
@@ -1508,25 +1536,34 @@ export default function Editor({
               </div>
             )}
 
-            {delBloque.map((b, i) => (
-              <TarjetaBloque
-                key={claveDe(b.id)}
-                b={b}
-                primero={i === 0}
-                ultimo={i === delBloque.length - 1}
-                porBorrar={porBorrar === b.id}
-                borrando={borrando === b.id}
-                resaltado={recienCreado === b.id}
-                expandido={!colapsados.has(claveDe(b.id))}
-                onToggleExpandido={() => alternarColapso(claveDe(b.id))}
-                estado={estadosPorBloque.get(claveDe(b.id)) ?? 'limpio'}
-                onCambio={campos => actualizar(b.id, campos)}
-                onMover={d => mover(b.id, d)}
-                onPedirBorrar={() => setPorBorrar(b.id)}
-                onCancelarBorrar={() => setPorBorrar(null)}
-                onBorrar={() => borrar(b.id)}
-              />
-            ))}
+            <DndContext
+              sensors={sensoresArrastre}
+              collisionDetection={closestCenter}
+              onDragEnd={alSoltarBloque}
+            >
+              <SortableContext items={delBloque.map(b => claveDe(b.id))} strategy={verticalListSortingStrategy}>
+                {delBloque.map((b, i) => (
+                  <TarjetaBloque
+                    key={claveDe(b.id)}
+                    b={b}
+                    claveArrastre={claveDe(b.id)}
+                    primero={i === 0}
+                    ultimo={i === delBloque.length - 1}
+                    porBorrar={porBorrar === b.id}
+                    borrando={borrando === b.id}
+                    resaltado={recienCreado === b.id}
+                    expandido={!colapsados.has(claveDe(b.id))}
+                    onToggleExpandido={() => alternarColapso(claveDe(b.id))}
+                    estado={estadosPorBloque.get(claveDe(b.id)) ?? 'limpio'}
+                    onCambio={campos => actualizar(b.id, campos)}
+                    onMover={d => mover(b.id, d)}
+                    onPedirBorrar={() => setPorBorrar(b.id)}
+                    onCancelarBorrar={() => setPorBorrar(null)}
+                    onBorrar={() => borrar(b.id)}
+                  />
+                ))}
+              </SortableContext>
+            </DndContext>
           </div>
 
           {bisagraActiva && (
@@ -1828,10 +1865,11 @@ function FilaSeccion({
 // ── Tarjeta de un bloque ────────────────────────────────────────
 
 function TarjetaBloque({
-  b, primero, ultimo, porBorrar, borrando, resaltado, expandido, onToggleExpandido, estado,
+  b, claveArrastre, primero, ultimo, porBorrar, borrando, resaltado, expandido, onToggleExpandido, estado,
   onCambio, onMover, onPedirBorrar, onCancelarBorrar, onBorrar,
 }: {
   b: Bloque
+  claveArrastre: string
   primero: boolean
   ultimo: boolean
   porBorrar: boolean
@@ -1846,6 +1884,18 @@ function TarjetaBloque({
   onCancelarBorrar: () => void
   onBorrar: () => void
 }) {
+  // Misma clave estable que ya usa React para esta tarjeta (`claveDe`,
+  // nunca el `id` real): un bloque recién creado vive como `local:...`
+  // hasta su primer guardado, y si `useSortable` usara ese id cambiante,
+  // dnd-kit vería un ítem distinto a mitad de un arrastre en curso.
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: claveArrastre,
+  })
+  const estiloArrastre = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  }
   const esNota = b.tipo === 'nota'
   // La etiqueta del campo principal ya la declara el contrato, por tipo
   // (bloques.ts). Mostrarla solo cuando de verdad agrega algo que el badge
@@ -1934,23 +1984,39 @@ function TarjetaBloque({
 
   return (
     <div
+      ref={setNodeRef}
       id={`bloque-${b.id}`}
+      style={estiloArrastre}
       className={`${TARJETA} overflow-hidden transition-shadow duration-500 ${
         resaltado ? 'ring-2 ring-dom/15' : ''
       } ${estado === 'error' ? 'ring-2 ring-red-300' : ''}`}
     >
       <div className="flex items-center justify-between gap-3 px-4 py-2.5 border-b border-line bg-paper/60">
-        <button
-          onClick={onToggleExpandido}
-          className="flex items-center gap-2.5 min-w-0 text-left"
-          title={expandido ? 'Colapsar' : 'Expandir'}
-        >
-          <span className="text-gray-ui text-[10px] flex-shrink-0 w-3">{expandido ? '▾' : '▸'}</span>
-          <span className="text-xs font-semibold text-gray-ui flex-shrink-0">{definicion(b.tipo).nombre}</span>
-          {!expandido && previa && (
-            <span className="text-xs text-gray-ui truncate">{previa}</span>
-          )}
-        </button>
+        <div className="flex items-center gap-1 min-w-0">
+          {/* Asa de arrastre separada del botón de expandir, mismo motivo
+              que en `FilaSeccion`: el gesto de arrastrar no puede competir
+              con un clic normal para expandir o colapsar la tarjeta. */}
+          <button
+            {...attributes}
+            {...listeners}
+            className="flex-shrink-0 px-1 py-1 text-gray-ui hover:text-ink cursor-grab active:cursor-grabbing touch-none"
+            title="Arrastra para reordenar"
+            aria-label={`Arrastrar ${definicion(b.tipo).nombre} para reordenar`}
+          >
+            ⠿
+          </button>
+          <button
+            onClick={onToggleExpandido}
+            className="flex items-center gap-2.5 min-w-0 text-left"
+            title={expandido ? 'Colapsar' : 'Expandir'}
+          >
+            <span className="text-gray-ui text-[10px] flex-shrink-0 w-3">{expandido ? '▾' : '▸'}</span>
+            <span className="text-xs font-semibold text-gray-ui flex-shrink-0">{definicion(b.tipo).nombre}</span>
+            {!expandido && previa && (
+              <span className="text-xs text-gray-ui truncate">{previa}</span>
+            )}
+          </button>
+        </div>
         <div className="flex items-center gap-2.5 flex-shrink-0">
           {/* La audiencia casi siempre es "Todos": el valor con el que nace
               todo bloque nuevo. Lo que está en su default no necesita caja;
