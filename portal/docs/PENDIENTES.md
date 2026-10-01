@@ -34,6 +34,65 @@ la base) igual que exige el resto del protocolo de este portal.
 
 ## Abiertos / decididos
 
+### P-026 — Cuatro ajustes de pulido del editor: botón flotante fuera, padding del lienzo, panel por zona, pie del borrador fuera
+- Estado: **construido y verificado en vivo, 2026-10-01**
+- Origen: Francisco, 2026-10-01, cuatro pedidos juntos.
+- **"El botón de la esquina inferior derecha que agrega bloques... estorba."**
+  Era el "+" flotante que llevaba hasta el panel "Agregar bloque"
+  (construido junto con P-024, el mismo día). Con el panel ya arriba y
+  siempre visible al entrar a un segmento (P-024), el atajo dejó de
+  hacer falta -- se quitó entero, junto con el `id="agregar-bloque"` y
+  el `scroll-mt-24` que solo él usaba.
+- **"El scroll de la sección de bloques no tiene un padding o un margen
+  inferior... se ve raro."** El riel de secciones SÍ traía `pb-16` desde
+  siempre; el lienzo de bloques (el mismo contenedor, mismo patrón de
+  scroll, según su propio comentario) nunca lo tuvo -- un `pb-16` que
+  faltaba, confirmado comparando los dos contenedores, no un rediseño.
+- **"Dile a Julian que trabaje en darle una distinción a las distintas
+  secciones del editor... alguna sombra o una diferencia de tono..."**
+  Antes las tres columnas (riel, lienzo, vista previa) flotaban sueltas
+  sobre el mismo suelo `bg-paper-2` del layout, sin marco propio --
+  tarjetas individuales (una fila de sección, un bloque, el selector de
+  vista previa) sí se distinguían entre sí, pero las TRES ZONAS GENERALES
+  no se distinguían de nada; de ahí "es como estar trabajando todo lo
+  mismo". Pase de Julian, usando el sistema de dos peldaños que ya rige
+  el resto del portal (`lib/estilos/oficina.ts`: suelo `paper-2`,
+  elevado `paper` + `border-line`), no un lenguaje nuevo: las tres
+  columnas son ahora su propio panel `TARJETA`, con el `gap-6` de la
+  cuadrícula pintando el suelo entre ellas como el corte real. Dentro del
+  riel y de la vista previa, piezas que ya eran `TARJETA` (la fila de
+  sección activa, el selector celular/computadora) perdieron su propio
+  fondo/borde donde quedaba redundante dentro del panel nuevo -- una
+  tarjeta idéntica dentro de otra tarjeta idéntica no sumaba nada. Al
+  marco de escritorio (`dispositivo === 'computadora'`) se le agregó
+  `shadow-md`, que nunca había tenido pese a representar lo mismo que el
+  bisel del celular (un objeto, una pantalla simulada), que sí trae
+  `shadow-xl` desde siempre -- no es sombra nueva en columnas quietas
+  (eso se evitó a propósito, ver el comentario grande en `Editor.tsx`
+  junto a la cuadrícula: `shadow-lg` en este portal está reservado a lo
+  que de verdad flota, como un menú), es la MISMA idea que ya existía
+  para el celular, aplicada al modo que no la tenía.
+- **"'Estás viendo el borrador...' Es innecesario este texto."** Se quitó
+  el párrafo entero debajo de la vista previa. El comentario que
+  explicaba por qué el bisel del celular se encogía en ventanas bajas
+  (2026-09-24) citaba ese pie como una de las piezas que restaban
+  espacio -- se corrigió esa explicación para no describir un elemento
+  que ya no existe, y se confirmó que quitarlo no reabre ese bug (un
+  `lg:flex-none` menos le deja más espacio al bisel, nunca menos).
+- Verificado en vivo con cuenta y experiencia desechables (cuatro
+  segmentos en los tres tiempos, uno con tres bloques): las tres columnas
+  se ven como tres paneles bordeados separados por el suelo, en celular Y
+  en computadora, riel colapsado Y expandido, 1280px Y 375px (mobile,
+  donde las tres se apilan y cada una sigue leyéndose como su propio
+  panel). El padding inferior del lienzo se confirmó con capturas
+  desplazadas hasta el último bloque. El botón flotante no aparece en
+  ningún estado. El pie del borrador no aparece. `shadow-md` del marco de
+  escritorio confirmado con `getComputedStyle` contra el elemento real,
+  no solo mirado. Sin errores nuevos en consola (el único warning que
+  aparece es el de hidratación ya documentado en P-023, preexistente,
+  confirmado otra vez que no lo causa este cambio). `npx tsc --noEmit`
+  limpio.
+
 ### P-025 — Vista previa de escritorio antes de abrir el editor, construida y verificada en vivo
 - Estado: **construido y verificado en vivo, 2026-10-01**
 - Origen: Francisco, 2026-09-30 (valorado en P-022), confirmó seguir con

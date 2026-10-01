@@ -1310,20 +1310,6 @@ export default function Editor({
         )}
       </div>
 
-      {/* "Agregar bloque" siempre alcanzable, sin buscar el final de la
-          lista. Hace scroll suave al panel que ya existe, no lo duplica.
-          Hallazgo de Julian: el cambio que más se nota de todo el editor. */}
-      {bisagraActiva && (
-        <button
-          onClick={() => document.getElementById('agregar-bloque')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
-          className="fixed bottom-6 right-6 z-40 min-h-toque min-w-toque rounded-full bg-dom text-paper shadow-lg hover:bg-dom-deep transition-colors flex items-center justify-center text-2xl font-light"
-          title="Agregar bloque"
-          aria-label="Agregar bloque"
-        >
-          +
-        </button>
-      )}
-
       {porBorrarSeccion && (
         <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center px-4">
           <div className="bg-white rounded-[10px] shadow-xl p-6 max-w-sm w-full">
@@ -1346,6 +1332,33 @@ export default function Editor({
         </div>
       )}
 
+      {/* LAS TRES COLUMNAS AHORA SE LEEN COMO TRES ZONAS, NO COMO UNA SOLA
+          SUPERFICIE CON TARJETAS SUELTAS. Pedido de Francisco, 2026-10-01:
+          "todo se ve igual y confunde, mentalmente es como estar
+          trabajando todo lo mismo... que quizá haya alguna sombra o una
+          diferencia de tono para dividir las partes del editor". Pase de
+          Julian: nada de sombra (`shadow-lg` en este portal está
+          reservado a lo que de verdad flota encima del contenido, como el
+          menú de `oficina.ts:118` -- usarla aquí para tres columnas
+          quietas habría sido un lenguaje nuevo que nadie más usa, lo
+          contrario de "que tenga coherencia"). La separación es TONO, con
+          el mismo sistema de dos peldaños que ya rige el resto del portal
+          (`lib/estilos/oficina.ts`: `paper-2` es el suelo, `paper` con
+          `border-line` es lo que se eleva). Antes las tres columnas
+          flotaban sueltas sobre el mismo suelo `paper-2` del layout, sin
+          ningún borde propio -- un riel sin marco, un lienzo sin marco,
+          una columna de vista previa sin marco, así que donde terminaba
+          una y empezaba la otra no se podía adivinar sin fijarse en el
+          contenido. Ahora cada una es su propio panel `TARJETA`
+          (`bg-paper border border-line rounded-marca`), con el `gap-6` de
+          esta cuadrícula pintando el suelo `paper-2` entre los tres como
+          el corte real. Dentro del riel y de la vista previa esto deja
+          piezas que ya eran `TARJETA` (la fila de sección activa, el
+          selector celular/computadora) ahora dentro de un panel del mismo
+          tono: se les quitó su propio fondo/borde donde quedaba
+          redundante, y lo que las distingue de su panel es exactamente lo
+          mismo que ya distingue a una fila de sección del resto del riel
+          -- `bg-paper-2`, no un segundo borde encima de otro. */}
       <div className={`grid grid-cols-1 gap-6 items-start ${
         dispositivo === 'computadora'
           ? rielColapsado ? 'lg:grid-cols-[40px_minmax(0,1fr)_680px]' : 'lg:grid-cols-[180px_minmax(0,1fr)_680px]'
@@ -1353,13 +1366,13 @@ export default function Editor({
       }`}>
         {/* Riel de secciones. Scroll propio (Julian, 2026-09-23), sin
             barra visible (pedido de Francisco). "Nueva sección" YA NO
-            vive aquí dentro -- es el botón flotante de más arriba, fijo
-            de verdad en la pantalla. El primer intento de dejarlo "fuera
-            de la región que scrollea" no funcionaba: viajaba con el
-            scroll de la PÁGINA, no del riel, así que había que bajar por
-            toda la lista para encontrarlo. `pb-16` deja aire abajo para
-            que la última sección de una lista larga no quede tapada por
-            el botón flotante.
+            vive aquí dentro: desde el 2026-09-23 vive en la cabecera fija
+            de arriba (ver el comentario "CUARTA VUELTA" junto a ese
+            botón), nunca más como flotante -- las dos veces que lo fue
+            Francisco no lo encontró. `pb-16` deja aire abajo para que la
+            última sección de una lista larga no quede pegada al borde de
+            la ventana, mismo motivo que el mismo padding en el lienzo de
+            bloques (más abajo en este archivo).
 
             93px, NO 173px -- MODO EDITOR, 2026-09-24. Hasta la vuelta
             anterior esta cifra era 173px (104px de las dos barras del
@@ -1373,13 +1386,13 @@ export default function Editor({
             vivo con `getBoundingClientRect()`, la columna de vista
             previa arrancaba en 93px, no en 69px, y con 69 el teléfono se
             recortaba 19px por abajo en una ventana de 768px de alto. */}
-        <nav className="lg:sticky lg:top-[93px] lg:h-[calc(100vh-93px)] lg:overflow-y-auto scroll-sin-barra pr-1 pb-16">
+        <nav className="lg:sticky lg:top-[93px] lg:h-[calc(100vh-93px)] bg-paper border border-line rounded-marca overflow-hidden">
+        <div className="lg:h-full lg:overflow-y-auto scroll-sin-barra p-2 pb-16">
           {/* EL ASA SIEMPRE ESTÁ, colapsado o no -- minimizar nunca es
               un callejón sin salida. Pedido de Francisco, 2026-09-24.
               `min-h-toque` (44px), no `h-8` (32px) -- hallazgo de Julian,
-              2026-09-24: el resto de controles nuevos de esta sesión (el
-              botón flotante "+" un poco más abajo, entre otros) ya usan
-              ese mismo token; este había quedado más chico que sus
+              2026-09-24: los demás controles nuevos de esa sesión ya
+              usaban ese mismo token; este había quedado más chico que sus
               vecinos, sin razón. */}
           <button
             onClick={() => setRielColapsado(v => !v)}
@@ -1440,9 +1453,15 @@ export default function Editor({
             })}
           </DndContext>
           )}
+        </div>
         </nav>
 
-        {/* Lienzo. Mismo arreglo de scroll que el riel, sin barra visible. */}
+        {/* Lienzo. Mismo arreglo de scroll que el riel, sin barra visible --
+            el riel SÍ traía `pb-16` desde el principio y este contenedor no,
+            así que el último bloque quedaba pegado al borde de la ventana
+            al llegar al final del scroll. Hallazgo de Francisco, 2026-10-01
+            ("no tiene un padding o un margen inferior... se ve raro"):
+            un `pb-16` que faltaba, no un diseño nuevo. */}
         {/* `lg:max-w-[720px]`, hallazgo de Julian, 2026-09-24: al
             ensanchar el editor a 1600px sin ponerle techo propio al
             lienzo, el texto que se está escribiendo podía llegar a
@@ -1451,7 +1470,8 @@ export default function Editor({
             620px de columna). Mismo criterio de legibilidad, aplicado
             aquí: más aire alrededor de una medida de lectura/escritura
             constante, no más caracteres por línea. */}
-        <div className="min-w-0 lg:max-w-[720px] lg:h-[calc(100vh-93px)] lg:overflow-y-auto scroll-sin-barra lg:pr-1">
+        <div className="min-w-0 lg:max-w-[720px] lg:h-[calc(100vh-93px)] bg-paper border border-line rounded-marca overflow-hidden">
+        <div className="lg:h-full lg:overflow-y-auto scroll-sin-barra p-4 pb-16">
           {bisagras.length === 0 && (
             <div className="border border-dashed border-line rounded-[10px] px-5 py-10 text-center">
               <p className="text-sm text-gray-ui">
@@ -1529,15 +1549,14 @@ export default function Editor({
               abajo cada vez que quiero agregar algo" -- antes vivía después
               de la lista de bloques, así que agregar el bloque número 10
               significaba desplazarse más allá de los nueve anteriores cada
-              vez. El id y el botón flotante "+" (más abajo, `scroll-mt-24`
-              incluido) no cambiaron: `scrollIntoView` apunta al mismo id
-              sin importar dónde esté en el documento, así que el flotante
-              sigue sirviendo para cuando se está desplazado bien abajo en
-              una lista larga -- ahora sube en vez de bajar. Compacto a
-              propósito ("que no robe mucho espacio"): mitad del padding y
-              del espacio entre filas que tenía antes, etiqueta más chica. */}
+              vez. Compacto a propósito ("que no robe mucho espacio"): mitad
+              del padding y del espacio entre filas que tenía antes, etiqueta
+              más chica. El botón flotante "+" que antes llevaba hasta este
+              panel se quitó el mismo 2026-10-01 ("estorba"): con el panel
+              ya arriba, siempre visible al entrar a un segmento, dejó de
+              hacer falta un atajo para encontrarlo. */}
           {bisagraActiva && (
-            <div id="agregar-bloque" className={`${TARJETA} p-2.5 mb-3 scroll-mt-24`}>
+            <div className={`${TARJETA} p-2.5 mb-3`}>
               <div className="text-[10px] font-semibold uppercase tracking-wider text-gray-ui mb-1.5">
                 Agregar bloque
               </div>
@@ -1596,6 +1615,7 @@ export default function Editor({
             </DndContext>
           </div>
         </div>
+        </div>
 
         {/* Vista previa en teléfono. BUG REAL reportado por Francisco:
             "necesito que en todo momento se esté viendo la pantalla
@@ -1609,27 +1629,35 @@ export default function Editor({
                teléfono tenía `style={{ height: 620 }}` -- un número FIJO
                que no respondía al espacio real disponible. En una
                ventana de 768px de alto, el selector celular/computadora
-               de arriba y el pie "Estás viendo el borrador" de abajo ya
-               ocupan de sobra los 620px no entraban: medido, el bisel se
-               recortaba por debajo del borde de la ventana aunque el
-               offset de arriba ya estuviera correcto. `lg:flex
-               lg:flex-col` en esta columna, con el selector y el pie
-               como `lg:flex-none` (su tamaño natural) y el bisel como
-               `lg:flex-1 lg:min-h-0` (se lleva lo que sobra, nunca más),
-               hace que el teléfono se ENCOJA cuando hace falta en vez de
+               de arriba ya ocupaba de sobra para que los 620px no
+               entraran: medido, el bisel se recortaba por debajo del
+               borde de la ventana aunque el offset de arriba ya
+               estuviera correcto. (El pie "Estás viendo el borrador" de
+               abajo, que en 2026-09-24 también restaba espacio aquí, se
+               quitó el 2026-10-01 por pedido de Francisco -- un
+               `lg:flex-none` menos no reabre este bug, le deja más
+               espacio al bisel, no menos.) `lg:flex lg:flex-col` en esta
+               columna, con el selector como `lg:flex-none` (su tamaño
+               natural) y el bisel como `lg:flex-1 lg:min-h-0` (se lleva
+               lo que sobra, nunca más), hace que el teléfono se ENCOJA
+               cuando hace falta en vez de
                desbordar -- `lg:max-h-[620px]` sigue poniendo el techo de
                "tamaño de teléfono real" para cuando sí sobra espacio (un
                monitor alto). Verificado con `getBoundingClientRect()`:
                sin desborde en 768px de alto, y el bisel sigue midiendo
                620px en una ventana de 1000px. */}
-        <div className="lg:sticky lg:top-[93px] lg:h-[calc(100vh-93px)] lg:flex lg:flex-col lg:min-h-0">
+        <div className="lg:sticky lg:top-[93px] lg:h-[calc(100vh-93px)] bg-paper border border-line rounded-marca overflow-hidden">
+        <div className="h-full lg:flex lg:flex-col lg:min-h-0 p-3">
           {/* EL SELECTOR DE AUDIENCIA (participante/moderador) SE QUITÓ
               DE AQUÍ, a pedido de Francisco -- ver el comentario junto al
               estado `dispositivo`. Este es ahora el único selector de la
               vista previa: solo el ancho de pantalla, nunca quién ve
               qué. La vista previa muestra siempre todo lo que no es
-              exclusivo de equipo (ver `visiblesEnPrevia`). */}
-          <div className={`${TARJETA} p-3 mb-3 lg:flex-none`}>
+              exclusivo de equipo (ver `visiblesEnPrevia`). Ya no lleva su
+              propia tarjeta (`TARJETA`): vive directo dentro del panel de
+              la columna, que ahora es el marco -- una tarjeta idéntica
+              dentro de otra tarjeta idéntica no sumaba nada. */}
+          <div className="mb-3 lg:flex-none">
             <div className="flex bg-paper-2 rounded-[10px] p-1">
               {(['celular', 'computadora'] as const).map(d => (
                 <button
@@ -1680,7 +1708,14 @@ export default function Editor({
             // inventado para esta pantalla. Mismo mecanismo de encoger que
             // el bisel: `lg:flex-1 lg:min-h-0` en el marco y en su región
             // de scroll, `lg:max-h-[620px]` como techo, no como fijo.
-            <div className="bg-paper border border-line rounded-[10px] overflow-hidden lg:flex-1 lg:min-h-0 lg:flex lg:flex-col">
+            // `shadow-md`, agregado el 2026-10-01 junto con el panel de la
+            // columna entera (mismo tono `bg-paper` que este marco): sin
+            // sombra, el marco de escritorio quedaba un borde flotando
+            // sobre un fondo idéntico. El bisel del celular ya tenía
+            // `shadow-xl` desde siempre por ser un objeto (una pantalla,
+            // no una tarjeta de contenido) -- esto no es un lenguaje
+            // nuevo, es la MISMA idea aplicada al modo que no la tenía.
+            <div className="bg-paper border border-line rounded-[10px] overflow-hidden shadow-md lg:flex-1 lg:min-h-0 lg:flex lg:flex-col">
               <div className="text-center pt-4 lg:flex-none">
                 <span className="text-[9px] font-semibold uppercase tracking-widest text-terra-ui bg-paper-2 px-2 py-0.5 rounded-full">
                   Vista previa
@@ -1696,11 +1731,7 @@ export default function Editor({
               </div>
             </div>
           )}
-
-          <p className="text-[11px] text-gray-ui text-center mt-3 leading-relaxed px-4 lg:flex-none">
-            Estás viendo el borrador. El participante ve la última versión publicada hasta que publiques
-            de nuevo.
-          </p>
+        </div>
         </div>
       </div>
     </div>
