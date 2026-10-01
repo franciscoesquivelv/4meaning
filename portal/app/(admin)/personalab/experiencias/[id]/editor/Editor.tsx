@@ -2353,7 +2353,7 @@ function TarjetaBloque({
                 />
                 <span className="text-xs text-gray-ui">Aplica al modo digital</span>
                 <span className="text-xs text-gray-ui">
-                  Sin marcar, quien compra la experiencia por su cuenta no ve este gesto.
+                  Sin marcar, quien compra la experiencia por su cuenta no ve este bloque.
                 </span>
               </label>
             )}

@@ -164,7 +164,7 @@ export default function Escritura({
 
   return (
     <div className="mt-8 md:mt-10 border-t border-b border-line py-6 md:py-7">
-      <div className="cejilla">Consigna</div>
+      <div className="cejilla">Instrucción</div>
 
       <p className="mt-3 text-[19px] md:text-[21px] leading-[1.55] font-light text-dom">
         {consigna}

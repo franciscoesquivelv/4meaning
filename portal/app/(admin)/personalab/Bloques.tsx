@@ -65,7 +65,7 @@ export default function BloqueLector({ b }: { b: Bloque }) {
     case 'consigna':
       return (
         <div className={`${mt} border-t border-b border-line py-6 md:py-7`}>
-          <div className={ROTULO}>Consigna</div>
+          <div className={ROTULO}>Instrucción</div>
           <p className="mt-3 text-[19px] md:text-[21px] leading-[1.55] font-light text-dom">
             <Enfasis texto={b.texto ?? ''} claseFuerte="font-medium" />
           </p>

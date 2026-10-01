@@ -202,13 +202,23 @@ export const CONTRATO = {
     },
   },
 
+  // RENOMBRADO DE "CONSIGNA" A "INSTRUCCIÓN", 2026-10-01. Pedido de
+  // Francisco: "qué es un gesto y qué es una consigna? Necesito que esos
+  // nombres cambien y realmente digan lo que hace la sección." "Consigna"
+  // es jerga de taller/terapia que no se explica sola; "instrucción" es
+  // la palabra que la propia `ayuda` de abajo ya usaba para explicarla.
+  // Solo cambia la ETIQUETA -- el identificador interno (`'consigna'`,
+  // el enum real de `blocks.tipo` en la base) se queda igual, mismo
+  // patrón que ya usó el rename de bisagra→segmento: renombrar un enum de
+  // verdad es una migración aparte, no un cambio de lo que se lee en
+  // pantalla.
   consigna: {
-    nombre: 'Consigna',
+    nombre: 'Instrucción',
     ayuda: 'Lo que se le pide hacer a la persona, en una sola instrucción.',
     frecuencia: 'frecuente',
     margen: 'mt-8 md:mt-10',
     campos: {
-      texto: { clase: 'texto', etiqueta: 'Consigna', exigencia: 'impide', ...FALTA_TEXTO },
+      texto: { clase: 'texto', etiqueta: 'Instrucción', exigencia: 'impide', ...FALTA_TEXTO },
       // EL INTERRUPTOR POR SECCIÓN. Decisión de Francisco, 2026-09-13
       // (memoria de proyecto `presente-regalo-digital.md`, decisión 2):
       // quien crea el contenido decide, consigna por consigna, si lo que la
@@ -291,13 +301,19 @@ export const CONTRATO = {
     },
   },
 
+  // RENOMBRADO DE "GESTO" A "A MANO", 2026-10-01, mismo pedido que
+  // "consigna"→"instrucción" de arriba. "Gesto" ya tenía otro sentido en
+  // el vocabulario propio del contenido de retiro (p. ej. "El gesto
+  // mínimo", el nombre de una SECCIÓN de retorno en `dominio.ts`) --
+  // dos cosas distintas compartiendo la misma palabra era parte de la
+  // confusión. "A mano" es literalmente la propia `ayuda` de abajo.
   gesto: {
-    nombre: 'Gesto',
+    nombre: 'A mano',
     ayuda: 'Lo que se escribe a mano. No se sube ni se transcribe.',
     frecuencia: 'frecuente',
     margen: 'mt-8 md:mt-10',
     campos: {
-      texto: { clase: 'texto', etiqueta: 'Gesto', exigencia: 'impide', ...FALTA_TEXTO },
+      texto: { clase: 'texto', etiqueta: 'A mano', exigencia: 'impide', ...FALTA_TEXTO },
       // UN GESTO DE SALA NO ES AUTOMÁTICAMENTE UN GESTO DIGITAL. Hallazgo de
       // Daniel, 2026-09-21: bisagras reales de "El Agradecimiento" y de "El
       // Presente como Regalo" (esta última, la única que se vende hoy) dicen
