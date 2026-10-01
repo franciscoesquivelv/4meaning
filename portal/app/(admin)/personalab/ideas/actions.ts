@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { createServiceClient } from '@/lib/supabase/server'
 import { exigirEquipo } from '@/lib/personalab/medios'
-import type { Idea } from '@/lib/personalab/ideas'
+import type { Idea, EstadoIdea } from '@/lib/personalab/ideas'
 
 // Cualquiera del equipo puede borrar cualquier idea, no solo la propia --
 // mismo criterio que el resto de PersonaLab (una experiencia, un segmento,
@@ -33,7 +33,7 @@ export async function crearIdea(texto: string): Promise<{ error: string } | { ok
   const { data, error } = await service
     .from('ideas')
     .insert({ texto: limpio, created_by: guardia.user!.id })
-    .select('id, texto, created_at, profiles(full_name, email)')
+    .select('id, texto, estado, created_at, profiles(full_name, email)')
     .single()
 
   if (error) return { error: error.message }
@@ -44,10 +44,31 @@ export async function crearIdea(texto: string): Promise<{ error: string } | { ok
     texto: data.texto as string,
     autor: perfil?.full_name ?? perfil?.email ?? 'Alguien del equipo',
     creadaEn: data.created_at as string,
+    estado: data.estado as EstadoIdea,
   }
 
   revalidatePath('/personalab/ideas')
   return { ok: true, idea }
+}
+
+// Cualquiera del equipo puede cambiar el estado de cualquier idea, mismo
+// criterio que crear/borrar. No se audita quién lo cambió ni cuándo --
+// es una libreta compartida, no un historial; si eso llega a hacer falta
+// de verdad, es una columna nueva, no algo que se finja con lo que ya hay.
+export async function actualizarEstadoIdea(
+  id: string,
+  estado: EstadoIdea
+): Promise<{ error: string } | { ok: true }> {
+  const guardia = await exigirEquipo()
+  if (guardia.error) return { error: guardia.error }
+
+  const service = createServiceClient()
+  const { error } = await service.from('ideas').update({ estado }).eq('id', id)
+
+  if (error) return { error: error.message }
+
+  revalidatePath('/personalab/ideas')
+  return { ok: true }
 }
 
 export async function borrarIdea(id: string): Promise<{ error: string } | { ok: true }> {

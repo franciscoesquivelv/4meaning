@@ -126,6 +126,40 @@ la base) igual que exige el resto del protocolo de este portal.
   -- era historial de consola acumulado de ANTES del arreglo, en la
   misma pestaña, no un error nuevo; confirmado igual que el hallazgo
   equivalente de P-023, con el mismo método). `npx tsc --noEmit` limpio.
+- **ESTADO POR IDEA, agregado el mismo día.** Francisco, al ver la
+  sección recién construida: "la veo muy básica... qué me recomiendas."
+  Se le propuso un estado por idea (una lista plana que solo crece no
+  distingue una idea buena sin resolver de una ya descartada -- las dos
+  se ven igual para siempre, mismo problema que ya resuelve
+  `docs/PENDIENTES.md` para los hallazgos de este archivo) y confirmó:
+  "Sí, construye el estado." También confirmó que Ideas se queda SOLO en
+  PersonaLab (se preguntó porque hoy vive solo ahí, y podía no ser así).
+  - Migración nueva
+    (`supabase/migrations/20261001_1652_personalab_ideas_estado.sql`,
+    corrida en vivo por Francisco): columna `estado` con cuatro valores
+    (`abierta` default, `en_progreso`, `hecha`, `descartada`) y un CHECK
+    constraint real -- probado en vivo insertando un valor inválido
+    (`'no-existe'`) y confirmando que la base lo rechaza, no solo que la
+    migración "corrió sin error".
+  - Insignia de color por estado, mismo sistema `TONO` que ya usan
+    maduración de experiencia y estado de encuentro en otras pantallas
+    de PersonaLab (`lib/estilos/oficina.ts`) -- no una paleta nueva.
+  - Filtro con pestañas (Activas/Hechas/Descartadas/Todas, con el conteo
+    de cada una) para que las que ya se resolvieron no estorben
+    visualmente sin desaparecer del registro -- "Activas" (abierta +
+    en progreso) es la vista por defecto.
+  - Cambiar el estado es un `<select>` directo en la tarjeta, optimista
+    con reversión real si el servidor lo rechaza (mismo criterio que
+    `mover`/`actualizar` en el editor): se ve el cambio al instante, y si
+    falla vuelve al valor de antes en vez de mentir sobre lo que de
+    verdad quedó guardado.
+  - Verificado en vivo con cuenta desechable y cuatro ideas (una por
+    estado): los conteos de las pestañas coinciden, la insignia de color
+    es la correcta para cada estado, cambiar "abierta" a "hecha" por el
+    `<select>` la mueve de la pestaña Activas a Hechas de inmediato Y
+    confirmado con una consulta directa a la base (no solo mirado en
+    pantalla) que el valor nuevo quedó guardado. Consola limpia en una
+    pestaña nueva. `npx tsc --noEmit` limpio.
 
 ### P-026 — Cuatro ajustes de pulido del editor: botón flotante fuera, padding del lienzo, panel por zona, pie del borrador fuera
 - Estado: **construido y verificado en vivo, 2026-10-01**

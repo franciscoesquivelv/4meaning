@@ -2,11 +2,19 @@ import { createServiceClient } from '@/lib/supabase/server'
 import { exigirEquipo } from './medios'
 import type { Resultado } from './lectura'
 
+// Cuatro estados, no dos. Pedido de Francisco, 2026-10-01, al ver la
+// sección recién construida: "qué me recomiendas... la veo muy básica."
+// Una idea en progreso sigue viva; una descartada se decidió activamente
+// no hacerla, no se perdió -- las dos son verdades distintas de "hecha",
+// mismo espíritu que ya rige `docs/PENDIENTES.md`.
+export type EstadoIdea = 'abierta' | 'en_progreso' | 'hecha' | 'descartada'
+
 export interface Idea {
   id: string
   texto: string
   autor: string
   creadaEn: string
+  estado: EstadoIdea
 }
 
 // El doble cast en `perfil` es por lo mismo que ya documenta
@@ -22,7 +30,7 @@ export async function cargarIdeas(): Promise<Resultado<Idea[]>> {
   const service = createServiceClient()
   const { data, error } = await service
     .from('ideas')
-    .select('id, texto, created_at, profiles(full_name, email)')
+    .select('id, texto, estado, created_at, profiles(full_name, email)')
     .order('created_at', { ascending: false })
 
   if (error) return { estado: 'fallo', motivo: error.message }
@@ -34,6 +42,7 @@ export async function cargarIdeas(): Promise<Resultado<Idea[]>> {
       texto: fila.texto as string,
       autor: perfil?.full_name ?? perfil?.email ?? 'Alguien del equipo',
       creadaEn: fila.created_at as string,
+      estado: fila.estado as EstadoIdea,
     }
   })
 
