@@ -34,6 +34,48 @@ la base) igual que exige el resto del protocolo de este portal.
 
 ## Abiertos / decididos
 
+### P-022 — Tres pedidos nuevos de Francisco, valorados (no construidos): Ideas, vista previa antes del editor, arrastrar bloques
+- Estado: **abierto** — valorado con el código real, falta que Francisco
+  decida orden y si los tres entran
+- Origen: Francisco, 2026-09-30, junto con el pedido de subida que se
+  volvió P-021: pidió ayuda para "valorar la creación" de tres cosas.
+- **"Sección de Ideas" para anotar y que queden registradas.** No existe
+  nada parecido hoy -- se buscó en todo el código y lo único que aparece
+  con "idea" es vocabulario de contenido de retiro, no una feature. Es
+  terreno nuevo de punta a punta: tabla nueva (texto, autor, fecha),
+  política RLS calcada de `exigirEquipo()` (mismo candado que ya usa
+  medios), página nueva en el nav de PersonaLab, formulario simple de
+  agregar/listar/borrar. Esfuerzo **medio**: no es complejo, pero no hay
+  nada que reaprovechar -- todo se escribe de cero.
+- **Vista previa en desktop antes de abrir el editor.** Esto es DISTINTO
+  de la vista previa que ya existe dentro del editor (el selector "En
+  celular/En computadora" de la columna derecha, `Editor.tsx:1583`): esa
+  vive adentro del editor y muestra solo el segmento activo. Lo que pide
+  Francisco es verlo ANTES de entrar, con TODOS los segmentos. La buena
+  noticia, confirmada leyendo el código: el bloque de escritorio ya
+  existe armado (`Editor.tsx:1634`, sin bisel, 620px, ya calibrado) y
+  `PreviaContenido`/`BloqueLector` (que ya sabe pintar los doce tipos de
+  bloque y respeta qué es exclusivo de equipo) también. Lo nuevo es
+  nada más una página que cargue TODOS los segmentos de la versión
+  (con `cargarParaEditar`, que el editor ya usa y ya los trae todos) y
+  los recorra en vez de mostrar solo el activo. Esfuerzo **bajo-medio**:
+  es ensamblar piezas ya probadas, no inventar renderizado nuevo.
+- **Arrastrar bloques dentro de un segmento, como ya se arrastra
+  secciones.** Confirmado leyendo el código: las secciones ya tienen
+  `DndContext`/`SortableContext`/`useSortable` completo y funcionando
+  (`Editor.tsx:1372-1413`), y el reordenamiento de BLOQUES (`mover(id,
+  delta)`, hoy solo con flechas ▲▼) YA le manda a `reordenarRemoto` la
+  lista completa de `{id, orden}` -- exactamente la forma que un
+  `onDragEnd` de arrastre necesita, no un reemplazo de la función. Lo
+  único nuevo es envolver la lista de bloques en su propio
+  `DndContext`/`SortableContext` (calcado del de secciones) y cambiar el
+  disparador de "clic en flecha" a "soltar al arrastrar" -- el backend
+  no cambia. Esfuerzo **bajo**: es el mismo patrón que ya está en
+  producción, aplicado un nivel más adentro.
+- No se construyó nada de esto todavía -- es la valoración que Francisco
+  pidió, para que decida con información real, no una opinión sin
+  fundamento.
+
 ### P-021 — El bucket dice admitir video hasta 200 MB; Supabase de verdad lo corta cerca de 50 MB
 - Estado: **mensaje de error corregido y verificado en vivo (2026-10-01) —
   la causa real NECESITA una acción de Francisco en el Dashboard, sin la
