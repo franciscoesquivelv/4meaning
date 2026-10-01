@@ -97,6 +97,9 @@ export default async function ExperienciaPage({ params }: { params: { id: string
           <Link href={`/personalab/experiencias/${e.slug}/editar`} className={BTN_SECUNDARIO}>
             Editar ficha
           </Link>
+          <Link href={`/personalab/experiencias/${e.slug}/preview`} className={BTN_SECUNDARIO}>
+            Vista previa
+          </Link>
           <Link href={`/personalab/experiencias/${e.slug}/editor`} className={BTN_PRIMARIO}>
             Abrir editor
           </Link>

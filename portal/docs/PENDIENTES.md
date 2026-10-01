@@ -34,6 +34,48 @@ la base) igual que exige el resto del protocolo de este portal.
 
 ## Abiertos / decididos
 
+### P-025 — Vista previa de escritorio antes de abrir el editor, construida y verificada en vivo
+- Estado: **construido y verificado en vivo, 2026-10-01**
+- Origen: Francisco, 2026-09-30 (valorado en P-022), confirmó seguir con
+  este el 2026-10-01.
+- Nueva ruta `experiencias/[id]/preview` (server component, sin
+  `'use client'` -- no hace falta nada interactivo, Francisco pidió "cómo
+  se vería en desktop", nada de selector celular/computadora que nadie
+  pidió). Reusa `cargarParaEditar()`, la MISMA función que ya usa
+  `editor/page.tsx`: ya trae TODOS los segmentos y TODOS los bloques del
+  borrador en una sola carga, no solo el activo, así que no hizo falta
+  ninguna consulta nueva a la base.
+- Reusa `BloqueLector` (el mismo componente que ya pinta cada bloque en
+  el lector real y en la vista previa del editor) y calca el marco de
+  escritorio sin bisel que ya existía dentro del editor (620px,
+  `Editor.tsx`, rama `dispositivo === 'computadora'`) -- no se inventó
+  renderizado nuevo, se ensambló lo que ya estaba probado.
+- Mismo techo de audiencia que la vista previa del editor
+  (`NIVEL[b.audiencia] <= 2`, `Editor.tsx:991`): lo exclusivo de equipo
+  se esconde siempre, lo exclusivo de moderador SÍ se muestra -- esta
+  pantalla es para quien edita, no para el participante, mismo criterio
+  que ya está probado ahí. Cada segmento vacío dice "todavía no tiene
+  nada escrito" en vez de desaparecer en silencio.
+- Botón "Vista previa" nuevo en la ficha de la experiencia
+  (`experiencias/[id]/page.tsx`), entre "Editar ficha" y "Abrir editor".
+- Verificado en vivo con cuenta y experiencia desechables (tres
+  segmentos, uno por cada tiempo, con un bloque de texto, uno de nota
+  exclusiva de moderador, uno de cita, uno exclusivo de equipo, y un
+  segmento sin ningún bloque):
+  - El bloque de equipo NO apareció. La nota de moderador SÍ apareció
+    (con su propio tratamiento visual, "Para ti, no para el grupo").
+    El segmento sin bloques mostró su propio mensaje vacío.
+  - Los tres tiempos (Previo/Desarrollo/Post) aparecieron en orden,
+    separados.
+  - `notFound()` real para un slug que no existe. Estado vacío real
+    (botón propio) para una experiencia sin ningún segmento.
+  - Consola limpia en una pestaña nueva, sin historial de otras
+    páginas -- se descartó un warning de hidratación que apareció al
+    principio: era historial acumulado de haber visitado el editor
+    antes en la misma pestaña (el mismo hallazgo ya documentado en
+    P-023), no algo nuevo de esta pantalla.
+  - `npx tsc --noEmit` limpio.
+
 ### P-024 — "Agregar bloque" subió al principio de la lista, compacto
 - Estado: **construido y verificado en vivo, 2026-10-01**
 - Origen: Francisco, 2026-10-01: "quiero que la sección de agregar
@@ -113,9 +155,9 @@ la base) igual que exige el resto del protocolo de este portal.
   no un cambio de una línea. Queda anotado para no redescubrirlo como si
   fuera nuevo la próxima vez que alguien mire la consola.
 
-### P-022 — Tres pedidos nuevos de Francisco, valorados: Ideas, vista previa antes del editor (arrastrar bloques ya construido, ver P-023)
-- Estado: **abierto** — dos de los tres siguen sin construir, falta que
-  Francisco decida si entran
+### P-022 — Tres pedidos nuevos de Francisco, valorados: Ideas (vista previa y arrastrar bloques ya construidos, ver P-025 y P-023)
+- Estado: **abierto** — Ideas sigue sin construir, falta que Francisco
+  decida si entra
 - Origen: Francisco, 2026-09-30, junto con el pedido de subida que se
   volvió P-021: pidió ayuda para "valorar la creación" de tres cosas.
 - **"Sección de Ideas" para anotar y que queden registradas.** No existe
@@ -126,7 +168,10 @@ la base) igual que exige el resto del protocolo de este portal.
   medios), página nueva en el nav de PersonaLab, formulario simple de
   agregar/listar/borrar. Esfuerzo **medio**: no es complejo, pero no hay
   nada que reaprovechar -- todo se escribe de cero.
-- **Vista previa en desktop antes de abrir el editor.** Esto es DISTINTO
+- **Vista previa en desktop antes de abrir el editor. Construida y
+  verificada, ver P-025** -- lo que sigue es la valoración original, que
+  se queda como registro de por qué salió barata, no como pendiente.
+  Esto es DISTINTO
   de la vista previa que ya existe dentro del editor (el selector "En
   celular/En computadora" de la columna derecha, `Editor.tsx:1583`): esa
   vive adentro del editor y muestra solo el segmento activo. Lo que pide
