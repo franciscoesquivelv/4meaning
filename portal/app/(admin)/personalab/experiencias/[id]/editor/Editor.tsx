@@ -1524,6 +1524,36 @@ export default function Editor({
             </div>
           )}
 
+          {/* Arriba, no abajo de la lista. Pedido de Francisco, 2026-10-01:
+              "quita [el panel de abajo] para no tener que scrollear hasta
+              abajo cada vez que quiero agregar algo" -- antes vivía después
+              de la lista de bloques, así que agregar el bloque número 10
+              significaba desplazarse más allá de los nueve anteriores cada
+              vez. El id y el botón flotante "+" (más abajo, `scroll-mt-24`
+              incluido) no cambiaron: `scrollIntoView` apunta al mismo id
+              sin importar dónde esté en el documento, así que el flotante
+              sigue sirviendo para cuando se está desplazado bien abajo en
+              una lista larga -- ahora sube en vez de bajar. Compacto a
+              propósito ("que no robe mucho espacio"): mitad del padding y
+              del espacio entre filas que tenía antes, etiqueta más chica. */}
+          {bisagraActiva && (
+            <div id="agregar-bloque" className={`${TARJETA} p-2.5 mb-3 scroll-mt-24`}>
+              <div className="text-[10px] font-semibold uppercase tracking-wider text-gray-ui mb-1.5">
+                Agregar bloque
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {TIPOS_FRECUENTES.map(t => (
+                  <BotonTipo key={t} t={t} onClick={() => agregar(t)} compacto />
+                ))}
+              </div>
+              <div className="flex flex-wrap gap-1.5 mt-1.5 pt-1.5 border-t border-line">
+                {TIPOS_OCASIONALES.map(t => (
+                  <BotonTipo key={t} t={t} onClick={() => agregar(t)} tenue compacto />
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="flex flex-col gap-3">
             {bisagraActiva && delBloque.length === 0 && (
               <div className="border border-dashed border-line rounded-[10px] px-5 py-8 text-center">
@@ -1565,24 +1595,6 @@ export default function Editor({
               </SortableContext>
             </DndContext>
           </div>
-
-          {bisagraActiva && (
-            <div id="agregar-bloque" className={`${TARJETA} p-4 mt-4 scroll-mt-24`}>
-              <div className="text-[11px] font-semibold uppercase tracking-wider text-gray-ui mb-3">
-                Agregar bloque
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {TIPOS_FRECUENTES.map(t => (
-                  <BotonTipo key={t} t={t} onClick={() => agregar(t)} />
-                ))}
-              </div>
-              <div className="flex flex-wrap gap-2 mt-2 pt-2 border-t border-line">
-                {TIPOS_OCASIONALES.map(t => (
-                  <BotonTipo key={t} t={t} onClick={() => agregar(t)} tenue />
-                ))}
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Vista previa en teléfono. BUG REAL reportado por Francisco:
@@ -1747,12 +1759,18 @@ function PreviaContenido({
 
 // ── Botón de tipo de bloque ─────────────────────────────────────
 
-function BotonTipo({ t, onClick, tenue = false }: { t: TipoBloque; onClick: () => void; tenue?: boolean }) {
+function BotonTipo({
+  t, onClick, tenue = false, compacto = false,
+}: {
+  t: TipoBloque; onClick: () => void; tenue?: boolean; compacto?: boolean
+}) {
   return (
     <button
       onClick={onClick}
       title={definicion(t).ayuda}
-      className={`text-xs px-3 py-1.5 rounded-[10px] border transition-[background-color,border-color,transform] duration-100 active:scale-[0.97] hover:bg-dom hover:text-paper hover:border-dom focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dom/25 focus-visible:ring-offset-2 focus-visible:ring-offset-paper ${
+      className={`text-xs rounded-[10px] border transition-[background-color,border-color,transform] duration-100 active:scale-[0.97] hover:bg-dom hover:text-paper hover:border-dom focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dom/25 focus-visible:ring-offset-2 focus-visible:ring-offset-paper ${
+        compacto ? 'px-2.5 py-1' : 'px-3 py-1.5'
+      } ${
         tenue ? 'border-line text-gray-ui' : 'border-line text-ink font-medium'
       }`}
     >

@@ -34,6 +34,36 @@ la base) igual que exige el resto del protocolo de este portal.
 
 ## Abiertos / decididos
 
+### P-024 — "Agregar bloque" subió al principio de la lista, compacto
+- Estado: **construido y verificado en vivo, 2026-10-01**
+- Origen: Francisco, 2026-10-01: "quiero que la sección de agregar
+  bloques ahora esté arriba... para no tener que scrollear hasta abajo
+  cada vez que quiero agregar algo. Hazla compacta para que no robe
+  mucho espacio."
+- El panel vivía DESPUÉS de la lista completa de bloques del segmento
+  (`Editor.tsx`): agregar el bloque número nueve significaba pasar por
+  los ocho anteriores cada vez. Se movió arriba, justo debajo del título
+  y la descripción del segmento, antes de la lista.
+- Compacto a propósito: mitad del padding del panel (`p-4`→`p-2.5`),
+  etiqueta más chica (`text-[11px]`→`text-[10px]`, menos margen),
+  separación entre la fila de tipos frecuentes y ocasionales reducida a
+  la mitad. `BotonTipo` ganó una variante `compacto` (menos padding por
+  botón) en vez de un componente nuevo -- es el mismo botón, no una
+  pieza distinta que mantener en paralelo.
+- El botón flotante "+" (fijo abajo a la derecha, que ya existía para
+  este mismo problema -- hallazgo de Julian documentado en el propio
+  código) NO se tocó: sigue apuntando al mismo `id="agregar-bloque"`,
+  así que `scrollIntoView` lo encuentra donde esté. Antes bajaba hasta el
+  final; ahora sube hasta el principio cuando se está desplazado bien
+  abajo en una lista larga -- mismo mecanismo, misma utilidad, solo que
+  ahora el caso común (recién se abre el segmento) ya no necesita ni
+  siquiera ese botón.
+- Verificado en vivo con cuenta y experiencia desechables (un segmento
+  con 8 bloques): el panel apareció arriba, compacto, sin tener que
+  scrollear; clicar un tipo agregó el bloque sin haber tenido que buscar
+  el panel primero; el botón flotante "+" sigue llevando al panel
+  (ahora arriba) sin cambios de código. `npx tsc --noEmit` limpio.
+
 ### P-023 — Arrastrar bloques dentro de un segmento, construido y verificado en vivo
 - Estado: **construido y verificado en vivo, 2026-10-01**
 - Origen: Francisco, 2026-09-30 (valorado en P-022), confirmó seguir con
