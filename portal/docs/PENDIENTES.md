@@ -34,6 +34,99 @@ la base) igual que exige el resto del protocolo de este portal.
 
 ## Abiertos / decididos
 
+### P-028 — "Consigna" y "Gesto" renombrados a "Instrucción" y "A mano"
+- Estado: **construido y verificado en vivo, 2026-10-01**
+- Origen: Francisco, 2026-10-01: "qué es un gesto y qué es una consigna?
+  Necesito que esos nombres cambien y realmente digan lo que hace la
+  sección."
+- **Consigna** era jerga de taller/terapia para "lo que se le pide hacer a
+  la persona, en una sola instrucción" (su propia `ayuda`, sin cambios) --
+  un bloque con espacio para responder, que opcionalmente se guarda de
+  verdad (`guarda`). Renombrado a **Instrucción**, la palabra que la
+  propia ayuda ya usaba para explicarse.
+- **Gesto** era "lo que se escribe a mano, no se sube ni se transcribe"
+  (su propia `ayuda`, sin cambios) -- específicamente algo escrito en una
+  libreta física, nunca digital por defecto (`aplicaDigital`). Renombrado
+  a **A mano**. Hallazgo de paso: "gesto" ya tenía OTRO significado en el
+  vocabulario de contenido del propio retiro ("El gesto mínimo", el
+  nombre de una sección real de retorno en `dominio.ts`) -- dos cosas
+  distintas compartiendo la misma palabra era parte de la confusión.
+- Solo cambia la ETIQUETA, no el identificador interno: `'consigna'` y
+  `'gesto'` se quedan igual como valores del enum real de
+  `blocks.tipo` en la base. Renombrar el enum es una migración de
+  esquema aparte que nadie pidió -- mismo criterio que ya usó el rename
+  de bisagra→segmento.
+- Tocó cuatro lugares, no solo `lib/personalab/bloques.ts` (`nombre` y
+  `etiqueta` de los dos tipos): la etiqueta "Consigna" que se le muestra
+  AL PARTICIPANTE arriba de la instrucción vive por separado en DOS
+  componentes que pintan lo mismo (`app/(admin)/personalab/Bloques.tsx`,
+  la vista previa del editor y del lector real; y
+  `app/(experiencia)/experiencia/Escritura.tsx`, el componente real con
+  el textarea donde el participante escribe su respuesta) -- confirmado
+  con un grep, no asumido. También se encontró y corrigió una frase
+  suelta en `Editor.tsx` ("no ve este gesto") que seguía nombrando el
+  tipo viejo en el texto de ayuda del interruptor "Aplica al modo
+  digital"; se dejó en "este bloque", genérico, para no depender de
+  ningún nombre.
+- Verificado en vivo con experiencia desechable (un bloque de cada tipo):
+  el selector "Agregar bloque" muestra "Instrucción" y "A mano"; la
+  tarjeta de cada bloque en el editor muestra el nombre nuevo; la vista
+  previa pinta "INSTRUCCIÓN" como antes pintaba "CONSIGNA" (mismo
+  tratamiento visual, solo cambia la palabra) y el bloque "A mano" sigue
+  sin etiqueta propia (el ícono de pluma ya comunicaba "a mano" sin
+  texto, eso no cambió). La frase corregida del interruptor se confirmó
+  en pantalla. `npx tsc --noEmit` limpio.
+- **No verificado en vivo, y se dice con honestidad:** el componente
+  `Escritura.tsx` (el que de verdad escribe el participante al responder
+  una instrucción publicada) no se probó con una cuenta de participante
+  real -- hubiera significado publicar una versión y dar un grant
+  completo solo para confirmar un cambio de un literal de texto. Se
+  verificó por lectura exacta del archivo (un solo string, igual al que
+  ya se confirmó en vivo en el componente gemelo) y por `tsc` limpio, no
+  por ejecución real de ese camino específico.
+
+### P-027 — Sección de Ideas en PersonaLab, construida y verificada en vivo
+- Estado: **construido y verificado en vivo, 2026-10-01**
+- Origen: Francisco, 2026-09-30 (valorado en P-022), confirmó seguir con
+  esto el 2026-10-01, el último de los tres pedidos de aquella valoración.
+- Terreno nuevo de punta a punta, como se había valorado: tabla
+  `public.ideas` nueva (`supabase/migrations/20261001_1546_personalab_ideas.sql`,
+  corrida en vivo por Francisco, confirmada con una consulta directa),
+  sin ninguna política de RLS permisiva a propósito -- todo el acceso
+  pasa por `lib/personalab/ideas.ts` (lectura) y
+  `app/(admin)/personalab/ideas/actions.ts` (escritura), los dos detrás
+  de `exigirEquipo()`, mismo patrón que `experiencias/actions.ts`. Pestaña
+  nueva "Ideas" en `PersonaLabNav.tsx`, al final.
+- Página simple: un formulario arriba (textarea + Cmd/Ctrl+Enter para
+  guardar rápido, lección directa de P-024: lo que se agrega va arriba,
+  no al final de una lista que crece) y la lista de ideas debajo, más
+  nueva primero, cada una con su autor y fecha y un botón "Quitar" con
+  confirmación de dos pasos (mismo patrón que borrar un bloque o un
+  segmento). Cualquiera del equipo puede borrar cualquier idea, no solo
+  la propia -- "nosotros" fue la palabra de Francisco, no "yo".
+- **BUG REAL ENCONTRADO PROBANDO EN VIVO, no leyendo código:** la primera
+  versión de `crearIdea()` devolvía solo `{ok:true}` y el cliente
+  confiaba en `router.refresh()` para que la lista se actualizara. La
+  idea SÍ se guardaba de verdad (confirmado con una consulta directa a
+  la base apenas se reportó el síntoma) pero la pantalla seguía diciendo
+  "todavía no hay ninguna idea anotada" -- `router.refresh()` vuelve a
+  correr el server component y le pasa un prop nuevo, pero el
+  `useState(ideasIniciales)` del cliente ya estaba sembrado y React no lo
+  resincroniza solo porque el prop cambió. Corregido haciendo que
+  `crearIdea()` devuelva la idea ya armada (con su autor, vía el mismo
+  join a `profiles` que ya usa el loader) para que el cliente la
+  agregue a su propio estado de inmediato -- mismo criterio que ya usaba
+  `borrar()`, que nunca tuvo este bug porque nunca dependió de que el
+  padre se resincronizara.
+- Verificado en vivo con cuenta desechable: agregar una idea la muestra
+  arriba de inmediato, con el autor y la fecha correctos, SIN recargar la
+  página (la prueba específica del bug de arriba); borrar pide confirmar
+  y la quita de la lista al instante; consola limpia en una pestaña
+  nueva (se descartó un "useRouter is not defined" que apareció primero
+  -- era historial de consola acumulado de ANTES del arreglo, en la
+  misma pestaña, no un error nuevo; confirmado igual que el hallazgo
+  equivalente de P-023, con el mismo método). `npx tsc --noEmit` limpio.
+
 ### P-026 — Cuatro ajustes de pulido del editor: botón flotante fuera, padding del lienzo, panel por zona, pie del borrador fuera
 - Estado: **construido y verificado en vivo, 2026-10-01**
 - Origen: Francisco, 2026-10-01, cuatro pedidos juntos.
@@ -241,19 +334,20 @@ la base) igual que exige el resto del protocolo de este portal.
   no un cambio de una línea. Queda anotado para no redescubrirlo como si
   fuera nuevo la próxima vez que alguien mire la consola.
 
-### P-022 — Tres pedidos nuevos de Francisco, valorados: Ideas (vista previa y arrastrar bloques ya construidos, ver P-025 y P-023)
-- Estado: **abierto** — Ideas sigue sin construir, falta que Francisco
-  decida si entra
+### P-022 — Tres pedidos nuevos de Francisco, valorados: los tres construidos (ver P-023, P-025, P-027)
+- Estado: **cerrado -- los tres construidos y verificados en vivo**
 - Origen: Francisco, 2026-09-30, junto con el pedido de subida que se
   volvió P-021: pidió ayuda para "valorar la creación" de tres cosas.
-- **"Sección de Ideas" para anotar y que queden registradas.** No existe
-  nada parecido hoy -- se buscó en todo el código y lo único que aparece
-  con "idea" es vocabulario de contenido de retiro, no una feature. Es
-  terreno nuevo de punta a punta: tabla nueva (texto, autor, fecha),
-  política RLS calcada de `exigirEquipo()` (mismo candado que ya usa
-  medios), página nueva en el nav de PersonaLab, formulario simple de
-  agregar/listar/borrar. Esfuerzo **medio**: no es complejo, pero no hay
-  nada que reaprovechar -- todo se escribe de cero.
+- **"Sección de Ideas" para anotar y que queden registradas. Construida y
+  verificada, ver P-027** -- lo que sigue es la valoración original, que
+  se queda como registro de por qué el esfuerzo era medio, no como
+  pendiente. No existía nada parecido hoy -- se buscó en todo el código y
+  lo único que aparecía con "idea" era vocabulario de contenido de
+  retiro, no una feature. Es terreno nuevo de punta a punta: tabla nueva
+  (texto, autor, fecha), política RLS calcada de `exigirEquipo()` (mismo
+  candado que ya usa medios), página nueva en el nav de PersonaLab,
+  formulario simple de agregar/listar/borrar. Esfuerzo **medio**: no es
+  complejo, pero no hay nada que reaprovechar -- todo se escribe de cero.
 - **Vista previa en desktop antes de abrir el editor. Construida y
   verificada, ver P-025** -- lo que sigue es la valoración original, que
   se queda como registro de por qué salió barata, no como pendiente.

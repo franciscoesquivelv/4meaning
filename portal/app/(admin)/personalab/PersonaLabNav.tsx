@@ -27,6 +27,7 @@ const SECCIONES = [
   { href: '/personalab/grupos',       label: 'Grupos' },
   { href: '/personalab/moderadores',  label: 'Moderadores' },
   { href: '/personalab/retorno',      label: 'Retorno' },
+  { href: '/personalab/ideas',        label: 'Ideas' },
 ]
 
 export default function PersonaLabNav() {
