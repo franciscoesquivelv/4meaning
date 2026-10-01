@@ -34,6 +34,68 @@ la base) igual que exige el resto del protocolo de este portal.
 
 ## Abiertos / decididos
 
+### P-021 — El bucket dice admitir video hasta 200 MB; Supabase de verdad lo corta cerca de 50 MB
+- Estado: **mensaje de error corregido y verificado en vivo (2026-10-01) —
+  la causa real NECESITA una acción de Francisco en el Dashboard, sin la
+  cual el límite real sigue siendo ~50 MB pase lo que pase en el código**
+- Origen: Francisco, 2026-09-30: "revisa el upload de videos y de
+  imágenes, no pude subir algunos videos... tiene que haber un mensaje
+  que explique por qué... si es un video muy pesado tiene que
+  mencionarlo directamente."
+- **Lo que se encontró, probando contra Storage real (no leyendo código):**
+  `subirArchivo()` (`app/(admin)/personalab/almacenRemoto.ts`) tenía UN
+  mensaje fijo para cualquier fallo de subida: "Se cortó la conexión. El
+  archivo sigue en tu computadora, no se perdió nada." -- fuera cual
+  fuera la causa real. Se subieron archivos de prueba reales (sparse,
+  via `mkfile`) directo contra el bucket `personalab-medios` para ver qué
+  responde Storage de verdad:
+  - 210 MB y 100 MB: **rechazados**, `{name: 'StorageApiError',
+    statusCode: '413', message: 'The object exceeded the maximum allowed
+    size'}`.
+  - 75 MB y 60 MB: **rechazados**, mismo error.
+  - 50 MB y 25 MB: **aceptados**.
+- **El hallazgo real no es el mensaje, es el límite.** El bucket tiene
+  declarado `file_size_limit = 200 MB` (migración
+  `20260914_1744_bucket_admite_audio.sql`) y `motivoRechazo()` (el
+  aviso ANTES de intentar subir, en `lib/personalab/medios.ts`) le dice
+  "sí cabe" a cualquier archivo hasta 200 MB. Pero Storage lo rechaza
+  igual, acotado por binario entre 50 y 60 MB. Esto es casi con certeza
+  la causa directa de "no pude subir algunos videos": cualquier video de
+  retiro entre ~50 y 200 MB pasa el aviso de bienvenida y falla después,
+  silenciosamente, con un mensaje que ni siquiera decía por qué.
+  El techo real que aplica es el límite de proyecto de Supabase
+  (Dashboard → Project Settings → Storage → "Upload file size limit"),
+  que viene en 50 MB por defecto y es independiente del límite por
+  bucket -- no es una fila de esta base, no es algo que la llave de
+  servicio de este proyecto pueda leer ni cambiar. El límite de 200 MB
+  del bucket es hoy aspiracional: nunca se aplica mientras el techo de
+  proyecto se quede en su default.
+- **Construido:** `mensajeDeErrorDeSubida()` nuevo en `almacenRemoto.ts`,
+  que lee la forma real del error de `uploadToSignedUrl` en vez de
+  asumir una causa fija: `statusCode === '413'` dice claro que pesa
+  demasiado y sugiere comprimir o dividir (sin prometer una cifra de MB
+  que hoy no se puede verificar); cualquier otro `StorageApiError` real
+  muestra el motivo tal cual Storage lo dio; solo cuando no hay
+  respuesta de la API (falla de red de verdad) se usa el mensaje de "se
+  cortó la conexión", que ahí sí es honesto.
+- Verificado: `npx tsc --noEmit` limpio; la función nueva probada contra
+  las formas de error reales capturadas de Storage (413 real, y un
+  `StorageApiError` genérico) más un fallo de red simulado, los tres
+  casos resuelven al mensaje correcto. No se pudo completar la prueba
+  de extremo a extremo en el navegador integrado: el selector de
+  "Elegir archivo" abre un diálogo nativo del sistema operativo, y ese
+  navegador no tiene manera de adjuntar un archivo a él (no hay
+  `file_upload` ni un `<input type=file>` que quede en el DOM para
+  manipular). Sí se verificó en vivo, en ese mismo navegador con una
+  cuenta y una experiencia desechables (borradas después): login,
+  creación de segmento, agregar bloque de Video -- todo con el léxico
+  "segmento" ya correcto en la UI real.
+- **Pendiente, y no es cosa de código:** para que el bucket realmente
+  admita hasta 200 MB como dice, alguien con acceso al Dashboard de
+  Supabase tiene que subir el "Upload file size limit" del proyecto a
+  200 MB (o más). Sin eso, el mensaje ahora es honesto pero el límite
+  real sigue siendo ~50 MB.
+
 ### P-020 — Indicador de almacenamiento en el Resumen de PersonaLab
 - Estado: **construido y verificado en vivo, 2026-09-30**
 - Origen: Francisco preguntó cómo saber cuánto espacio de subida se está

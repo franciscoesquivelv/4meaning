@@ -466,6 +466,48 @@ export async function revertirVersion(experienciaId: string): Promise<void> {
 
 // ── Subida de archivos, contra las rutas del paso 7 ─────────
 
+// Antes esto era un solo mensaje fijo ("se cortó la conexión") sin importar
+// la causa real. Pedido de Francisco, 2026-09-30: "tiene que haber un
+// mensaje que explique por qué... si es un video muy pesado tiene que
+// mencionarlo directamente." Probado en vivo contra Storage real (no es
+// una suposición de cómo se comporta la librería):
+//
+//   - Storage SÍ responde con un error claro cuando el objeto pesa de más:
+//     { name: 'StorageApiError', statusCode: '413',
+//       message: 'The object exceeded the maximum allowed size' }
+//     Eso se distingue y se dice tal cual, sin inventar una cifra.
+//
+//   - HALLAZGO: subiendo un archivo de 100 MB -- bien debajo del límite de
+//     200 MB que el bucket `personalab-medios` tiene declarado -- Storage
+//     lo rechazó igual con el mismo error. Se acotó por binario (50 MB
+//     pasó, 60 MB falló): el techo real que Supabase aplica hoy ronda los
+//     50 MB, no los 200 declarados. Esto es casi con certeza la causa de
+//     "no pude subir algunos videos": cualquier video entre ~50 y 200 MB
+//     pasa el aviso de "sí cabe" (`motivoRechazo`, que lee el límite
+//     DECLARADO del bucket) y después Storage lo rechaza igual. Ese límite
+//     real es un ajuste de proyecto en el Dashboard de Supabase (Project
+//     Settings → Storage → "Upload file size limit"), no una fila de la
+//     base ni algo que este código pueda leer o subir por sí solo -- hay
+//     que subirlo ahí a mano para que el techo de 200 MB sea real. Mientras
+//     tanto, el mensaje de acá no promete una cifra que no se puede
+//     verificar: dice que el archivo pesa de más y sugiere comprimir.
+//
+//   - Cualquier otro error CON respuesta de la API (`name: 'StorageApiError'`)
+//     se muestra tal cual vino -- es un motivo real, no uno inventado.
+//
+//   - Solo cuando no hay respuesta de la API (falló la red antes de llegar)
+//     es honesto decir que se cortó la conexión.
+function mensajeDeErrorDeSubida(error: unknown): string {
+  const e = error as { name?: string; statusCode?: string; message?: string } | null
+  if (e?.statusCode === '413') {
+    return 'El archivo pesa demasiado: el servidor de almacenamiento lo rechazó por tamaño. Comprímelo o divídelo en partes más pequeñas.'
+  }
+  if (e?.name === 'StorageApiError' && e.message) {
+    return `No se pudo subir el archivo: ${e.message}`
+  }
+  return 'Se cortó la conexión. El archivo sigue en tu computadora, no se perdió nada.'
+}
+
 export async function subirArchivo(
   archivo: File,
   alAvanzar?: (pct: number) => void
@@ -492,7 +534,7 @@ export async function subirArchivo(
     .from(bucket)
     .uploadToSignedUrl(ruta, token, archivo)
 
-  if (errorSubida) throw new Error('Se cortó la conexión. El archivo sigue en tu computadora, no se perdió nada.')
+  if (errorSubida) throw new Error(mensajeDeErrorDeSubida(errorSubida))
 
   alAvanzar?.(85)
 
