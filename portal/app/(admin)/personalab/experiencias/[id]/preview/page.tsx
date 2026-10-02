@@ -12,9 +12,9 @@ import { TARJETA, BTN_PRIMARIO, BTN_SECUNDARIO } from '../../../tokens'
 // previa que ya existe DENTRO del editor (`Editor.tsx`, el selector
 // "En celular/En computadora"): esa vive adentro, un segmento a la vez, y
 // requiere haber abierto ya el editor pesado. Esta es la misma pieza de
-// render (`BloqueLector`, el mismo marco de escritorio de 620px sin
-// bisel) pero sirve TODOS los segmentos de un tirón, desde la ficha de
-// la experiencia, sin entrar al editor.
+// render (`BloqueLector`, el mismo marco de escritorio sin bisel) pero
+// sirve TODOS los segmentos de un tirón, desde la ficha de la
+// experiencia, sin entrar al editor.
 //
 // `cargarParaEditar` es la misma función que ya usa `editor/page.tsx`: ya
 // trae TODOS los segmentos y TODOS los bloques del borrador, no solo el
@@ -29,6 +29,16 @@ import { TARJETA, BTN_PRIMARIO, BTN_SECUNDARIO } from '../../../tokens'
 // lo exclusivo de moderador SÍ se muestra -- esta pantalla es para
 // quien edita, no para el participante, mismo criterio que ya está
 // probado ahí.
+//
+// SIN TOPE DE ANCHO, DESDE EL 2026-10-01. Tenía `max-w-[620px]` (la
+// misma cifra que el lector real, calibrada por Julian, P-013) -- ahí
+// era deliberado, un techo de longitud de línea. Aquí Francisco lo vio
+// como un defecto: "se ve el contenido demasiado delgado, como si
+// estuviese hecho para mobile... quites ese pre-set". Se quitó, igual
+// que en `Editor.tsx` (la misma vista previa, vista desde adentro del
+// editor). El lector real que de verdad usa el participante NO se tocó
+// -- sigue en 620px; ensanchar ESE es una decisión más grande, que
+// Francisco no pidió todavía.
 const TIEMPOS: Tiempo[] = ['vispera', 'ignicion', 'retorno']
 
 export default async function VistaPreviaPage({ params }: { params: { id: string } }) {
@@ -84,7 +94,7 @@ export default async function VistaPreviaPage({ params }: { params: { id: string
           </Link>
         </div>
       ) : (
-        <div className="bg-paper border border-line rounded-[10px] overflow-hidden max-w-[620px] mx-auto">
+        <div className="bg-paper border border-line rounded-[10px] overflow-hidden">
           <div className="text-center pt-4">
             <span className="text-[9px] font-semibold uppercase tracking-widest text-terra-ui bg-paper-2 px-2 py-0.5 rounded-full">
               Vista previa

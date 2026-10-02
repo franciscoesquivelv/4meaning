@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { createBrowserClient } from '@supabase/ssr'
+import RenderMarkdown from '@/app/(admin)/personalab/RenderMarkdown'
 
 // ── DONDE SE ESCRIBE ────────────────────────────────────────────
 //
@@ -166,9 +167,24 @@ export default function Escritura({
     <div className="mt-8 md:mt-10 border-t border-b border-line py-6 md:py-7">
       <div className="cejilla">Instrucción</div>
 
-      <p className="mt-3 text-[19px] md:text-[21px] leading-[1.55] font-light text-dom">
-        {consigna}
-      </p>
+      {/* `RenderMarkdown`, no texto crudo -- BUG REAL, ENCONTRADO EN EL
+          CONTENIDO REAL DE "El Presente como Regalo": `{consigna}` sin
+          parsear ni siquiera admitía negrita o cursiva, y una lista
+          numerada escrita en el texto ("6 Temas en los que se mide el
+          amor") se leía corrida en una sola línea, sin saltos ni
+          numeración -- lo mismo que ya se corrigió en `Bloques.tsx` para
+          la vista previa del editor, aquí en el componente que de verdad
+          ve el participante al responder. Mismas clases exactas, para
+          que las dos pantallas pinten lo mismo. */}
+      <RenderMarkdown
+        texto={consigna}
+        encabezados={false}
+        clases={{
+          p: 'mt-3 text-[19px] md:text-[21px] leading-[1.55] font-light text-dom',
+          lista: 'mt-3 text-[19px] md:text-[21px] leading-[1.55] font-light text-dom pl-5 space-y-2',
+          fuerte: 'font-medium',
+        }}
+      />
 
       <textarea
         ref={area}

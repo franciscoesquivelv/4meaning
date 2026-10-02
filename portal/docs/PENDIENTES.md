@@ -34,6 +34,86 @@ la base) igual que exige el resto del protocolo de este portal.
 
 ## Abiertos / decididos
 
+### P-029 — Viñetas/numeradas de verdad en seis tipos de bloque más, y la vista previa ya no se encoge a ancho de celular en modo escritorio
+- Estado: **construido y verificado en vivo, 2026-10-01, contra contenido real**
+- Origen: Francisco, viendo el editor de "El Presente como Regalo" en
+  vivo: "en la sección del folder blanco, hay una instrucción que dice:
+  6 Temas en los que se mide el amor. Mira como se ve en el preview. Por
+  eso yo te había dicho que tiene que poder haber viñetas o enumeración.
+  Lo que necesito es que hagas algo para que ese tipo de errores no
+  sucedan." Junto con: "en el preview, se ve el contenido demasiado
+  delgado, como si estuviese hecho para mobile... quites ese pre-set."
+- **Hallazgo real, no inventado:** el bloque "Instrucción" de "El folder
+  blanco" (`presente-regalo`, versión 4, borrador) tiene guardada, tal
+  cual, una lista numerada 1-6 escrita a mano -- y quien la escribió ya
+  se había dejado una nota: *"(Insertar formato, mientras tanto lo pongo
+  tipo texto)"*. `Enfasis` (el render de cita/instrucción/a mano/aviso/
+  nota/objeto) pintaba todo dentro de un solo `<p>` sin
+  `white-space:pre-wrap`: cada `\n` se colapsaba, así que la lista
+  completa se leía como una sola oración corrida. El mismo defecto,
+  confirmado leyendo el contenido real de la misma sección, ya afectaba
+  varios bloques "A mano" con preguntas separadas por un solo salto de
+  línea.
+- **La corrección no es un parche para un bloque -- es un solo motor de
+  texto.** `RenderMarkdown` (antes solo de "Texto") ganó soporte real de
+  listas (`<ul>`/`<ol>` de verdad, no texto con guiones) y una prop
+  `clases` para que cada tipo de bloque mantenga su tipografía exacta de
+  siempre. cita/instrucción/a mano/aviso/nota/objeto pasaron de `Enfasis`
+  crudo a `RenderMarkdown` con `encabezados={false}` (un h2/h3 real
+  sigue sin tener sentido en una instrucción de un párrafo, razón
+  original de Leo que se mantiene) -- ahora SÍ párrafos, saltos de línea
+  reales y listas. Se corrigió en los DOS lugares que pintan una
+  instrucción: `Bloques.tsx` (vista previa del editor y del lector) Y
+  `Escritura.tsx` (el componente real donde el participante responde,
+  que ni siquiera tenía negrita/cursiva hasta hoy).
+- **Dos bugs reales encontrados en el camino, los dos solo visibles
+  probando contra el contenido real, no inventando casos de prueba:**
+  - El patrón de lista numerada exigía el punto ("1."). La línea real
+    "4 **cafe**-..." no tiene punto -- probablemente una errata de quien
+    escribió, no una sintaxis a propósito. Con el punto obligatorio, esa
+    única línea rompía la uniformidad del bloque y la lista ENTERA volvía
+    a párrafo corrido -- el mismo defecto que se estaba corrigiendo.
+    Corregido: el punto o un espacio alcanzan, no los dos.
+  - Con eso corregido, apareció un segundo bug: el TÍTULO "6 Temas en los
+    que se mide el amor" (su propia línea, separada por blanco de la
+    lista real) empezaba con un número y un espacio, así que calificaba
+    como una "lista" de un solo ítem -- se pintaba "1. Temas..." y el "6"
+    real se perdía. Corregido exigiendo dos líneas como mínimo para que
+    algo cuente como lista: una lista de un renglón no es una lista, es
+    una oración que por casualidad empieza con un número.
+- **Botones nuevos en la barra del editor** ("Viñeta"/"Numerada"),
+  visibles para los siete tipos con texto largo, no solo "Texto" --
+  alternan el marcador de la línea del cursor (lo agregan, lo quitan, o
+  lo reemplazan si la línea ya tenía el otro tipo), mismo modelo que los
+  botones de Párrafo/Subtítulo/Título que ya existían.
+- **El ancho fijo de 620px en modo "En computadora" (el mismo número en
+  el editor y en la página de vista previa de pantalla completa,
+  P-025) se quitó.** Era deliberado -- la misma cifra que Julian calibró
+  para el LECTOR REAL (P-013), un techo de longitud de línea a
+  propósito. Francisco lo vio como un defecto en ESTAS DOS pantallas de
+  vista previa específicamente, no se tocó el lector real que de verdad
+  usa el participante (sigue en 620px) -- ensancharlo también es una
+  decisión más grande que esta, que no se pidió todavía.
+- Verificado en vivo, EN EL CONTENIDO REAL de "El Presente como Regalo"
+  (solo lectura -- se confirmó con una consulta directa que el bloque
+  quedó byte a byte igual después de mirarlo, nunca se guardó nada):
+  - La lista 1-6 de "El folder blanco" renderiza como `<ol>` real
+    (confirmado con `getComputedStyle`: `list-style-type: decimal`, 6
+    `<li>`), con sus colores en negrita.
+  - El título "6 Temas..." renderiza como el párrafo correcto, no como
+    un ítem de lista.
+  - Los bloques "A mano" con preguntas separadas por salto de línea ahora
+    muestran cada pregunta en su propia línea.
+  - En modo "En computadora" el texto usa el ancho real del panel, no
+    los ~620px de antes; en modo "En celular" no cambió nada.
+  - La página de vista previa de pantalla completa (P-025) tiene el
+    mismo arreglo de ancho y el mismo `<ol>` real.
+  - Los botones nuevos "Viñeta"/"Numerada" se probaron con experiencia
+    desechable: agregan el marcador, lo alternan (quitar si ya estaba,
+    reemplazar si era el otro tipo), y con dos líneas marcadas aparece
+    un `<ul>` real con viñetas de verdad en la vista previa.
+  - Consola limpia en pestaña nueva. `npx tsc --noEmit` limpio.
+
 ### P-028 — "Consigna" y "Gesto" renombrados a "Instrucción" y "A mano"
 - Estado: **construido y verificado en vivo, 2026-10-01**
 - Origen: Francisco, 2026-10-01: "qué es un gesto y qué es una consigna?

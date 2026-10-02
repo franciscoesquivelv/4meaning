@@ -49,10 +49,24 @@ export default function BloqueLector({ b }: { b: Bloque }) {
       // Peso editorial sin serif: la marca descartó Cormorant para el sitio
       // ("se descartó la capa serif editorial en el sitio", BRAND.md §5), así
       // que la cita gana presencia por escala y aire, no por familia tipográfica.
+      //
+      // `RenderMarkdown` en vez de `Enfasis` crudo, aquí y en los cinco casos
+      // que siguen: ver el comentario grande junto a `RenderMarkdown`,
+      // `encabezados={false}` porque un h2/h3 real no tiene sentido dentro de
+      // una cita/instrucción/nota de un párrafo, pero el contenido SÍ
+      // necesita párrafos, saltos de línea reales y listas -- lo que faltaba.
       return (
         <figure className={mt}>
-          <blockquote className="text-[24px] md:text-[32px] leading-[1.42] md:leading-[1.36] font-extralight tracking-[-0.02em] text-dom border-l-[3px] border-terra-ui pl-6 md:pl-8">
-            <Enfasis texto={b.texto ?? ''} claseFuerte="font-medium" />
+          <blockquote className="border-l-[3px] border-terra-ui pl-6 md:pl-8">
+            <RenderMarkdown
+              texto={b.texto ?? ''}
+              encabezados={false}
+              clases={{
+                p: 'text-[24px] md:text-[32px] leading-[1.42] md:leading-[1.36] font-extralight tracking-[-0.02em] text-dom mt-4 first:mt-0',
+                lista: 'text-[24px] md:text-[32px] leading-[1.42] md:leading-[1.36] font-extralight tracking-[-0.02em] text-dom mt-4 first:mt-0 pl-6 space-y-2',
+                fuerte: 'font-medium',
+              }}
+            />
           </blockquote>
           {b.autor && (
             <figcaption className="mt-4 pl-6 md:pl-8 text-[12.5px] font-light text-gray-ui">
@@ -66,9 +80,15 @@ export default function BloqueLector({ b }: { b: Bloque }) {
       return (
         <div className={`${mt} border-t border-b border-line py-6 md:py-7`}>
           <div className={ROTULO}>Instrucción</div>
-          <p className="mt-3 text-[19px] md:text-[21px] leading-[1.55] font-light text-dom">
-            <Enfasis texto={b.texto ?? ''} claseFuerte="font-medium" />
-          </p>
+          <RenderMarkdown
+            texto={b.texto ?? ''}
+            encabezados={false}
+            clases={{
+              p: 'mt-3 text-[19px] md:text-[21px] leading-[1.55] font-light text-dom',
+              lista: 'mt-3 text-[19px] md:text-[21px] leading-[1.55] font-light text-dom pl-5 space-y-2',
+              fuerte: 'font-medium',
+            }}
+          />
         </div>
       )
 
@@ -79,18 +99,36 @@ export default function BloqueLector({ b }: { b: Bloque }) {
           <svg className="w-4 h-4 text-terra-ui mt-1 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.6}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 20h9M16.5 3.5a2.12 2.12 0 013 3L7 19l-4 1 1-4L16.5 3.5z" />
           </svg>
-          <p className="text-[15px] leading-[1.7] font-light text-gray-ui italic">
-            <Enfasis texto={b.texto ?? ''} claseFuerte="font-medium" claseEnfasis="not-italic" />
-          </p>
+          <div className="min-w-0 flex-1">
+            <RenderMarkdown
+              texto={b.texto ?? ''}
+              encabezados={false}
+              clases={{
+                // Todo el bloque es itálica por defecto -- la negrita es lo
+                // que rompe esa itálica para resaltar, no al revés, mismo
+                // criterio que ya tenía `Enfasis` aquí.
+                p: 'text-[15px] leading-[1.7] font-light text-gray-ui italic',
+                lista: 'text-[15px] leading-[1.7] font-light text-gray-ui italic pl-5 space-y-1.5',
+                fuerte: 'font-medium',
+                enfasis: 'not-italic',
+              }}
+            />
+          </div>
         </div>
       )
 
     case 'aviso':
       return (
         <div className={`${mt} bg-paper-2 border-l-[3px] border-terra-ui rounded-r-[10px] px-5 py-4`}>
-          <p className="text-[15px] md:text-[16px] leading-[1.65] font-light text-ink">
-            <Enfasis texto={b.texto ?? ''} claseFuerte="font-medium" />
-          </p>
+          <RenderMarkdown
+            texto={b.texto ?? ''}
+            encabezados={false}
+            clases={{
+              p: 'text-[15px] md:text-[16px] leading-[1.65] font-light text-ink',
+              lista: 'text-[15px] md:text-[16px] leading-[1.65] font-light text-ink pl-5 space-y-1.5',
+              fuerte: 'font-medium',
+            }}
+          />
         </div>
       )
 
@@ -98,9 +136,15 @@ export default function BloqueLector({ b }: { b: Bloque }) {
       return (
         <div className={`${mt} border border-line rounded-[10px] px-5 py-5 bg-paper-2`}>
           <div className={ROTULO}>En la mano</div>
-          <p className="mt-2.5 text-[17px] md:text-[18px] font-light text-dom">
-            <Enfasis texto={b.texto ?? ''} claseFuerte="font-medium" />
-          </p>
+          <RenderMarkdown
+            texto={b.texto ?? ''}
+            encabezados={false}
+            clases={{
+              p: 'mt-2.5 text-[17px] md:text-[18px] font-light text-dom',
+              lista: 'mt-2.5 text-[17px] md:text-[18px] font-light text-dom pl-5 space-y-1.5',
+              fuerte: 'font-medium',
+            }}
+          />
           {b.pie && (
             <p className="mt-2 text-[12.5px] leading-[1.6] font-light text-gray-ui">
               <Enfasis texto={b.pie} claseFuerte="font-medium" />
@@ -143,9 +187,15 @@ export default function BloqueLector({ b }: { b: Bloque }) {
           <div className={ROTULO}>
             Para ti, no para el grupo
           </div>
-          <p className="mt-2 text-[15px] leading-[1.65] font-light text-ink">
-            <Enfasis texto={b.texto ?? ''} claseFuerte="font-medium" />
-          </p>
+          <RenderMarkdown
+            texto={b.texto ?? ''}
+            encabezados={false}
+            clases={{
+              p: 'mt-2 text-[15px] leading-[1.65] font-light text-ink',
+              lista: 'mt-2 text-[15px] leading-[1.65] font-light text-ink pl-5 space-y-1.5',
+              fuerte: 'font-medium',
+            }}
+          />
         </div>
       )
 

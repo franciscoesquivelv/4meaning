@@ -1702,11 +1702,10 @@ export default function Editor({
             // sin que nada los mantuviera iguales es justo lo que rompió
             // esto -- la corrección no es otro número fijo, es dejar de
             // fijar uno: sin `lg:w-...`, el bisel ESTIRA al 100% del
-            // espacio real que `flex` le da dentro de su panel (mismo
-            // mecanismo que ya usa el marco de escritorio con
-            // `max-w-[620px]`, nunca un ancho fijo). `lg:max-w-[320px]`
-            // quedó como techo -- un teléfono real no debería verse más
-            // ancho que eso aunque la columna algún día tenga más espacio.
+            // espacio real que `flex` le da dentro de su panel.
+            // `lg:max-w-[320px]` quedó como techo -- un teléfono real no
+            // debería verse más ancho que eso aunque la columna algún día
+            // tenga más espacio.
             <div className="relative mx-auto w-full max-w-[375px] lg:max-w-[320px] lg:flex-1 lg:min-h-0">
               <div
                 className="relative bg-paper rounded-[40px] border-4 border-slate-800 overflow-hidden shadow-xl h-[620px] lg:h-full lg:max-h-[620px]"
@@ -1729,11 +1728,25 @@ export default function Editor({
             // SIN BISEL, A PROPÓSITO. Un celular es un objeto con un marco
             // real; una laptop o un monitor no tienen uno que valga la pena
             // dibujar, y ponerle uno habría sido decoración, no información.
-            // Ancho real de columna: 620px, la misma cifra que Julian
-            // calibró para el lector real (P-013) -- no un número aparte
-            // inventado para esta pantalla. Mismo mecanismo de encoger que
-            // el bisel: `lg:flex-1 lg:min-h-0` en el marco y en su región
-            // de scroll, `lg:max-h-[620px]` como techo, no como fijo.
+            //
+            // SIN TECHO DE ANCHO, DESDE EL 2026-10-01. Tenía `max-w-[620px]`,
+            // la misma cifra que Julian calibró para el lector real
+            // (P-013) -- ahí seguía siendo correcta: un techo DELIBERADO
+            // para la longitud de línea de lectura. Pero en ESTA pantalla
+            // (la vista previa del editor, no el lector real) Francisco lo
+            // encontró como un defecto: "se ve el contenido demasiado
+            // delgado, como si estuviese hecho para mobile... quites ese
+            // pre-set porque lo que hace es que quite la posibilidad de
+            // que se vea bien en desktop también." Se quita aquí y en
+            // `experiencias/[id]/preview/page.tsx` (la vista previa de
+            // pantalla completa). El lector real NO se tocó -- sigue en
+            // 620px, es la pantalla que de verdad importa para longitud de
+            // línea; falta que Francisco diga si también la quiere ancha
+            // ahí, una decisión más grande que esta vista previa. Mismo
+            // mecanismo de encoger que el bisel: `lg:flex-1 lg:min-h-0`
+            // en el marco y en su región de scroll, `lg:max-h-[620px]`
+            // como techo DE ALTO (ese sí se queda -- es para que quepa en
+            // la ventana, no decide cuánto texto cabe por línea).
             // `shadow-md`, agregado el 2026-10-01 junto con el panel de la
             // columna entera (mismo tono `bg-paper` que este marco): sin
             // sombra, el marco de escritorio quedaba un borde flotando
@@ -1747,7 +1760,7 @@ export default function Editor({
                   Vista previa
                 </span>
               </div>
-              <div className="overflow-y-auto scroll-sin-barra px-8 md:px-10 pt-6 pb-10 mx-auto max-w-[620px] w-full max-h-[620px] lg:flex-1 lg:min-h-0 lg:max-h-[620px]">
+              <div className="overflow-y-auto scroll-sin-barra px-8 md:px-10 pt-6 pb-10 w-full max-h-[620px] lg:flex-1 lg:min-h-0 lg:max-h-[620px]">
                 <PreviaContenido
                   bisagraActiva={bisagraActiva}
                   visiblesEnPrevia={visiblesEnPrevia}
@@ -2055,6 +2068,42 @@ function TarjetaBloque({
     })
   }
 
+  // VIÑETA/NUMERADA, SOBRE LA LÍNEA DEL CURSOR, mismo modelo que
+  // `estiloDeLinea`. Se agregó el mismo día que `RenderMarkdown` ganó
+  // soporte real de listas (P-029): el contenido real de "El Presente
+  // como Regalo" ya tenía a alguien escribiendo "1. algo" a mano,
+  // esperando que se viera como lista -- el botón no reemplaza saber la
+  // sintaxis, es para no tener que saberla. Alterna: si la línea ya tiene
+  // el marcador pedido, lo quita; si tiene el OTRO marcador, lo
+  // reemplaza, nunca los apila. El número literal no importa -- un
+  // `<ol>` de verdad se renumera solo, por eso siempre se inserta "1.".
+  function alternarMarcadorLista(tipo: 'viñeta' | 'numerada') {
+    const el = areaRef.current
+    if (!el) return
+    const valor = b.texto ?? ''
+    const pos = el.selectionStart ?? valor.length
+    const inicioLinea = valor.lastIndexOf('\n', pos - 1) + 1
+    const finBuscado = valor.indexOf('\n', pos)
+    const finLinea = finBuscado === -1 ? valor.length : finBuscado
+    const linea = valor.slice(inicioLinea, finLinea)
+
+    const yaViñeta = /^[-*]\s+/.test(linea)
+    const yaNumerada = /^\d+\.\s*/.test(linea)
+    const limpia = linea.replace(/^[-*]\s+/, '').replace(/^\d+\.\s*/, '')
+
+    const quitar = (tipo === 'viñeta' && yaViñeta) || (tipo === 'numerada' && yaNumerada)
+    const nuevaLinea = quitar ? limpia : tipo === 'viñeta' ? `- ${limpia}` : `1. ${limpia}`
+
+    const nuevo = valor.slice(0, inicioLinea) + nuevaLinea + valor.slice(finLinea)
+    onCambio({ texto: nuevo })
+    const delta = nuevaLinea.length - linea.length
+    requestAnimationFrame(() => {
+      el.focus({ preventScroll: true }) // ver comentario de envolverSeleccion
+      const p = Math.max(inicioLinea, pos + delta)
+      el.setSelectionRange(p, p)
+    })
+  }
+
   const BTN_HERRAMIENTA = 'px-2 py-1 rounded text-xs text-gray-ui hover:bg-paper-2 hover:text-ink transition-colors'
 
   return (
@@ -2272,6 +2321,16 @@ function TarjetaBloque({
               <button type="button" onClick={() => envolverSeleccion('*')} className={BTN_HERRAMIENTA} title="Cursiva: rodea lo que selecciones con *">
                 <i>I</i>
               </button>
+              <span className="w-px h-4 bg-paper-2 mx-1" />
+              {/* Viñeta/numerada: para TODO tipo que admite texto largo,
+                  no solo "Texto" -- `RenderMarkdown` ya las soporta en los
+                  siete (P-029). */}
+              <button type="button" onClick={() => alternarMarcadorLista('viñeta')} className={BTN_HERRAMIENTA} title="Línea del cursor: viñeta">
+                ◦—
+              </button>
+              <button type="button" onClick={() => alternarMarcadorLista('numerada')} className={BTN_HERRAMIENTA} title="Línea del cursor: lista numerada">
+                1.—
+              </button>
               {b.tipo === 'texto' && (
                 <>
                   <span className="w-px h-4 bg-paper-2 mx-1" />
@@ -2293,7 +2352,7 @@ function TarjetaBloque({
                 value={b.texto ?? ''}
                 onChange={e => onCambio({ texto: e.target.value })}
                 rows={b.tipo === 'texto' ? 6 : 3}
-                placeholder={b.tipo === 'texto' ? 'Escribe. O usa los botones de arriba para negrita, cursiva, subtítulo y título.' : 'Lo que el moderador necesita saber y el grupo no.'}
+                placeholder={b.tipo === 'texto' ? 'Escribe. O usa los botones de arriba para negrita, cursiva, viñetas, numerada, subtítulo y título.' : 'Lo que el moderador necesita saber y el grupo no.'}
                 className={`${INPUT} resize-y leading-relaxed`}
                 spellCheck
                 lang="es"
