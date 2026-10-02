@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { cargarParaEditar } from '@/lib/personalab/editorDatos'
 import { NIVEL } from '@/lib/personalab/bloques'
 import BloqueLector from '../../../Bloques'
+import AtmosferaVistaPrevia from '../../../AtmosferaVistaPrevia'
 import { ETIQUETA_TIEMPO, type Tiempo } from '../../../dominio'
 import { TARJETA, BTN_PRIMARIO, BTN_SECUNDARIO } from '../../../tokens'
 
@@ -30,15 +31,23 @@ import { TARJETA, BTN_PRIMARIO, BTN_SECUNDARIO } from '../../../tokens'
 // quien edita, no para el participante, mismo criterio que ya está
 // probado ahí.
 //
-// SIN TOPE DE ANCHO, DESDE EL 2026-10-01. Tenía `max-w-[620px]` (la
-// misma cifra que el lector real, calibrada por Julian, P-013) -- ahí
-// era deliberado, un techo de longitud de línea. Aquí Francisco lo vio
-// como un defecto: "se ve el contenido demasiado delgado, como si
-// estuviese hecho para mobile... quites ese pre-set". Se quitó, igual
-// que en `Editor.tsx` (la misma vista previa, vista desde adentro del
-// editor). El lector real que de verdad usa el participante NO se tocó
-// -- sigue en 620px; ensanchar ESE es una decisión más grande, que
-// Francisco no pidió todavía.
+// EL ANCHO DE 620PX SE QUEDA, PERO YA NO SE SIENTE COMO MOBILE. Tenía
+// `max-w-[620px]` (la misma cifra que el lector real, calibrada por
+// Julian, P-013) y por un día se quitó del todo -- Francisco lo había
+// visto como un defecto: "se ve el contenido demasiado delgado, como si
+// estuviese hecho para mobile... quites ese pre-set". Pero investigando
+// por qué existía: es un techo DELIBERADO de longitud de línea (67
+// caracteres por línea, óptimo de lectura 45-75), y el LECTOR REAL ya
+// resuelve "que no se sienta como mobile en escritorio" sin tocar esa
+// cifra -- con un degradado ambiental alrededor de la columna
+// (`AtmosferaLectura.tsx`). Verificado en vivo que sí funciona (cuenta
+// de prueba con grant real, revocado después). Con ese hallazgo sobre la
+// mesa, Francisco decidió: "dejar la columna en 620px... si el editor y
+// mi preview ya tienen el mismo degradado ambiental" -- así que el techo
+// de 620px vuelve, y esta pantalla gana `AtmosferaVistaPrevia` (la
+// versión del degradado adaptada a un panel, no a la ventana completa).
+// El lector real que de verdad usa el participante sigue intacto, nunca
+// se tocó.
 const TIEMPOS: Tiempo[] = ['vispera', 'ignicion', 'retorno']
 
 export default async function VistaPreviaPage({ params }: { params: { id: string } }) {
@@ -94,13 +103,14 @@ export default async function VistaPreviaPage({ params }: { params: { id: string
           </Link>
         </div>
       ) : (
-        <div className="bg-paper border border-line rounded-[10px] overflow-hidden">
-          <div className="text-center pt-4">
+        <div className="relative bg-paper border border-line rounded-[10px] overflow-hidden">
+          <AtmosferaVistaPrevia />
+          <div className="relative text-center pt-4">
             <span className="text-[9px] font-semibold uppercase tracking-widest text-terra-ui bg-paper-2 px-2 py-0.5 rounded-full">
               Vista previa
             </span>
           </div>
-          <div className="px-8 md:px-10 pt-6 pb-10">
+          <div className="relative bg-paper px-8 md:px-10 pt-6 pb-10 max-w-[620px] mx-auto">
             {segmentos.map((s, i) => {
               const delSegmento = bloques.filter(b => b.bisagraId === s.id).sort((a, b) => a.orden - b.orden)
               const visibles = delSegmento.filter(b => NIVEL[b.audiencia] <= 2)

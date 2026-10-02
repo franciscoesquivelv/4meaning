@@ -34,6 +34,67 @@ la base) igual que exige el resto del protocolo de este portal.
 
 ## Abiertos / decididos
 
+### P-030 — El ancho de 620px vuelve a las dos vistas previas de admin (editor y P-025), con degradado ambiental en vez de ensanchar
+- Estado: **construido y verificado en vivo, 2026-10-01**
+- Origen: Francisco, sobre el arreglo de P-029 ("quites ese pre-set"):
+  "Sí, ensancha también el lector real a lo que se vea mejor" -- pedido de
+  ensanchar también la columna del LECTOR REAL (`[slug]/page.tsx` y
+  afines), no solo las dos pantallas de admin que P-029 ya había
+  ensanchado.
+- **Investigado antes de ejecutar literal, porque el pedido literal rompía
+  algo deliberado.** `AtmosferaLectura.tsx` documenta que 620px NO es un
+  número arbitrario: Julian lo midió contra el bloque `texto` real (67
+  caracteres por línea, dentro del óptimo de lectura 45-75; P-013) y el
+  propio comentario del archivo dice "LA COLUMNA NO SE TOCA... lo que
+  cambia es lo que rodea esa columna, nunca la columna." El lector real
+  YA tiene una solución construida y funcionando para "que no se sienta
+  como mobile en escritorio" sin tocar la columna: un degradado ambiental
+  de blobs de color alrededor del margen (`--teal-2`/`--wine-2`/
+  `--terra`/`--gold`, `blur-[120px]`). Verificado en vivo que SÍ está
+  activo y SÍ se ve: cuenta de prueba desechable + fila `grants` real
+  (ambas borradas después), login real por el navegador (una sesión de
+  Node con `createClient` aparte NO comparte cookies con el navegador y
+  da un falso "pasa").
+- **Encontrado con ese hallazgo sobre la mesa: el degradado existe en el
+  lector real pero NO en ninguna de las dos pantallas de admin que P-029
+  había ensanchado (editor "En computadora" y la página de vista previa
+  de pantalla completa).** Preguntado a Francisco con `AskUserQuestion`,
+  eligió la opción recomendada: **"Dejar la columna en 620px"** -- es
+  decir, el ensanche de P-029 en esas dos pantallas se revierte, el
+  lector real nunca se toca, y en vez de ensanchar se les agrega el mismo
+  degradado ambiental.
+- **Construido:** `AtmosferaVistaPrevia.tsx`, adaptación de
+  `AtmosferaLectura.tsx` para un panel chico en vez de la ventana entera
+  (`absolute inset-[-20%]` contra el propio contenedor en vez de `fixed`
+  contra el viewport; blobs más chicos, 320/280/230/170px vs 560px, y
+  menos blur, 70px vs 120px -- los tamaños del lector real se habrían
+  comido un panel embebido entero). Se agregó a las dos pantallas y se
+  les devolvió `max-w-[620px] mx-auto`.
+- **Bug encontrado y corregido en el camino, solo visible midiendo en
+  vivo:** en el editor, el panel "En computadora" media 734px contra una
+  columna de 620px -- apenas ~57px de margen por lado, insuficiente para
+  que blobs de 170-320px se noten (contra la página de vista previa
+  aparte, que ya tenía ~100px por lado y se veía bien). Corregido
+  ensanchando esa columna del grid de 680px a 760px (ambas variantes,
+  riel colapsado y expandido); el modo "En celular" (320px) no se tocó.
+- Verificado en vivo, 2026-10-01, con experiencia desechable
+  (`prueba-atmosfera-*`, borrada después junto con su cuenta):
+  - `npx tsc --noEmit` limpio después del cambio a 760px.
+  - Medido con `getBoundingClientRect`: panel del editor en "En
+    computadora" ahora 734px de ancho, columna de contenido 620px, margen
+    57px por lado (114px total) -- el degradado se ve con claridad
+    comparable a la página de vista previa aparte.
+  - Confirmado visualmente: tinte de color visible en los márgenes
+    alrededor de la columna, en ambas pantallas.
+  - "En celular" (320px) sin cambios, confirmado por captura.
+  - Consola limpia en pestañas nuevas en ambas pantallas (un warning de
+    hidratación de `dnd-kit`, `aria-describedby`, aparece solo en
+    `/editor` y es previo a este cambio, no relacionado con el ancho ni
+    el degradado).
+- **Corrige la fila de P-029** que decía "el ancho fijo de 620px... se
+  quitó": ya no es así, volvió, por decisión explícita de Francisco
+  después de ver el hallazgo de arriba.
+
 ### P-029 — Viñetas/numeradas de verdad en seis tipos de bloque más, y la vista previa ya no se encoge a ancho de celular en modo escritorio
 - Estado: **construido y verificado en vivo, 2026-10-01, contra contenido real**
 - Origen: Francisco, viendo el editor de "El Presente como Regalo" en
@@ -88,12 +149,19 @@ la base) igual que exige el resto del protocolo de este portal.
   botones de Párrafo/Subtítulo/Título que ya existían.
 - **El ancho fijo de 620px en modo "En computadora" (el mismo número en
   el editor y en la página de vista previa de pantalla completa,
-  P-025) se quitó.** Era deliberado -- la misma cifra que Julian calibró
-  para el LECTOR REAL (P-013), un techo de longitud de línea a
-  propósito. Francisco lo vio como un defecto en ESTAS DOS pantallas de
-  vista previa específicamente, no se tocó el lector real que de verdad
-  usa el participante (sigue en 620px) -- ensancharlo también es una
-  decisión más grande que esta, que no se pidió todavía.
+  P-025) se quitó en esta entrega.** Era deliberado -- la misma cifra que
+  Julian calibró para el LECTOR REAL (P-013), un techo de longitud de
+  línea a propósito. Francisco lo vio como un defecto en ESTAS DOS
+  pantallas de vista previa específicamente, no se tocó el lector real
+  que de verdad usa el participante (sigue en 620px).
+  **CORREGIDO EN P-030: el ancho volvió a 620px en las dos pantallas.**
+  Investigando por qué pedir "ensancha también el lector real" (ver
+  P-030) se encontró que el lector real ya resuelve "no se sienta como
+  mobile" con un degradado ambiental sin tocar la columna -- Francisco,
+  con ese hallazgo, decidió dejar las tres columnas (lector real y las
+  dos de admin) en 620px y darle a las dos de admin el mismo degradado.
+  Esta fila queda como registro histórico de la decisión intermedia; el
+  estado real está en P-030.
 - Verificado en vivo, EN EL CONTENIDO REAL de "El Presente como Regalo"
   (solo lectura -- se confirmó con una consulta directa que el bloque
   quedó byte a byte igual después de mirarlo, nunca se guardó nada):

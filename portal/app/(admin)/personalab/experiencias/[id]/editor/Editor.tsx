@@ -12,6 +12,7 @@ import {
 import { CSS } from '@dnd-kit/utilities'
 import BloqueLector from '../../../Bloques'
 import SubirArchivo from '../../../SubirArchivo'
+import AtmosferaVistaPrevia from '../../../AtmosferaVistaPrevia'
 import {
   NIVEL, definicion,
   TIPOS_FRECUENTES, TIPOS_OCASIONALES, CON_MEDIO,
@@ -1367,9 +1368,22 @@ export default function Editor({
           redundante, y lo que las distingue de su panel es exactamente lo
           mismo que ya distingue a una fila de sección del resto del riel
           -- `bg-paper-2`, no un segundo borde encima de otro. */}
+      {/* 680px -> 760px EN MODO COMPUTADORA, 2026-10-02. El panel de
+          escritorio ganó `AtmosferaVistaPrevia` (ver el comentario junto
+          a ese panel, más abajo) para que la columna de 620px no se
+          sintiera flotando sola -- pero medido en vivo con 680px de
+          columna, el margen total alrededor del contenido era de solo
+          ~34px (680 menos 620 menos el borde del panel), demasiado poco
+          para que un degradado de 170-320px de ancho tuviera dónde
+          respirar. 760px da ~110px de margen total, parecido en
+          proporción a la página de vista previa de pantalla completa
+          (P-025), que nunca tuvo este problema por no vivir apretada
+          entre el riel y el lienzo. El modo celular (320px) no cambia:
+          el bisel del teléfono ya tiene su propio ancho real, 320px de
+          columna ya le sobra margen de siempre. */}
       <div className={`grid grid-cols-1 gap-4 items-start ${
         dispositivo === 'computadora'
-          ? rielColapsado ? 'lg:grid-cols-[40px_minmax(0,1fr)_680px]' : 'lg:grid-cols-[180px_minmax(0,1fr)_680px]'
+          ? rielColapsado ? 'lg:grid-cols-[40px_minmax(0,1fr)_760px]' : 'lg:grid-cols-[180px_minmax(0,1fr)_760px]'
           : rielColapsado ? 'lg:grid-cols-[40px_minmax(0,1fr)_320px]' : 'lg:grid-cols-[180px_minmax(0,1fr)_320px]'
       }`}>
         {/* Riel de secciones. Scroll propio (Julian, 2026-09-23), sin
@@ -1729,38 +1743,45 @@ export default function Editor({
             // real; una laptop o un monitor no tienen uno que valga la pena
             // dibujar, y ponerle uno habría sido decoración, no información.
             //
-            // SIN TECHO DE ANCHO, DESDE EL 2026-10-01. Tenía `max-w-[620px]`,
-            // la misma cifra que Julian calibró para el lector real
-            // (P-013) -- ahí seguía siendo correcta: un techo DELIBERADO
-            // para la longitud de línea de lectura. Pero en ESTA pantalla
-            // (la vista previa del editor, no el lector real) Francisco lo
-            // encontró como un defecto: "se ve el contenido demasiado
-            // delgado, como si estuviese hecho para mobile... quites ese
-            // pre-set porque lo que hace es que quite la posibilidad de
-            // que se vea bien en desktop también." Se quita aquí y en
-            // `experiencias/[id]/preview/page.tsx` (la vista previa de
-            // pantalla completa). El lector real NO se tocó -- sigue en
-            // 620px, es la pantalla que de verdad importa para longitud de
-            // línea; falta que Francisco diga si también la quiere ancha
-            // ahí, una decisión más grande que esta vista previa. Mismo
-            // mecanismo de encoger que el bisel: `lg:flex-1 lg:min-h-0`
-            // en el marco y en su región de scroll, `lg:max-h-[620px]`
-            // como techo DE ALTO (ese sí se queda -- es para que quepa en
-            // la ventana, no decide cuánto texto cabe por línea).
-            // `shadow-md`, agregado el 2026-10-01 junto con el panel de la
-            // columna entera (mismo tono `bg-paper` que este marco): sin
-            // sombra, el marco de escritorio quedaba un borde flotando
-            // sobre un fondo idéntico. El bisel del celular ya tenía
-            // `shadow-xl` desde siempre por ser un objeto (una pantalla,
-            // no una tarjeta de contenido) -- esto no es un lenguaje
-            // nuevo, es la MISMA idea aplicada al modo que no la tenía.
-            <div className="bg-paper border border-line rounded-[10px] overflow-hidden shadow-md lg:flex-1 lg:min-h-0 lg:flex lg:flex-col">
-              <div className="text-center pt-4 lg:flex-none">
+            // EL ANCHO DE 620PX SE QUEDA, PERO YA NO SE SIENTE COMO MOBILE.
+            // 2026-10-01: Francisco vio este panel como "demasiado delgado,
+            // como si estuviese hecho para mobile" y pidió quitar el techo
+            // de ancho. Antes de hacerlo, se investigó POR QUÉ existe: es
+            // la misma cifra que Julian calibró para el LECTOR REAL
+            // (P-013) -- 620px da 67 caracteres por línea, dentro del
+            // óptimo de lectura 45-75; ensancharla lo habría roto, no
+            // mejorado. Verificado en vivo, con una cuenta de prueba y un
+            // grant real (revocado después): el lector real YA resuelve
+            // "que no se sienta como mobile en escritorio" con
+            // `AtmosferaLectura.tsx`, un degradado ambiental alrededor de
+            // la columna, nunca ensanchando la columna misma -- y SÍ
+            // funciona, confirmado por `getComputedStyle` contra la
+            // pantalla real. Con ese hallazgo sobre la mesa, Francisco
+            // decidió: "dejar la columna en 620px... si el editor y mi
+            // preview ya tienen el mismo degradado ambiental". Este panel
+            // ahora lo tiene (`AtmosferaVistaPrevia`, la versión adaptada
+            // a un panel chico en vez de a la ventana completa -- ver su
+            // propio comentario). `relative` nuevo aquí: el degradado es
+            // `absolute` contra ESTE contenedor, no contra la ventana.
+            // Mismo mecanismo de encoger que el bisel: `lg:flex-1
+            // lg:min-h-0` en el marco y en su región de scroll,
+            // `lg:max-h-[620px]` como techo DE ALTO (nunca decidió cuánto
+            // texto cabe por línea, eso siempre fue el ancho). `shadow-md`,
+            // agregado el 2026-10-01 junto con el panel de la columna
+            // entera (mismo tono `bg-paper` que este marco): sin sombra,
+            // el marco de escritorio quedaba un borde flotando sobre un
+            // fondo idéntico. El bisel del celular ya tenía `shadow-xl`
+            // desde siempre por ser un objeto (una pantalla, no una
+            // tarjeta de contenido) -- esto no es un lenguaje nuevo, es la
+            // MISMA idea aplicada al modo que no la tenía.
+            <div className="relative bg-paper border border-line rounded-[10px] overflow-hidden shadow-md lg:flex-1 lg:min-h-0 lg:flex lg:flex-col">
+              <AtmosferaVistaPrevia />
+              <div className="relative text-center pt-4 lg:flex-none">
                 <span className="text-[9px] font-semibold uppercase tracking-widest text-terra-ui bg-paper-2 px-2 py-0.5 rounded-full">
                   Vista previa
                 </span>
               </div>
-              <div className="overflow-y-auto scroll-sin-barra px-8 md:px-10 pt-6 pb-10 w-full max-h-[620px] lg:flex-1 lg:min-h-0 lg:max-h-[620px]">
+              <div className="relative bg-paper overflow-y-auto scroll-sin-barra px-8 md:px-10 pt-6 pb-10 mx-auto max-w-[620px] w-full max-h-[620px] lg:flex-1 lg:min-h-0 lg:max-h-[620px]">
                 <PreviaContenido
                   bisagraActiva={bisagraActiva}
                   visiblesEnPrevia={visiblesEnPrevia}
