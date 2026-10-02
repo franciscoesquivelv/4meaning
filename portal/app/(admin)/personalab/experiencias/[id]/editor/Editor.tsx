@@ -857,7 +857,13 @@ export default function Editor({
       .map(s => ({ id: s.id, orden: s.orden }))
     const ordenPrevio = new Map(antes.map(s => [s.id, s.orden]))
     try {
-      await reordenarSeccionesRemoto(cambios, experiencia.versionId)
+      const revisadas = await reordenarSeccionesRemoto(cambios, experiencia.versionId)
+      // Mismo arreglo que `mover` ya aplica a bloques: sin esto, el `rev`
+      // local de la sección movida queda congelado y el próximo guardado
+      // de su título/descripción choca contra un `rev` que ya subió por
+      // este mismo reordenamiento.
+      const revPorId = new Map(revisadas.map(r => [r.id, r.rev]))
+      setBisagras(prev => prev.map(s => (revPorId.has(s.id) ? { ...s, rev: revPorId.get(s.id)! } : s)))
       setErrorGlobal(null)
       registrarDeshacer('Segmento movido', () => restaurarOrdenDeSecciones(ordenPrevio, cambios.map(c => c.id)))
     } catch (e) {
@@ -875,7 +881,11 @@ export default function Editor({
     reordenarSeccionesRemoto(
       ids.map(id => ({ id, orden: ordenPrevio.get(id)! })),
       experiencia.versionId
-    ).catch(() => {
+    ).then(revisadas => {
+      // Mismo arreglo que en `moverSeccion`.
+      const revPorId = new Map(revisadas.map(r => [r.id, r.rev]))
+      setBisagras(prev => prev.map(s => (revPorId.has(s.id) ? { ...s, rev: revPorId.get(s.id)! } : s)))
+    }).catch(() => {
       setErrorGlobal(mensajeDeFallo('No se pudo deshacer el orden de un segmento. Intenta de nuevo.'))
     })
   }
@@ -1055,7 +1065,18 @@ export default function Editor({
 
     for (const c of cambiadosReales) marcarPorClave(claveDe(c.id), 'guardando')
     try {
-      await reordenarRemoto(cambiadosReales.map(b => ({ id: b.id, orden: b.orden })), experiencia.versionId)
+      const revisados = await reordenarRemoto(cambiadosReales.map(b => ({ id: b.id, orden: b.orden })), experiencia.versionId)
+      // SIN ESTO, EL `rev` LOCAL DE CADA BLOQUE MOVIDO SE QUEDA CONGELADO:
+      // `reordenarRemoto` sube el `rev` real en la base (el trigger
+      // `subir_rev` lo hace con cualquier UPDATE, no solo con los que
+      // tocan contenido), y el PRÓXIMO guardado de texto sobre uno de
+      // estos bloques mandaría el `rev` viejo contra uno que ya subió --
+      // un conflicto falso contra el propio trabajo de quien edita.
+      // Mismo patrón que `guardarOCrear` ya usa. Hallazgo real: Francisco
+      // reportó ver "alguien más del equipo... están editando al mismo
+      // tiempo" editando solo, 2026-10-01.
+      const revPorId = new Map(revisados.map(r => [r.id, r.rev]))
+      setBloques(prev => prev.map(b => (revPorId.has(b.id) ? { ...b, rev: revPorId.get(b.id)! } : b)))
       for (const c of cambiadosReales) marcarPorClave(claveDe(c.id), 'guardado')
       setErrorGlobal(null)
       const idsCambiados = cambiadosReales.map(b => b.id)
@@ -1095,7 +1116,11 @@ export default function Editor({
       ids.map(id => ({ id, orden: ordenPrevio.get(id)! })),
       experiencia.versionId
     )
-      .then(() => {
+      .then(revisados => {
+        // Mismo arreglo que en `mover`: sin refrescar el `rev` local aquí
+        // también, deshacer un movimiento dejaba la misma trampa.
+        const revPorId = new Map(revisados.map(r => [r.id, r.rev]))
+        setBloques(prev => prev.map(b => (revPorId.has(b.id) ? { ...b, rev: revPorId.get(b.id)! } : b)))
         for (const id of ids) marcarPorClave(claveDe(id), 'guardado')
       })
       .catch(() => {

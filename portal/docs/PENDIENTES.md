@@ -34,6 +34,65 @@ la base) igual que exige el resto del protocolo de este portal.
 
 ## Abiertos / decididos
 
+### P-031 — "Alguien más está editando al mismo tiempo" aparecía editando solo: reordenar subía el `rev` y nadie lo refrescaba en pantalla
+- Estado: **construido y verificado en vivo, 2026-10-01, contra la base real**
+- Origen: Francisco, molesto, citando que ya lo había pedido antes: "Alguien
+  más del equipo guardó un cambio aquí mismo mientras editabas... están
+  editando al mismo tiempo. Esto sigue apareciendo incluso cuando una sola
+  persona está editando."
+- **Causa real, encontrada leyendo el candado de concurrencia que la
+  auditoría del 2026-09-29 construyó para `blocks` y `hinges`
+  (`supabase/migrations/20260929_1715_hinges_concurrencia_optimista.sql`):
+  el trigger `subir_rev` sube `rev` en CUALQUIER `UPDATE` a esas tablas, no
+  solo en los que tocan contenido.** `reordenarRemoto` (mover bloques) y
+  `reordenarSeccionesRemoto` (mover segmentos) hacen un `UPDATE` que solo
+  toca `orden` -- y ese `UPDATE` también dispara el trigger. Las dos
+  funciones nunca devolvían el `rev` nuevo, y `Editor.tsx` nunca lo pedía:
+  después de mover un bloque o un segmento, el `rev` que la pantalla tenía
+  guardado para esa fila quedaba congelado en el viejo. El PRÓXIMO
+  guardado de CONTENIDO sobre esa misma fila (editar su texto, su título) 
+  mandaba ese `rev` viejo contra una base que ya había subido con el propio
+  reordenamiento -- cero filas afectadas, `ConflictoDeVersion` con
+  `revReal >= 0`, y `mensajeDeConflicto` elige
+  `MENSAJE_CONFLICTO_EDICION_SIMULTANEA` para ese caso exacto (ver
+  `Editor.tsx:122`) -- un mensaje que dice "otra persona está editando"
+  cuando la única persona era la misma, en la misma pestaña, un segundo
+  antes. Nada de esto es sobre dos personas chocando: es la propia
+  concurrencia optimista (construida para proteger de un choque real)
+  chocando contra el trabajo de quien editaba solo.
+- **El patrón que faltaba ya existía para el guardado de contenido**
+  (`guardarOCrear`/`guardarSeccionAhora`: `setBloques`/`setBisagras`
+  refrescan el `rev` local con el que devuelve el servidor después de
+  cada guardado que sí funciona) -- nunca se había extendido a
+  reordenar, que es un UPDATE distinto pero toca las mismas filas y el
+  mismo trigger.
+- **Corregido en los dos lados, los cuatro caminos que llaman a
+  reordenar:** `reordenarRemoto` y `reordenarSeccionesRemoto`
+  (`almacenRemoto.ts`) ahora piden `rev` en el `.select()` y devuelven
+  `{id, rev}[]` en vez de `void`. `Editor.tsx` usa esa lista para
+  refrescar el `rev` local de cada fila movida en los cuatro lugares que
+  llaman a estas dos funciones: `mover` (flechas/arrastre de bloques),
+  `restaurarOrdenDeBloques` (deshacer), `moverSeccion`
+  (flechas/arrastre de segmentos) y `restaurarOrdenDeSecciones`
+  (deshacer).
+- Verificado en vivo, 2026-10-01, con experiencia desechable de dos
+  segmentos y dos bloques (slug `prueba-rev-*`, borrada después junto
+  con su cuenta):
+  - `npx tsc --noEmit` limpio.
+  - **Bloques:** se movió el bloque 1 (bajarlo, `rev` 1 -> 2 en la base
+    por el reordenamiento) y de inmediato se editó su texto. Sin el
+    arreglo esto habría disparado el conflicto falso; con el arreglo
+    guardó limpio -- confirmado en la UI ("Guardado", sin banner) Y
+    consultando la fila real en la base: `orden: 2`, `rev: 3` (1 inicial
+    + 1 reordenar + 1 editar), `contenido.texto` con el cambio exacto
+    que se escribió.
+  - **Segmentos:** mismo experimento con "Bajar Segmento A" y editando su
+    título de inmediato -- mismo resultado, confirmado en la UI y en la
+    base: `orden: 2`, `rev: 3`, `titulo: "Segmento A editado"`.
+  - Consola limpia en pestaña nueva (el único warning, de `dnd-kit`
+    `aria-describedby`, es previo a este cambio y ajeno -- ya registrado
+    en P-030).
+
 ### P-030 — El ancho de 620px vuelve a las dos vistas previas de admin (editor y P-025), con degradado ambiental en vez de ensanchar
 - Estado: **construido y verificado en vivo, 2026-10-01**
 - Origen: Francisco, sobre el arreglo de P-029 ("quites ese pre-set"):

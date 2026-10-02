@@ -261,22 +261,39 @@ export async function borrarBloque(id: string) {
 // afectadas, y la llamada vuelve como éxito. Antes de esto, reordenar
 // bloques sobre una versión que acababa de morir reportaba "listo" sin
 // haber movido nada.
+// DEVUELVE EL `rev` NUEVO DE CADA FILA -- SIN ESTO, FRANCISCO VEÍA EL
+// BANNER DE "EDICIÓN SIMULTÁNEA" EDITANDO SOLO, 2026-10-01. El trigger
+// `subir_rev` (ver la migración de concurrencia optimista) sube `rev` en
+// CUALQUIER UPDATE, incluido este, que solo toca `orden` -- no hacía
+// falta que lo subiera "a propósito" para que el reordenamiento mismo lo
+// disparara. `Editor.tsx` actualizaba `orden` en pantalla después de
+// reordenar, pero nunca el `rev` local de esas filas: quedaba congelado
+// en el que trajo la carga inicial. El PRÓXIMO guardado de contenido
+// sobre un bloque que se acababa de mover (o de uno que cedió el lugar)
+// mandaba ese `rev` viejo contra una base que ya había subido con el
+// reordenamiento -- cero filas, `ConflictoDeVersion` con `revReal >= 0`,
+// y el mensaje que dice "otra persona está editando" cuando la única
+// persona era la misma, en la misma pestaña. Mismo defecto, mismo arreglo,
+// que `reordenarSeccionesRemoto`.
 export async function reordenarRemoto(
   cambios: { id: string; orden: number }[],
   versionId: string
-): Promise<void> {
+): Promise<{ id: string; rev: number }[]> {
   const sb = cliente()
+  const revisadas: { id: string; rev: number }[] = []
   for (const c of cambios) {
     const { data, error } = await sb
       .from('blocks')
       .update({ orden: c.orden })
       .eq('id', c.id)
       .eq('version_id', versionId)
-      .select('id')
+      .select('id, rev')
       .maybeSingle()
     if (error) throw error
     if (!data) throw new ConflictoDeVersion(0, -1)
+    revisadas.push({ id: data.id, rev: data.rev })
   }
+  return revisadas
 }
 
 // ── Secciones (hinges) ───────────────────────────────────────
@@ -319,11 +336,21 @@ export function reordenarSecciones<T extends BisagraEditable>(
   return secciones.map(s => (ordenes.has(s.id) ? { ...s, orden: ordenes.get(s.id)! } : s))
 }
 
+// DEVUELVE EL `rev` NUEVO DE CADA FILA, MISMO HALLAZGO Y MISMO ARREGLO
+// QUE `reordenarRemoto` (ver su comentario): el trigger `subir_rev` sube
+// `rev` en cualquier UPDATE a `hinges`, incluido este, que solo toca
+// `orden`. Sin devolverlo, `Editor.tsx` actualizaba el `orden` en
+// pantalla pero dejaba el `rev` local de la sección congelado -- el
+// próximo guardado de título o descripción sobre una sección recién
+// movida mandaba ese `rev` viejo, chocaba contra cero filas, y Francisco
+// veía "alguien más del equipo guardó un cambio... están editando al
+// mismo tiempo" editando él solo (2026-10-01).
 export async function reordenarSeccionesRemoto(
   cambios: { id: string; orden: number }[],
   versionId: string
-): Promise<void> {
+): Promise<{ id: string; rev: number }[]> {
   const sb = cliente()
+  const revisadas: { id: string; rev: number }[] = []
   for (const c of cambios) {
     // Mismo hallazgo que en `guardarSeccionRemoto`: sin `.select()`, mover
     // una sección sobre una versión que dejó de ser el borrador vivo
@@ -333,11 +360,13 @@ export async function reordenarSeccionesRemoto(
       .update({ orden: c.orden })
       .eq('id', c.id)
       .eq('version_id', versionId)
-      .select('id')
+      .select('id, rev')
       .maybeSingle()
     if (error) throw error
     if (!data) throw new ConflictoDeVersion(0, -1)
+    revisadas.push({ id: data.id, rev: data.rev })
   }
+  return revisadas
 }
 
 // Qué trae una sección recién nacida. El `tiempo` lo decide quien crea
