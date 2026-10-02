@@ -179,7 +179,16 @@ export const CONTRATO = {
     nombre: 'Texto',
     ayuda: 'Lo que se lee. Admite negrita, cursiva y subtítulos.',
     frecuencia: 'frecuente',
-    margen: '', // el propio markdown pone su margen
+    // El propio markdown pone su margen -- pero de verdad, no como el
+    // comentario anterior prometía. Hasta el 2026-10-02 esto citaba la
+    // misma frase y era falso: `RenderMarkdown` borra el margen de su
+    // primer elemento con `first:mt-0` (pensado para cita/aviso/etc.,
+    // que sí traen su propio `mt` exterior), así que un bloque `texto`
+    // nunca aportaba ningún espacio, ni como párrafo ni como título.
+    // Bug real, medido en vivo (0px en los 12 pares texto-con-algo
+    // probados), reportado por Francisco. `primerConMargen` en
+    // `Bloques.tsx` es lo que hace cierta esta frase ahora.
+    margen: '',
     campos: {
       texto: { clase: 'texto', etiqueta: 'Texto', exigencia: 'impide', ...FALTA_TEXTO },
     },

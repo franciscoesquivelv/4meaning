@@ -135,13 +135,49 @@ function partirLineas(bloque: string): Linea[] {
 // instrucción de un párrafo (razón original de Leo, 2026-09-23, que
 // sigue siendo válida) -- lo que sí hacía falta, y no existía, eran
 // párrafos, saltos de línea reales y listas.
+// BUG REAL, REPORTADO POR FRANCISCO, 2026-10-02: "cuando pongo dos
+// bloques de texto, no tienen ningún tipo de espaciado entre ellos, los
+// títulos no generan padding alrededor de ellos, ni los subtítulos."
+// Medido en vivo, en el preview del teléfono, con los 13 tipos de
+// bloque en secuencia: CADA vez que un bloque `texto` era el segundo de
+// un par, el espacio medía 0px exacto -- sin excepción, sin importar
+// qué bloque viniera antes. Los otros 11 tipos (cita, instrucción,
+// aviso, a mano, objeto, pausa, divisor, video, audio, nota) ya median
+// bien, al pixel, contra su propio `margen` declarado en
+// `lib/personalab/bloques.ts`.
+//
+// CAUSA: `texto` es el único tipo cuyo `CONTRATO.margen` es `''` -- el
+// comentario decía "el propio markdown pone su margen", confiando en
+// que el `mt-X` de `c.p`/`c.h2`/`c.h3` de aquí abajo haría ese trabajo.
+// Pero cada bloque `texto` es su PROPIA instancia de `RenderMarkdown`, y
+// `first:mt-0` borra el margen del primer elemento de CADA instancia --
+// diseñado para el caso contrario (cita/aviso/instrucción/etc., que sí
+// traen su propio `mt` en el `<div>` que los envuelve, y necesitan que
+// el párrafo de adentro NO sume un segundo margen encima). Para `texto`
+// no hay ningún `mt` exterior que lo reemplace: el primer (o único)
+// elemento queda sin margen, siempre.
+//
+// ARREGLO, NO PARCHE: en vez de ponerle a `texto` un número fijo (que
+// sería el margen de un párrafo SIEMPRE, incluso cuando el bloque entero
+// es un título -- y un título necesita más aire que un párrafo, 72px
+// contra 28px, exactamente la diferencia que `c.h2` ya declara), este
+// prop deja que el primer elemento conserve SU PROPIO margen -- el mismo
+// que ya tendría si no fuera el primero. Dos bloques `texto` seguidos
+// quedan indistinguibles de un solo bloque con dos párrafos, que es
+// exactamente el objetivo: un motor de texto, no dos comportamientos
+// según dónde esté el salto de línea en blanco.
+function sinMargenCero(clase: string, activo: boolean): string {
+  return activo ? clase.replace(' first:mt-0', '') : clase
+}
+
 export default function RenderMarkdown({
-  texto, tono = 'lectura', encabezados = true, clases,
+  texto, tono = 'lectura', encabezados = true, clases, primerConMargen = false,
 }: {
   texto: string
   tono?: Tono
   encabezados?: boolean
   clases?: Partial<ClasesTono>
+  primerConMargen?: boolean
 }) {
   const c = { ...CLASES[tono], ...clases }
   const bloques = texto.split(/\n{2,}/).map(b => b.trim()).filter(Boolean)
@@ -150,10 +186,10 @@ export default function RenderMarkdown({
     <>
       {bloques.map((bloque, i) => {
         if (encabezados && bloque.startsWith('### ')) {
-          return <h3 key={i} className={c.h3}>{enLinea(bloque.slice(4), c, `h3${i}`)}</h3>
+          return <h3 key={i} className={sinMargenCero(c.h3, primerConMargen)}>{enLinea(bloque.slice(4), c, `h3${i}`)}</h3>
         }
         if (encabezados && bloque.startsWith('## ')) {
-          return <h2 key={i} className={c.h2}>{enLinea(bloque.slice(3), c, `h2${i}`)}</h2>
+          return <h2 key={i} className={sinMargenCero(c.h2, primerConMargen)}>{enLinea(bloque.slice(3), c, `h2${i}`)}</h2>
         }
 
         const lineas = partirLineas(bloque).filter(l => l.texto.trim() || l.tipo)
@@ -179,7 +215,7 @@ export default function RenderMarkdown({
           return (
             <Lista
               key={i}
-              className={`${c.lista} ${tipos.has('numerada') ? 'list-decimal' : 'list-disc'}`}
+              className={`${sinMargenCero(c.lista, primerConMargen)} ${tipos.has('numerada') ? 'list-decimal' : 'list-disc'}`}
             >
               {lineas.map((l, j) => (
                 <li key={j}>{enLinea(l.texto, c, `li${i}-${j}`)}</li>
@@ -189,7 +225,7 @@ export default function RenderMarkdown({
         }
 
         return (
-          <p key={i} className={c.p}>
+          <p key={i} className={sinMargenCero(c.p, primerConMargen)}>
             {bloque.split('\n').map((linea, j, arr) => (
               <React.Fragment key={j}>
                 {enLinea(linea, c, `p${i}-${j}`)}

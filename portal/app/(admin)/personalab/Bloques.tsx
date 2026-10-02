@@ -39,9 +39,13 @@ export default function BloqueLector({ b }: { b: Bloque }) {
 
   switch (b.tipo) {
     case 'texto':
+      // `primerConMargen`: ver el comentario grande en `RenderMarkdown.tsx`
+      // -- sin esto, dos bloques `texto` seguidos (o un título como su
+      // propio bloque) no tenían NINGÚN espacio entre ellos, bug real
+      // medido en vivo, reportado por Francisco 2026-10-02.
       return (
         <div className={mt}>
-          <RenderMarkdown texto={b.texto ?? ''} />
+          <RenderMarkdown texto={b.texto ?? ''} primerConMargen />
         </div>
       )
 

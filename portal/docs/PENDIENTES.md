@@ -34,6 +34,100 @@ la base) igual que exige el resto del protocolo de este portal.
 
 ## Abiertos / decididos
 
+### P-032 — Bloques `texto` sin ningún espacio entre sí ni antes de un título: auditoría completa, los 13 tipos, cada transición medida
+- Estado: **construido y verificado en vivo, 2026-10-02, los 13 tipos de bloque, 24 transiciones medidas al pixel**
+- Origen: Francisco, en el preview del teléfono: "cuando pongo dos bloques
+  de texto, no tienen ningún tipo de espaciado entre ellos, los títulos no
+  generan padding alrededor de ellos, ni los subtítulos. Muchas de las
+  cosas que se ponen de bloques se ven mal en el previes. Audita todo eso
+  con Leo y Julian, bloque por bloque combinación por combinación, quiero
+  que se vea perfecto." Mandato: Julian mide jerarquía/espaciado/tipografía
+  (su dominio exacto, ver `agents/Julian.md`); Leo asegura que el arreglo
+  sea un sistema, no un parche tipo por tipo.
+- **Auditoría real, no de memoria: experiencia desechable con los 13 tipos
+  de bloque en secuencia** (texto plano, texto-como-título ##, texto-como-
+  subtítulo ###, pausa, cita, instrucción, aviso, a mano, objeto, divisor,
+  video, audio, nota), armada para capturar la transición tipo→texto Y
+  texto→tipo de cada uno. Medido con `getBoundingClientRect` sobre el
+  artefacto corriendo (el panel "En celular" del editor), no leyendo
+  clases: **las 12 transiciones donde `texto` era el SEGUNDO bloque medían
+  0px exactas, sin una sola excepción**, sin importar qué viniera antes
+  (otro texto, un título, una pausa, una cita, un video). Las otras 9
+  transiciones probadas (pausa, cita, instrucción, aviso, a mano, objeto,
+  divisor, video, audio, nota, todas con `texto` de un lado) ya medían
+  bien, al pixel exacto, contra su propio `margen` declarado en
+  `lib/personalab/bloques.ts`.
+- **Causa, no síntoma: `texto` es el único tipo de los 13 cuyo
+  `CONTRATO.margen` es `''`** (`lib/personalab/bloques.ts`), con un
+  comentario que decía "el propio markdown pone su margen" -- confiando en
+  que el `mt-X` que `RenderMarkdown.tsx` ya pone en cada párrafo/título
+  haría ese trabajo. Pero cada bloque `texto` es su PROPIA instancia de
+  `RenderMarkdown`, y ahí `first:mt-0` borra el margen del primer elemento
+  de CADA instancia -- un mecanismo que es CORRECTO para los otros 6 tipos
+  que usan `RenderMarkdown` (cita/instrucción/aviso/a mano/objeto/nota: su
+  `<div>`/`<figure>` exterior YA trae su propio `mt`, y sin `first:mt-0` el
+  párrafo de adentro sumaría un segundo margen encima) pero deja a `texto`
+  sin ningún margen exterior que lo reemplace. El comentario llevaba la
+  frase correcta y el código la hacía falsa.
+- **El arreglo no es un número fijo para `texto`.** Ponerle `mt-6 md:mt-7`
+  (el ritmo de "párrafo tras párrafo") habría cerrado el caso más común
+  pero habría roto el otro: un bloque `texto` cuyo contenido ES un título
+  (`## `) necesita el margen de un título (72px en escritorio), no el de
+  un párrafo (28px) -- la diferencia que `RenderMarkdown` ya declara en
+  `c.h2` y que un número fijo habría aplanado. El arreglo real es un prop
+  nuevo, `primerConMargen`, que deja que el PRIMER elemento de un
+  `RenderMarkdown` conserve SU PROPIO margen (el que tendría si no fuera
+  el primero) en vez de siempre borrarlo -- así dos bloques `texto`
+  seguidos quedan indistinguibles de un solo bloque con dos párrafos, que
+  es el objetivo real: un motor de texto, no dos comportamientos según
+  dónde esté el salto de línea en blanco. Solo `Bloques.tsx` lo activa, y
+  solo para el caso `'texto'`; los otros 6 tipos que usan `RenderMarkdown`
+  no lo reciben y siguen exactamente igual que antes.
+- **Verificado en vivo, el ANTES y el DESPUÉS de cada una de las 12
+  transiciones rotas, misma experiencia desechable, mismo panel, mismo
+  `getBoundingClientRect`** (borrada después junto con su cuenta):
+
+  | Transición | Antes | Después | Declarado |
+  |---|---|---|---|
+  | texto → texto (párrafo) | 0px | 28px | `mt-7` párrafo |
+  | texto → texto-H2 (título) | 0px | 72px | `mt-[72px]` H2 |
+  | texto-H2 → texto | 0px | 28px | `mt-7` párrafo |
+  | texto → texto-H3 (subtítulo) | 0px | 40px | `mt-10` H3 |
+  | cita → texto | 0px | 28px | `mt-7` párrafo |
+  | instrucción → texto | 0px | 28px | `mt-7` párrafo |
+  | aviso → texto | 0px | 28px | `mt-7` párrafo |
+  | a mano → texto | 0px | 28px | `mt-7` párrafo |
+  | objeto → texto | 0px | 28px | `mt-7` párrafo |
+  | video → texto | 0px | 28px | `mt-7` párrafo |
+  | audio → texto | 0px | 28px | `mt-7` párrafo |
+  | nota → texto | 0px | 28px | `mt-7` párrafo |
+
+  Las 9 transiciones que ya medían bien (pausa/cita/instrucción/aviso/a
+  mano/objeto/divisor/video/audio con `texto` del otro lado) se volvieron
+  a medir después del arreglo: **ningún número cambió, cero regresión.**
+  `npx tsc --noEmit` limpio antes y después de cada edición. Confirmado
+  visualmente en los dos modos del preview del editor ("En celular" y "En
+  computadora"). Confirmado además contra CONTENIDO REAL publicado,
+  sin modificarlo: "El Presente como Regalo", la sección antes de "El
+  folder blanco" ("¿Cuánto amor pones..." seguido de "El siguiente
+  ejercicio es bastante intangible...", dos bloques `texto` consecutivos)
+  ahora muestra el espacio de párrafo correcto entre los dos, el mismo
+  defecto exacto que Francisco describió, en el mismo documento que ya
+  había mencionado antes (P-029). Consola limpia en pestaña nueva.
+- **`archivo` e `imagen` no se midieron en vivo** (su `media_id` exige una
+  subida real a Storage, más pesado que lo que esta auditoría necesitaba)
+  -- quedan en **estimado, no verificado**: comparten el mismo mecanismo
+  de margen no vacío que `objeto` y `video` (sí medidos) y este arreglo no
+  los toca, así que no hay manera plausible de que se comporten distinto.
+- **El lector real del participante** (`app/(experiencia)/experiencia/
+  [slug]/[bisagra]/page.tsx`) importa el MISMO `BloqueLector` de
+  `Bloques.tsx` que se corrigió aquí -- no una copia. El arreglo lo
+  alcanza automáticamente, sin tocar ese archivo. No se repitió la
+  verificación con una cuenta de participante y un grant (como sí se hizo
+  en P-030) porque es el mismo componente compartido, no una
+  reimplementación -- confianza por identidad de código, no por prueba
+  end-to-end aparte.
+
 ### P-031 — "Alguien más está editando al mismo tiempo" aparecía editando solo: reordenar subía el `rev` y nadie lo refrescaba en pantalla
 - Estado: **construido y verificado en vivo, 2026-10-01, contra la base real**
 - Origen: Francisco, molesto, citando que ya lo había pedido antes: "Alguien
