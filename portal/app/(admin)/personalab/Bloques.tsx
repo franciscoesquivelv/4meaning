@@ -204,17 +204,24 @@ export default function BloqueLector({ b }: { b: Bloque }) {
       )
 
     case 'archivo':
+      // `flex-wrap` + `min-w-[9rem]`: en la vista del teléfono la tarjeta
+      // mide ~238px y la fila de una sola línea (ícono, nombre, peso,
+      // Descargar) le dejaba 20px al nombre -- "guion-de-prueba.pdf"
+      // aparecía como "g…". Medido en vivo, 2026-10-06, al revisar el
+      // visor de documentos del editor. Ahora el peso y el botón bajan a su
+      // propia línea cuando no caben, en vez de aplastar el nombre, que es
+      // justo lo que sirve para saber que es el documento correcto.
       return (
-        <div className={`${mt} border border-line rounded-[10px] px-5 py-4 bg-paper-2 flex items-center gap-4`}>
+        <div className={`${mt} border border-line rounded-[10px] px-5 py-4 bg-paper-2 flex flex-wrap items-center gap-x-4 gap-y-3`}>
           <svg className="w-5 h-5 text-terra-ui flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
             <path strokeLinecap="round" strokeLinejoin="round" d="M14 2v6h6" />
           </svg>
-          <div className="min-w-0 flex-1">
+          <div className="min-w-[9rem] flex-1">
             <div className="text-[15px] font-light text-dom truncate">{b.nombreArchivo}</div>
             {b.pie && <div className="text-[12.5px] font-light text-gray-ui mt-0.5">{b.pie}</div>}
           </div>
-          <div className="flex items-center gap-3 flex-shrink-0">
+          <div className="flex items-center gap-3 flex-shrink-0 ml-auto">
             {b.peso && <span className="text-[12px] text-gray-ui tabular-nums">{b.peso}</span>}
             {b.descargable && b.medioId && <BotonDescargar medioId={b.medioId} />}
           </div>

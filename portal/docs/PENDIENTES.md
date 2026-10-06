@@ -34,6 +34,36 @@ la base) igual que exige el resto del protocolo de este portal.
 
 ## Abiertos / decididos
 
+### P-034 — El nombre del archivo se leía "g…" en la vista del teléfono: la tarjeta del bloque Archivo aplastaba el nombre
+- Estado: **construido y verificado en vivo, 2026-10-06**
+- Origen: lo encontré probando P-033, mirando la vista previa del teléfono
+  a la derecha del editor. Cae dentro del mandato de P-032 ("bloque por
+  bloque... que se vea perfecto"): ahí dejé `archivo` e `imagen` como
+  "estimado, no medido" porque su `media_id` exige una subida real. Esta
+  vez sí había un archivo subido y el estimado era incompleto: el margen
+  vertical de `archivo` está bien (era lo que P-032 estimó), pero el
+  ancho de su tarjeta no.
+- **Medido ANTES:** tarjeta de 238px en el panel del teléfono, ícono +
+  nombre + peso + "Descargar" en una sola fila; al nombre le tocaban
+  **20px de los 144px que necesita** y se leía "g…" en vez de
+  `guion-de-prueba.pdf`. Justo el dato que sirve para saber si es el
+  documento correcto.
+- **Arreglo** (`Bloques.tsx`, caso `archivo`): `flex-wrap`, nombre con
+  `min-w-[9rem]` y el peso con el botón a la derecha en su propia línea
+  cuando no caben. Mismo patrón que se usó en el editor (P-033).
+- **Medido DESPUÉS:** nombre de **160px, completo**, botón dentro de la
+  tarjeta en una segunda línea. En "En computadora" (tarjeta de 540px) no
+  cambió nada: nombre de 322px completo, peso y "Descargar" en la misma
+  línea. `npx tsc --noEmit` limpio.
+- **Mismo componente que lee el participante** (`BloqueLector`, ver
+  P-032): el arreglo lo alcanza sin tocar el lector. Misma salvedad que
+  allá: confianza por identidad de código, no por una prueba aparte como
+  participante.
+- **Corrige a P-032:** su nota "`archivo` e `imagen`... no hay manera
+  plausible de que se comporten distinto" hablaba de margen vertical y
+  sigue en pie, pero dejaba sin mirar el ancho, y ahí `archivo` sí tenía
+  un defecto. `imagen` sigue sin medirse en vivo.
+
 ### P-033 — Botón "Ver" en el bloque Archivo: vista previa del PDF subido en una ventana emergente
 - Estado: **construido y verificado en vivo, 2026-10-06, con una subida real de PDF**
 - Origen: Francisco: "Podemos hacer que los archivos, desde el editor, en
@@ -187,6 +217,9 @@ la base) igual que exige el resto del protocolo de este portal.
   -- quedan en **estimado, no verificado**: comparten el mismo mecanismo
   de margen no vacío que `objeto` y `video` (sí medidos) y este arreglo no
   los toca, así que no hay manera plausible de que se comporten distinto.
+  **CORREGIDO 2026-10-06 (P-034):** eso valía para el MARGEN vertical, no
+  para el ancho. Al tener por fin un archivo subido, `archivo` midió 20px
+  para su nombre en el teléfono y se arregló. `imagen` sigue sin medirse.
 - **El lector real del participante** (`app/(experiencia)/experiencia/
   [slug]/[bisagra]/page.tsx`) importa el MISMO `BloqueLector` de
   `Bloques.tsx` que se corrigió aquí -- no una copia. El arreglo lo
