@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { familiaDe, type TipoBloque, type FamiliaMedio } from '@/lib/personalab/bloques'
 import { subirArchivo } from './almacenRemoto'
 import { BTN_FILA, BTN_PELIGRO } from './tokens'
+import VentanaDocumento from './VentanaDocumento'
 
 // SUBIDA REAL, ETAPA 3. Hasta hoy este componente no mandaba nada a ningún
 // lado: `URL.createObjectURL` fingía el archivo y se perdía al recargar.
@@ -55,14 +56,16 @@ function pesoLegible(bytes: number) {
 }
 
 export default function SubirArchivo({
-  tipo, nombre, url, onListo, onQuitar,
+  tipo, nombre, url, medioId, onListo, onQuitar,
 }: {
   tipo: TipoBloque
   nombre?: string
   url?: string
+  medioId?: string | null
   onListo: (datos: { nombreArchivo: string; peso: string; url: string; medioId: string }) => void
   onQuitar: () => void
 }) {
+  const [viendo, setViendo] = useState(false)
   const [estado, setEstado] = useState<Estado>(nombre || url ? 'listo' : 'vacio')
   const [avance, setAvance] = useState(0)
   const [motivo, setMotivo] = useState('')
@@ -170,7 +173,11 @@ export default function SubirArchivo({
       )}
 
       {estado === 'listo' && (
-        <div className="border border-slate-200 rounded-lg px-4 py-3 flex items-center gap-3">
+        // `flex-wrap`: con tres botones (Ver, Reemplazar, Quitar) la fila no
+        // cabe a 375px -- medido en vivo, el nombre del archivo se
+        // encogía a cero y "Quitar" se salía de la tarjeta. Los botones
+        // bajan a su propia línea en vez de aplastar el nombre.
+        <div className="border border-slate-200 rounded-lg px-4 py-3 flex flex-wrap items-center gap-x-3 gap-y-2">
           {tipo === 'imagen' && url ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={url} alt="" className="w-14 h-10 object-cover rounded flex-shrink-0" />
@@ -187,8 +194,8 @@ export default function SubirArchivo({
               </svg>
             </span>
           )}
-          <span className="text-sm text-slate-700 truncate flex-1 min-w-0">{nombre ?? 'archivo'}</span>
-          <div className="flex items-center gap-1.5 flex-shrink-0">
+          <span className="text-sm text-slate-700 truncate flex-1 min-w-[6rem]">{nombre ?? 'archivo'}</span>
+          <div className="flex items-center gap-1.5 flex-shrink-0 ml-auto">
             {confirmandoQuitar ? (
               <>
                 <button
@@ -201,6 +208,12 @@ export default function SubirArchivo({
               </>
             ) : (
               <>
+                {/* Solo documentos: es el último control de que se subió el
+                    archivo correcto. Una imagen ya se ve en la miniatura de
+                    al lado; video y audio no son lo que se pidió. */}
+                {familiaDe(tipo) === 'documento' && medioId && (
+                  <button onClick={() => setViendo(true)} className={BTN_FILA}>Ver</button>
+                )}
                 <button onClick={elegir} className={BTN_FILA}>Reemplazar</button>
                 <button
                   onClick={() => setConfirmandoQuitar(true)}
@@ -212,6 +225,10 @@ export default function SubirArchivo({
             )}
           </div>
         </div>
+      )}
+
+      {viendo && medioId && (
+        <VentanaDocumento medioId={medioId} nombre={nombre} onCerrar={() => setViendo(false)} />
       )}
     </div>
   )

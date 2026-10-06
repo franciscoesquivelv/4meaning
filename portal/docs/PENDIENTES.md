@@ -34,6 +34,74 @@ la base) igual que exige el resto del protocolo de este portal.
 
 ## Abiertos / decididos
 
+### P-033 — Botón "Ver" en el bloque Archivo: vista previa del PDF subido en una ventana emergente
+- Estado: **construido y verificado en vivo, 2026-10-06, con una subida real de PDF**
+- Origen: Francisco: "Podemos hacer que los archivos, desde el editor, en
+  los bloques, puedan dar la opción de ver un preview en ventana emergente
+  del documento subido. Es como para tener un último control de que está
+  el documento correcto."
+- **Qué es:** botón "Ver" junto a Reemplazar y Quitar en el bloque Archivo
+  (solo documentos, `familiaDe(tipo) === 'documento'`; una imagen ya se ve
+  en su miniatura y video/audio no se pidieron). Abre `VentanaDocumento.tsx`:
+  nombre del archivo en la cabecera, el PDF en un visor, "Abrir en otra
+  pestaña" y "Cerrar". Aparece también al recargar el editor (viene de
+  `blocks.media_id`, no del estado de la subida).
+- **Decisiones y por qué:**
+  - `fetch` de la ruta `/api/personalab/medios/[id]` a un blob, no un
+    `<iframe src>` directo: la ruta responde 307 a una URL firmada, y si
+    responde 404 el iframe pintaría el JSON crudo dentro de la ventana.
+    Con `fetch` el error se ve como error y se puede reintentar.
+  - **Reintenta solo si recibe 404** (4 veces, 0.9 s entre una y otra) antes
+    de rendirse: `pl_puede_ver_medio` solo deja ver un medio ya LIGADO a un
+    bloque guardado, y el bloque se guarda ~700 ms después de subir. Un
+    clic inmediato en "Ver" cae en esa ventana. El mensaje final dice la
+    verdad ("todavía no está guardado en el bloque... espera a que diga
+    Guardado") y trae "Reintentar".
+- **Dos defectos míos encontrados probando, ya corregidos:**
+  - La primera versión era un `<div fixed>` con trampa de foco escrita a
+    mano. En vivo, el Tab se escapaba al editor de atrás: cuando el foco
+    entra al visor de PDF (un iframe), las teclas que se pulsan adentro no
+    llegan al documento padre y el manejador nunca se enteraba. Reescrito
+    con `<dialog>` nativo + `showModal()`: lo de atrás queda inerte (probado:
+    `focus()` sobre el campo del editor no lo recibe), Escape cierra, el
+    foco vuelve al botón "Ver" y el scroll se restaura. Guarda para el
+    `close()` del montaje doble de React en desarrollo, que si no cerraba
+    la ventana recién abierta.
+  - A 375px la fila del archivo se desbordaba con el tercer botón (el
+    nombre bajaba a ~0px y "Quitar" se salía de la tarjeta), y la cabecera
+    de la ventana partía el rótulo en cuatro líneas. Ambas con `flex-wrap`:
+    medido después, nombre de 177px y los tres botones dentro de la
+    tarjeta; cabecera con rótulo en una línea y botones debajo.
+- Verificado en vivo (cuenta y experiencia desechables, PDF de 597 bytes
+  subido por los endpoints reales `subir` + `registrar`; el selector de
+  archivos se simuló desde la página porque el panel no puede abrir uno):
+  - `npx tsc --noEmit` limpio tras cada edición.
+  - El PDF subido se ve en la ventana ("DOCUMENTO CORRECTO"); el enlace de
+    "Abrir en otra pestaña" devuelve 597 bytes, `%PDF-1.4`, exactamente lo
+    que se subió.
+  - **Reemplazar:** se subió un segundo PDF; "Ver" muestra "DOCUMENTO
+    NUEVO", no el anterior, y la cabecera dice `guion-version-2.pdf`. El
+    medio viejo ya no existía en la base (el flujo de Reemplazar lo borró).
+  - Reintento: con las dos primeras lecturas forzadas a 404 abrió a la
+    tercera. Con 404 permanente: mensaje + Reintentar, que al apagar el
+    fallo cargó el documento.
+  - Cierre: Escape, botón Cerrar, clic en el fondo; un clic dentro de la
+    ventana no cierra.
+  - Consola limpia en pestaña nueva con el visor abierto y cerrado.
+  - Limpieza: experiencia, bloque, fila de `media`, objeto de Storage y
+    cuenta borrados; se comprobó que no quedó ningún objeto huérfano.
+- **Límites que conviene saber, no resueltos:**
+  - **Escape no cierra si el foco está DENTRO del visor de PDF** (el visor
+    se queda con la tecla; comprobado). Cerrar, el fondo y Escape con el
+    foco en la ventana sí funcionan.
+  - "Abrir en otra pestaña" no se pudo ejercitar en este panel (no abre
+    pestañas nuevas); solo se comprobó que el enlace blob es válido.
+  - El botón de descargar/imprimir del visor de PDF del navegador no pasa
+    por `pl_registrar_descarga`. La ventana solo la ve el equipo, que ya
+    puede leer el archivo por esa misma ruta, así que no abre acceso nuevo,
+    pero esa descarga no deja rastro.
+  - Solo se probó con PDF (la única familia "documento").
+
 ### P-032 — Bloques `texto` sin ningún espacio entre sí ni antes de un título: auditoría completa, los 13 tipos, cada transición medida
 - Estado: **construido y verificado en vivo, 2026-10-02, los 13 tipos de bloque, 24 transiciones medidas al pixel**
 - Origen: Francisco, en el preview del teléfono: "cuando pongo dos bloques

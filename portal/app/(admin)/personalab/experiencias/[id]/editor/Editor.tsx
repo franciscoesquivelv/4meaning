@@ -2276,6 +2276,7 @@ function TarjetaBloque({
               tipo={b.tipo}
               nombre={b.nombreArchivo}
               url={b.medioId ? b.url : undefined}
+              medioId={b.medioId}
               onListo={d => onCambio({ nombreArchivo: d.nombreArchivo, peso: d.peso, url: d.url, medioId: d.medioId })}
               onQuitar={() => onCambio({ nombreArchivo: '', peso: undefined, url: undefined, medioId: null })}
             />
