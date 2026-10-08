@@ -1393,7 +1393,11 @@ export default function Editor({
           redundante, y lo que las distingue de su panel es exactamente lo
           mismo que ya distingue a una fila de sección del resto del riel
           -- `bg-paper-2`, no un segundo borde encima de otro. */}
-      {/* 680px -> 760px EN MODO COMPUTADORA, 2026-10-02. El panel de
+      {/* (2026-10-08: los 760px fijos de aquí abajo ya no son fijos --
+          ahora es `clamp(480px,40vw,760px)`, ver el comentario siguiente.
+          El 760px sigue siendo el techo, y la razón de abajo sigue
+          valiendo donde sobra pantalla.)
+          680px -> 760px EN MODO COMPUTADORA, 2026-10-02. El panel de
           escritorio ganó `AtmosferaVistaPrevia` (ver el comentario junto
           a ese panel, más abajo) para que la columna de 620px no se
           sintiera flotando sola -- pero medido en vivo con 680px de
@@ -1406,10 +1410,34 @@ export default function Editor({
           entre el riel y el lienzo. El modo celular (320px) no cambia:
           el bisel del teléfono ya tiene su propio ancho real, 320px de
           columna ya le sobra margen de siempre. */}
+      {/* MÍNIMO EN VEZ DE TOPE PARA EL LIENZO, 2026-10-08. Pedido de
+          Francisco, mirando una captura con un hueco entre el lienzo y el
+          teléfono: "en vez de un max width para la parte de edición, tenga
+          un min width y así si crece en largo la pantalla la parte de
+          edición se hace más grande nada más". El hueco medido era de
+          316px a 1600px o más de ancho: la columna de la rejilla ya
+          crecía, pero el lienzo llevaba `lg:max-w-[720px]` (ver abajo) y
+          se quedaba en 720. Sin ese tope el lienzo ocupa toda su columna.
+
+          `minmax(420px,1fr)`: el mínimo vive en la PISTA de la rejilla, no
+          como `min-w` del lienzo -- un `min-w` sobre un elemento dentro de
+          una pista `minmax(0,1fr)` se sale de su pista y se encima con la
+          vista previa. 420px porque es lo que necesita la barra de formato
+          de un bloque (N, I, viñeta, numerada, Párrafo, Subtítulo, Título)
+          para no cortarse.
+
+          El mínimo obligó a tocar la vista previa en modo computadora,
+          encontrado al medir: con la columna fija de 760px (2026-10-02),
+          el lienzo medía 260px a 1280 y 80px a 1100 -- una caja de texto
+          de 26px. Ahora esa columna es `clamp(480px,40vw,760px)`: cede
+          espacio en pantallas chicas y llega a 760px donde sobra. Por
+          debajo de ~1160px de pantalla en modo computadora el mínimo ya
+          no cabe y la página se desplaza en horizontal, que se prefiere a
+          un lienzo de 26px. */}
       <div className={`grid grid-cols-1 gap-4 items-start ${
         dispositivo === 'computadora'
-          ? rielColapsado ? 'lg:grid-cols-[40px_minmax(0,1fr)_760px]' : 'lg:grid-cols-[180px_minmax(0,1fr)_760px]'
-          : rielColapsado ? 'lg:grid-cols-[40px_minmax(0,1fr)_320px]' : 'lg:grid-cols-[180px_minmax(0,1fr)_320px]'
+          ? rielColapsado ? 'lg:grid-cols-[40px_minmax(420px,1fr)_clamp(480px,40vw,760px)]' : 'lg:grid-cols-[180px_minmax(420px,1fr)_clamp(480px,40vw,760px)]'
+          : rielColapsado ? 'lg:grid-cols-[40px_minmax(420px,1fr)_320px]' : 'lg:grid-cols-[180px_minmax(420px,1fr)_320px]'
       }`}>
         {/* Riel de secciones. Scroll propio (Julian, 2026-09-23), sin
             barra visible (pedido de Francisco). "Nueva sección" YA NO
@@ -1509,15 +1537,16 @@ export default function Editor({
             al llegar al final del scroll. Hallazgo de Francisco, 2026-10-01
             ("no tiene un padding o un margen inferior... se ve raro"):
             un `pb-16` que faltaba, no un diseño nuevo. */}
-        {/* `lg:max-w-[720px]`, hallazgo de Julian, 2026-09-24: al
-            ensanchar el editor a 1600px sin ponerle techo propio al
-            lienzo, el texto que se está escribiendo podía llegar a
-            ~130 caracteres por línea -- casi el doble del techo de 75
-            que él mismo fijó un día antes para el lector real (P-013,
-            620px de columna). Mismo criterio de legibilidad, aplicado
-            aquí: más aire alrededor de una medida de lectura/escritura
-            constante, no más caracteres por línea. */}
-        <div className="min-w-0 lg:max-w-[720px] lg:h-[calc(100vh-93px)] bg-paper border border-line rounded-marca overflow-hidden">
+        {/* SIN TOPE DE ANCHO, 2026-10-08. Aquí había `lg:max-w-[720px]`
+            (hallazgo de Julian, 2026-09-24): sin techo, la caja de texto
+            podía llegar a ~130 caracteres por línea, casi el doble del
+            techo de 75 que fijó para el lector real (P-013). Francisco
+            decidió lo contrario para ESTA pantalla: que el lienzo crezca
+            con la ventana (ver el comentario de la rejilla, arriba). La
+            medida de lectura del participante no cambia: la vista previa
+            sigue en 620px de columna y 320px de teléfono. Lo que se ensancha
+            es la caja donde se escribe, no lo que se lee. */}
+        <div className="min-w-0 lg:h-[calc(100vh-93px)] bg-paper border border-line rounded-marca overflow-hidden">
         <div className="lg:h-full lg:overflow-y-auto scroll-sin-barra p-4 pb-16">
           {bisagras.length === 0 && (
             <div className="border border-dashed border-line rounded-[10px] px-5 py-10 text-center">

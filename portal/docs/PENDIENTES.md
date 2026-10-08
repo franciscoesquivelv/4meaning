@@ -34,6 +34,67 @@ la base) igual que exige el resto del protocolo de este portal.
 
 ## Abiertos / decididos
 
+### P-035 — El lienzo de edición crece con la pantalla: se quitó su tope de 720px y se le puso un mínimo
+- Estado: **construido y verificado en vivo, 2026-10-08, medido en 6 anchos y los 2 modos de vista previa**
+- Origen: Francisco, con una captura que mostraba un hueco grande entre la
+  columna de edición y el teléfono: "en vez de un max width para la parte
+  de edición, tenga un min width y así si crece en largo la pantalla la
+  parte de edición se hace más grande nada más."
+- **Causa:** la columna de la rejilla ya crecía (`minmax(0,1fr)`), pero el
+  lienzo llevaba `lg:max-w-[720px]` (hallazgo de Julian, 2026-09-24, por
+  legibilidad: sin techo la caja de texto llegaba a ~130 caracteres por
+  línea) y se quedaba en 720px, a la izquierda de su propia columna.
+- **Qué se hizo:** (1) se quitó ese tope. Francisco decide lo contrario
+  para esta pantalla; lo que se ensancha es la caja donde se escribe, no la
+  medida de lectura del participante, que sigue en 620px/320px.
+  (2) El mínimo vive en la PISTA de la rejilla, `minmax(420px,1fr)`, no
+  como `min-w` del lienzo (un `min-w` dentro de una pista `minmax(0,1fr)`
+  se sale de su pista y se encima con la vista previa). 420px es lo que
+  necesita la barra de formato de un bloque para no cortarse (medido: la
+  barra ocupa 360px dentro de un lienzo de 420px).
+- **Hallazgo propio al medir, corregido junto:** en modo "En computadora"
+  la columna fija de 760px que puse el 2026-10-02 (P-030, para que el
+  degradado ambiental tuviera margen) aplastaba el lienzo: **260px a 1280
+  y 80px a 1100** (caja de texto de 26px). Un mínimo no cabía con 760px
+  fijos, así que esa columna ahora es `clamp(480px,40vw,760px)`: cede en
+  pantallas chicas y llega a 760px donde sobra (40vw alcanza 760 a 1900px;
+  a 1440 mide 576, a 1600 mide 640). Costo: por debajo de ~1550px la
+  columna de vista previa queda menor a los 620px de contenido y el
+  degradado ambiental casi no tiene margen a los lados.
+- **Medido ANTES → DESPUÉS** (ancho del lienzo; con `getBoundingClientRect`,
+  misma experiencia desechable, misma función de medición):
+
+  | Pantalla | Celular, antes | Celular, después | Computadora, antes | Computadora, después |
+  |---|---|---|---|---|
+  | 1100 | 520 | 520 | **80** | 420 (desborde 60px) |
+  | 1280 | 700 | 700 | **260** | 508 |
+  | 1440 | 720 (hueco 156) | 860 (hueco 16) | 420 | 604 |
+  | 1600 | 720 (hueco 316) | 1020 (hueco 16) | 580 | 700 |
+  | 1920 | 720 (hueco 316) | 1020 (hueco 16) | 580 * | 580 |
+  | 2560 | 720 (hueco 316) | 1020 (hueco 16) | 580 | 580 |
+
+  \* Inferido, no medido: a 1920 solo se midió el "antes" en modo
+  celular. A 1600 y 2560 el modo computadora midió 580, y por el tope
+  exterior de 1600px cualquier pantalla de 1600 o más da el mismo
+  reparto.
+
+  El hueco entre lienzo y teléfono queda siempre en 16px (el de la rejilla)
+  en modo celular. A 1160px el mínimo cabe sin desborde (comprobado), y
+  la barra de formato no se corta a 420px (`scrollWidth` = `clientWidth`).
+  `npx tsc --noEmit` limpio. Consola limpia en pestaña nueva (solo el
+  aviso previo de `dnd-kit`, ya registrado en P-030).
+- **Límites, no resueltos:**
+  - Por debajo de ~1160px de pantalla **en modo computadora** el mínimo ya
+    no cabe y la página se desplaza en horizontal (60px a 1100). Se
+    prefirió a un lienzo de 26px.
+  - El contenedor de afuera conserva `lg:max-w-[1600px] lg:mx-auto`: en una
+    pantalla de 1920px quedan 184px de margen a cada lado, y en una de
+    2560px, 504px. El lienzo deja de crecer a partir de los 1600px de
+    pantalla. Es una decisión aparte; no se tocó.
+  - Con el tope quitado, la caja de texto llega a 952px de ancho a 1600px o
+    más, o sea cerca de 130 caracteres por línea al escribir (la razón
+    original del tope). No afecta lo que lee el participante.
+
 ### P-034 — El nombre del archivo se leía "g…" en la vista del teléfono: la tarjeta del bloque Archivo aplastaba el nombre
 - Estado: **construido y verificado en vivo, 2026-10-06**
 - Origen: lo encontré probando P-033, mirando la vista previa del teléfono
