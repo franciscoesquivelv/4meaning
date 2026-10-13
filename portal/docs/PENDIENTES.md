@@ -34,6 +34,63 @@ la base) igual que exige el resto del protocolo de este portal.
 
 ## Abiertos / decididos
 
+### P-038 — Tu cuenta de administrador veía "Son 0 pasos" con la versión nueva publicada: el lector anclaba al equipo a la versión vieja y leía los marcadores sin filtrar por persona
+- Estado: **construido y verificado antes/después, 2026-10-13**
+- Origen: Francisco publicó la versión 4 (10 pasos Digital/Ambos listos) y
+  abrió el lector en `app.4meaning.life`: "me sale esto" (captura con "Son
+  0 pasos... todavía no tiene contenido publicado para leer en línea"),
+  y "el mío sí abre con la pantalla de comenzar".
+- **No era la cuenta de Eli.** Con la versión publicada de hoy Eli ve "Son
+  10 pasos" (comprobado entrando como ella). La captura era de la cuenta de
+  administrador de Francisco. Medido en la base: su marcador de lectura
+  apuntaba a un paso de la **versión 1 (retirada)**, actualizado 17 s
+  después de publicar. El lector ancla a quien ya empezó a la versión de su
+  marcador (`versionAnclada`, "quien está a la mitad termina su versión"),
+  y la versión 1 no tiene ningún paso que sea listo y digital a la vez:
+  0 pasos. Para un participante ese diseño protege; para quien revisa lo que
+  acaba de publicar es una trampa: cada publicación nueva lo deja anclado a
+  la anterior y desde ahí no puede abrir ni el primer paso.
+- **Un segundo defecto debajo, que explica los síntomas que iban y venían:**
+  `versionAnclada`, `ultimaVista` y `bienvenidaVista` consultaban `bookmarks`
+  SIN filtrar por persona, confiando en la RLS. Pero la política "pl equipo
+  ve posicion" (`20260916_1600_equipo_ve_posicion.sql`) deja que el equipo
+  vea los marcadores de TODOS, así que `maybeSingle()` devolvía el propio
+  con exactamente una fila visible (anclaje activo, la trampa de arriba) y
+  daba error, ignorado en silencio, con dos o más (anclaje y posición
+  ignorados, y la bienvenida volvía a salir en cada entrada). Mi propia
+  cuenta de prueba sumó un segundo marcador y, sin querer, "desatoró" el de
+  Francisco: ahora apunta a un paso de la versión 4.
+- **Arreglo** (`lib/personalab/lectura.ts`): (1) los tres lugares filtran
+  siempre por quien pregunta (`miId()`); (2) el equipo (`pl_es_equipo()`)
+  lee siempre lo último publicado, sin anclaje; (3) el equipo no pasa por
+  el candado de "un paso a la vez" de `cargarBisagra`: es una comodidad
+  del participante, no una barrera de seguridad (el propio comentario del
+  archivo lo dice), y con el anclaje a otra versión el servidor descarta en
+  silencio cualquier avance "hacia atrás" entre versiones
+  (`solo_avanza_marcador`), así que con el candado puesto no habría pasado
+  del primer paso de una versión nueva.
+- **Verificado:** experiencia desechable con una versión 1 retirada (sin
+  pasos digitales) y una versión 2 publicada (2 pasos), y una cuenta de
+  equipo cuyo ÚNICO marcador está anclado a la versión 1 (el caso de
+  Francisco, reproducido de forma determinista).
+  - **Antes** (código anterior puesto de vuelta): "Son 0 pasos. Esta
+    experiencia todavía no tiene contenido publicado para leer en línea",
+    el texto exacto de la captura.
+  - **Después:** "Son 2 pasos. Empezar. Ahora toca: Paso nuevo (version 2,
+    publicada)". El equipo abre el segundo paso por dirección directa, sin
+    redirección.
+  - **El candado del participante sigue puesto:** Eli pidió el tercer paso
+    de la experiencia real por dirección directa y fue devuelta al primero.
+  - `npx tsc --noEmit` limpio. El marcador de Francisco quedó exactamente
+    igual antes y después de la limpieza; la experiencia y la cuenta de
+    prueba se borraron, y el marcador que mi visita escribió en la cuenta de
+    Eli también.
+- **Límite:** el índice de la experiencia solo lista hasta el paso actual
+  para quien tiene el marcador en esa versión (revelar por apertura); el
+  equipo entra al primer paso y avanza con "Seguir" o por dirección directa,
+  pero el índice no le lista los 10 de golpe. Si hace falta, es un cambio
+  aparte.
+
 ### P-037 — Abierto: la app de participante de Trascendencia (rol `participant`) es solo móvil, no tiene salida en la mayoría de pantallas y su menú de abajo dice "Firmar"
 - Estado: **abierto, diagnosticado, sin construir** (2026-10-13)
 - Origen: Francisco, mirando `app.4meaning.life/acuerdos` en Chrome con la

@@ -1,6 +1,40 @@
+import { cache } from 'react'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { desdeFila, type Bloque, type FilaBloque } from '@/lib/personalab/bloques'
+
+// QUIÉN PREGUNTA, Y SI ES DEL EQUIPO. 2026-10-13.
+//
+// Francisco publicó la versión 4 de "El Presente como Regalo", abrió el
+// lector con su cuenta de administrador y vio "Son 0 pasos", con 10 pasos
+// publicados. Causa, medida en la base: su marcador de lectura seguía
+// anclado a la versión 1 (retirada), que no tiene ningún paso digital, y
+// `versionAnclada` lo respeta por diseño ("quien está a la mitad termina su
+// versión"). Ese diseño es para quien COMPRÓ y está leyendo; para quien
+// revisa lo que acaba de publicar es una trampa: cada publicación nueva lo
+// deja anclado a la anterior, y desde ahí no puede ni abrir el primer paso.
+//
+// Y había un segundo defecto debajo, que explica por qué a ratos funcionaba:
+// los marcadores se consultaban SIN filtrar por persona, confiando en que la
+// RLS devolviera solo el propio. Pero la política "pl equipo ve posicion"
+// (20260916_1600) deja que el equipo VEA los de todos, así que `maybeSingle()`
+// daba el propio marcador con exactamente una fila visible y un error, ignorado
+// en silencio, con dos o más. El mismo administrador veía una versión u otra
+// según cuántas personas hubieran abierto la experiencia.
+//
+// Las dos cosas se cierran aquí: los marcadores se filtran siempre por quien
+// pregunta, y el equipo lee siempre lo último publicado y no pasa por el
+// candado de "un paso a la vez" (que es una comodidad para el participante,
+// no una barrera de seguridad; ver el comentario en `cargarBisagra`).
+const miId = cache(async (): Promise<string | null> => {
+  const { data: { user } } = await createClient().auth.getUser()
+  return user?.id ?? null
+})
+
+const esEquipo = cache(async (): Promise<boolean> => {
+  const { data } = await createClient().rpc('pl_es_equipo')
+  return data === true
+})
 
 // ── LA LECTURA ──────────────────────────────────────────────────
 //
@@ -96,11 +130,18 @@ export type ResultadoLectura<T> = Resultado<T> | { estado: 'sin-contenido' }
 async function versionAnclada(experienceId: string): Promise<string | null> {
   const supabase = createClient()
 
-  const { data: marcador } = await supabase
-    .from('bookmarks')
-    .select('hinge_id')
-    .eq('experience_id', experienceId)
-    .maybeSingle()
+  // El equipo no se ancla: lee siempre lo último publicado (ver `miId`).
+  const id = await miId()
+  const equipo = await esEquipo()
+
+  const { data: marcador } = (id && !equipo)
+    ? await supabase
+        .from('bookmarks')
+        .select('hinge_id')
+        .eq('experience_id', experienceId)
+        .eq('profile_id', id)
+        .maybeSingle()
+    : { data: null }
 
   if (marcador?.hinge_id) {
     const { data: h } = await supabase
@@ -232,7 +273,12 @@ export async function cargarBisagra(
   const ultima = await ultimaVista(experiencia.id)
   const iUltima = bisagras.findIndex(b => b.id === ultima)
   const iAlcanzable = posicionAlcanzable(iUltima)
-  if (i > iAlcanzable) {
+  // El equipo no pasa por este candado: revisa lo publicado, no lo atraviesa.
+  // Además su marcador puede apuntar a una versión anterior, y el servidor
+  // descarta en silencio cualquier avance "hacia atrás" entre versiones
+  // (`solo_avanza_marcador`), así que con el candado puesto no podría pasar
+  // del primer paso de una versión nueva.
+  if (i > iAlcanzable && !(await esEquipo())) {
     redirect(`/experiencia/${slug}/${bisagras[iAlcanzable].id}`)
   }
 
@@ -339,11 +385,14 @@ export async function cargarBisagra(
 // técnico, y la regla de Francisco sigue en pie para él: no se construye
 // una barrera para un borrado manual que el proceso normal no produce.
 export async function ultimaVista(experienciaId: string): Promise<string | null> {
+  const id = await miId()
+  if (!id) return null
   const supabase = createClient()
   const { data } = await supabase
     .from('bookmarks')
     .select('hinge_id')
     .eq('experience_id', experienciaId)
+    .eq('profile_id', id)
     .maybeSingle()
   return data?.hinge_id ?? null
 }
@@ -357,11 +406,14 @@ export async function ultimaVista(experienciaId: string): Promise<string | null>
 // siempre. El costo real está del lado seguro sin necesidad de propagar el
 // error.
 export async function bienvenidaVista(experienciaId: string): Promise<boolean> {
+  const id = await miId()
+  if (!id) return false
   const supabase = createClient()
   const { data } = await supabase
     .from('bookmarks')
     .select('bienvenida_vista_at')
     .eq('experience_id', experienciaId)
+    .eq('profile_id', id)
     .maybeSingle()
   return Boolean(data?.bienvenida_vista_at)
 }
