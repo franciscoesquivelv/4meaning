@@ -34,6 +34,43 @@ la base) igual que exige el resto del protocolo de este portal.
 
 ## Abiertos / decididos
 
+### P-039 — Frases de acompañamiento quitadas del lector del participante
+- Estado: **hecho y verificado, 2026-10-13**
+- Origen: Francisco, texto por texto: "Quita este tipo de frases: 'Esto ya
+  quedó hecho. Lo que sigue, aparece cuando llegues.' NO HACEN FALTA." Y
+  después: "Lo que escribas se queda en tu navegador. No lo guardamos, no lo
+  leemos, y al final vas a poder pedir que te lo mandemos a tu correo.
+  Esto igual", "Esto se guarda. Es tuyo, no lo leemos, y lo puedes borrar
+  cuando quieras. lo mismo aquí", y "En las partes que dicen 'escribe
+  aquí' quita el 'o no: ....'".
+- **Quitado:** (1) la frase encima del botón de seguir (`PisoDeTiempo.tsx`);
+  (2) las dos notas bajo el campo de respuesta, la de "se queda en tu
+  navegador" y la de "esto se guarda" (`Escritura.tsx`); (3) el "O no:
+  también se puede seguir sin escribir." del campo, que queda "Escribe
+  aquí." (el único lugar donde decía eso); (4) la misma frase repetida en
+  la pantalla de cierre, que queda "Todavía no llegaste al final."
+  (`Cierre.tsx`).
+- **Se conservó, porque tiene función:** el aviso "No se pudo guardar..." y
+  el botón "Borrar lo escrito" (es lo único que borra lo ya guardado en el
+  servidor); "Anterior" / "Seguir" / "Terminar".
+- **Efecto a saber:** esas dos notas eran el único aviso, durante la
+  escritura, de si lo escrito se guarda en el servidor o solo vive en el
+  navegador, y de que existe el envío a correo (`api/experiencia/enviar`,
+  que sí existe). La pantalla de cierre lo sigue diciendo al final.
+- **Verificado** como cuenta de equipo desechable en el lector real
+  (borrada): "Tu vida en meses" (no guarda): placeholder "Escribe aquí.",
+  ninguna de las cinco frases, "Anterior" y "Seguir" intactos. "El punto de
+  inflexión" (sí guarda): sin nota; el botón de borrar no aparece hasta que
+  hay texto; al escribir se guardó en el servidor, al recargar se cargó lo
+  guardado, y "Borrar lo escrito" vació el campo y dejó 0 filas en
+  `responses`. `npx tsc --noEmit` limpio.
+- **Frases parecidas que NO se tocaron** (para que Francisco diga cuáles
+  van): "No escribiste nada, y está bien. Atravesarlo ya fue hacerlo."
+  (cierre); "Esto vive solo en esta pestaña. Si la cierras, se borra.",
+  "Esto lo guardamos. Es tuyo, lo puedes borrar cuando quieras." y "Una
+  parte de esto la guardamos..." (cierre); "Quédate aquí un momento." y
+  "Seguir sin esperar" (pausa con espera).
+
 ### P-038 — Tu cuenta de administrador veía "Son 0 pasos" con la versión nueva publicada: el lector anclaba al equipo a la versión vieja y leía los marcadores sin filtrar por persona
 - Estado: **construido y verificado antes/después, 2026-10-13**
 - Origen: Francisco publicó la versión 4 (10 pasos Digital/Ambos listos) y

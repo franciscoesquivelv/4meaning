@@ -123,13 +123,11 @@ export default function PisoDeTiempo({
     )
   }
 
+  // Sin frase de transición encima del botón. Había una ("Esto ya quedó
+  // hecho. Lo que sigue, aparece cuando llegues."), de Sora, y Francisco
+  // pidió quitarla el 2026-10-13: "NO HACEN FALTA". Queda solo el botón.
   return (
-    <span className="flex flex-col items-end gap-2">
-      {/* La frase de transición de Sora ya no se pinta siempre: aparece con
-          el botón, y con el piso cumplido se vuelve literalmente cierta. */}
-      <span className="text-[12px] text-gray-ui">
-        Esto ya quedó hecho. Lo que sigue, aparece cuando llegues.
-      </span>
+    <span className="flex flex-col items-end">
       <Link
         href={href}
         className="inline-flex items-center px-6 py-3 rounded-full bg-dom text-paper text-[15px] font-medium border border-dom hover:opacity-90 transition-opacity duration-700 ease-marca focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-dom focus-visible:ring-offset-2 focus-visible:ring-offset-paper"

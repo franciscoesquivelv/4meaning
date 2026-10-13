@@ -88,14 +88,14 @@ export default function Cierre({
         // terminado, y el permiso de quedarse en la superficie hay que
         // sostenerlo hasta el final, no solo ofrecerlo al principio — pero
         // eso vale cuando SÍ se llegó al final. Si `completo` es falso (se
-        // entró a `/cierre` por URL directa sin recorrer las bisagras), la
-        // frase reusa "lo que sigue aparece cuando llegues" de
-        // `PisoDeTiempo.tsx`, la misma voz para la misma idea: no hay nada
-        // que ver todavía, no un error.
+        // entró a `/cierre` por URL directa sin recorrer las bisagras), no
+        // hay nada que ver todavía, no un error. Se quitó el "Lo que sigue
+        // aparece cuando llegues" que iba aquí (2026-10-13): era la misma
+        // frase que Francisco pidió quitar de `PisoDeTiempo.tsx`.
         <p className="mt-6 text-[17px] leading-[1.65] font-light text-ink/90">
           {completo
             ? 'No escribiste nada, y está bien. Atravesarlo ya fue hacerlo.'
-            : 'Todavía no llegaste al final. Lo que sigue aparece cuando llegues.'}
+            : 'Todavía no llegaste al final.'}
         </p>
       ) : (
         <>

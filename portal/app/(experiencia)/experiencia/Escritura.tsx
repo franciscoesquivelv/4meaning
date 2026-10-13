@@ -192,38 +192,36 @@ export default function Escritura({
         onChange={e => escribir(e.target.value)}
         disabled={!listo}
         rows={4}
-        placeholder="Escribe aquí. O no: también se puede seguir sin escribir."
+        placeholder="Escribe aquí."
         aria-label="Tu respuesta"
         className="mt-5 w-full resize-none bg-transparent border-0 border-b border-line focus:border-dom outline-none text-[17px] leading-[1.7] font-light text-ink placeholder:text-gray-ui/70 pb-2 transition-colors"
       />
 
-      {guarda ? (
+      {/* SIN LAS DOS NOTAS EXPLICATIVAS, 2026-10-13. Pedido de Francisco,
+          texto por texto: "Lo que escribas se queda en tu navegador. No lo
+          guardamos, no lo leemos, y al final vas a poder pedir que te lo
+          mandemos a tu correo." y "Esto se guarda. Es tuyo, no lo leemos, y
+          lo puedes borrar cuando quieras." -- "NO HACEN FALTA". Y el "O no:
+          también se puede seguir sin escribir." del campo. Quedan solo las
+          dos cosas que tienen función: el aviso cuando el guardado falla, y
+          el botón que borra lo ya guardado en el servidor. */}
+      {guarda && (estadoGuardado === 'error' || texto.trim()) && (
         <div className="mt-3 flex items-center justify-between gap-4">
-          {/* El permiso de no escribir, dicho en el sitio donde se ejerce.
-              Sora lo dejó escrito para la sala: el permiso de quedarse en la
-              superficie hay que ofrecerlo A MITAD y no solo en la entrada, y
-              sin el cuerpo del facilitador que lo modele, aquí tiene que ir
-              por escrito. Parar también es haber terminado. */}
-          <p className="text-[13px] leading-[1.5] text-gray-ui">
-            {estadoGuardado === 'error'
-              ? 'No se pudo guardar. Sigue en esta pantalla, vamos a intentarlo de nuevo.'
-              : 'Esto se guarda. Es tuyo, no lo leemos, y lo puedes borrar cuando quieras.'}
-          </p>
+          {estadoGuardado === 'error' && (
+            <p className="text-[13px] leading-[1.5] text-gray-ui">
+              No se pudo guardar. Sigue en esta pantalla, vamos a intentarlo de nuevo.
+            </p>
+          )}
           {texto.trim() && (
             <button
               type="button"
               onClick={borrar}
-              className="flex-shrink-0 text-[12.5px] text-gray-ui hover:text-alerta underline underline-offset-2 transition-colors"
+              className="ml-auto flex-shrink-0 text-[12.5px] text-gray-ui hover:text-alerta underline underline-offset-2 transition-colors"
             >
               Borrar lo escrito
             </button>
           )}
         </div>
-      ) : (
-        <p className="mt-3 text-[13px] leading-[1.5] text-gray-ui">
-          Lo que escribas se queda en tu navegador. No lo guardamos, no lo
-          leemos, y al final vas a poder pedir que te lo mandemos a tu correo.
-        </p>
       )}
     </div>
   )
