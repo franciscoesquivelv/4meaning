@@ -35,6 +35,9 @@
 
 export type Tiempo = 'vispera' | 'ignicion' | 'retorno'
 export type Soporte = 'sala' | 'objeto' | 'pantalla'
+// Los valores del enum `pl_modo` de Postgres. Dónde se entrega un segmento:
+// el lector digital solo muestra 'digital' y 'ambos' (`lectura.ts`).
+export type Modo = 'digital' | 'presencial' | 'ambos'
 export type EstadoEncuentro = 'prospecto' | 'confirmado' | 'en_preparacion' | 'realizado' | 'cancelado'
 export type MaduracionExp = 'diseño' | 'piloto' | 'lista' | 'retirada'
 

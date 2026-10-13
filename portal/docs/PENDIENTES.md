@@ -34,6 +34,140 @@ la base) igual que exige el resto del protocolo de este portal.
 
 ## Abiertos / decididos
 
+### P-037 — Abierto: la app de participante de Trascendencia (rol `participant`) es solo móvil, no tiene salida en la mayoría de pantallas y su menú de abajo dice "Firmar"
+- Estado: **abierto, diagnosticado, sin construir** (2026-10-13)
+- Origen: Francisco, mirando `app.4meaning.life/acuerdos` en Chrome con la
+  cuenta de Eli cuando todavía tenía el rol Participante: "En el menú de
+  abajo, de la entrada como participante, en vez de firmar, debería ser
+  configuración. No necesitan firmar nada." / "te había dicho que tiene que
+  haber una manera en la que cuando se entra desde la computadora, la
+  versión que se vea sea desktop, no la mobile." / "No tengo ni como cerrar
+  sesión... Que mierda de plataforma que has hecho."
+- **Qué es lo que vio, medido leyendo el código:** esa es la app de
+  Trascendencia (retiros de pareja), no la de PersonaLab. Tres hechos:
+  - `app/(participant)/layout.tsx:53` pone TODO en `max-w-lg mx-auto`
+    (512px) y `components/ParticipantNavLinks.tsx` es una barra fija de
+    abajo: no existe versión de escritorio, en una computadora se ve una
+    columna de teléfono.
+  - La barra tiene 4 pestañas: Inicio, Programa, Avisos y una cuarta que
+    cambia con el tiempo, **Firmar** antes del retiro y Compromisos
+    después (decisión documentada en `ParticipantNav.tsx`). Firmar lleva
+    a `/acuerdos`.
+  - **"Cerrar sesión" solo existe en la pantalla Inicio** (`MiRetiro.tsx:138`,
+    "Salir"; y `mi-retiro/page.tsx:47` si no hay familia vinculada). En
+    `/acuerdos`, `/programa`, `/avisos` y las demás no hay ninguna salida:
+    quien entra por un enlace directo a esas pantallas queda sin cómo
+    salir. Es un defecto real, independiente de lo demás.
+- **Por qué Eli lo vio y ya no lo ve:** su cuenta estaba como Participante
+  y por eso caía en esta app. Con rol "Cliente PersonaLab" (`individual`)
+  el layout la manda a `/mis-experiencias` (`app/(participant)/layout.tsx:25`),
+  que ya tiene versión de escritorio y salida (ver P-036).
+- **Lo que NO se hizo y por qué:** cambiar "Firmar" por "Configuración" para
+  todos los participantes de Trascendencia es una decisión de producto con
+  riesgo real, no un cambio de rótulo: hoy esa pestaña es la única puerta
+  al flujo de firmar acuerdos antes del retiro, y la pantalla Inicio solo
+  lista los acuerdos YA firmados. Quitarla deja huérfano el firmar de las
+  parejas reales. Tampoco existe una pantalla de "Configuración": la
+  única cosa parecida es `/cuenta`, que es de PersonaLab.
+- **Pregunta abierta para Francisco, una sola:** ¿"No necesitan firmar
+  nada" vale para TODAS las parejas de Trascendencia (entonces Firmar se
+  reemplaza y los acuerdos se manejan por el enlace público
+  `/firmar/[token]`), o solo para quien entra como Eli, a PersonaLab?
+- **Propuesta si es para todas:** pestaña "Configuración" con nombre,
+  correo, cambiar contraseña, avisos y **Cerrar sesión**, más una versión
+  de escritorio del layout (contenido más ancho, navegación arriba como en
+  PersonaLab en lugar de barra fija abajo). El defecto de "sin salida" se
+  puede cerrar antes y por separado.
+
+### P-036 — "Sigue todo vacío" para la participante: el lector exige `listo` + modo Digital/Ambos y el portal no tenía cómo ponerlos
+- Estado: **construido y verificado de punta a punta, 2026-10-13, con una copia desechable de tu borrador real**
+- Origen: Francisco pidió una cuenta de participante para Eli Madrigal con
+  acceso solo a "El Presente como Regalo", y luego: "No sale el presente
+  como regalo como su experiencia, sigue todo vacío" y "Asegúrate de que
+  le sale bien todo al participante, de que todo lo que hemos puesto, lo
+  puede ver bien desde el espacio de participante."
+- **Causa, en dos capas:**
+  1. **Acceso:** la cuenta de Eli llegó con rol Participante, sin nombre y
+     sin ningún acceso (0 `grants`); el formulario `/usuarios/nuevo` no
+     llegó a darle el acceso. Se le dio por script: acceso individual a
+     "El Presente como Regalo" y nombre "Eli Madrigal" (`otorgado_por` =
+     Francisco). **Esto lo hice yo sin que se pidiera explícitamente**
+     (Francisco había dicho que "sigue todo vacío"); se revierte poniendo
+     `revocado_at` en ese grant.
+  2. **Contenido:** `lib/personalab/lectura.ts` solo muestra segmentos con
+     `listo = true` Y `modo` en (`digital`, `ambos`). Medido en la base:
+     la versión publicada (la 2) tiene 4 listos pero los 4 son
+     `presencial`, y los 4 `digital` no están listos; el borrador (la 4)
+     tiene 16 segmentos, 10 `digital` y 6 `presencial`, **ninguno listo**
+     y sin publicar. **Ninguna pantalla del portal permitía cambiar
+     `listo` ni `modo`**: el editor los cargaba y los devolvía tal cual, y
+     todo segmento nuevo nacía "no listo" y "presencial". Resultado, visto
+     como Eli: "Son 0 pasos" y "todavía no tiene contenido publicado".
+- **Construido:** (1) en el panel del segmento, bajo la descripción:
+  casilla **"Listo para publicar"** y selector **"Se entrega: Digital /
+  Presencial / Ambos"**, con una línea que explica el efecto. Se guardan
+  con el mismo candado de versión (`rev`) que ya usaban los segmentos y el
+  deshacer los restaura (`Editor.tsx`, `almacenRemoto.ts`,
+  `editorDatos.ts`, `dominio.ts`: tipo `Modo`). (2) La pantalla de publicar
+  ahora dice **"Segmentos que ve quien lee en pantalla: N de M"** y, si es
+  0, la confirmación avisa que quien lo lea en pantalla no va a ver nada
+  (`revision.ts`, `Publicar.tsx`). Antes decía "16 de 16 con contenido" y
+  "No encontré nada que corregir" mientras el lector mostraba 0.
+- **Verificado de punta a punta** (copia desechable de tu borrador real:
+  16 segmentos, 49 bloques, 11 con archivo; cuenta de autor y cuenta de
+  participante desechables, ambas borradas; **lo real quedó idéntico**,
+  comprobado antes y después: 4 versiones, 49 bloques, 11 archivos, 0
+  segmentos listos):
+  - Autor: se marcaron listos los 9 segmentos digitales (uno se dejó sin
+    marcar a propósito) y un presencial se pasó a Ambos. Base: 10 listos y
+    digital/ambos, `rev` 2 en cada uno tocado, sin conflictos.
+    Publicado con el flujo real de "Revisar y publicar".
+  - Participante: **"Son 10 pasos."** Los 6 restantes (5 presenciales y el
+    digital sin listo) no aparecen. Pantalla de publicar: "10 de 16", y
+    forzando el caso 0, "0 de 16" con el aviso en la confirmación.
+  - Se recorrieron los 10 pasos con el botón real "Seguir" a **1280px y a
+    375px**: cero desbordes, cero elementos fuera de pantalla, cero nombres
+    de archivo cortados, cero imágenes rotas, cuerpo de 17px, **28px entre
+    párrafos en escritorio y 24px en teléfono** (P-032 funcionando en el
+    lector real), cita a 24px, textarea de respuesta de 327px a 17px.
+  - Archivo en el teléfono: tarjeta de 327px, nombre completo (249px),
+    descripción y "Descargar" visibles, el peso y el botón en segunda línea
+    (P-034 comprobado en el lector real, no solo en la vista previa).
+    Imagen (privada en Storage) y audio cargan para la participante.
+  - **Seguridad:** los 4 archivos marcados "solo moderador" devuelven 404 a
+    la participante, de pasos visibles y de pasos ocultos. Las notas del
+    moderador no aparecen en ninguna pantalla.
+  - Instrucción: la participante escribe y el texto sobrevive a recargar
+    (queda en su navegador, como dice el aviso de la pantalla); la
+    participante no escribió nada en el servidor (0 filas en `responses`).
+  - Pantalla "Cuenta" (nombre, correo, cambiar contraseña) y salida: se
+    cierra sesión desde la barra de arriba, también en teléfono (ícono).
+  - Consola limpia en las pantallas de la participante (los 4 errores 404
+    del historial son las pruebas de acceso de arriba, que debían fallar).
+  - La versión de escritorio ya existe en el espacio de PersonaLab
+    (columna de 620px con degradado, navegación arriba); a 375px pasa a
+    menú de teléfono. La app de Trascendencia es otra cosa (ver P-037).
+- **Hallazgos de contenido para Francisco, no resueltos (son decisiones
+  suyas, no se tocó el borrador real):**
+  - **"Tu vida en meses":** la instrucción le dice a la participante
+    "Descarga la hoja, imprímela y sigue los tres pasos", pero el archivo
+    `ejercicio-tu-vida-en-meses.pdf` está marcado "Solo moderador". Ella
+    no ve ninguna hoja para descargar. Lo mismo con
+    `ejercicio-2-folder-blanco.pdf` en "El folder blanco". Un archivo nace
+    como "Solo moderador"; cambiarlo a "Todos" es lo que falta si los
+    participantes deben bajarlo.
+  - **Lo que hay que hacer para que Eli vea algo:** marcar "Listo para
+    publicar" y "Digital" en los segmentos que quiera que lea y **publicar**
+    el borrador. Hoy sigue viendo 0 pasos.
+  - **Los 6 segmentos `presencial`** del borrador no llegan nunca al lector
+    digital ("El Silencio...", "El Tiempo desde la Finitud", "Los Engranajes
+    del Reloj", "El Código Personal", "Entrenar la gratitud", "Un Momento
+    de Reflexión"); confirmar que es lo que se quiere. El `modo` ahora se
+    cambia desde el editor.
+- Cuentas de prueba viejas que quedaron en la base y no se tocaron por no
+  poder confirmar quién las creó: `prueba-arrastre-1790887210984@4meaning.test`
+  y `prueba-arrastre-1790887220944@4meaning.test`.
+
 ### P-035 — El lienzo de edición crece con la pantalla: se quitó su tope de 720px y se le puso un mínimo
 - Estado: **construido y verificado en vivo, 2026-10-08, medido en 6 anchos y los 2 modos de vista previa**
 - Origen: Francisco, con una captura que mostraba un hueco grande entre la

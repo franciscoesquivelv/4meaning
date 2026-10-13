@@ -186,6 +186,7 @@ export default function Publicar({
             </div>
             <dl className="space-y-2.5 text-sm">
               <Dato k="Segmentos con contenido" v={`${r.resumen.bisagrasConContenido} de ${r.resumen.bisagrasTotales}`} />
+              <Dato k="Segmentos que ve quien lee en pantalla" v={`${r.resumen.bisagrasEnPantalla} de ${r.resumen.bisagrasTotales}`} />
               <Dato k="Bloques en el borrador" v={String(r.resumen.bloques)} />
               <Dato k="Ve el participante" v={String(r.resumen.visiblesAlParticipante)} />
               <Dato k="Solo el moderador" v={String(r.resumen.soloModerador)} />
@@ -246,6 +247,9 @@ export default function Publicar({
                   <p className="text-sm text-slate-700 leading-relaxed mb-3">
                     Al publicar, {r.resumen.visiblesAlParticipante} bloques quedan visibles para el
                     participante y {r.resumen.soloModerador} solo para el moderador.
+                    {r.resumen.bisagrasEnPantalla === 0
+                      ? ' Ningún segmento está marcado como listo y Digital o Ambos, así que quien lo lea en pantalla no va a ver nada.'
+                      : ` A quien lo lea en pantalla le llegan ${r.resumen.bisagrasEnPantalla} de ${r.resumen.bisagrasTotales} segmentos.`}
                     {resumenPublicacion.bloquesEnPublicada > 0 && ' Reemplaza lo que hay publicado desde este momento, para quien empiece de nuevo.'}
                   </p>
                   <div className="flex gap-2">

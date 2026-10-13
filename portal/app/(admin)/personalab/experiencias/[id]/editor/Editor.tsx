@@ -26,7 +26,7 @@ import {
   ConflictoDeVersion,
 } from '../../../almacenRemoto'
 import type { ExperienciaEditable, BloqueEditable, BisagraEditable } from '@/lib/personalab/editorDatos'
-import { ETIQUETA_TIEMPO, type Tiempo } from '../../../dominio'
+import { ETIQUETA_TIEMPO, type Tiempo, type Modo } from '../../../dominio'
 import { BTN_PRIMARIO, BTN_SECUNDARIO, BTN_FILA, BTN_PELIGRO, TARJETA } from '../../../tokens'
 import { Boton, Girador } from '../../../ui'
 import { PASTILLA_CURSO } from '@/lib/estilos/oficina'
@@ -785,7 +785,9 @@ export default function Editor({
     const actual = seccionesRef.current.find(s => s.id === id)
     if (!actual) return // se borró mientras tanto: ese borrado tiene su propia entrada de deshacer
     setBisagras(prev =>
-      prev.map(s => (s.id === id ? { ...s, titulo: anterior.titulo, descripcion: anterior.descripcion } : s))
+      prev.map(s => (s.id === id
+        ? { ...s, titulo: anterior.titulo, descripcion: anterior.descripcion, listo: anterior.listo, modo: anterior.modo }
+        : s))
     )
     marcarSeccion(id, 'pendiente')
     const existente = temporizadoresSeccion.current.get(id)
@@ -1617,6 +1619,40 @@ export default function Editor({
                 lang="es"
                 className="w-full text-sm text-gray-ui bg-white border border-line rounded-[10px] focus:border-dom/40 outline-none transition-colors px-3 py-2 mt-2"
               />
+              {/* LO QUE DECIDE SI ALGUIEN LO VE EN PANTALLA, 2026-10-13.
+                  Pedido de Francisco: Eli, una cuenta de participante,
+                  entraba a "El Presente como Regalo" y veía "Son 0 pasos".
+                  Causa medida: el lector (`lectura.ts`) solo muestra los
+                  segmentos con `listo` Y con modo `digital` o `ambos`, y
+                  ninguna pantalla dejaba cambiar ninguno de los dos --
+                  la versión publicada tenía sus 4 listos en `presencial`,
+                  y el borrador tiene 16 segmentos con 0 listos. */}
+              <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2">
+                <label className="flex items-center gap-2 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={bisagraActiva.listo}
+                    onChange={e => actualizarSeccion(bisagraActiva.id, { listo: e.target.checked })}
+                    className="w-4 h-4 rounded border-line accent-dom"
+                  />
+                  <span className="text-xs text-ink">Listo para publicar</span>
+                </label>
+                <label className="flex items-center gap-2 text-xs text-gray-ui">
+                  Se entrega
+                  <select
+                    value={bisagraActiva.modo}
+                    onChange={e => actualizarSeccion(bisagraActiva.id, { modo: e.target.value as Modo })}
+                    className="text-xs text-ink bg-white border border-line rounded-md px-2 py-1 focus:border-dom/40 outline-none"
+                  >
+                    <option value="digital">Digital</option>
+                    <option value="presencial">Presencial</option>
+                    <option value="ambos">Ambos</option>
+                  </select>
+                </label>
+              </div>
+              <p className="text-[11px] text-gray-ui mt-1.5 leading-relaxed">
+                Quien lo lee en pantalla solo ve los segmentos que están listos y son Digital o Ambos.
+              </p>
             </div>
           )}
 

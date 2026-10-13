@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { desdeFila, type Bloque, type FilaBloque } from '@/lib/personalab/bloques'
-import type { Tiempo, Soporte } from '@/app/(admin)/personalab/dominio'
+import type { Tiempo, Soporte, Modo } from '@/app/(admin)/personalab/dominio'
 
 // ── LO QUE EL EDITOR NECESITA PARA ABRIR, DEL LADO DEL SERVIDOR ─────────
 //
@@ -26,7 +26,13 @@ export interface BisagraEditable {
   descripcion: string
   soporte: Soporte
   duracion?: string
+  // `listo` y `modo` son lo que decide si una persona que lee en pantalla
+  // ve este segmento (`lectura.ts` filtra por los dos). Hasta el
+  // 2026-10-13 el editor solo los cargaba y los devolvía tal cual: ninguna
+  // pantalla permitía cambiarlos, así que todo segmento nuevo nacía "no
+  // listo" y "presencial" y nunca llegaba a nadie.
   listo: boolean
+  modo: Modo
   requiere?: string[]
   // El mismo candado de concurrencia optimista que ya tenía `blocks`
   // (`BloqueEditable.rev`), agregado a `hinges` el 2026-09-29: sin esto,
@@ -84,7 +90,7 @@ export async function cargarParaEditar(slug: string): Promise<ResultadoEditor> {
 
   const { data: bis, error: errBis } = await supabase
     .from('hinges')
-    .select('id, tiempo, orden, titulo, descripcion, soporte, duracion, listo, requiere, rev')
+    .select('id, tiempo, orden, titulo, descripcion, soporte, duracion, listo, modo, requiere, rev')
     .eq('version_id', versionId)
     .order('tiempo')
     .order('orden')

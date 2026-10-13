@@ -6,7 +6,7 @@ import {
   type Bloque, type TipoBloque, type Audiencia, type FilaBloque,
 } from '@/lib/personalab/bloques'
 import type { BisagraEditable } from '@/lib/personalab/editorDatos'
-import type { Tiempo, Soporte } from './dominio'
+import type { Tiempo, Soporte, Modo } from './dominio'
 
 // Adaptador contra Supabase. Se escribió completo desde la Etapa 1 y no se
 // usó hasta la Etapa 3: `Editor.tsx` y `Publicar.tsx` lo llaman ahora de
@@ -383,6 +383,10 @@ export function seccionNueva(tiempo: Tiempo, orden: number): Omit<BisagraEditabl
     descripcion: '',
     soporte: 'pantalla' as Soporte,
     listo: false,
+    // Presencial, igual que el default de la columna: falla cerrado, un
+    // segmento nuevo no llega a quien lee en pantalla hasta que quien
+    // edita lo marca Digital o Ambos.
+    modo: 'presencial' as Modo,
   }
 }
 
@@ -402,16 +406,20 @@ export async function crearSeccionRemoto(
       descripcion: s.descripcion || null,
       soporte: s.soporte,
       listo: s.listo,
+      modo: s.modo,
     })
-    .select('id, tiempo, orden, titulo, descripcion, soporte, duracion, listo, requiere, rev')
+    .select('id, tiempo, orden, titulo, descripcion, soporte, duracion, listo, modo, requiere, rev')
     .single()
 
   if (error) throw error
   return data as BisagraEditable
 }
 
-// Título, descripción y si está lista para publicarse -- los tres campos
-// que un humano edita a mano. `tiempo`/`orden`/`soporte` no se tocan aquí:
+// Título, descripción, si está lista para publicarse y en qué modo se
+// entrega (`modo`) -- los cuatro campos que un humano edita a mano. Los dos
+// últimos decidían si una persona que lee en pantalla veía el segmento, y
+// hasta el 2026-10-13 ninguna pantalla los dejaba cambiar.
+// `tiempo`/`orden`/`soporte` no se tocan aquí:
 // tiempo y soporte no cambian nunca desde esta pantalla, y orden lo maneja
 // solo `reordenarSeccionesRemoto`, para no pisar un reordenamiento que
 // haya corrido mientras tanto.
@@ -431,7 +439,7 @@ export async function crearSeccionRemoto(
 // nada -- si SÍ existe, es la otra persona editando; si no aparece ni en
 // esa segunda lectura, la versión ya no es la que se creía.
 export async function guardarSeccionRemoto(
-  s: Pick<BisagraEditable, 'id' | 'titulo' | 'descripcion' | 'listo' | 'rev'>,
+  s: Pick<BisagraEditable, 'id' | 'titulo' | 'descripcion' | 'listo' | 'modo' | 'rev'>,
   versionId: string
 ): Promise<number> {
   const sb = cliente()
@@ -441,6 +449,7 @@ export async function guardarSeccionRemoto(
       titulo: s.titulo,
       descripcion: s.descripcion || null,
       listo: s.listo,
+      modo: s.modo,
     })
     .eq('id', s.id)
     .eq('version_id', versionId)

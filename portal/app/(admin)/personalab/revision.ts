@@ -27,6 +27,12 @@ export interface Revision {
   resumen: {
     bisagrasConContenido: number
     bisagrasTotales: number
+    // Cuántos segmentos le llegan a quien lee EN PANTALLA: los que están
+    // `listo` y en modo Digital o Ambos, que es exactamente el filtro de
+    // `lectura.ts`. Faltaba: la pantalla de publicar decía "16 de 16 con
+    // contenido" y "No encontré nada que corregir" mientras el lector
+    // digital mostraba "Son 0 pasos" (2026-10-13, la cuenta de Eli).
+    bisagrasEnPantalla: number
     bloques: number
     visiblesAlParticipante: number
     soloModerador: number
@@ -224,6 +230,7 @@ export function revisar(experiencia: Experiencia, bloques: Bloque[]): Revision {
     resumen: {
       bisagrasConContenido: conContenido,
       bisagrasTotales: bisagras.length,
+      bisagrasEnPantalla: bisagras.filter(bi => bi.listo && (bi.modo === 'digital' || bi.modo === 'ambos')).length,
       bloques: bloques.length,
       visiblesAlParticipante: bloques.filter(b => NIVEL[b.audiencia] <= 1).length,
       soloModerador: bloques.filter(b => NIVEL[b.audiencia] === 2).length,
