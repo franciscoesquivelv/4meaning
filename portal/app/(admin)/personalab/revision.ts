@@ -1,4 +1,5 @@
 import { NIVEL, definicion, estaVacio, type Bloque, type ClaseCampo } from '@/lib/personalab/bloques'
+import { leerVideoExterno } from '@/lib/personalab/videoExterno'
 import type { ExperienciaEditable as Experiencia } from '@/lib/personalab/editorDatos'
 
 // Compuerta de publicacion. Distingue dos cosas que se confunden siempre:
@@ -157,6 +158,26 @@ export function revisar(experiencia: Experiencia, bloques: Bloque[]): Revision {
           comoSeArregla: def.medio.admiteUrl
             ? 'Súbelo cuando el editor guarde de verdad, o pega un enlace. Por ahora es un aviso, no un bloqueo.'
             : 'La subida real llega con el editor reconstruido. Por ahora es un aviso, no un bloqueo.',
+        })
+      }
+
+      // UN ENLACE DE VIDEO QUE NO SE VA A REPRODUCIR. Una URL con forma de
+      // página (no de archivo) que no es de YouTube ni de Vimeo termina en un
+      // `<video src>` sin nada que reproducir: reproductor negro y muerto.
+      // El editor ya no deja guardar uno así (`EnlaceVideo`), pero puede
+      // venir de antes de ese campo o de una edición directa en la base.
+      if (
+        b.tipo === 'video' && !b.medioId && b.url && !estaVacio('url', b.url) &&
+        !leerVideoExterno(b.url) &&
+        !b.url.startsWith('/') &&
+        !/\.(mp4|mov|m4v|webm)(\?|#|$)/i.test(b.url)
+      ) {
+        hallazgos.push({
+          severidad: 'advierte',
+          bisagraId: bi.id,
+          bisagra: nombre,
+          que: `${etiquetaDe(b, def.nombre)} tiene un enlace que no es de YouTube ni de Vimeo, y no se va a poder reproducir.`,
+          comoSeArregla: 'Pega el enlace de YouTube o de Vimeo, o sube el archivo.',
         })
       }
 

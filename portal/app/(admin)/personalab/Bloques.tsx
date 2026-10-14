@@ -1,5 +1,7 @@
 import RenderMarkdown, { Enfasis } from './RenderMarkdown'
 import BotonDescargar from './BotonDescargar'
+import VideoIncrustado from './VideoIncrustado'
+import { leerVideoExterno } from '@/lib/personalab/videoExterno'
 import { definicion, type Bloque } from '@/lib/personalab/bloques'
 
 // EL RITMO VERTICAL VIVE EN EL CONTRATO, NO AQUÍ. Era un mapa suelto con
@@ -11,28 +13,17 @@ import { definicion, type Bloque } from '@/lib/personalab/bloques'
 
 const ROTULO = 'text-[10px] font-semibold uppercase tracking-[0.16em] text-terra-ui'
 
-// UN ENLACE DE VIMEO/YOUTUBE NO ES UN ARCHIVO DE VIDEO. `revision.ts` y el
-// campo "O pega un enlace" del editor prometen los dos por igual ("Vimeo,
-// YouTube sin listar"), pero `<video src>` solo sabe reproducir un archivo
-// directo (mp4, mov, o la URL firmada propia de `/api/personalab/medios/…`
-// tras el redirect): pegado a una URL de página como
-// `https://vimeo.com/76979871`, el navegador no tiene qué reproducir y el
-// participante ve un reproductor negro y muerto. Hallazgo de Hugo,
-// reproducido pegando exactamente el enlace que el propio campo invita a
-// pegar. La forma correcta de un enlace de plataforma es un `<iframe>` a
-// su URL de embed, no un `<video>`.
-function comoIncrustable(url: string): string | null {
-  const vimeo = url.match(/vimeo\.com\/(?:video\/)?(\d+)/)
-  if (vimeo) return `https://player.vimeo.com/video/${vimeo[1]}`
-
-  const ytLargo = url.match(/[?&]v=([\w-]{11})/)
-  if (ytLargo) return `https://www.youtube.com/embed/${ytLargo[1]}`
-
-  const ytCorto = url.match(/youtu\.be\/([\w-]{11})/)
-  if (ytCorto) return `https://www.youtube.com/embed/${ytCorto[1]}`
-
-  return null
-}
+// UN ENLACE DE VIMEO/YOUTUBE NO ES UN ARCHIVO DE VIDEO. `<video src>` solo
+// sabe reproducir un archivo directo (mp4, mov, o la URL firmada propia de
+// `/api/personalab/medios/…` tras el redirect): pegado a una URL de página,
+// el navegador no tiene qué reproducir y el participante ve un reproductor
+// negro y muerto. Hallazgo de Hugo. La forma correcta de un enlace de
+// plataforma es un reproductor incrustado.
+//
+// Quién reconoce el enlace vive ahora en `lib/personalab/videoExterno.ts`,
+// compartido con el editor (2026-10-14): antes esta función entendía tres
+// formas de enlace y el editor ninguna, y un Shorts o un Vimeo "no listado"
+// terminaba en `<video src>`. El reproductor es `VideoIncrustado`.
 
 export default function BloqueLector({ b }: { b: Bloque }) {
   const mt = definicion(b.tipo).margen
@@ -257,16 +248,11 @@ export default function BloqueLector({ b }: { b: Bloque }) {
       )
 
     case 'video': {
-      const incrustable = b.url ? comoIncrustable(b.url) : null
+      const externo = b.url ? leerVideoExterno(b.url) : null
       return (
         <figure className={mt}>
-          {incrustable ? (
-            <iframe
-              src={incrustable}
-              className="rounded-[10px] w-full aspect-video bg-ink"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
+          {externo ? (
+            <VideoIncrustado video={externo} titulo={b.pie || 'Video'} />
           ) : b.url ? (
             <video src={b.url} controls className="rounded-[10px] w-full bg-ink" />
           ) : (

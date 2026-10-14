@@ -12,6 +12,7 @@ import {
 import { CSS } from '@dnd-kit/utilities'
 import BloqueLector from '../../../Bloques'
 import SubirArchivo from '../../../SubirArchivo'
+import EnlaceVideo from '../../../EnlaceVideo'
 import AtmosferaVistaPrevia from '../../../AtmosferaVistaPrevia'
 import {
   NIVEL, definicion,
@@ -2336,32 +2337,47 @@ function TarjetaBloque({
           </p>
         ) : CON_MEDIO.includes(b.tipo) ? (
           <>
-            <label className={ETIQUETA_INPUT}>{definicion(b.tipo).nombre}</label>
-            <SubirArchivo
-              tipo={b.tipo}
-              nombre={b.nombreArchivo}
-              url={b.medioId ? b.url : undefined}
-              medioId={b.medioId}
-              onListo={d => onCambio({ nombreArchivo: d.nombreArchivo, peso: d.peso, url: d.url, medioId: d.medioId })}
-              onQuitar={() => onCambio({ nombreArchivo: '', peso: undefined, url: undefined, medioId: null })}
-            />
+            {/* VIDEO: EL ENLACE VA PRIMERO Y A LA VISTA. 2026-10-14, pedido de
+                Francisco: poner video de YouTube sin cargar el archivo al
+                portal "por tema de peso". Antes el enlace era un campo
+                escondido debajo de "Subir archivo", sin comprobar. Ahora se
+                comprueba al pegar y muestra miniatura y título (ver
+                `EnlaceVideo`). Un archivo ya subido manda sobre el enlace,
+                igual que antes; con un enlace puesto, "Subir archivo" se
+                esconde para que no haya dos fuentes a la vez. */}
+            {b.tipo === 'video' && !b.medioId && (
+              <EnlaceVideo
+                url={b.url}
+                onCambio={url => onCambio({ url })}
+                claseInput={INPUT}
+                claseEtiqueta={ETIQUETA_INPUT}
+              />
+            )}
+
+            {!(b.tipo === 'video' && !b.medioId && b.url) && (
+              <div className={b.tipo === 'video' && !b.medioId ? 'mt-4' : ''}>
+                <label className={ETIQUETA_INPUT}>
+                  {b.tipo === 'video' && !b.medioId ? 'O sube el archivo' : definicion(b.tipo).nombre}
+                </label>
+                <SubirArchivo
+                  tipo={b.tipo}
+                  nombre={b.nombreArchivo}
+                  url={b.medioId ? b.url : undefined}
+                  medioId={b.medioId}
+                  onListo={d => onCambio({ nombreArchivo: d.nombreArchivo, peso: d.peso, url: d.url, medioId: d.medioId })}
+                  onQuitar={() => onCambio({ nombreArchivo: '', peso: undefined, url: undefined, medioId: null })}
+                />
+              </div>
+            )}
 
             {/* EL CAMINO QUE LA COMPUERTA YA PROMETÍA Y NINGUNA PANTALLA
                 OFRECÍA. `blocks_contenido_por_tipo` acepta video y audio
                 con solo una URL, sin archivo subido (contrato:
-                `admiteUrl`), y `revision.ts` le decía a quien edita "pega
-                un enlace" — pero no había dónde. Encontrado por Julián,
-                probando en el navegador, mientras el bucket de audio
-                todavía no existía y subir un archivo directo no era
-                opción. Ahora sí lo es (Etapa 5, `lib/personalab/medios.ts`),
-                pero el enlace externo se queda: para video sigue siendo la
-                vía honesta hacia Vimeo o un YouTube sin listar, algo que
-                subir el archivo nunca reemplaza. */}
-            {definicion(b.tipo).medio?.admiteUrl && !b.medioId && (
+                `admiteUrl`). Hoy solo queda aquí para el AUDIO: el video
+                tiene su propio campo comprobado (`EnlaceVideo`, arriba). */}
+            {definicion(b.tipo).medio?.admiteUrl && b.tipo !== 'video' && !b.medioId && (
               <div className="mt-3">
-                <label className={ETIQUETA_INPUT}>
-                  O pega un enlace{b.tipo === 'video' ? ' (Vimeo, YouTube sin listar)' : ''}
-                </label>
+                <label className={ETIQUETA_INPUT}>O pega un enlace</label>
                 <input
                   value={b.url ?? ''}
                   onChange={e => onCambio({ url: e.target.value || undefined })}

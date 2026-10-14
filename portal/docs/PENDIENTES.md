@@ -34,6 +34,86 @@ la base) igual que exige el resto del protocolo de este portal.
 
 ## Abiertos / decididos
 
+### P-040 — Video de YouTube o Vimeo por enlace, sin subir el archivo al portal
+- Estado: **construido y verificado en vivo, 2026-10-14**
+- Origen: Francisco: "al poner un video en alguno de los bloques me dé la
+  opción de poner un video de YouTube, no quiero cargar el video completo al
+  portal por tema de peso. ¿Cómo hacemos para que para el usuario sea la
+  mejor experiencia posible?" Y, tras ver la propuesta y la pregunta de si
+  una cuenta sin monetizar basta para evitar anuncios: "Sí, constrúyelo así.
+  De momento voy a poner en YouTube y me guías para hacerlo no listado y
+  minimizar el riesgo de que salga un anuncio."
+- **Lo que ya existía y se quedaba corto:** un campo "O pega un enlace"
+  escondido debajo de "Subir archivo", solo visible sin archivo subido, sin
+  ninguna comprobación; el lector entendía tres formas de enlace y un
+  Shorts, un `live/`, un `embed/` o un Vimeo "no listado" terminaban en un
+  `<video src>` negro y muerto.
+- **Construido:**
+  1. `lib/personalab/videoExterno.ts`: UN lector de enlaces para el editor y
+     el lector. Entiende `watch`, `youtu.be`, `shorts`, `live`, `embed`,
+     `m.`/`music.`/`nocookie`, el minuto de inicio (`t=90`, `1m30s`,
+     `start=`) y en Vimeo `/ID`, `/ID/HASH` (no listado), `player.vimeo.com`,
+     canales y `#t=`. Guarda siempre la forma canónica. Probado con una
+     tabla de 38 enlaces (23 válidos de formas distintas y 15 que NO deben
+     reconocerse: listas de reproducción, canales, hosts parecidos como
+     `youtube.com.evil.com`, `javascript:`): 38 de 38 tras corregir un error
+     que la propia tabla encontró (una colección `vimeo.com/showcase/123456`
+     se leía como el video 123456).
+  2. `app/api/personalab/video/info/route.ts`: al pegar, le pregunta a la
+     plataforma (oEmbed) título, autor y miniatura, y distingue "no existe",
+     "no permite incrustarlo" y "no respondió". Solo para el equipo (401 sin
+     sesión, 403 a un participante, probados). Nunca reenvía la URL que
+     llega: extrae el id y arma la consulta contra dos hosts fijos (sin SSRF).
+  3. `EnlaceVideo.tsx`: campo visible arriba en el bloque Video, con
+     miniatura y título al pegar ("¿es este?"), aviso inmediato si no sirve,
+     y "Subir archivo" como alternativa debajo (se esconde cuando hay
+     enlace, para no tener dos fuentes). El bloque solo cambia cuando el
+     enlace se confirma: un enlace malo no pisa uno bueno.
+  4. `VideoIncrustado.tsx`: YouTube entra como PORTADA con botón de play y el
+     reproductor se carga al tocar (la página pesa menos; antes del toque
+     hay 0 reproductores de YouTube en la página); Vimeo entra directo.
+     YouTube por `youtube-nocookie.com`, `rel=0` (videos relacionados solo
+     del mismo canal), `playsinline`, minuto de inicio, título accesible y
+     `referrerpolicy` fijado (YouTube rechaza el reproductor sin referer).
+  5. `revision.ts`: aviso en "Revisar y publicar" si un video tiene un
+     enlace que no es de YouTube ni de Vimeo ni un archivo.
+- **Verificado en vivo** (experiencia, cuenta de equipo y cuenta de
+  participante desechables, ya borradas; lo real quedó idéntico antes y
+  después):
+  - Participante, lector real: YouTube como portada de 16:9 con la
+    miniatura del video; Vimeo como reproductor; archivo directo como
+    `<video>`. **Un toque** en la portada creó el reproductor con
+    `youtube-nocookie`, `rel=0`, `start=5`, `autoplay=1` y YouTube lo aceptó
+    y reprodujo solo hasta el final (0:19), sin cuadrícula de recomendados.
+  - Editor, como equipo: un enlace de Shorts muestra miniatura, título y
+    autor; `hola` → "No es un enlace de YouTube ni de Vimeo"; un id
+    inventado → "No encontramos ese video"; una lista de reproducción →
+    "No es un enlace…"; `youtu.be/…?t=1m5s` → tarjeta con "desde 1:05"; un
+    enlace de Vimeo → tarjeta. En la base quedó la forma canónica.
+  - Pantalla de publicar: "1 cosa conviene revisar… un enlace que no es de
+    YouTube ni de Vimeo".
+  - A 375px: portada y Vimeo de 327×184 (16:9 exacto), sin desbordes. Un
+    defecto propio encontrado midiendo (el título de la tarjeta del editor se
+    cortaba a 61px) y corregido con `flex-wrap` (129px, completo).
+  - `npx tsc --noEmit` limpio.
+- **NO verificado, y por qué:** (a) un video de YouTube con la inserción
+  desactivada: no tengo uno a mano; el mensaje "YouTube no deja verlo desde
+  aquí" depende de que la plataforma responda 401, que es lo que se sabe de
+  oEmbed pero no se probó; (b) un Vimeo "no listado" real: el lector de
+  enlaces lo entiende y se probó, pero no hay un video no listado con el que
+  comprobar la respuesta de la plataforma; (c) Vimeo reproduciendo (solo se
+  vio cargado); (d) anuncios: no se pueden comprobar de antemano, los decide
+  YouTube por video y por espectador.
+- **Límites a saber:** la miniatura de YouTube se pide a `i.ytimg.com` al
+  cargar la página, antes del toque (una petición a Google, sin
+  reproductor ni cookies de seguimiento). Quitar un enlace deja el bloque en
+  el mismo "no se pudo guardar" que ya daba quitar un archivo subido. Los
+  enlaces viejos no se reescriben a la forma canónica hasta que alguien los
+  edita (el lector los entiende igual). En desarrollo React duplica la
+  consulta al abrir el editor; en producción es una por tarjeta. Visto y no
+  tocado: a 375px el selector "Todos" del encabezado de cada bloque se monta
+  sobre su título ("Video").
+
 ### P-039 — Frases de acompañamiento quitadas del lector del participante
 - Estado: **hecho y verificado, 2026-10-13**
 - Origen: Francisco, texto por texto: "Quita este tipo de frases: 'Esto ya
