@@ -11,6 +11,46 @@
 <meta property="og:description" content="Diseñadas para moderadores que quieren que su foro profundice en los temas importantes de la vida.">
 <meta property="og:image" content="https://4meaning.life/img/personalab/foro-real.webp">
 <link rel="canonical" href="https://4meaning.life/personalab/">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "¿Yo facilito la experiencia?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "En los módulos del catálogo, tú facilitas con la guía y los materiales de PersonaLab, y el equipo te orienta para prepararte. En una experiencia a la medida, conversamos sobre el tipo de acompañamiento que necesitas."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Puedo pedir un tema diferente?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Sí. Cuéntanos el objetivo de tu encuentro y el momento en que está el grupo, y construimos una propuesta a la medida."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Sirve para equipos de empresa?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Sí. PersonaLab también acompaña a líderes, recursos humanos y organizaciones en valores, comunicación, liderazgo y cultura. El enfoque se define según las necesidades del equipo."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "¿Cuánto dura y cuál es la inversión?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "El equipo te confirma la duración, el formato y la inversión de la experiencia que te interesa. Las propuestas a la medida se cotizan según su alcance."
+      }
+    }
+  ]
+}
+</script>
 <link rel="icon" href="/logos/blk-icon.png" media="(prefers-color-scheme: light)">
 <link rel="icon" href="/logos/wht-icon.png" media="(prefers-color-scheme: dark)">
 <link rel="stylesheet" href="/assets/brand.css">
@@ -76,9 +116,9 @@
 
   /* ── PARA QUIÉN · 2 perfiles con foto ── */
   .perfiles{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
-  .perfil{position:relative;border-radius:10px;overflow:hidden;min-height:420px;display:flex;flex-direction:column;justify-content:flex-end;isolation:isolate}
+  .perfil{position:relative;border-radius:10px;overflow:hidden;min-height:560px;display:flex;flex-direction:column;justify-content:flex-end;isolation:isolate}
   .perfil .bg{position:absolute;inset:0;background:#222 center/cover no-repeat;z-index:-2}
-  .perfil::after{content:'';position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,transparent 30%,rgba(0,26,33,.6) 62%,rgba(0,18,23,.94) 100%)}
+  .perfil::after{content:'';position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(0,26,33,.2) 0%,rgba(0,26,33,.78) 38%,rgba(0,18,23,.96) 100%)}
   .perfil-body{padding:2.25rem}
   .perfil-tag{font-size:.62rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--terra-lo);margin-bottom:1.1rem;display:block}
   .perfil ul{list-style:none;display:flex;flex-direction:column;gap:.7rem}
@@ -127,7 +167,12 @@
   }
 </style>
 </head>
-<body>
+<body class="has-eco">
+<nav class="eco" aria-label="Universo 4 Meaning">
+  <div class="eco-group"><span class="eco-label">Universo 4 Meaning</span><a href="/">4 Meaning</a><a href="/personalab/" aria-current="page">PersonaLab</a><a href="/trascendencia/">Trascendencia</a></div>
+  <div class="eco-group eco-more"><a href="/blog/">Blog</a><a href="/patricia/">Patricia</a></div>
+</nav>
+
 
 <nav id="nav">
   <a href="#top" class="nav-logo"><img class="flip-blk" src="/logos/personalab-marcas.png" alt="PersonaLab" width="5797" height="802"></a>
@@ -144,6 +189,8 @@
     <li><a href="#catalogo">Catálogo</a></li>
     <li><a href="#paraquien">Para quién</a></li>
     <li><a href="sobrenosotros/">Sobre nosotros</a></li>
+    <li><a href="/blog/">Blog</a></li>
+    <li><a href="/patricia/">Patricia</a></li>
     <li><a href="#cierre" class="nav-cta">Contáctanos</a></li>
   </ul>
 </div>
@@ -194,6 +241,52 @@
   <div class="quees-img"><img src="/img/personalab/quees.webp" alt="El equipo presenta uno de los módulos al grupo" width="1300" height="975" loading="lazy"></div>
 </section>
 
+<!-- PUNTO DE PARTIDA -->
+<section class="sec alt" id="paraquien">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <h2>¿Moderas un foro o <em>lideras un equipo?</em></h2>
+    </div>
+    <div class="perfiles">
+      <div class="perfil reveal"><span class="bg" style="background-image:url('/img/personalab/moderador.webp')"></span><div class="perfil-body">
+        <span class="perfil-tag">Moderadores · Foros YPO / EO</span>
+        <h3 class="perfil-titulo">Llega preparado y facilita con confianza.</h3>
+        <p class="perfil-intro">Módulos listos para abrir conversaciones sobre los temas importantes de la vida, con una estructura que puedes llevar a tu próximo foro o retiro.</p>
+        <ul><li>Elige un tema del catálogo.</li><li>Recibe la guía y los materiales de la experiencia.</li><li>Cuenta con orientación para facilitarla.</li></ul>
+        <a class="perfil-go" href="#catalogo">Ver las experiencias <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+      </div></div>
+      <div class="perfil reveal d1"><span class="bg" style="background-image:url('/img/personalab/equipos.webp')"></span><div class="perfil-body">
+        <span class="perfil-tag">Líderes · Recursos humanos · Organizaciones</span>
+        <h3 class="perfil-titulo">Construye cultura con intención.</h3>
+        <p class="perfil-intro">Experiencias a la medida para mirar los valores que sostienen las decisiones de tu equipo, fortalecer la comunicación y desarrollar un liderazgo más consciente.</p>
+        <ul><li>Partimos del momento y las necesidades del equipo.</li><li>Definimos el enfoque y el alcance contigo.</li><li>Diseñamos una experiencia para tu organización.</li></ul>
+        <a class="perfil-go" href="https://wa.me/50230179048" target="_blank" rel="noopener">Conversemos sobre tu equipo <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CATÁLOGO -->
+<section class="sec" id="catalogo">
+  <div class="wrap">
+    <div class="sec-head reveal" style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:2rem;max-width:none;margin-bottom:3rem">
+      <div><h2 style="max-width:none">Temas para tu <em>próximo foro.</em></h2></div>
+      <p style="max-width:32ch;color:var(--gray);font-size:.9rem;line-height:1.7">Cada módulo es una experiencia completa: guía, audio, video y ejercicios listos para facilitar.</p>
+    </div>
+    <div class="modulos reveal">
+      <a href="/personalab/el-presente-como-regalo/" class="modulo"><span class="modulo-n">01</span><div><div class="modulo-name">El Presente como Regalo</div><div class="modulo-tags">El Tiempo · El Amor · Gratitud · Presencia · Eternidad</div><div class="modulo-q">¿A qué le estás dando tu tiempo?</div></div><span class="modulo-go">→</span></a>
+      <a href="/personalab/metamorfosis-y-metanoia/" class="modulo"><span class="modulo-n">02</span><div><div class="modulo-name">Metamorfosis y Metanoia: Cerrando Círculos</div><div class="modulo-tags">Soltar apegos · Renovación · Voluntad · Sanación</div><div class="modulo-q">¿Qué quieres dejar atrás para seguir creciendo?</div></div><span class="modulo-go">→</span></a>
+      <a href="/personalab/una-pincelada-a-la-muerte/" class="modulo"><span class="modulo-n">03</span><div><div class="modulo-name">Una Pincelada a la Muerte</div><div class="modulo-tags">Legado · Consciencia · Perdón · Gratitud · Aceptación</div><div class="modulo-q">¿Qué te gustaría que permaneciera de ti?</div></div><span class="modulo-go">→</span></a>
+      <a href="/personalab/el-nido-vacio/" class="modulo"><span class="modulo-n">04</span><div><div class="modulo-name">El Nido Vacío: Nuevas Oportunidades de Crecimiento en Pareja</div><div class="modulo-tags">Pareja · Nueva etapa · Redescubrimiento · Miedos · Dejar volar</div><div class="modulo-q">¿Qué quieren construir juntos en esta nueva etapa?</div></div><span class="modulo-go">→</span></a>
+      <a href="/personalab/la-llave-la-comunicacion/" class="modulo"><span class="modulo-n">05</span><div><div class="modulo-name">La Llave de la Comunicación: Analogías</div><div class="modulo-tags">Vínculos · Empatía · Escucha · Respeto · Amor</div><div class="modulo-q">¿Qué cambia cuando escuchas para comprender?</div></div><span class="modulo-go">→</span></a>
+    </div>
+    <div class="includes reveal">
+      <span class="includes-label">Cada módulo incluye</span>
+      <span class="item">Audio y/o video</span><span class="item">Ejercicios escritos</span><span class="item">Guía del moderador</span><span class="item">Acompañamiento</span>
+    </div>
+  </div>
+</section>
+
 <!-- CÓMO FUNCIONA -->
 <section class="sec alt">
   <div class="wrap">
@@ -217,46 +310,6 @@
   </div>
 </section>
 
-<!-- CATÁLOGO -->
-<section class="sec" id="catalogo">
-  <div class="wrap">
-    <div class="sec-head reveal" style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:2rem;max-width:none;margin-bottom:3rem">
-      <div><h2 style="max-width:none">Temas para tu <em>próximo foro.</em></h2></div>
-      <p style="max-width:32ch;color:var(--gray);font-size:.9rem;line-height:1.7">Cada módulo es una experiencia completa: guía, audio, video y ejercicios listos para facilitar.</p>
-    </div>
-    <div class="modulos reveal">
-      <a href="/personalab/el-presente-como-regalo/" class="modulo"><span class="modulo-n">01</span><div><div class="modulo-name">El Presente como Regalo</div><div class="modulo-tags">El Tiempo · El Amor · Gratitud · Presencia · Eternidad</div></div><span class="modulo-go">→</span></a>
-      <a href="/personalab/metamorfosis-y-metanoia/" class="modulo"><span class="modulo-n">02</span><div><div class="modulo-name">Metamorfosis y Metanoia: Cerrando Círculos</div><div class="modulo-tags">Soltar apegos · Renovación · Voluntad · Sanación</div></div><span class="modulo-go">→</span></a>
-      <a href="/personalab/una-pincelada-a-la-muerte/" class="modulo"><span class="modulo-n">03</span><div><div class="modulo-name">Una Pincelada a la Muerte</div><div class="modulo-tags">Legado · Consciencia · Perdón · Gratitud · Aceptación</div></div><span class="modulo-go">→</span></a>
-      <a href="/personalab/el-nido-vacio/" class="modulo"><span class="modulo-n">04</span><div><div class="modulo-name">El Nido Vacío: Nuevas Oportunidades de Crecimiento en Pareja</div><div class="modulo-tags">Pareja · Nueva etapa · Redescubrimiento · Miedos · Dejar volar</div></div><span class="modulo-go">→</span></a>
-      <a href="/personalab/la-llave-la-comunicacion/" class="modulo"><span class="modulo-n">05</span><div><div class="modulo-name">La Llave de la Comunicación: Analogías</div><div class="modulo-tags">Vínculos · Empatía · Escucha · Respeto · Amor</div></div><span class="modulo-go">→</span></a>
-    </div>
-    <div class="includes reveal">
-      <span class="includes-label">Cada módulo incluye</span>
-      <span class="item">Audio y/o video</span><span class="item">Ejercicios escritos</span><span class="item">Guía del moderador</span><span class="item">Acompañamiento</span>
-    </div>
-  </div>
-</section>
-
-<!-- PARA QUIÉN -->
-<section class="sec alt" id="paraquien">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <h2>Para el moderador que dirige foros que <em>trascienden.</em></h2>
-    </div>
-    <div class="perfiles">
-      <div class="perfil reveal"><span class="bg" style="background-image:url('/img/personalab/moderador.webp')"></span><div class="perfil-body">
-        <span class="perfil-tag">Moderadores YPO / EO</span>
-        <ul><li>Es el moderador de este año y quiere proponer algo con profundidad.</li><li>Quiere que su grupo profundice en los temas importantes de la vida.</li></ul>
-      </div></div>
-      <div class="perfil reveal d1"><span class="bg" style="background-image:url('/img/personalab/equipos.webp')"></span><div class="perfil-body">
-        <span class="perfil-tag">Líderes de empresa y HR</span>
-        <ul><li>Retiro anual o jornada interna de liderazgo.</li><li>Ya hizo el teambuilding de siempre.</li><li>Necesita que el equipo hable de algo que no sea trabajo.</li></ul>
-      </div></div>
-    </div>
-  </div>
-</section>
-
 <!-- DE DONDE SALE -->
 <section class="sec" id="origen">
   <div class="wrap origen">
@@ -267,7 +320,23 @@
       <h2 class="reveal">Quince años armando retiros antes de <em>empaquetar el primero.</em></h2>
       <p class="reveal d1">Cada módulo salió de una sesión real, con un grupo real delante. Se probó, se corrigió y se volvió a probar antes de entrar al catálogo.</p>
       <p class="reveal d2">Detrás está el mismo equipo de Trascendencia, la otra línea de 4 Meaning: el retiro de tres días que las familias viven en Antigua. El material que aquí se entrega es el que allí se usa.</p>
-      <p class="reveal d2"><a href="/trascendencia/" class="link-mas">Conocer Trascendencia</a></p>
+      <p class="reveal d2">Detrás del método está Patricia Esquivel de Arriaza, fundadora de 4 Meaning.</p>
+      <p class="reveal d2" style="display:flex;gap:2rem;flex-wrap:wrap"><a href="/patricia/" class="link-mas">Conocer a Patricia</a><a href="/trascendencia/" class="link-mas">Conocer Trascendencia</a></p>
+    </div>
+  </div>
+</section>
+
+<!-- PREGUNTAS FRECUENTES -->
+<section class="sec alt" id="preguntas">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <h2>Resolvamos <em>tus preguntas</em> antes de empezar.</h2>
+    </div>
+    <div class="faq reveal">
+      <details><summary>¿Yo facilito la experiencia?</summary><p>En los módulos del catálogo, tú facilitas con la guía y los materiales de PersonaLab, y el equipo te orienta para prepararte. En una experiencia a la medida, conversamos sobre el tipo de acompañamiento que necesitas.</p></details>
+      <details><summary>¿Puedo pedir un tema diferente?</summary><p>Sí. Cuéntanos el objetivo de tu encuentro y el momento en que está el grupo, y construimos una propuesta a la medida.</p></details>
+      <details><summary>¿Sirve para equipos de empresa?</summary><p>Sí. PersonaLab también acompaña a líderes, recursos humanos y organizaciones en valores, comunicación, liderazgo y cultura. El enfoque se define según las necesidades del equipo.</p></details>
+      <details><summary>¿Cuánto dura y cuál es la inversión?</summary><p>El equipo te confirma la duración, el formato y la inversión de la experiencia que te interesa. Las propuestas a la medida se cotizan según su alcance.</p></details>
     </div>
   </div>
 </section>
@@ -302,6 +371,8 @@
     <li><a href="/">4 Meaning</a></li>
     <li><a href="/trascendencia/">Trascendencia</a></li>
     <li><a href="sobrenosotros/">Sobre nosotros</a></li>
+    <li><a href="/blog/">Blog</a></li>
+    <li><a href="/patricia/">Patricia</a></li>
   </ul>
 </footer>
 

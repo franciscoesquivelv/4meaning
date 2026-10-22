@@ -2,56 +2,102 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://4meaning.life/</loc>
-    <lastmod>2026-08-17</lastmod>
-    <changefreq>monthly</changefreq>
+    <lastmod>2026-10-21</lastmod>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://4meaning.life/personalab/</loc>
-    <lastmod>2026-08-17</lastmod>
-    <changefreq>monthly</changefreq>
+    <lastmod>2026-10-21</lastmod>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://4meaning.life/trascendencia/</loc>
-    <lastmod>2026-08-17</lastmod>
-    <changefreq>monthly</changefreq>
+    <lastmod>2026-10-21</lastmod>
     <priority>0.9</priority>
   </url>
   <url>
+    <loc>https://4meaning.life/trascendencia/como-funciona/</loc>
+    <lastmod>2026-10-21</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://4meaning.life/trascendencia/que-se-llevan/</loc>
+    <lastmod>2026-10-21</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://4meaning.life/trascendencia/modalidades/</loc>
+    <lastmod>2026-10-21</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://4meaning.life/trascendencia/historias/</loc>
+    <lastmod>2026-10-21</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://4meaning.life/trascendencia/equipo/</loc>
+    <lastmod>2026-10-21</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://4meaning.life/trascendencia/preguntas/</loc>
+    <lastmod>2026-10-21</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://4meaning.life/personalab/el-presente-como-regalo/</loc>
-    <lastmod>2026-08-17</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.6</priority>
+    <lastmod>2026-09-17</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://4meaning.life/personalab/la-llave-la-comunicacion/</loc>
-    <lastmod>2026-08-17</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.6</priority>
+    <lastmod>2026-09-17</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://4meaning.life/personalab/el-nido-vacio/</loc>
-    <lastmod>2026-08-17</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.6</priority>
+    <lastmod>2026-09-17</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://4meaning.life/personalab/metamorfosis-y-metanoia/</loc>
-    <lastmod>2026-08-17</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.6</priority>
+    <lastmod>2026-09-17</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://4meaning.life/personalab/una-pincelada-a-la-muerte/</loc>
-    <lastmod>2026-08-17</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.6</priority>
+    <lastmod>2026-09-17</lastmod>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://4meaning.life/personalab/sobrenosotros/</loc>
     <lastmod>2026-08-17</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://4meaning.life/patricia/</loc>
+    <lastmod>2026-10-21</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://4meaning.life/blog/</loc>
+    <lastmod>2026-10-21</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://4meaning.life/blog/preguntas-para-hacerle-a-tus-abuelos/</loc>
+    <lastmod>2026-10-21</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://4meaning.life/blog/que-es-un-legado-familiar/</loc>
+    <lastmod>2026-10-21</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://4meaning.life/blog/como-preparar-un-foro-con-profundidad/</loc>
+    <lastmod>2026-10-21</lastmod>
+    <priority>0.7</priority>
   </url>
 </urlset>
