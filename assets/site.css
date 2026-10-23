@@ -568,3 +568,31 @@ figure{margin:0}
 .summary-footnote{margin:16px 0 0}
 @media(max-width:900px){.two-col,.checkout-grid{grid-template-columns:1fr;gap:40px}.checkout-summary{position:static}.facts{grid-template-columns:1fr}}
 @media(max-width:760px){.form-row{grid-template-columns:1fr}.checkout-summary{padding:26px}}
+
+/* Fotos: que no se corten las caras */
+.hero-wide img{object-position:50% 15%}
+.gallery.five{grid-template-columns:repeat(6,1fr)}
+.gallery.five figure{grid-column:span 2;aspect-ratio:3/2}
+.gallery.five figure:nth-child(n+4){grid-column:span 3}
+.gallery.three figure{aspect-ratio:4/3}
+.story figure.natural img{height:auto;aspect-ratio:3/2}
+.wide-photo.cita{height:auto;min-height:clamp(430px,40vw,560px)}
+.wide-photo.cita img{position:absolute;inset:0}
+.wide-photo.cita .photo-overlay{position:relative;min-height:inherit;padding-top:60px;padding-bottom:60px}
+.wide-photo.cita .photo-overlay blockquote{max-width:min(640px,58%);font-size:clamp(26px,2.8vw,42px);line-height:1.2}
+@media(max-width:1000px){
+  .gallery.five,.gallery.three{grid-template-columns:repeat(2,1fr)}
+  .gallery.five figure,.gallery.five figure:nth-child(n+4){grid-column:span 1}
+  .gallery.five figure:last-child{grid-column:1/-1}
+}
+@media(max-width:760px){
+  .wide-photo.cita .photo-overlay blockquote{max-width:none;font-size:26px}
+  .wide-photo.cita{min-height:460px}
+  .story figure.natural img{height:auto;aspect-ratio:3/2;border-radius:2px 70px 2px 2px}
+}
+.gallery img,.story figure img,.photo-pair img,.pillar-foto img,.moment-row img,.tab-panel img,.path-image img{object-position:50% 28%}
+@media(max-width:760px){
+  .editorial-header.has-photo .hero-wide{height:auto}
+  .editorial-header.has-photo .hero-wide img{height:auto;aspect-ratio:3/2}
+  .wide-photo.cita .photo-overlay{background:linear-gradient(0deg,rgba(var(--teal-rgb),.82),rgba(var(--teal-rgb),.6))}
+}
