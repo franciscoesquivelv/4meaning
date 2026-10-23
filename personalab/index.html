@@ -3,308 +3,400 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PersonaLab · Experiencias que le dan sentido a tu retiro</title>
-<meta name="description" content="PersonaLab diseña experiencias para moderadores que quieren que su foro profundice en los temas importantes de la vida. Una experiencia de 4 Meaning.">
+<title>PersonaLab · Experiencias para foros, líderes y equipos</title>
+<meta name="description" content="PersonaLab diseña experiencias para moderadores, líderes y equipos que quieren conversar con profundidad: catálogo de módulos y propuestas a la medida. Una experiencia de 4 Meaning.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://4meaning.life/personalab/">
-<meta property="og:title" content="PersonaLab · Experiencias que le dan sentido a tu retiro">
-<meta property="og:description" content="Diseñadas para moderadores que quieren que su foro profundice en los temas importantes de la vida.">
+<meta property="og:title" content="PersonaLab · Experiencias para foros, líderes y equipos">
+<meta property="og:description" content="PersonaLab diseña experiencias para moderadores, líderes y equipos que quieren conversar con profundidad: catálogo de módulos y propuestas a la medida. Una experiencia de 4 Meaning.">
 <meta property="og:image" content="https://4meaning.life/img/personalab/foro-real.webp">
+<meta name="theme-color" content="#002B34">
 <link rel="canonical" href="https://4meaning.life/personalab/">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "¿Yo facilito la experiencia?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "En los módulos del catálogo, tú facilitas con la guía y los materiales de PersonaLab, y el equipo te orienta para prepararte. En una experiencia a la medida, conversamos sobre el tipo de acompañamiento que necesitas."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Puedo pedir un tema diferente?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sí. Cuéntanos el objetivo de tu encuentro y el momento en que está el grupo, y construimos una propuesta a la medida."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Sirve para equipos de empresa?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sí. PersonaLab también acompaña a líderes, recursos humanos y organizaciones en valores, comunicación, liderazgo y cultura. El enfoque se define según las necesidades del equipo."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Cuánto dura y cuál es la inversión?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "El equipo te confirma la duración, el formato y la inversión de la experiencia que te interesa. Las propuestas a la medida se cotizan según su alcance."
+          }
+        }
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "4 Meaning",
+          "item": "https://4meaning.life/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "PersonaLab",
+          "item": "https://4meaning.life/personalab/"
+        }
+      ]
+    }
+  ]
+}
+</script>
 <link rel="icon" href="/logos/blk-icon.png" media="(prefers-color-scheme: light)">
 <link rel="icon" href="/logos/wht-icon.png" media="(prefers-color-scheme: dark)">
-<link rel="stylesheet" href="/assets/brand.css">
-<noscript><style>.reveal{opacity:1;transform:none}</style></noscript>
-<style>
-  /* PersonaLab — teal DOMINANTE, vino secundario (ver /BRAND.md) */
-  :root{
-    --dom:var(--teal); --dom-deep:var(--teal-deep); --sec:var(--wine);
-    --blob1:#0E5866; --blob2:#15788A; --blob3:var(--wine); --blob4:var(--terra);
-    --blob2-op:.6; --blob3-op:.32; --blob4-op:.22;
-  }
-
-  /* ── EL PROBLEMA · 3 tarjetas de dolor ── */
-  .problema-head{max-width:56ch;margin-bottom:clamp(2.5rem,5vw,4rem)}
-  .dolor-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
-  .dolor-card{border-top:2px solid var(--terra);padding-top:1.75rem}
-  .dolor-n{font-size:2.6rem;font-weight:200;color:var(--line);letter-spacing:-.02em;display:block;margin-bottom:.5rem;font-variant-numeric:tabular-nums}
-  .dolor-card h3{font-size:1.15rem;font-weight:400;color:var(--ink);margin-bottom:.6rem;letter-spacing:-.01em}
-  .dolor-card p{font-size:.88rem;color:var(--gray);line-height:1.75}
-  @media(max-width:760px){.dolor-grid{grid-template-columns:1fr}}
-
-  /* ── QUÉ ES · split definición + imagen ── */
-  .quees{display:grid;grid-template-columns:1fr 1fr;min-height:78vh}
-  .quees-text{background:var(--paper);display:flex;align-items:center;padding:clamp(3rem,7vw,6rem)}
-  .quees-text-inner{max-width:46ch}
-  .quees-def{font-size:clamp(1.4rem,2.4vw,1.9rem);font-weight:300;line-height:1.5;color:var(--dom);margin-bottom:2.5rem;letter-spacing:-.01em}
-  .dim{padding:1.5rem 0;border-top:1px solid var(--line)}
-  .dim:first-child{border-top:0;padding-top:0}
-  .dim-name{font-size:.66rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--terra);display:block;margin-bottom:.5rem}
-  .dim-desc{font-size:.9rem;color:var(--gray);line-height:1.7}
-  .quees-img{position:relative;overflow:hidden;min-height:280px}
-  .quees-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-  @media(max-width:860px){.quees{grid-template-columns:1fr}.quees-img{order:-1;min-height:0;aspect-ratio:4/3}}
-
-  /* ── CÓMO FUNCIONA · pasos + testimonio ── */
-  .como-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:clamp(2.5rem,6vw,5rem);align-items:start}
-  .pasos{display:flex;flex-direction:column;gap:0}
-  .paso{display:grid;grid-template-columns:3.25rem 1fr;gap:1.5rem;padding:1.75rem 0;border-top:1px solid var(--line)}
-  .paso:first-child{border-top:0;padding-top:0}
-  .paso-circle{width:3.25rem;height:3.25rem;border-radius:50%;border:1px solid var(--dom);color:var(--dom);display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:300}
-  .paso h3{font-size:1.05rem;font-weight:400;color:var(--ink);margin-bottom:.4rem;letter-spacing:-.01em}
-  .paso p{font-size:.86rem;color:var(--gray);line-height:1.7}
-  .como-photo{position:relative;border-radius:10px;overflow:hidden;min-height:420px}
-  .como-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-  .como-photo::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(0,20,25,.88) 100%)}
-  .como-quote{position:absolute;left:1.75rem;right:1.75rem;bottom:1.75rem;z-index:1;color:#fff}
-  .como-quote p{font-size:.95rem;font-style:italic;line-height:1.6;margin-bottom:.75rem}
-  .como-quote cite{font-style:normal;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.65)}
-  @media(max-width:860px){.como-grid{grid-template-columns:1fr}}
-
-  /* ── CATÁLOGO · lista de módulos ── */
-  .modulos{display:flex;flex-direction:column}
-  .modulo{display:grid;grid-template-columns:3.5rem 1fr auto;gap:1.75rem;align-items:center;padding:1.75rem 0;border-top:1px solid var(--line);text-decoration:none;color:inherit;transition:padding-left .3s var(--ease)}
-  .modulo:hover{padding-left:.85rem}
-  .modulo-n{font-size:1.9rem;font-weight:200;color:var(--terra);font-variant-numeric:tabular-nums}
-  .modulo-name{font-size:1.2rem;font-weight:400;color:var(--dom);margin-bottom:.3rem;letter-spacing:-.01em}
-  .modulo-tags{font-size:.78rem;color:var(--gray)}
-  .modulo-go{color:var(--terra);transition:transform .25s}
-  .modulo:hover .modulo-go{transform:translateX(4px)}
-  .includes{margin-top:2.5rem;padding-top:2rem;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:1.5rem;align-items:baseline}
-  .includes-label{font-size:.66rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--terra)}
-  .includes span.item{font-size:.84rem;color:var(--gray)}
-
-  /* ── PARA QUIÉN · 2 perfiles con foto ── */
-  .perfiles{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
-  .perfil{position:relative;border-radius:10px;overflow:hidden;min-height:420px;display:flex;flex-direction:column;justify-content:flex-end;isolation:isolate}
-  .perfil .bg{position:absolute;inset:0;background:#222 center/cover no-repeat;z-index:-2}
-  .perfil::after{content:'';position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,transparent 30%,rgba(0,26,33,.6) 62%,rgba(0,18,23,.94) 100%)}
-  .perfil-body{padding:2.25rem}
-  .perfil-tag{font-size:.62rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--terra-lo);margin-bottom:1.1rem;display:block}
-  .perfil ul{list-style:none;display:flex;flex-direction:column;gap:.7rem}
-  .perfil li{font-size:.86rem;color:rgba(255,255,255,.82);line-height:1.6;padding-left:1.1rem;position:relative}
-  .perfil li::before{content:'·';position:absolute;left:0;color:var(--terra-lo)}
-  @media(max-width:860px){.perfiles{grid-template-columns:1fr}}
-
-  /* ── DE DONDE SALE ────────────────────────────────────
-     Aqui vivia una tabla comparativa con cinco filas de equis contra
-     palomita frente a "otras ofertas". Definia el producto negando lo
-     de los demas cinco veces seguidas, no llevaba una sola imagen y
-     repetia lo que ya dicen "Que es PersonaLab" y "Cada modulo
-     incluye". La sustituye una foto y dos parrafos que afirman. */
-  .origen{display:grid;grid-template-columns:1fr;gap:clamp(2rem,5vw,3.5rem);align-items:center}
-  .origen-foto{margin:0;position:relative;aspect-ratio:4/5;border-radius:10px;overflow:hidden;background:var(--paper-2)}
-  .origen-foto img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-  .origen-texto h2{font-size:clamp(1.9rem,3.6vw,3.1rem);font-weight:200;line-height:1.1;letter-spacing:-.02em;color:var(--dom);text-wrap:balance;max-width:22ch;margin-bottom:clamp(1.5rem,3vw,2rem)}
-  .origen-texto h2 em{font-style:normal;color:var(--terra)}
-  .origen-texto p{font-size:1rem;font-weight:400;line-height:1.7;color:var(--ink);max-width:52ch;margin-bottom:1.2rem}
-  .origen-texto p:last-of-type{margin-bottom:0}
-  .link-mas{display:inline-block;color:var(--dom);text-decoration:none;font-size:.78rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;border-bottom:1px solid var(--terra);padding-bottom:3px}
-  .link-mas:hover{color:var(--terra)}
-  @media(min-width:861px){
-    .origen{grid-template-columns:5fr 7fr;gap:clamp(2.5rem,6vw,5rem)}
-    .origen-foto{aspect-ratio:3/4}
-  }
-  @media(max-width:560px){
-    .link-mas{padding-top:.95rem;padding-bottom:.95rem;border-bottom-width:0;box-shadow:0 1px 0 var(--terra)}
-  }
-  /* ── MOVIL (<=560px) ──────────────────────────────────
-     PersonaLab nunca recibio el paso que ya llevaban las otras dos
-     paginas. Medido a 375px: once bloques de cuerpo entre 13.76 y
-     14.4px, y dos titulares con interlinea de escritorio (1.10 y
-     1.20) y peso 200. Mismo criterio: cuerpo a 16px, titular a 300
-     con interlinea 1.26. */
-  @media(max-width:560px){
-    .dolor-card p,.paso p,.perfil li,.quees .dim-desc,
-    .origen-texto p,.includes .item{font-size:1rem;line-height:1.65}
-    .problema-head h2,.origen-texto h2{font-size:1.7rem!important;line-height:1.26!important;font-weight:300!important;max-width:none}
-    .quees-def{font-size:1.35rem;line-height:1.45}
-    .como-quote p{font-size:1rem;line-height:1.6}
-    .modulo-name{font-size:1.02rem}
-    .dolor-card h3,.paso h3{font-size:1.08rem}
-    /* El parrafo del catalogo trae el tamano en atributo style= */
-    .sec-head p[style]{font-size:1rem!important;line-height:1.65;max-width:none!important}
-  }
-</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;1,400&display=swap">
+<link rel="stylesheet" href="/assets/site.css">
+<script defer src="/assets/site.js"></script>
 </head>
 <body>
-
-<nav id="nav">
-  <a href="#top" class="nav-logo"><img class="flip-blk" src="/logos/personalab-marcas.png" alt="PersonaLab" width="5797" height="802"></a>
-  <button class="nav-toggle" aria-label="Abrir menú" aria-expanded="false"><span></span></button>
-  <ul class="nav-links">
-    <li class="hide-m"><a href="#catalogo">Catálogo</a></li>
-    <li class="hide-m"><a href="#paraquien">Para quién</a></li>
-    <li class="hide-m"><a href="sobrenosotros/">Sobre nosotros</a></li>
-    <li class="hide-m"><a href="#cierre" class="nav-cta">Contáctanos</a></li>
-  </ul>
+<a class="skip" href="#contenido">Saltar al contenido</a>
+<header class="nav">
+<div class="ecosystem-bar"><div class="wrap ecosystem-inner">
+<span class="label">Universo 4 Meaning</span>
+<nav aria-label="Marcas del ecosistema"><a href="/">4 Meaning</a><a href="/personalab/" aria-current="page">PersonaLab</a><a href="/trascendencia/">Trascendencia</a></nav>
+</div></div>
+<div class="wrap nav-inner">
+<a aria-label="PersonaLab, inicio" href="/personalab/"><img class="persona-logo" src="/logos/personalab-marcas.png" alt="PersonaLab" width="5797" height="802"></a>
+<button class="menu" aria-controls="navigation" aria-expanded="false">Menú</button>
+<nav class="nav-links" id="navigation" aria-label="Navegación principal">
+<a href="/personalab/#experiencias">Experiencias</a>
+<a href="/personalab/#catalogo">Catálogo</a>
+<a href="/personalab/#metodo">Cómo funciona</a>
+<a href="/blog/">Blog</a>
+<a href="/patricia/">Patricia</a>
+<a class="nav-cta" href="/personalab/#contacto">Conversemos</a>
 </nav>
-<div class="nav-mobile-panel">
-  <ul>
-    <li><a href="#catalogo">Catálogo</a></li>
-    <li><a href="#paraquien">Para quién</a></li>
-    <li><a href="sobrenosotros/">Sobre nosotros</a></li>
-    <li><a href="#cierre" class="nav-cta">Contáctanos</a></li>
-  </ul>
 </div>
-
-<!-- HERO -->
-<section class="hero" id="top">
-  <div class="aurora"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span><span class="blob b4"></span></div>
-  <div class="grain"></div>
-  <div class="hero-inner">
-    <p class="eyebrow hero-eyebrow" style="margin-bottom:1.25rem">De los creadores de Trascendencia</p>
-    <h1>Experiencias que le dan <em>sentido</em> a tu retiro.</h1>
-    <p class="lead">Diseñadas para moderadores que quieren que su foro profundice en los temas importantes de la vida.</p>
-    <div class="hero-actions">
-      <a href="https://wa.me/50230179048" target="_blank" rel="noopener" class="btn-fill">Hablemos por WhatsApp
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
-      <a href="#catalogo" class="btn-ghost">Ver catálogo</a>
-    </div>
-  </div>
-  <span class="scroll-cue">Desplazar</span>
+</header>
+<main id="contenido">
+<section class="hero">
+<div class="wrap">
+<div class="hero-top"><span class="label">PersonaLab / Desarrollo humano</span><a class="back-brand" href="/">Una experiencia de 4 Meaning</a></div>
+<div class="hero-layout">
+<div class="hero-copy">
+<h1>Tu grupo tiene<br>mucho por<br><em>descubrir.</em></h1>
+<p>Experiencias para foros, líderes y equipos que quieren conversar con profundidad, fortalecer sus vínculos y crecer con intención.</p>
+<div class="actions"><a class="btn" href="#catalogo">Explorar el catálogo</a><a class="text-link" href="#experiencias">Una experiencia para mi equipo</a></div>
+</div>
+<div class="hero-visual">
+<img src="/img/personalab/persona-foro.webp" alt="Profesionales conversan durante un foro" width="1122" height="1402" fetchpriority="high">
+<div class="hero-caption"><span class="photo-quote">Las conversaciones que dejan huella.</span><span class="label">PersonaLab</span></div>
+</div>
+</div>
+<div class="hero-bottom"><span class="label">Para foros, líderes y equipos</span><a class="text-link" href="#experiencias">Descubre más</a></div>
+</div>
 </section>
 
-<!-- EL PROBLEMA -->
-<section class="sec">
-  <div class="wrap">
-    <div class="problema-head reveal">
-      <h2 style="margin-top:1.5rem;font-size:clamp(1.7rem,3.2vw,2.6rem);font-weight:200;letter-spacing:-.02em;color:var(--dom);line-height:1.2">
-        "Ya viene el retiro y aún no tengo <em style="font-style:normal;color:var(--terra)">material preparado.</em>"
-      </h2>
-    </div>
-    <div class="dolor-grid">
-      <div class="dolor-card reveal"><span class="dolor-n">01</span><h3>"Voy a tener que improvisar"</h3><p>Buscar dinámicas en Google. Preguntar a otros. Llegar sin prepararme y que se note.</p></div>
-      <div class="dolor-card reveal d1"><span class="dolor-n">02</span><h3>"No logro la profundidad que necesito"</h3><p>Nadie se abre. El grupo queda en la superficie. La oportunidad se pierde.</p></div>
-      <div class="dolor-card reveal d2"><span class="dolor-n">03</span><h3>"Se me acabaron las ideas"</h3><p>Siempre los mismos temas, dinámicas aburridas, formatos repetitivos. Ya no sé qué más hacer.</p></div>
-    </div>
-  </div>
+<section class="section">
+<div class="wrap intro reveal">
+<span class="label">01 / Lo que hacemos</span>
+<div>
+<h2>Abre la conversación.<br><em>Nosotros te ayudamos a prepararla.</em></h2>
+<div class="under">
+<p>Quieres que tu próximo encuentro tenga profundidad. Que tu grupo se abra, se escuche y hable de lo que realmente le importa.</p>
+<p>PersonaLab te ofrece temas, ejercicios y acompañamiento para lograrlo. Puedes elegir una experiencia del catálogo o construir una a la medida de tu equipo.</p>
+</div>
+</div>
+</div>
 </section>
 
-<!-- QUÉ ES PERSONALAB -->
-<section class="quees" id="proposito">
-  <div class="quees-text">
-    <div class="quees-text-inner reveal">
-      <p class="quees-def">Es un abanico de experiencias diseñadas para acompañar a cualquier moderador.</p>
-      <div class="dim"><span class="dim-name">Catálogo</span><span class="dim-desc">Temas listos para facilitar. Una experiencia completa con guía, audio, video y ejercicios.</span></div>
-      <div class="dim"><span class="dim-name">A la medida</span><span class="dim-desc">Si necesitas un tema específico, lo construimos. Asesoría para crear exactamente lo que necesitas.</span></div>
-      <div class="dim"><span class="dim-name">Acompañamiento</span><span class="dim-desc">No te dejamos solo. Te orientamos para que llegues seguro y puedas facilitar con naturalidad.</span></div>
-    </div>
-  </div>
-  <div class="quees-img"><img src="/img/personalab/quees.webp" alt="El equipo presenta uno de los módulos al grupo" width="1300" height="975" loading="lazy"></div>
+<section class="section rule">
+<div class="wrap">
+<div class="section-head reveal "><div><p class="label muted">02 / Lo que se piensa antes de un retiro</p><h2>"Ya viene el retiro y aún no tengo<br><em>material preparado.</em>"</h2></div></div>
+<div class="pillars three">
+<article class="pillar reveal"><span class="number">01</span><h3>"Voy a tener que improvisar"</h3><p>Buscar dinámicas en Google. Preguntar a otros. Llegar sin prepararme y que se note.</p></article>
+<article class="pillar reveal"><span class="number">02</span><h3>"No logro la profundidad que necesito"</h3><p>Nadie se abre. El grupo queda en la superficie. La oportunidad se pierde.</p></article>
+<article class="pillar reveal"><span class="number">03</span><h3>"Se me acabaron las ideas"</h3><p>Siempre los mismos temas, dinámicas aburridas, formatos repetitivos. Ya no sé qué más hacer.</p></article>
+</div>
+</div>
 </section>
 
-<!-- CÓMO FUNCIONA -->
-<section class="sec alt">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <h2>Tres pasos para un retiro <em>memorable.</em></h2>
-    </div>
-    <div class="como-grid">
-      <div class="pasos">
-        <div class="paso reveal"><span class="paso-circle">1</span><div><h3>Escoges tu tema (o lo construimos)</h3><p>Seleccionas del catálogo de experiencias o diseñamos algo a la medida.</p></div></div>
-        <div class="paso reveal d1"><span class="paso-circle">2</span><div><h3>Te damos acceso al material</h3><p>Enviamos el acceso a la plataforma con todo el material listo y fácil de utilizar.</p></div></div>
-        <div class="paso reveal d2"><span class="paso-circle">3</span><div><h3>Tú facilitas, ellos profundizan</h3><p>Llegas preparado. Tu grupo vive algo que recuerda y puede valorar el resto de su vida.</p></div></div>
-      </div>
-      <div class="como-photo reveal d1">
-        <img src="/img/personalab/foro-real.webp" alt="Un foro en sesión" width="1200" height="1200" loading="lazy">
-        <div class="como-quote">
-          <p>"Quería llegar con algo que de verdad mueva a mi grupo. De un equipo en el que confío."</p>
-          <cite>Ayleen Mini, Moderadora YPO Guatemala</cite>
-        </div>
-      </div>
-    </div>
-  </div>
+<section class="section rule" id="experiencias">
+<div class="wrap">
+<div class="section-head reveal "><div><p class="label muted">03 / Encuentra tu punto de partida</p><h2>La experiencia correcta<br>para <em>tu grupo.</em></h2></div></div>
+<div class="choice-tabs" role="tablist" aria-label="Tipo de experiencia">
+<button role="tab" id="tab-foro" aria-controls="panel-foro" aria-selected="true">Para mi foro</button>
+<button role="tab" id="tab-equipo" aria-controls="panel-equipo" aria-selected="false" tabindex="-1">Para mi equipo</button>
+</div>
+<div class="tab-panel" id="panel-foro" role="tabpanel" aria-labelledby="tab-foro">
+<div class="panel-text">
+<span class="label muted">Moderadores · Foros YPO / EO</span>
+<h3>Llega preparado y<br>facilita con confianza.</h3>
+<p>Módulos listos para abrir conversaciones sobre los temas importantes de la vida, con una estructura que puedes llevar a tu próximo foro o retiro.</p>
+<ul><li>Elige un tema del catálogo.</li><li>Recibe la guía y los materiales de la experiencia.</li><li>Cuenta con orientación para facilitarla.</li></ul>
+<a class="btn" href="#catalogo">Ver las experiencias</a>
+</div>
+<img src="/img/personalab/persona-equipo.webp" alt="Profesionales trabajan juntos en una sesión" width="1536" height="1024" loading="lazy">
+</div>
+<div class="tab-panel" id="panel-equipo" role="tabpanel" aria-labelledby="tab-equipo" hidden>
+<div class="panel-text">
+<span class="label muted">Líderes · Recursos humanos · Organizaciones</span>
+<h3>Construye cultura<br>con intención.</h3>
+<p>Experiencias a la medida para mirar los valores que sostienen las decisiones de tu equipo, fortalecer la comunicación y desarrollar un liderazgo más consciente.</p>
+<ul><li>Partimos del momento y las necesidades del equipo.</li><li>Definimos el enfoque y el alcance contigo.</li><li>Diseñamos una experiencia para tu organización.</li></ul>
+<a class="btn" href="#contacto">Conversemos sobre tu equipo</a>
+</div>
+<img src="/img/personalab/persona-dialogo.webp" alt="Dos profesionales conversan" width="1536" height="1024" loading="lazy">
+</div>
+</div>
 </section>
 
-<!-- CATÁLOGO -->
-<section class="sec" id="catalogo">
-  <div class="wrap">
-    <div class="sec-head reveal" style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:2rem;max-width:none;margin-bottom:3rem">
-      <div><h2 style="max-width:none">Temas para tu <em>próximo foro.</em></h2></div>
-      <p style="max-width:32ch;color:var(--gray);font-size:.9rem;line-height:1.7">Cada módulo es una experiencia completa: guía, audio, video y ejercicios listos para facilitar.</p>
-    </div>
-    <div class="modulos reveal">
-      <a href="/personalab/el-presente-como-regalo/" class="modulo"><span class="modulo-n">01</span><div><div class="modulo-name">El Presente como Regalo</div><div class="modulo-tags">El Tiempo · El Amor · Gratitud · Presencia · Eternidad</div></div><span class="modulo-go">→</span></a>
-      <a href="/personalab/metamorfosis-y-metanoia/" class="modulo"><span class="modulo-n">02</span><div><div class="modulo-name">Metamorfosis y Metanoia: Cerrando Círculos</div><div class="modulo-tags">Soltar apegos · Renovación · Voluntad · Sanación</div></div><span class="modulo-go">→</span></a>
-      <a href="/personalab/una-pincelada-a-la-muerte/" class="modulo"><span class="modulo-n">03</span><div><div class="modulo-name">Una Pincelada a la Muerte</div><div class="modulo-tags">Legado · Consciencia · Perdón · Gratitud · Aceptación</div></div><span class="modulo-go">→</span></a>
-      <a href="/personalab/el-nido-vacio/" class="modulo"><span class="modulo-n">04</span><div><div class="modulo-name">El Nido Vacío: Nuevas Oportunidades de Crecimiento en Pareja</div><div class="modulo-tags">Pareja · Nueva etapa · Redescubrimiento · Miedos · Dejar volar</div></div><span class="modulo-go">→</span></a>
-      <a href="/personalab/la-llave-la-comunicacion/" class="modulo"><span class="modulo-n">05</span><div><div class="modulo-name">La Llave de la Comunicación: Analogías</div><div class="modulo-tags">Vínculos · Empatía · Escucha · Respeto · Amor</div></div><span class="modulo-go">→</span></a>
-    </div>
-    <div class="includes reveal">
-      <span class="includes-label">Cada módulo incluye</span>
-      <span class="item">Audio y/o video</span><span class="item">Ejercicios escritos</span><span class="item">Guía del moderador</span><span class="item">Acompañamiento</span>
-    </div>
-  </div>
+<section class="section catalog" id="catalogo">
+<div class="wrap">
+<div class="section-head reveal "><div><p class="label muted">04 / Catálogo de experiencias</p><h2>Un buen tema puede<br>abrir <em>mucho más.</em></h2></div><p>Cada módulo reúne una guía para el moderador, recursos y ejercicios. Explora el tema que tiene sentido para tu próximo encuentro.</p></div>
+<div class="catalog-list">
+<details class="module">
+<summary><span class="module-no">01</span><h3>El Presente como Regalo</h3><span class="module-topic">Presencia y gratitud</span><span class="plus" aria-hidden="true">+</span></summary>
+<div class="module-content">
+<div>
+<p>Una pausa para reconocer el valor del tiempo, el amor y lo cotidiano. Abre una conversación sobre cómo estamos viviendo el presente.</p>
+<p class="tags">El tiempo · El amor · Gratitud · Presencia · Eternidad</p>
+<div class="links"><a class="btn" href="/personalab/el-presente-como-regalo/">Ver la experiencia</a></div>
+</div>
+<div>
+<h4>Una pregunta para empezar</h4>
+<p class="module-question">¿A qué le estás dando tu tiempo?</p>
+<p style="font-size:14px">Consulta con el equipo el formato, la duración y la inversión para tu grupo.</p>
+</div>
+</div>
+</details>
+<details class="module">
+<summary><span class="module-no">02</span><h3>Metamorfosis y Metanoia: Cerrando Círculos</h3><span class="module-topic">Cambio y renovación</span><span class="plus" aria-hidden="true">+</span></summary>
+<div class="module-content">
+<div>
+<p>Una invitación a mirar los ciclos que terminan, reconocer lo aprendido y explorar qué hace falta soltar para dar paso a una nueva etapa.</p>
+<p class="tags">Soltar apegos · Renovación · Voluntad · Sanación</p>
+<div class="links"><a class="btn" href="/personalab/metamorfosis-y-metanoia/">Ver la experiencia</a></div>
+</div>
+<div>
+<h4>Una pregunta para empezar</h4>
+<p class="module-question">¿Qué quieres dejar atrás para seguir creciendo?</p>
+<p style="font-size:14px">Consulta con el equipo el formato, la duración y la inversión para tu grupo.</p>
+</div>
+</div>
+</details>
+<details class="module">
+<summary><span class="module-no">03</span><h3>Una Pincelada a la Muerte</h3><span class="module-topic">Conciencia y legado</span><span class="plus" aria-hidden="true">+</span></summary>
+<div class="module-content">
+<div>
+<p>Un espacio para reflexionar sobre la finitud y lo que hace valiosa la vida. Permite conversar sobre gratitud, perdón y aquello que queremos dejar en otros.</p>
+<p class="tags">Legado · Consciencia · Perdón · Gratitud · Aceptación</p>
+<div class="links"><a class="btn" href="/personalab/una-pincelada-a-la-muerte/">Ver la experiencia</a></div>
+</div>
+<div>
+<h4>Una pregunta para empezar</h4>
+<p class="module-question">¿Qué te gustaría que permaneciera de ti?</p>
+<p style="font-size:14px">Consulta con el equipo el formato, la duración y la inversión para tu grupo.</p>
+</div>
+</div>
+</details>
+<details class="module">
+<summary><span class="module-no">04</span><h3>El Nido Vacío: Nuevas Oportunidades de Crecimiento en Pareja</h3><span class="module-topic">Pareja y nuevas etapas</span><span class="plus" aria-hidden="true">+</span></summary>
+<div class="module-content">
+<div>
+<p>Una experiencia para explorar los cambios que llegan cuando los hijos emprenden su propio camino y la pareja tiene la oportunidad de volver a mirarse.</p>
+<p class="tags">Pareja · Nueva etapa · Redescubrimiento · Miedos · Dejar volar</p>
+<div class="links"><a class="btn" href="/personalab/el-nido-vacio/">Ver la experiencia</a></div>
+</div>
+<div>
+<h4>Una pregunta para empezar</h4>
+<p class="module-question">¿Qué quieren construir juntos en esta nueva etapa?</p>
+<p style="font-size:14px">Consulta con el equipo el formato, la duración y la inversión para tu grupo.</p>
+</div>
+</div>
+</details>
+<details class="module">
+<summary><span class="module-no">05</span><h3>La Llave de la Comunicación: Analogías</h3><span class="module-topic">Vínculos y escucha</span><span class="plus" aria-hidden="true">+</span></summary>
+<div class="module-content">
+<div>
+<p>Una oportunidad para reconocer cómo nos expresamos y escuchamos. Las analogías abren nuevas maneras de conversar y comprender al otro.</p>
+<p class="tags">Vínculos · Empatía · Escucha · Respeto · Amor</p>
+<div class="links"><a class="btn" href="/personalab/la-llave-la-comunicacion/">Ver la experiencia</a></div>
+</div>
+<div>
+<h4>Una pregunta para empezar</h4>
+<p class="module-question">¿Qué cambia cuando escuchas para comprender?</p>
+<p style="font-size:14px">Consulta con el equipo el formato, la duración y la inversión para tu grupo.</p>
+</div>
+</div>
+</details>
+</div>
+<div class="included">
+<span class="label muted">El material incluye</span>
+<div class="included-items"><span>Guía del moderador</span><span>Audio y/o video</span><span>Ejercicios escritos</span><span>Acompañamiento</span></div>
+</div>
+</div>
 </section>
 
-<!-- PARA QUIÉN -->
-<section class="sec alt" id="paraquien">
-  <div class="wrap">
-    <div class="sec-head reveal">
-      <h2>Para el moderador que dirige foros que <em>trascienden.</em></h2>
-    </div>
-    <div class="perfiles">
-      <div class="perfil reveal"><span class="bg" style="background-image:url('/img/personalab/moderador.webp')"></span><div class="perfil-body">
-        <span class="perfil-tag">Moderadores YPO / EO</span>
-        <ul><li>Es el moderador de este año y quiere proponer algo con profundidad.</li><li>Quiere que su grupo profundice en los temas importantes de la vida.</li></ul>
-      </div></div>
-      <div class="perfil reveal d1"><span class="bg" style="background-image:url('/img/personalab/equipos.webp')"></span><div class="perfil-body">
-        <span class="perfil-tag">Líderes de empresa y HR</span>
-        <ul><li>Retiro anual o jornada interna de liderazgo.</li><li>Ya hizo el teambuilding de siempre.</li><li>Necesita que el equipo hable de algo que no sea trabajo.</li></ul>
-      </div></div>
-    </div>
-  </div>
+<section class="section" id="metodo">
+<div class="wrap process">
+<div class="reveal"><p class="label muted">05 / Cómo funciona</p><h2>Menos improvisación<br>y <em>más sentido.</em></h2></div>
+<div class="steps">
+<article class="step"><span class="number">01</span><div><h3>Elige el tema o cuéntanos qué necesitas.</h3><p>Selecciona una experiencia del catálogo o conversa con el equipo para diseñar una propuesta a la medida.</p></div></article>
+<article class="step"><span class="number">02</span><div><h3>Prepárate con los materiales.</h3><p>Recibe el acceso a la plataforma con la guía, los recursos y los ejercicios. Te orientamos para que llegues con confianza.</p></div></article>
+<article class="step"><span class="number">03</span><div><h3>Facilita el encuentro y dale espacio al grupo.</h3><p>La estructura te ayuda a conducir la experiencia y abrir una conversación que el grupo pueda llevar a su vida.</p></div></article>
+</div>
+</div>
 </section>
 
-<!-- DE DONDE SALE -->
-<section class="sec" id="origen">
-  <div class="wrap origen">
-    <figure class="origen-foto reveal">
-      <img src="/img/personalab/origen.webp" alt="Dos participantes durante una sesión" width="1000" height="1250" loading="lazy">
-    </figure>
-    <div class="origen-texto">
-      <h2 class="reveal">Quince años armando retiros antes de <em>empaquetar el primero.</em></h2>
-      <p class="reveal d1">Cada módulo salió de una sesión real, con un grupo real delante. Se probó, se corrigió y se volvió a probar antes de entrar al catálogo.</p>
-      <p class="reveal d2">Detrás está el mismo equipo de Trascendencia, la otra línea de 4 Meaning: el retiro de tres días que las familias viven en Antigua. El material que aquí se entrega es el que allí se usa.</p>
-      <p class="reveal d2"><a href="/trascendencia/" class="link-mas">Conocer Trascendencia</a></p>
-    </div>
-  </div>
+<section class="quote">
+<div class="wrap reveal">
+<p class="label">La voz de una moderadora</p>
+<blockquote>“Quería llegar con algo que de verdad mueva a mi grupo. De un equipo en el que confío.”</blockquote>
+<cite>Ayleen Mini · Moderadora YPO Guatemala</cite>
+</div>
 </section>
 
-<!-- MOMENTO -->
-<section class="moment">
-  <div class="bg" data-parallax="0.15" style="background-image:url('/img/reflexion.jpg')"></div>
-  <div class="scrim"></div>
-  <div class="inner reveal">
-    <blockquote>Las respuestas que buscamos casi siempre <em>ya viven dentro.</em> Solo hace falta el espacio para escucharlas.</blockquote>
-    <cite>PersonaLab</cite>
-  </div>
+<section class="section" id="nosotros">
+<div class="wrap story">
+<figure><img src="/img/personalab/origen.webp" alt="Dos participantes durante una sesión" width="1000" height="1250" loading="lazy"></figure>
+<div class="reveal">
+<p class="label">06 / De dónde sale</p>
+<h2>Quince años armando retiros antes de <em>empaquetar el primero.</em></h2>
+<p>Cada módulo salió de una sesión real, con un grupo real delante. Se probó, se corrigió y se volvió a probar antes de entrar al catálogo.</p>
+<p>Detrás está el mismo equipo de Trascendencia, la otra línea de 4 Meaning: el retiro de tres días que las familias viven en Antigua. El material que aquí se entrega es el que allí se usa. Detrás del método está Patricia Esquivel de Arriaza, fundadora de 4 Meaning.</p>
+<div class="actions"><a class="text-link" href="/patricia/">Conocer a Patricia</a><a class="text-link" href="/personalab/sobrenosotros/">Sobre nosotros</a></div>
+</div>
+</div>
 </section>
 
-<!-- CIERRE -->
-<section class="cta" id="cierre">
-  <div class="aurora"><span class="blob c1"></span><span class="blob c2"></span></div>
-  <div class="inner reveal">
-    <h2>El retiro que tu grupo necesita, <em>no tienes que diseñarlo solo.</em></h2>
-    <a class="btn-white" href="https://wa.me/50230179048" target="_blank" rel="noopener">Escribirnos por WhatsApp
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg></a>
-    <br><a class="cta-mail" href="#top">↑ Regresar al inicio</a>
-  </div>
+<section class="section rule">
+<div class="wrap faq-grid">
+<div class="reveal"><p class="label muted">07 / Antes de empezar</p><h2>Resolvamos<br><em>tus preguntas.</em></h2></div>
+<div class="faq">
+<details><summary>¿Yo facilito la experiencia?</summary><p>En los módulos del catálogo, tú facilitas con la guía y los materiales de PersonaLab, y el equipo te orienta para prepararte. En una experiencia a la medida, conversamos sobre el tipo de acompañamiento que necesitas.</p></details>
+<details><summary>¿Puedo pedir un tema diferente?</summary><p>Sí. Cuéntanos el objetivo de tu encuentro y el momento en que está el grupo, y construimos una propuesta a la medida.</p></details>
+<details><summary>¿Sirve para equipos de empresa?</summary><p>Sí. PersonaLab también acompaña a líderes, recursos humanos y organizaciones en valores, comunicación, liderazgo y cultura. El enfoque se define según las necesidades del equipo.</p></details>
+<details><summary>¿Cuánto dura y cuál es la inversión?</summary><p>El equipo te confirma la duración, el formato y la inversión de la experiencia que te interesa. Las propuestas a la medida se cotizan según su alcance.</p></details>
+</div>
+</div>
 </section>
 
-<footer>
-  <div class="footer-brand">
-    <img src="/logos/personalab-marcas.png" class="footer-logo" style="filter:brightness(0) invert(1)" alt="PersonaLab" width="5797" height="802" loading="lazy">
-    <span class="footer-seal">Una experiencia de 4 Meaning</span>
-  </div>
-  <ul class="fl">
-    <li><a href="/">4 Meaning</a></li>
-    <li><a href="/trascendencia/">Trascendencia</a></li>
-    <li><a href="sobrenosotros/">Sobre nosotros</a></li>
-  </ul>
+<div class="wrap"><aside class="bridge">
+<h3>¿Quieres explorar las huellas<br>de <em>tu historia familiar?</em></h3>
+<a class="btn outline" href="/trascendencia/">Conoce Trascendencia</a>
+</aside></div>
+
+<section class="section journal-preview rule">
+<div class="wrap">
+<div class="section-head reveal">
+<div><p class="label muted">El blog de 4 Meaning</p><h2>Preguntas que merecen<br><em>un poco de tiempo.</em></h2></div>
+<a class="btn outline" href="/blog/">Explorar el blog</a>
+</div>
+<div class="journal-grid">
+<article class="journal-card" data-category="Familia">
+<a class="journal-cover cover-persona" href="/blog/preguntas-para-hacerle-a-tus-abuelos/" aria-label="Leer: ¿Qué le preguntarías hoy a tus abuelos?">
+<span class="label">01 / Familia</span>
+<span class="cover-word">Abuelos</span>
+<span class="label">Una lectura de 4 Meaning</span>
+</a>
+<div class="journal-body">
+<p class="label muted">Familia</p>
+<h3><a href="/blog/preguntas-para-hacerle-a-tus-abuelos/">¿Qué le preguntarías hoy a tus abuelos?</a></h3>
+<p>Diez preguntas para empezar, y cómo guardar las respuestas mientras todavía se pueden escuchar.</p>
+<a class="text-link" href="/blog/preguntas-para-hacerle-a-tus-abuelos/">Leer artículo</a>
+</div>
+</article>
+<article class="journal-card" data-category="Legado">
+<a class="journal-cover cover-family" href="/blog/que-es-un-legado-familiar/" aria-label="Leer: Qué es un legado familiar y cómo se empieza a dejar">
+<span class="label">02 / Legado</span>
+<span class="cover-word">Legado</span>
+<span class="label">Una lectura de 4 Meaning</span>
+</a>
+<div class="journal-body">
+<p class="label muted">Legado</p>
+<h3><a href="/blog/que-es-un-legado-familiar/">Qué es un legado familiar y cómo se empieza a dejar</a></h3>
+<p>Lo que una familia transmite casi nunca está en el testamento. Tres preguntas para mirarlo con claridad.</p>
+<a class="text-link" href="/blog/que-es-un-legado-familiar/">Leer artículo</a>
+</div>
+</article>
+<article class="journal-card" data-category="Foros">
+<a class="journal-cover cover-history" href="/blog/como-preparar-un-foro-con-profundidad/" aria-label="Leer: Cómo preparar un foro para que el grupo hable de lo importante">
+<span class="label">03 / Foros</span>
+<span class="cover-word">Foros</span>
+<span class="label">Una lectura de 4 Meaning</span>
+</a>
+<div class="journal-body">
+<p class="label muted">Foros</p>
+<h3><a href="/blog/como-preparar-un-foro-con-profundidad/">Cómo preparar un foro para que el grupo hable de lo importante</a></h3>
+<p>Lo que decide la profundidad de un encuentro se prepara antes de que llegue la primera persona.</p>
+<a class="text-link" href="/blog/como-preparar-un-foro-con-profundidad/">Leer artículo</a>
+</div>
+</article>
+</div>
+</div>
+</section>
+
+<section class="contact" id="contacto">
+<div class="wrap contact-layout">
+<div>
+<p class="label">Una conversación primero</p>
+<h2>Tu próximo encuentro<br>puede dejar <em>huella.</em></h2>
+<p>Cuéntanos qué estás buscando y te decimos por dónde empezar.</p>
+</div>
+<form class="contact-box" data-whatsapp>
+<span class="label">Cuéntanos qué estás buscando</span>
+<label for="nombre">Tu nombre</label>
+<input id="nombre" name="nombre" autocomplete="given-name" maxlength="100" placeholder="¿Cómo te llamas?" required>
+<label for="interes">Me interesa</label>
+<select id="interes" name="interes"><option>un módulo para mi foro</option><option>una experiencia a la medida para mi equipo</option><option>conocer Trascendencia</option></select>
+<label for="grupo">Mi grupo o equipo</label>
+<input id="grupo" name="grupo" maxlength="150" placeholder="Ej. un foro de 8 personas" required>
+<button class="btn light" type="submit">Continuar en WhatsApp</button>
+<p class="note">Abriremos WhatsApp con tu mensaje preparado. Tú decides cuándo enviarlo.</p>
+</form>
+</div>
+</section>
+</main>
+<footer class="footer">
+<div class="wrap">
+<div class="footer-top">
+<img class="seal" src="/logos/seal-4meaning.png" alt="Una experiencia de 4 Meaning" width="2500" height="743">
+<a aria-label="4 Meaning, inicio" href="/"><img class="footer-logo" src="/logos-4meaning/wht-logo.png" alt="4 Meaning" width="4903" height="1201" loading="lazy"></a>
+<nav class="footer-links" aria-label="Navegación de pie de página">
+<a href="/">4 Meaning</a>
+<a href="/personalab/">PersonaLab</a>
+<a href="/trascendencia/">Trascendencia</a>
+<a href="/blog/">Blog</a>
+<a href="/patricia/">Patricia</a>
+<a href="/#contacto">Contacto</a>
+</nav>
+</div>
+<div class="footer-bottom"><span>© 2026 4 Meaning · Toda vida deja huellas.</span></div>
+</div>
 </footer>
-
-<script src="/assets/brand.js"></script>
 </body>
 </html>
