@@ -680,3 +680,16 @@ h2{text-wrap:balance}
 .quote cite{display:block;margin-top:var(--space-3)}
 .t-card cite{display:block;margin-top:var(--space-1)}
 .testimonials+.gallery-foot,.testimonials+p{margin-top:var(--space-5)}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+.duo article{border-top:1px solid var(--line);padding-top:25px}
+.duo .path-image{margin-bottom:24px}
+.duo h3{margin-bottom:14px}
+.duo p{color:var(--gray);max-width:46ch}
+.duo a:hover img{transform:scale(1.035)}
+@media(max-width:760px){.duo{grid-template-columns:1fr;gap:44px}.duo .path-image{height:240px}}
+.faq summary{list-style:none;display:flex;justify-content:space-between;align-items:center;gap:20px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:'+';font-size:30px;font-weight:300;color:var(--terra);flex-shrink:0;transition:transform .2s}
+.faq details[open] summary::after{transform:rotate(45deg)}
+.faq details[open] summary{color:var(--terra)}
+@media(min-width:1001px){.process{grid-template-columns:1fr 1.3fr}}
