@@ -730,3 +730,16 @@ h2{text-wrap:balance}
   .voice blockquote{font-size:24px}
   .voice-main blockquote{font-size:28px}
 }
+
+/* Imágenes: miniaturas del catálogo, bandas de cita sin recortar a la gente */
+.module summary{grid-template-columns:96px 65px 1fr 160px 40px}
+.module-thumb{width:96px;height:72px;object-fit:cover;border-radius:2px;display:block}
+@media(max-width:1000px){.module summary{grid-template-columns:72px 35px 1fr 110px 30px}.module-thumb{width:72px;height:54px}}
+@media(max-width:760px){
+  .module summary{grid-template-columns:56px 1fr 25px}
+  .module-thumb{width:56px;height:56px}
+  .module-no{display:none}
+  .wide-photo.cita{min-height:0;background:var(--ink)}
+  .wide-photo.cita img{position:static;display:block;height:280px;width:100%;object-fit:cover}
+  .wide-photo.cita .photo-overlay{background:none;min-height:0;padding:40px 20px 48px}
+}
