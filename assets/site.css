@@ -12,6 +12,7 @@
   --on-dark:#cfdddd; --on-dark-muted:#b3c5c8; --on-wine:#e0ccd0; --light-wine:#f8f4f4; --clay:#864e39;
   --sans:'Avenir Next','Helvetica Neue',Arial,sans-serif;
   --serif:'Cormorant Garamond',Georgia,serif;
+  --sans-xh:.468;
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;scroll-padding-top:110px}
@@ -26,7 +27,7 @@ h1,h2,h3{font-weight:400;margin:0;letter-spacing:-.045em}
 h1{font-size:clamp(52px,6.8vw,108px);line-height:1.04}
 h2{font-size:clamp(40px,4.7vw,72px);line-height:1.1}
 h3{font-size:29px;line-height:1.2}
-em{font-family:var(--serif);font-weight:400;letter-spacing:-.035em}
+em{font-family:var(--serif);font-weight:500;letter-spacing:-.035em;line-height:0;font-variant-numeric:lining-nums}
 ::selection{background:var(--terra);color:var(--white)}
 .wrap{max-width:1600px;margin:auto;padding:0 5vw}
 .section{padding:110px 0}
@@ -596,3 +597,7 @@ figure{margin:0}
   .editorial-header.has-photo .hero-wide img{height:auto;aspect-ratio:3/2}
   .wide-photo.cita .photo-overlay{background:linear-gradient(0deg,rgba(var(--teal-rgb),.82),rgba(var(--teal-rgb),.6))}
 }
+
+/* Cursiva al mismo cuerpo que la sans: igualada por x-height (medido: 0.395 contra 0.468 antes, 1.000 después) */
+h1,h2,h3{font-size-adjust:var(--sans-xh)}
+.stat .num{font-variant-numeric:lining-nums}
