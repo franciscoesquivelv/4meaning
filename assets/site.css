@@ -601,3 +601,6 @@ figure{margin:0}
 /* Cursiva al mismo cuerpo que la sans: igualada por x-height (medido: 0.395 contra 0.468 antes, 1.000 después) */
 h1,h2,h3{font-size-adjust:var(--sans-xh)}
 .stat .num{font-variant-numeric:lining-nums}
+
+/* Titulares equilibrados: sin palabras huérfanas en la última línea */
+h1,h2{text-wrap:balance}
