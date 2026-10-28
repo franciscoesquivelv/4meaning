@@ -693,3 +693,7 @@ h2{text-wrap:balance}
 .faq details[open] summary::after{transform:rotate(45deg)}
 .faq details[open] summary{color:var(--terra)}
 @media(min-width:1001px){.process{grid-template-columns:1fr 1.3fr}}
+
+.pillars.modalities .pillar{display:flex;flex-direction:column;align-items:flex-start}
+.pillars.modalities .pillar .text-link{margin-top:auto}
+.pillars.modalities .pillar p{margin-bottom:var(--space-3)}
